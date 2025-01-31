@@ -1,0 +1,68 @@
+/* 푸터 스타일 */
+footer {
+  background-color: white;
+  color: gray;
+  padding: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+/* 이용약관, 개인정보 처리방침, 입점신청 항목 */
+.footer-links {
+  width: 100%; /* 부모 요소에 맞게 너비 조정 */
+  text-align: center; /* 항목을 중앙에 배치 */
+  margin-bottom: 10px; /* 하단 여백 */
+  border-top: 2px solid #ff6600; /* 구분선: 항목 위 */
+  border-bottom: 2px solid #e5e5e5; /* 구분선: 항목 아래 */
+  padding: 5px 0; /* 위아래 패딩을 줄여서 높이 감소 */
+}
+
+.footer-links a {
+  margin: 0 15px; /* 항목 간 간격 */
+  font-size: 14px;
+  color: #000000;
+  text-decoration: none;
+  white-space: nowrap; /* 텍스트가 한 줄로 보이도록 설정 */
+}
+
+/* 첫 번째 구분선 */
+.footer-divider {
+  border-top: 2px solid #e5e5e5; /* 회색 구분선 */
+  width: 100%;
+  margin-top: 20px; /* 위쪽 여백 */
+}
+
+/* 푸터의 콘텐츠 영역 */
+.footer-content {
+  display: flex; /* 로고와 텍스트를 가로로 배치 */
+  align-items: center; /* 세로 가운데 정렬 */
+  justify-content: flex-start; /* 로고와 텍스트를 왼쪽 정렬 */
+  padding: 10px 20px; /* 상하 좌우 여백 */
+  gap: 20px; /* 로고와 텍스트 간의 간격을 조정 */
+}
+
+/* 로고 */
+.footer-left {
+  flex: 0 0 auto; /* 로고 영역은 고정 크기로 설정 */
+}
+
+.footer-logo {
+  width: 150px; /* 로고 크기 설정 */
+  height: auto;
+}
+
+/* 텍스트 영역 */
+.footer-right {
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+  font-size: 14px;
+}
+
+
+/* 텍스트 스타일 */
+footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+footer p:first-of-type {
+  font-size: 16px; /* 회사명은 약간 큰 글씨로 */
+}
