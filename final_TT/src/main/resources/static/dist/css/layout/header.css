@@ -1,0 +1,119 @@
+      .navbar {
+        background-color: #ffffff;
+        /* border-bottom: 1px solid #e5e5e5; */ /* 네비게이션 바의 하단 선 제거 */
+      }
+
+      /* 로고 스타일 */
+      .navbar-brand {
+        font-weight: bold;
+        color: #ff6600;
+      }
+
+      /* 기본 검색창 스타일 */
+      .search-input {
+        border: 2px solid #ff6600;
+        border-radius: 20px; /* 양쪽 끝 둥글게 */
+        width: 400px; /* 기본 너비 */
+        max-width: 100%; /* 반응형 */
+        padding-right: 40px; /* 오른쪽 공간 확보 */
+
+      }
+
+      .search-btn {
+        position: absolute;
+        right: 10px; /* 버튼 위치 */
+        top: 50%; /* 버튼을 중앙에 정렬 */
+        transform: translateY(-50%); /* 세로 정렬 조정 */
+        background: none; /* 버튼 배경 제거 */
+        border: none; /* 버튼 테두리 제거 */
+        cursor: pointer;
+      }
+
+      .search-btn svg {
+        fill: #000000; /* 검은색 검색 아이콘 */
+      }
+
+      /* 메뉴 하단 배치 */
+      .sub-menu {
+        padding-top: 10px;
+        border-bottom: 2px solid #e5e5e5; /* 하단 선 두께 증가 */
+        /* margin-top: -1px; */ /* 필요에 따라 조정 */
+      }
+
+      /* 글자 색상 및 스타일 */
+      .nav-link {
+        color: #000000; /* 글자 검은색 */
+        font-weight: 500;
+        position: relative; /* 드롭다운 메뉴 위치를 위한 상대 위치 설정 */
+      }
+
+      /* 메뉴 항목 간의 간격 조정 */
+      .sub-menu .nav {
+        gap: 30px; /* 항목 간격을 30px으로 설정 */
+      }
+
+      /* 반응형 조정 */
+      @media (max-width: 992px) {
+        .search-input {
+          width: 100%;
+        }
+      }
+
+      /* 전체 너비를 차지하도록 서브 메뉴 수정 */
+      .full-width-border {
+        position: relative;
+        width: 100%;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        border-bottom: 2px solid #e5e5e5; /* 하단 선 두께 및 색상 */
+      }
+
+      /* 서브 메뉴 기본 숨김 */
+      .dropdown-submenu {
+        display: none;
+        position: absolute;
+        top: 100%; /* 부모 메뉴 아래에 위치 */
+        left: 0;
+        background-color: #ffffff;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        width: 200px; /* 서브 메뉴 너비 */
+      }
+
+      /* 서브 메뉴 항목 스타일 */
+      .dropdown-submenu .nav-link {
+        padding: 10px 15px;
+        white-space: nowrap;
+      }
+
+      /* 서브 메뉴 항목 호버 시 배경색 변경 */
+      .dropdown-submenu .nav-link:hover {
+        background-color: #f8f9fa;
+      }
+
+      /* "전체 카테고리" 메뉴에 호버 시 서브 메뉴 표시 */
+      .nav-item.dropdown:hover .dropdown-submenu {
+        display: block;
+      }
+
+      /* 상단 사용자 메뉴 항목 간의 간격 줄이기 */
+      .user-menu .nav-item {
+        margin-right: 10px; /* 항목 간 간격을 줄임 */
+      }
+
+      /* 사용자 메뉴 항목 텍스트의 패딩 조정 */
+      .user-menu .nav-link {
+        padding-left: 5px; /* 좌측 패딩 줄이기 */
+        padding-right: 5px; /* 우측 패딩 줄이기 */
+        font-size: 14px; /* 텍스트 크기 조금 줄이기 (선택 사항) */
+      }
+
+      /* 사용자 메뉴 항목의 위아래 여백을 줄임 */
+      .user-menu .nav-link {
+        padding-top: 2px; /* 위쪽 여백 줄이기 */
+        padding-bottom: 2px; /* 아래쪽 여백 줄이기 */
+        font-size: 14px; /* 텍스트 크기 줄이기 (선택 사항) */
+      }
