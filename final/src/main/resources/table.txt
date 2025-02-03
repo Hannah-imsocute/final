@@ -1,0 +1,703 @@
+-------------------------------------------------------------------------------							
+-- PRODUCTOPTION							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTOPTION (							
+OPTION_CODE      NUMBER        NOT NULL,							
+PRODUCTCODE      NUMBER        NOT NULL,							
+OPTION_NAME      VARCHAR2(255) NOT NULL,							
+OPTION_VALUE     VARCHAR2(255) NOT NULL,							
+OPTION_PRICE            NUMBER        NOT NULL,							
+PARENT_OPTION    NUMBER        NULL,							
+SOLDOUT          NUMBER        NOT NULL,							
+CONSTRAINT PK_PRODUCTOPTION PRIMARY KEY (OPTION_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductOption INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- ALL_CATEGORY							
+-------------------------------------------------------------------------------							
+CREATE TABLE ALL_CATEGORY (							
+CATEGORY_NUM   NUMBER         NOT NULL,							
+CATENAME       VARCHAR2(100)  NOT NULL,							
+UPPER_CATE     NUMBER         NOT NULL,							
+CONSTRAINT PK_ALL_CATEGORY PRIMARY KEY (CATEGORY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_ALL_CATEGORY INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- COUPON_USED_HISTORY							
+-------------------------------------------------------------------------------							
+CREATE TABLE COUPON_USED_HISTORY (							
+COUPON_HISTORY_NUM  NUMBER        NOT NULL,							
+COUPON_CODE         VARCHAR2(100) NOT NULL,							
+USEDDATE            DATE          NOT NULL,							
+MEMBERIDX           NUMBER        NOT NULL,							
+CONSTRAINT PK_COUPON_USED_HISTORY PRIMARY KEY (COUPON_HISTORY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_COUPON_USED_HISTORY INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+-------------------------------------------------------------------------------							
+-- EVENT_GACHA							
+-------------------------------------------------------------------------------							
+CREATE TABLE EVENT_GACHA (							
+GACHA_NUM  NUMBER NOT NULL,							
+EVT_NUM    NUMBER NOT NULL,							
+MEMBERIDX  NUMBER NOT NULL,							
+CONSTRAINT PK_EVENT_GACHA PRIMARY KEY (GACHA_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_EVENT_GACHA INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- REFUNDS							
+-------------------------------------------------------------------------------							
+CREATE TABLE REFUNDS (							
+REFUNDS_CODE         NUMBER        NOT NULL,							
+ITEM_CODE            NUMBER        NOT NULL,							
+PRODUCTCODE          NUMBER        NOT NULL,							
+REFUND_AMOUNT        NUMBER        NOT NULL,							
+REFUND_REASON        VARCHAR2(255) NOT NULL,							
+REFUND_STATUS        VARCHAR2(20)  NOT NULL,							
+REFUND_REQUEST_DATE  DATE          NOT NULL,							
+REFUND_COMPLETE_DATE DATE          NOT NULL,							
+MEMBERIDX            NUMBER        NOT NULL,							
+CONSTRAINT PK_REFUNDS PRIMARY KEY (REFUNDS_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_REFUNDS INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCTREVIEW							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTREVIEW (							
+REVIEW_NUM   NUMBER         NOT NULL,							
+MEMBERIDX    NUMBER         NOT NULL,							
+PRODUCTCODE  NUMBER         NOT NULL,							
+CONTENT      VARCHAR2(4000) NULL,							
+BLOCK        NUMBER         NULL,							
+STARRATE     NUMBER(5)      NOT NULL,							
+CONSTRAINT PK_PRODUCTREVIEW PRIMARY KEY (REVIEW_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductReview INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+-------------------------------------------------------------------------------							
+-- SELLER_APPLY							
+-------------------------------------------------------------------------------							
+CREATE TABLE SELLER_APPLY (							
+SELLER_APPLY_NUM  NUMBER         NOT NULL,							
+NAME              VARCHAR2(50)   NOT NULL,							
+EMAIL             VARCHAR2(100)  NOT NULL,							
+PHONE             VARCHAR2(50)   NOT NULL,							
+BRANDNAME         VARCHAR2(50)   NOT NULL,							
+BRANDINTRO        VARCHAR2(4000) NOT NULL,							
+INTROPEICE        VARCHAR2(50)   NOT NULL,							
+FOREXTRA          VARCHAR2(4000) NOT NULL,							
+AGREED            NUMBER(1)      NOT NULL,							
+CONSTRAINT PK_SELLER_APPLY PRIMARY KEY (SELLER_APPLY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_SELLER_APPLY INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCTREVIEWIMAGE							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTREVIEWIMAGE (							
+REVIEW_IMG_NUM NUMBER        NOT NULL,							
+IMAGE          VARCHAR2(255) NULL,							
+REVIEW_NUM     NUMBER        NOT NULL,							
+CONSTRAINT PK_PRODUCTREVIEWIMAGE PRIMARY KEY (REVIEW_IMG_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductReviewImage INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- SETTLEMENT_CASH							
+-------------------------------------------------------------------------------							
+CREATE TABLE SETTLEMENT_CASH (							
+WITHDRAW_NUM   NUMBER        NOT NULL,							
+BRAND_CODE     NUMBER        NOT NULL,							
+POINT_AMOUNT   NUMBER        NOT NULL,							
+SURCHARGE      NUMBER        NOT NULL,							
+WITHDRAW_DATE  DATE          NOT NULL,							
+STATE          VARCHAR2(50)  NOT NULL,							
+CONSTRAINT PK_SETTLEMENT_CASH PRIMARY KEY (WITHDRAW_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_Settlement_cash INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- REPORT_CATEGORY							
+-------------------------------------------------------------------------------							
+CREATE TABLE REPORT_CATEGORY (							
+CATEGORY_NUM   NUMBER         NOT NULL,							
+CATEGORY_NAME  VARCHAR2(100)  NOT NULL,							
+CONSTRAINT PK_REPORT_CATEGORY PRIMARY KEY (CATEGORY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_report_category INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- MEMBER_ADDRESS							
+-------------------------------------------------------------------------------							
+CREATE TABLE MEMBER_ADDRESS (							
+ADD_NUM     NUMBER         NOT NULL,							
+MEMBERIDX   NUMBER         NOT NULL,							
+NAME        VARCHAR2(30)   NOT NULL,							
+PHONE       VARCHAR2(30)   NOT NULL,							
+ADDNAME     VARCHAR2(20)   NOT NULL,							
+ADDTITLE    VARCHAR2(100)  NOT NULL,							
+ADDDETAIL   VARCHAR2(100)  NOT NULL,							
+FIRSTADD    NUMBER(1)      NOT NULL,							
+CONSTRAINT PK_MEMBER_ADDRESS PRIMARY KEY (ADD_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_MEMBER_ADDRESS INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCTCATEGORY							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTCATEGORY (							
+CATEGORYCODE       NUMBER       NOT NULL,							
+NAME               VARCHAR2(30) NOT NULL,							
+PARENTCATEGORYCODE NUMBER       NOT NULL,							
+CONSTRAINT PK_PRODUCTCATEGORY PRIMARY KEY (CATEGORYCODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductCategory INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- EVENT_COMM							
+-------------------------------------------------------------------------------							
+CREATE TABLE EVENT_COMM (							
+EVTCMM_NUM  NUMBER         NOT NULL,							
+EVT_NUM     NUMBER         NOT NULL,							
+CONTENT     VARCHAR2(4000) NOT NULL,							
+MEMBERIDX   NUMBER         NOT NULL,							
+CONSTRAINT PK_EVENT_COMM PRIMARY KEY (EVTCMM_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_EVENT_COMM INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- ROLES (Composite PK: ROLE_NAME, MEMBERIDX)							
+-------------------------------------------------------------------------------							
+CREATE TABLE ROLES (							
+ROLE_NAME  VARCHAR2(20)  NOT NULL,							
+MEMBERIDX  NUMBER        NOT NULL,							
+DIVISION   VARCHAR2(50)  NOT NULL,							
+CONSTRAINT PK_ROLES PRIMARY KEY (ROLE_NAME, MEMBERIDX)							
+);							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- MEMBER							
+-------------------------------------------------------------------------------							
+CREATE TABLE MEMBER (							
+MEMBERIDX     NUMBER       NOT NULL,							
+EMAIL         VARCHAR2(30) UNIQUE NOT NULL,							
+PASSWORD      VARCHAR2(30) NOT NULL,							
+NICKNAME      VARCHAR2(30) NOT NULL,							
+BLOCK         NUMBER(1)    NOT NULL,							
+REG_DATE      DATE         NOT NULL,							
+LASTMODIFIED  DATE         NULL,							
+USERSTATE     NUMBER(3)    NOT NULL,							
+LASTLOGIN     DATE         NULL,							
+FAILCOUNT     NUMBER(1)    NULL,							
+CONSTRAINT PK_MEMBER PRIMARY KEY (MEMBERIDX)							
+);							
+							
+							
+CREATE SEQUENCE seq_MEMBER INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMUNITY							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMUNITY (							
+COMMUNITY_NUM NUMBER         NOT NULL,							
+MEMBERIDX     NUMBER         NOT NULL,							
+CONTENT       VARCHAR2(4000) NOT NULL,							
+CREATED_PO    DATE           NOT NULL,							
+UPDATE_PO     DATE           NOT NULL,							
+CONSTRAINT PK_COMMUNITY PRIMARY KEY (COMMUNITY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_COMMUNITY INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMUNITYLIKES (Composite PK: COMMUNITY_NUM, MEMBERIDX)							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMUNITYLIKES (							
+COMMUNITY_NUM NUMBER NOT NULL,							
+MEMBERIDX     NUMBER NOT NULL,							
+LIKED_AT      DATE   NOT NULL,							
+CONSTRAINT PK_COMMUNITYLIKES PRIMARY KEY (COMMUNITY_NUM, MEMBERIDX)							
+);							
+							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMENT_REPORT							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMENT_REPORT (							
+CMM_REPORT_NUM NUMBER         NOT NULL,							
+REPLY_NUM      NUMBER         NOT NULL,							
+MEMBERIDX      NUMBER         NOT NULL,							
+CATEGORY_NUM   NUMBER         NOT NULL,							
+REASON         VARCHAR2(1000) NULL,							
+REPORT_DATE    DATE           NOT NULL,							
+CONSTRAINT PK_COMMENT_REPORT PRIMARY KEY (CMM_REPORT_NUM)							
+);							
+							
+							
+							
+CREATE SEQUENCE seq_comment_report INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- ITEM_REPORT							
+-------------------------------------------------------------------------------							
+CREATE TABLE ITEM_REPORT (							
+SELLERREPORT_NUM NUMBER         NOT NULL,							
+PRODUCTCODE      NUMBER         NOT NULL,							
+MEMBERIDX2       NUMBER         NOT NULL,							
+REASON           VARCHAR2(1000) NOT NULL,							
+REPORT_DATE      DATE           NOT NULL,							
+CATEGORY_NUM     NUMBER         NOT NULL,							
+CONSTRAINT PK_ITEM_REPORT PRIMARY KEY (SELLERREPORT_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_Item_Report INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- INFORMATION							
+-------------------------------------------------------------------------------							
+CREATE TABLE INFORMATION (							
+INFO_NUM     NUMBER         NOT NULL,							
+MEMBERIDX    NUMBER         NOT NULL,							
+SUBJECT      VARCHAR2(500)  NOT NULL,							
+TEXTCONTENT  VARCHAR2(4000) NOT NULL,							
+ADMINIDX     NUMBER         NOT NULL,							
+ANSWERSTATE  NUMBER(1)      NOT NULL,							
+APPLY_DATE   DATE           NOT NULL,							
+ANSWER_DATE  DATE           NULL,							
+CATEGORY_NUM NUMBER         NOT NULL,							
+CONSTRAINT PK_INFORMATION PRIMARY KEY (INFO_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_INFORMATION INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- USER_HAVE_COUPON							
+-------------------------------------------------------------------------------							
+CREATE TABLE USER_HAVE_COUPON (							
+USERCOUPON_NUM NUMBER        NOT NULL,							
+MEMBERIDX      NUMBER        NOT NULL,							
+COUPONCODE     VARCHAR2(100) NOT NULL,							
+GETDATE        DATE          NOT NULL,							
+EXPIREDATE     DATE          NOT NULL,							
+VALID          NUMBER(1)     NOT NULL,							
+CONSTRAINT PK_USER_HAVE_COUPON PRIMARY KEY (USERCOUPON_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_USER_HAVE_COUPON INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- SETTLEMENT_POINT							
+-------------------------------------------------------------------------------							
+CREATE TABLE SETTLEMENT_POINT (							
+SETTLEMENT_NUM  NUMBER        NOT NULL,							
+BRAND_CODE      NUMBER        NOT NULL,							
+POINT_AMOUNT    NUMBER        NOT NULL,							
+SETTLEMENT_DATE DATE          NOT NULL,							
+FROM            VARCHAR2(50)  NOT NULL,							
+POINTBALANCE    NUMBER        NOT NULL,							
+CONSTRAINT PK_SETTLEMENT_POINT PRIMARY KEY (SETTLEMENT_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_Settlement_POINT INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+-------------------------------------------------------------------------------							
+-- MEMBER_INFO							
+-------------------------------------------------------------------------------							
+CREATE TABLE MEMBER_INFO (							
+MEMBERIDX    NUMBER       NOT NULL,							
+NAME         VARCHAR2(30) NOT NULL,							
+PHONE        VARCHAR2(50) NOT NULL,							
+DOB          DATE         NOT NULL,							
+LASTMODIFIED DATE         NULL,							
+CONSTRAINT PK_MEMBER_INFO PRIMARY KEY (MEMBERIDX)							
+);							
+							
+							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMUNITYIMAGE							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMUNITYIMAGE (							
+IMAGE_NUM          NUMBER        NOT NULL,							
+COMMUNITY_NUM      NUMBER        NOT NULL,							
+SAVEFILENAME       VARCHAR2(255) NOT NULL,							
+ORIGINAL_FILENAME  VARCHAR2(255) NOT NULL,							
+UPLOADDATE         DATE          NOT NULL,							
+CONSTRAINT PK_COMMUNITYIMAGE PRIMARY KEY (IMAGE_NUM)							
+);							
+							
+							
+							
+CREATE SEQUENCE seq_COMMUNITYIMAGE INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCTREIVEWREPORT							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTREIVEWREPORT (							
+REPORT_CODE  NUMBER         NOT NULL,							
+MEMBERIDX    NUMBER         NOT NULL,							
+REVIEW_NUM   NUMBER         NOT NULL,							
+CATEGORY_NUM NUMBER         NOT NULL,							
+CONTENT      VARCHAR2(1000) NULL,							
+REPORT_DATE  DATE           NOT NULL,							
+CONSTRAINT PK_PRODUCTREIVEWREPORT PRIMARY KEY (REPORT_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductReivewReport INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+-------------------------------------------------------------------------------							
+-- ORDER_ITEM							
+-------------------------------------------------------------------------------							
+CREATE TABLE ORDER_ITEM (							
+ITEM_CODE     NUMBER        NOT NULL,							
+ORDER_CODE    NUMBER        NOT NULL,							
+PRODUCTCODE   NUMBER        NOT NULL,							
+OPTIONS       VARCHAR2(300) NULL,							
+PRICEFOREACH  NUMBER        NOT NULL,							
+AMOUNT        NUMBER        NOT NULL,							
+PRICE         NUMBER        NOT NULL,							
+SHIPPING      NUMBER        NOT NULL,							
+CONSTRAINT PK_ORDER_ITEM PRIMARY KEY (ITEM_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_ORDER_ITEM INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- COUPON							
+-------------------------------------------------------------------------------							
+CREATE TABLE COUPON (							
+COUPON_CODE VARCHAR2(100) NOT NULL,							
+COUPONNAME  VARCHAR2(100) NOT NULL,							
+STARTDATE   DATE          NOT NULL,							
+ENDDATE     DATE          NOT NULL,							
+VALID       NUMBER        NOT NULL,							
+CONSTRAINT PK_COUPON PRIMARY KEY (COUPON_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_COUPON INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- POINT_SAVE							
+-------------------------------------------------------------------------------							
+CREATE TABLE POINT_SAVE (							
+POINT_SAVE_NUM NUMBER        NOT NULL,							
+MEMBERIDX      NUMBER        NOT NULL,							
+SAVEAMOUNT     NUMBER        NOT NULL,							
+SAVEDATE       DATE          NOT NULL,							
+EXPIREDATE     DATE          NOT NULL,							
+REASON         VARCHAR2(30)  NOT NULL,							
+ENABLE         NUMBER(1)     NOT NULL,							
+BALANCE        NUMBER        NOT NULL,							
+CONSTRAINT PK_POINT_SAVE PRIMARY KEY (POINT_SAVE_NUM)							
+);							
+							
+							
+							
+CREATE SEQUENCE seq_POINT_SAVE INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMUNITYREPLY							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMUNITYREPLY (							
+REPLY_NUM          NUMBER         NOT NULL,							
+MEMBERIDX          NUMBER         NOT NULL,							
+COMMUNITY_NUM      NUMBER         NOT NULL,							
+CONTENT            VARCHAR2(4000) NOT NULL,							
+CREATED            DATE           NOT NULL,							
+UPDATED            DATE           NOT NULL,							
+PARENT_COMMENT_NUM NUMBER         NOT NULL,							
+BLIND              NUMBER(1)      NOT NULL,							
+CONSTRAINT PK_COMMUNITYREPLY PRIMARY KEY (REPLY_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_COMMUNITYREPLY INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- EVENT_NOTICE_IMAGE							
+-------------------------------------------------------------------------------							
+CREATE TABLE EVENT_NOTICE_IMAGE (							
+EVT_NOT_IMG_NUM NUMBER        NOT NULL,							
+EVT_NOT_NUM     NUMBER        NOT NULL,							
+IMGFILE         VARCHAR2(100) NOT NULL,							
+CONSTRAINT PK_EVENT_NOTICE_IMAGE PRIMARY KEY (EVT_NOT_IMG_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_EVENT_NOTICE_IMAGE INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- SELLER_BANKACCOUNT							
+-------------------------------------------------------------------------------							
+CREATE TABLE SELLER_BANKACCOUNT (							
+MEMBERIDX  NUMBER        NOT NULL,							
+BANK       VARCHAR2(50)  NOT NULL,							
+ACCNUMBER  VARCHAR2(100) NOT NULL,							
+ACCIMAGE   VARCHAR2(100) NOT NULL,							
+CONSTRAINT PK_SELLER_BANKACCOUNT PRIMARY KEY (MEMBERIDX)							
+);							
+							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- PROFILE_PHOTO							
+-------------------------------------------------------------------------------							
+CREATE TABLE PROFILE_PHOTO (							
+MEMBERIDX NUMBER        NOT NULL,							
+IMGFILE   VARCHAR2(100) NOT NULL,							
+CONSTRAINT PK_PROFILE_PHOTO PRIMARY KEY (MEMBERIDX)							
+);							
+							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- PAYBYMETHOD							
+-------------------------------------------------------------------------------							
+CREATE TABLE PAYBYMETHOD (							
+ORDER_CODE   NUMBER        NOT NULL,							
+MEMBERIDX    NUMBER        NOT NULL,							
+BYMETHOD     VARCHAR2(100) NOT NULL,							
+COMFIRMCODE  VARCHAR2(100) NOT NULL,							
+PROVIDER     VARCHAR2(100) NOT NULL,							
+CONSTRAINT PK_PAYBYMETHOD PRIMARY KEY (ORDER_CODE)							
+);							
+							
+							
+							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCT							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCT (							
+PRODUCTCODE   NUMBER         NOT NULL,							
+BRAND_CODE    NUMBER         NOT NULL,							
+ITEM          VARCHAR2(255)  NOT NULL,							
+PRICE         NUMBER         NOT NULL,							
+DISCOUNT      NUMBER(5,2)    NULL,							
+ADDOPTIONS    NUMBER(1)      NOT NULL,							
+DESCRIBE      CLOB           NOT NULL,							
+FIELD         DATE           NOT NULL,							
+MODIFIED      DATE           NULL,							
+CATEGORYCODE  NUMBER         NOT NULL,							
+THUMBNAIL     VARCHAR2(100)  NOT NULL,							
+SOLDOUT       NUMBER         NOT NULL,							
+CONSTRAINT PK_PRODUCT PRIMARY KEY (PRODUCTCODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_Product INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- EVENT_NOTICE							
+-------------------------------------------------------------------------------							
+CREATE TABLE EVENT_NOTICE (							
+EVT_NOT_NUM  NUMBER         NOT NULL,							
+ADMINIDX     NUMBER         NOT NULL,							
+SUBJECT      VARCHAR2(500)  NOT NULL,							
+TEXTCONTENT  VARCHAR2(4000) NOT NULL,							
+FIXED        NUMBER(1)      NOT NULL,							
+CREATE_DATE  DATE           NOT NULL,							
+CATEGORY_NUM NUMBER         NOT NULL,							
+CONSTRAINT PK_EVENT_NOTICE PRIMARY KEY (EVT_NOT_NUM)							
+);							
+							
+							
+CREATE SEQUENCE seq_EVENT_NOTICE INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PACKAGE							
+-------------------------------------------------------------------------------							
+CREATE TABLE PACKAGE (							
+ITEM_CODE      NUMBER        NOT NULL,							
+MEMBERIDX      NUMBER        NOT NULL,							
+PRODUCTCODE    NUMBER        NOT NULL,							
+TRACKINGNUMBER NUMBER        NOT NULL,							
+STATE          VARCHAR2(30)  NOT NULL,							
+COMPANY_NAME   VARCHAR2(255) NOT NULL,							
+CONSTRAINT PK_PACKAGE PRIMARY KEY (ITEM_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_PACKAGE INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- COMMUNITYREPLYLIKES (Composite PK: REPLY_NUM, MEMBERIDX)							
+-------------------------------------------------------------------------------							
+CREATE TABLE COMMUNITYREPLYLIKES (							
+REPLY_NUM NUMBER NOT NULL,							
+MEMBERIDX NUMBER NOT NULL,							
+LIKED_AT  DATE   NOT NULL,							
+CONSTRAINT PK_COMMUNITYREPLYLIKES PRIMARY KEY (REPLY_NUM, MEMBERIDX)							
+);							
+							
+							
+-------------------------------------------------------------------------------							
+-- POINT_EXPIRED							
+-------------------------------------------------------------------------------							
+CREATE TABLE POINT_EXPIRED (							
+EXPIRED_NUM    NUMBER NOT NULL,							
+MEMBERIDX      NUMBER NOT NULL,							
+ORDER_CODE     NUMBER NOT NULL,							
+POINT_SAVE_NUM NUMBER NOT NULL,							
+USEDAMOUNT     NUMBER NOT NULL,							
+USEDDATE       DATE   NOT NULL,							
+CONSTRAINT PK_POINT_EXPIRED PRIMARY KEY (EXPIRED_NUM)							
+);							
+							
+							
+							
+CREATE SEQUENCE seq_POINT_EXPIRED INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- SELLER_BRAND							
+-------------------------------------------------------------------------------							
+CREATE TABLE SELLER_BRAND (							
+BRAND_CODE    NUMBER         NOT NULL,							
+MEMBERIDX     NUMBER         NOT NULL,							
+PHONE         VARCHAR2(30)   NOT NULL,							
+BRANDNAME     VARCHAR2(50)   NOT NULL,							
+BRANDINTRO    VARCHAR2(4000) NOT NULL,							
+ENABLE        NUMBER(1)      NOT NULL,							
+REPORT_COUNT  NUMBER(1)      NOT NULL,							
+CONSTRAINT PK_SELLER_BRAND PRIMARY KEY (BRAND_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_SELLER_BRAND INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCT_ORDER							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCT_ORDER (							
+ORDER_CODE   NUMBER        NOT NULL,							
+MEMBERIDX    NUMBER        NOT NULL,							
+ORDER_DATE   DATE          NOT NULL,							
+ADDR_NUM     NUMBER        NOT NULL,							
+TOTAL_PRICE  NUMBER        NOT NULL,							
+COUPON_CODE  VARCHAR2(100) NOT NULL,							
+COUPONVALUE  NUMBER        NULL,							
+SPENTPOINT   NUMBER        NULL,							
+NETPAY       NUMBER        NOT NULL,							
+CONFIRMDATE  DATE          NOT NULL,							
+ORDER_STATE  NUMBER        NOT NULL,							
+CONSTRAINT PK_PRODUCT_ORDER PRIMARY KEY (ORDER_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_PRODUCT_ORDER INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- PRODUCTIMAGE							
+-------------------------------------------------------------------------------							
+CREATE TABLE PRODUCTIMAGE (							
+IMAGE_CODE     NUMBER        NOT NULL,							
+PRODUCTCODE    NUMBER        NOT NULL,							
+IMAGEFILENAME  VARCHAR2(255) NOT NULL,							
+CONSTRAINT PK_PRODUCTIMAGE PRIMARY KEY (IMAGE_CODE)							
+);							
+							
+							
+CREATE SEQUENCE seq_ProductImage INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+-------------------------------------------------------------------------------							
+-- SETTLEMENT_DETAIL							
+-------------------------------------------------------------------------------							
+CREATE TABLE SETTLEMENT_DETAIL (							
+SETDETAIL_NUM  NUMBER NOT NULL,							
+SETTLEMENT_NUM NUMBER NOT NULL,							
+ITEM_CODE      NUMBER NOT NULL,							
+CONSTRAINT PK_SETTLEMENT_DETAIL PRIMARY KEY (SETDETAIL_NUM)							
+);							
+							
+							
+							
+CREATE SEQUENCE seq_settlement_detail INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+							
+							
+							
+							
