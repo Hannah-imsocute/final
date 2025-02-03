@@ -39,8 +39,11 @@ body {
   padding: 20px;
   background-color: #FFC497;
   border-bottom: 1px solid #e5e5e5;
-  position: relative;
+  position: fixed;
   z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 /* 로고 스타일 */
@@ -193,9 +196,11 @@ body {
   vertical-align: middle;
   position: absolute;
   right: 20px;  /* 이미지를 오른쪽 끝에 고정 */
-
+  transition: transform 0.3s ease; /* 마우스 호버 시 아이콘 회전 효과 */
 }
-
+.toggle-icon:hover {
+  transform: rotate(180deg); /* 호버 시 아이콘을 180도 회전 */
+}
 
 /* 서브 메뉴 */
 .sub-menu {
@@ -214,7 +219,8 @@ body {
 }
 /* 메인 콘텐츠 영역 */
 main {
-  margin-left: 250px;
+  margin-left: 250px; /* 사이드바 너비 만큼 여백 */
+  margin-top: 80px; /* 고정된 헤더의 높이 만큼 여백 추가 */
   padding: 20px;
 }
 
