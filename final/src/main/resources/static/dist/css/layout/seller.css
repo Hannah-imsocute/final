@@ -8,14 +8,24 @@ body {
 
 /* 상단 사용자 메뉴 */
 .user-menu {
+  position: fixed;
+  top: 0; /* 화면 상단에 고정 */
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
   background-color: #f8f9fa;
-  padding: 1px 20px;
+  padding: 0px 20px;
+  height: 33px;
+  z-index: 15; /* 헤더보다 위로 올리기 위해 z-index 설정 */
 }
 
 .user-menu .nav {
   display: flex;
   justify-content: flex-end;
   list-style-type: none;
+  padding: 0;
 }
 
 .user-menu .nav li {
@@ -26,24 +36,24 @@ body {
   text-decoration: none;
   color: #333;
   font-size: 14px;
-  line-height: 0.2;
+  line-height: 1;
 }
 
 .user-menu .nav-link:hover {
   color: #ff6600;
 }
 .navbar-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 20px;
-  background-color: #FFC497;
-  border-bottom: 1px solid #e5e5e5;
-  position: fixed;
-  z-index: 10;
-  top: 0;
+  position: fixed; /* 헤더 고정 */
+  top: 33px; /* 사용자 메뉴의 높이만큼 여백 추가 */
   left: 0;
   right: 0;
+  z-index: 10;
+  background-color: #FFC497;
+  padding: 20px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between; /* 로고와 아이콘을 양 끝으로 배치 */
+  align-items: center;
 }
 
 /* 로고 스타일 */
@@ -196,11 +206,8 @@ body {
   vertical-align: middle;
   position: absolute;
   right: 20px;  /* 이미지를 오른쪽 끝에 고정 */
-  transition: transform 0.3s ease; /* 마우스 호버 시 아이콘 회전 효과 */
 }
-.toggle-icon:hover {
-  transform: rotate(180deg); /* 호버 시 아이콘을 180도 회전 */
-}
+
 
 /* 서브 메뉴 */
 .sub-menu {
@@ -220,7 +227,7 @@ body {
 /* 메인 콘텐츠 영역 */
 main {
   margin-left: 250px; /* 사이드바 너비 만큼 여백 */
-  margin-top: 80px; /* 고정된 헤더의 높이 만큼 여백 추가 */
+  margin-top: 133px; /* 사용자 메뉴 (33px) + 헤더 (100px) 높이만큼 여백 추가 */
   padding: 20px;
 }
 
@@ -231,6 +238,34 @@ main {
     display: none;
   }
   main {
-    margin-left: 0;
+    margin-left: 250px; /* 사이드바 너비 만큼 여백 */
+    margin-top: 140px; /* 사용자 메뉴(40px) + 헤더(80px) 높이 만큼 여백 추가 */
+    padding: 20px;
   }
+}
+/* 아이콘 크기 키우고 간격 늘리기 */
+.icon-group i {
+  font-size: 22px !important; /* 아이콘 크기 강제로 키우기 */
+}
+
+.icon-group p {
+  margin-top: 2px;
+  font-size: 12px; /* 텍스트 크기 조정 */
+  margin-bottom: 0;
+}
+
+.icon-text-group-container {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  align-items: center;
+}
+
+.icon-group {
+  text-align: center;
+  margin-left: 25px; /* 아이콘 간 간격을 더 띄우기 위해 30px로 설정 */
+  display: flex; /* 플렉스 사용 */
+  flex-direction: column; /* 아이콘과 텍스트 세로 정렬 */
+  justify-content: center; /* 세로 중앙 정렬 */
+  align-items: center; /* 가로 중앙 정렬 */
+
 }
