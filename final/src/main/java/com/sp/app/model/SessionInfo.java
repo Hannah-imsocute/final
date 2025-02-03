@@ -13,8 +13,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class SessionInfo {
-	private long memberIdx;
-	private String userId;
-	private String userName;
-	private int userLevel;
+
+	private long memberIdx; // 기본키
+	private String email;
+	private String nickName;
+	private int userState;
+
+//	private long memberIdx;
+//	private String userId;
+//	private String userName;
+//	private int userLevel;
 }

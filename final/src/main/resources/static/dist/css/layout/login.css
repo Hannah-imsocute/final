@@ -1,0 +1,159 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: #fff; /* 배경색 흰색 */
+    color: #333;
+}
+/* 전체를 세로 중앙정렬하기 위한 래퍼 */
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.login-container {
+    margin: auto; /* 수직 중앙정렬 (위아래) */
+    width: 360px; /* 로그인 폼 넓이 (임의) */
+    max-width: 90%; /* 좁은 화면에서 반응형 대응 */
+    text-align: center;
+}
+
+/* 로고 및 안내 문구 */
+.login-logo img {
+    max-width: 160px;
+    margin-bottom: 10px;
+}
+.login-title {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* 구분선 + 타이틀 */
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin: 20px 0 15px;
+}
+.section-title::before,
+.section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+    margin: 0 10px;
+}
+
+/* 간편 로그인/회원가입 버튼 */
+.simple-login-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* 카카오 버튼 */
+.kakao-btn {
+    background-color: #fee500;
+    border-color: #fee500;
+    color: #3b1d1c;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.kakao-btn:hover {
+    background: #e1d237;
+}
+
+.email-btn:hover {
+    background: #f9f9f9;
+}
+
+
+/* 아이콘 라인 */
+.icon-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+.icon-list i {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.icon-list i:hover {
+    opacity: 0.7;
+}
+
+/* 이메일 로그인 영역 */
+.login-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.login-form .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    color: #666;
+}
+.login-form .options label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+.login-form .options input[type="checkbox"] {
+    margin-right: 4px;
+}
+.login-form .options a {
+    text-decoration: none;
+    color: #666;
+    transition: 0.2s;
+}
+.login-form .options a:hover {
+    color: #000;
+}
+.login-submit {
+    width: 100%;
+    font-weight: bold;
+    padding: 14px 0;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ff7900; /* 오렌지 톤 */
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.login-submit:hover {
+    background-color: #b46f2c;
+}
+
+/* 푸터나 기타 영역이 있다면 */
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.8rem;
+    color: #999;
+}
