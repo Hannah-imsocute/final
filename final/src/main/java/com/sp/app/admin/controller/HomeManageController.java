@@ -13,6 +13,6 @@ public class HomeManageController {
 	 
 	@GetMapping("/admin")
 	public String handleHome() {
-		return "admin/main/home";
+		return "admin/home";
 	}
 }
