@@ -17,4 +17,11 @@ public class HomeController {
 		
 		return "main/template";
 	}
+
+	@GetMapping("/test")
+	public String handleHome2(Model model) {
+		
+		return "main/sellertemplate";
+	}
+	
 }
