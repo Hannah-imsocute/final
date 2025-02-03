@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
     : 일반적인 웹 애플리케이션에서 사용되는 예외 처리 및 공통 기능을 제공
     : 주로 뷰 리졸버를 사용하는 @Controller와 함께 사용
 */
-
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
