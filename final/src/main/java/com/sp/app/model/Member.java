@@ -19,10 +19,10 @@ public class Member {
 	private int failCount; // 로그인 실패 횟수
 	private String addr; // 주소
 	private String addrDetails; // 주소별명
-	private int userState; //
 
-	private Long addNum;
-	private String name;
+	private String authority; // 권한
+	private String oldAuthority; // 이전권한
+
 	private String phone;
 	private String addName;
 	private String addTitle;
