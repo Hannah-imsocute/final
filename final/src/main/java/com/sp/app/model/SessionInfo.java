@@ -17,7 +17,6 @@ public class SessionInfo {
 	private long memberIdx; // 기본키
 	private String email;
 	private String nickName;
-	private int userState;
 
 //	private long memberIdx;
 //	private String userId;

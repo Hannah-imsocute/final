@@ -45,7 +45,6 @@ public class MemberController {
 				.memberIdx(dto.getMemberIdx())
 				.email(dto.getEmail())
 				.nickName(dto.getNickName())
-				.userState(dto.getUserState())
 				.build();
 		
 		// 세션 유지시간
