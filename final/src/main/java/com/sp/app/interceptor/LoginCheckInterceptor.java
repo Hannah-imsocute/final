@@ -55,7 +55,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 					resp.sendRedirect(cp + "/member/login");
 				}
 			} else {
-				if(uri.indexOf("admin") != -1 && info.getUserState() < 51) {
+				if(uri.indexOf("admin") != -1) {
 					result = false;
 					resp.sendRedirect(cp + "/member/noAuthorized");
 				}
