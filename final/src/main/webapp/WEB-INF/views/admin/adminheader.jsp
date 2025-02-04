@@ -12,7 +12,7 @@
 	</div>
 </div>
 
-<div class="navbar-container mt-4">
+<div class="navbar-container">
 	<!-- 로고 -->
 	<div class="navbar-brand">
 		<img src="/dist/images/layout/top_logo.png" alt="로고">
