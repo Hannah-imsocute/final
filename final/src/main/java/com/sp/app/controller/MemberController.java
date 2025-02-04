@@ -42,7 +42,7 @@ public class MemberController {
 
 		// 세션에 로그인 정보 저장
 		SessionInfo info = SessionInfo.builder()
-				.memberIdx(dto.getMember_Id())
+				.memberIdx(dto.getMemberIdx())
 				.email(dto.getEmail())
 				.nickName(dto.getNickName())
 				.userState(dto.getUserState())

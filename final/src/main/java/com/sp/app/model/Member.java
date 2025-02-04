@@ -1,26 +1,33 @@
 package com.sp.app.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
-
-	private long member_Id;
+	private long memberIdx;
 	private String email;
 	private String password;
 	private String nickName;
 	private String birth;
-	private String phone;
-	private String reg_date;
-	private String lastModified;
+	private int block;
+	private String reg_date; // 생성일
+	private String lastModified; // 마지막 수정일
+	private String last_login; // 마지막 로그인
+	private int failCount; // 로그인 실패 횟수
 	private String addr; // 주소
 	private String addrDetails; // 주소별명
-	private int userState; // 사용자:1 작가:2 관리자:3
-	private int block;
+	private int userState; //
+
+	private Long addNum;
+	private String name;
+	private String phone;
+	private String addName;
+	private String addTitle;
+	private String addDetail;
+	private int firstAdd;
 
 
 /*
