@@ -1,0 +1,211 @@
+/* 전역 리셋 */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: sans-serif;
+	color: #333;
+}
+
+/* 전체 컨테이너 (가운데 배치) */
+.join-container {
+	width: 600px; /* 폼 전체 너비 (상황에 맞게 조절) */
+	margin: 50px auto; /* 상단여백 50px, 가로 중앙정렬 */
+	text-align: center; /* 상단 로고/타이틀, 스텝 표시 중앙정렬 */
+}
+
+/* 상단 로고 + 서브타이틀 */
+.join-header h1 {
+	font-size: 1.8rem;
+	color: #FF7C00; /* 주황색 로고 느낌 */
+	margin-bottom: 0.5rem;
+}
+
+.join-header p {
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 1rem;
+}
+
+.divider {
+	width: 100%;
+	height: 1px;
+	background-color: #ccc;
+	margin-bottom: 2rem;
+}
+
+/* 단계 표시부 */
+.step-indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.step-circle {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background-color: #eee;
+	color: #888;
+	line-height: 30px; /* 수직 가운데 정렬 */
+	font-size: 1rem;
+}
+/* 현재 단계 표시를 위한 클래스 */
+.step-circle.active {
+	background-color: #FF7C00;
+	color: #fff;
+}
+/* 단계 사이 라인 */
+.step-line {
+	width: 60px;
+	height: 2px;
+	background-color: #eee;
+}
+/* 섹션 제목 */
+.step-title {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-bottom: 2rem;
+}
+
+/* 폼 영역 (왼쪽 정렬) */
+form {
+	text-align: left;
+}
+
+.form-group {
+	margin-bottom: 1.2rem;
+	position: relative; /* 비밀번호 아이콘 배치 등에 필요하면 활용 */
+}
+
+label {
+	display: block;
+	font-size: 0.9rem;
+	margin-bottom: 0.3rem;
+}
+
+.required {
+	color: #FF4433; /* 빨간 별표 */
+	margin-left: 4px;
+}
+
+/* 일반 input */
+input[type="text"], input[type="password"], input[type="date"] {
+	width: 100%;
+	padding: 0.7rem 0.8rem;
+	font-size: 0.9rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+input::placeholder {
+	color: #ccc;
+}
+
+/* 이메일 영역: [아이디] @ [직접입력] [도메인 select] [중복확인버튼] */
+.email-wrap {
+	display: flex;
+	flex-wrap: wrap; /* 필요 시 다음 줄로 넘어갈 수 있게 */
+	gap: 0.5rem;
+}
+
+.email-user {
+	flex: 1;
+	min-width: 100px; /* 너무 좁아지지 않도록 */
+	padding: 0.7rem 0.8rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.at-symbol {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.7rem 0.5rem;
+}
+
+.email-domain {
+	flex: 1;
+	min-width: 90px;
+	padding: 0.7rem 0.8rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.domain-select {
+	width: 130px;
+	padding: 0.7rem 0.8rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #fff;
+}
+/* 중복확인 버튼 */
+.dup-check-btn {
+	white-space: nowrap;
+	padding: 0.7rem 1rem;
+	background-color: #FF7C00;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.dup-check-btn:hover {
+	background-color: #ff9540;
+}
+
+/* 체크박스 그룹 */
+.checkbox-group {
+	margin-top: 1rem;
+	border-top: 1px solid #eee;
+	padding-top: 1rem;
+}
+
+.checkbox-item {
+	margin: 0.5rem 0;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* (선택) "보기" 오른쪽 배치 등 */
+}
+
+.checkbox-item label {
+	cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+.option-link {
+	font-size: 0.8rem;
+	color: #999;
+	cursor: pointer;
+}
+
+/* 가입 버튼 */
+.submit-btn {
+	display: block;
+	width: 100%;
+	margin: 2rem auto 0;
+	padding: 0.8rem 1rem;
+	border: 1px solid #FF7C00;
+	background-color: #fff;
+	color: #FF7C00;
+	font-size: 1rem;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+	background-color: #FF7C00;
+	color: #fff;
+}

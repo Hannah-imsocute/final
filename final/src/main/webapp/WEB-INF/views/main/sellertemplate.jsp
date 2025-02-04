@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Boooooot</title>
+<title>ttshop</title>
 <link rel="icon" href="data;base64,iVBORw0kGgo=">
 <jsp:include page="/WEB-INF/views/layout/sellerimported.jsp"/>
 </head>

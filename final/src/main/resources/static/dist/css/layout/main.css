@@ -1,0 +1,130 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: sans-serif;
+	background-color: #fafafa; /* 예시 배경색 */
+}
+
+/* 캐러셀을 포함하는 요소 */
+#carouselExampleIndicators {
+	width: 800px; /* 고정 너비 (원하면 80% 등으로 바꿀 수도 있음) */
+	height: 400px; /* 고정 높이 */
+	margin: 50px auto; /* 상단 여백 50px, 중앙 정렬 */
+	position: relative; /* 높이를 고정하기 위해 position 사용 */
+	overflow: hidden; /* 이미지가 벗어나지 않게 */
+	border-radius: 8px; /* 모서리를 조금 둥글게 (선택) */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 예시 그림자 */
+}
+
+/* 캐러셀 내부 이미지가 영역을 꽉 채우도록 설정 */
+.carousel-inner img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover; /* 이미지 비율 유지하면서 채우기 */
+}
+
+/* 인디케이터(●●●)가 이미지 위쪽에 오도록 조정하고 싶다면 예: */
+.carousel-indicators {
+	bottom: 10px; /* 기본값은 하단이지만, 원하는 위치로 조정 */
+}
+
+/* 좌우 버튼 아이콘 크기/색상 약간 수정 예시 */
+.carousel-control-prev-icon, .carousel-control-next-icon {
+	background-color: rgba(0, 0, 0, 0.3);
+	border-radius: 50%;
+	padding: 10px;
+}
+
+.carousel-control-prev-icon:hover, .carousel-control-next-icon:hover {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+.best-items-section {
+	width: 80%; /* 전체 폭의 80% 사용 (원하는 대로 조정 가능) */
+	margin: 0 auto; /* 가로 중앙 정렬 */
+	padding: 2rem 0; /* 위아래 여백 */
+}
+
+.best-items-section h2 {
+	font-size: 1.8rem;
+	font-weight: bold;
+	margin-bottom: 1.5rem;
+}
+
+/* 상품 카드들을 가로로 나열 (flex) */
+.best-items-wrap {
+	display: flex;
+	justify-content: space-between; /* 카드 간격 넓게 분배 */
+	gap: 1rem; /* 카드 사이 간격 (브라우저 호환 필요시 주의) */
+}
+
+/* 개별 상품 카드 */
+.best-item {
+	background-color: #fff;
+	width: 18%; /* 5개 정도 나란히 보이도록 비율 조정 */
+	min-width: 160px; /* 너무 좁아지지 않도록 최소너비 */
+	border: 1px solid #eee;
+	border-radius: 6px;
+	overflow: hidden;
+	position: relative; /* 좋아요 버튼 배치를 위해 relative 사용 */
+	text-align: center;
+	transition: box-shadow 0.2s ease;
+}
+
+.best-item:hover {
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 호버 시 살짝 강조 */
+}
+
+/* 이미지 영역 (임시 회색 배경) */
+.best-item-img {
+	width: 100%;
+	height: 180px; /* 고정 높이(원하는 대로 조정) */
+	background-color: #ccc;
+}
+
+/* 상품명 */
+.best-item-desc {
+	margin: 0.8rem 0;
+	font-size: 1rem;
+	color: #333;
+}
+
+/* 좋아요(하트) 버튼 */
+.heart-btn {
+	position: absolute;
+	bottom: 0.5rem;
+	right: 0.5rem;
+	background: none;
+	border: none;
+	font-size: 1.2rem;
+	cursor: pointer;
+	color: #aaa;
+	transition: color 0.3s;
+}
+
+.heart-btn:hover {
+	color: #FF6666; /* 호버 시 빨간색 하트로 */
+}
+
+/* “작품 더보기” 버튼 영역 */
+.more-btn {
+	display: block; /* 인라인 대신 블록으로 */
+	margin: 2rem auto 0; /* 상단 여백 2rem, 가로 중앙 정렬 */
+	padding: 0.8rem 1.5rem;
+	border: 1px solid #FF7C00;
+	background-color: #fff;
+	color: #FF7C00;
+	font-size: 1rem;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: background-color 0.2s;
+}
+
+.more-btn:hover {
+	background-color: #FF7C00;
+	color: #fff;
+}

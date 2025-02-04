@@ -420,7 +420,8 @@ OPTIONS       VARCHAR2(300) NULL,
 PRICEFOREACH  NUMBER        NOT NULL,							
 AMOUNT        NUMBER        NOT NULL,							
 PRICE         NUMBER        NOT NULL,							
-SHIPPING      NUMBER        NOT NULL,							
+SHIPPING      NUMBER        NOT NULL,		
+ORDER_STATE	  NUMBER(1)     NOT NULL,					
 CONSTRAINT PK_ORDER_ITEM PRIMARY KEY (ITEM_CODE)							
 );							
 							
@@ -554,7 +555,7 @@ PRICE         NUMBER         NOT NULL,
 DISCOUNT      NUMBER(5,2)    NULL,							
 ADDOPTIONS    NUMBER(1)      NOT NULL,							
 DESCRIBE      CLOB           NOT NULL,							
-FIELD         DATE           NOT NULL,							
+UPLOADDATE         DATE           NOT NULL,							
 MODIFIED      DATE           NULL,							
 CATEGORYCODE  NUMBER         NOT NULL,							
 THUMBNAIL     VARCHAR2(100)  NOT NULL,							
@@ -661,8 +662,7 @@ COUPON_CODE  VARCHAR2(100) NOT NULL,
 COUPONVALUE  NUMBER        NULL,							
 SPENTPOINT   NUMBER        NULL,							
 NETPAY       NUMBER        NOT NULL,							
-CONFIRMDATE  DATE          NOT NULL,							
-ORDER_STATE  NUMBER        NOT NULL,							
+CONFIRMDATE  DATE          NOT NULL,														
 CONSTRAINT PK_PRODUCT_ORDER PRIMARY KEY (ORDER_CODE)							
 );							
 							
@@ -700,4 +700,70 @@ CREATE SEQUENCE seq_settlement_detail INCREMENT BY 1 START WITH 1 NOMAXVALUE NOC
 							
 							
 							
-							
+					
+-------------------------------------------------------------------------------					
+- LIKE_ITEMS					
+					
+-------------------------------------------------------------------------------					
+					
+CREATE TABLE liked_items(					
+memberIdx   NUMBER   NOT NULL,					
+productCode NUMBER  NOT NULL,					
+CONSTRAINT pk_liked_items PRIMARY KEY (memberIdx, productCode)					
+)					
+					
+					
+					
+-------------------------------------------------------------------------------					
+- membership					
+					
+-------------------------------------------------------------------------------					
+CREATE TABLE membership (					
+ad_num        NUMBER       NOT NULL,  -- 광고 기본키					
+memberIdx     NUMBER       NOT NULL,  -- 관리자 코드 등 (예: 회원번호)					
+title         VARCHAR2(100) NOT NULL, -- 광고명					
+term          VARCHAR2(20) NOT NULL,  -- 기간(예: "3개월", "1년" 등 문자열로 관리)					
+slotCount     NUMBER(3)    NOT NULL,  -- 광고 가능 개수					
+discountRate  NUMBER(3)    NOT NULL,  -- 할인율(정수 또는 % 값)					
+CONSTRAINT pk_membership PRIMARY KEY (ad_num)					
+);					
+					
+
+CREATE SEQUENCE seq_membership INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;	
+
+					
+CREATE TABLE membership_list (					
+ad_list_num   NUMBER NOT NULL, -- 결제내역 기본키					
+ad_num        NUMBER NOT NULL, -- 광고(membership)의 FK					
+product_code  NUMBER NOT NULL, -- 광고상품 코드					
+totalprice    NUMBER NOT NULL, -- 총금액					
+point         NUMBER NOT NULL, -- 사용 포인트					
+netprice      NUMBER NOT NULL, -- 순 결제 금액(총금액 - 포인트)					
+CONSTRAINT pk_membership_list PRIMARY KEY (ad_list_num),					
+CONSTRAINT fk_membership_list_adnum					
+FOREIGN KEY (ad_num)					
+REFERENCES membership (ad_num)					
+);					
+					
+				
+CREATE SEQUENCE seq_membership_list INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;				
+				
+					
+CREATE TABLE membership_item (					
+ad_item_num   NUMBER NOT NULL, -- 광고현황 기본키					
+ad_list_num   NUMBER NOT NULL, -- 광고결제내역(membership_list)의 FK					
+product_code  NUMBER NOT NULL, -- 상품 코드					
+expireDate    DATE   NOT NULL, -- 만료일					
+startDate     DATE   NOT NULL, -- 시작일					
+CONSTRAINT pk_membership_item PRIMARY KEY (ad_item_num),					
+CONSTRAINT fk_membership_item_adlistnum					
+FOREIGN KEY (ad_list_num)					
+REFERENCES membership_list (ad_list_num),					
+CONSTRAINT fk_membership_list_product_code					
+FOREIGN KEY (product_code)					
+REFERENCES product (productcode)					
+);					
+					
+					
+CREATE SEQUENCE seq_membership_item INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;						
+												

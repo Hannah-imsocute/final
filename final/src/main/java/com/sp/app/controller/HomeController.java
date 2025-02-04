@@ -15,13 +15,13 @@ public class HomeController {
 	@GetMapping("/")
 	public String handleHome(Model model) {
 		
-		return "main/template";
+		return "main/main";
 	}
 
 	@GetMapping("/test")
 	public String handleHome2(Model model) {
 		
-		return "main/sellertemplate";
+		return "member/register";
 	}
 	
 }
