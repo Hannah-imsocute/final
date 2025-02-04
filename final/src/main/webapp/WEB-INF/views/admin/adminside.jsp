@@ -34,4 +34,5 @@
 			<li><a href="javascript:void(0)" class="accordion-button"> 통계 및 보고 </a></li>
 			
 		</ul>
+</div>
 <script src="/dist/js/layout/app.js"></script>
