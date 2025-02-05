@@ -19,6 +19,8 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
+
 public class MemberServiceImpl implements MemberService {
   private final MemberMapper mapper;
   private final MailSender mailSender;
