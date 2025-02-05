@@ -93,7 +93,7 @@
     <!-- 메뉴 항목들 -->
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">전체 카테고리</a>
+        <a class="nav-link" href="${pageContext.request.contextPath}/product/category">전체 카테고리</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">추천 작품</a>
