@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/vendor/bootstrap5/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/vendor/bootstrap5/icon/bootstrap-icons.css" type="text/css">
 
