@@ -33,7 +33,7 @@ public class SpringSecurityConfig {
         .headers(headers -> headers
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); ; // 스프링 버전 6부터 ?continue 가 붙어서 지움..
 
-    http.authorizeHttpRequests(authoriz -> authoriz
+     http.authorizeHttpRequests(authoriz -> authoriz
         .requestMatchers(excludeUri).permitAll()
         .requestMatchers("/admin/**").hasRole("ADMIN")
         .requestMatchers("/**").hasAnyRole("USER", "AUTHOR","ADMIN")

@@ -42,7 +42,8 @@
         </div>
 
         <!-- 이메일 로그인 -->
-        <form name="loginForm" action="" method="post">
+        <!-- form 태그에 login-form 클래스를 추가 -->
+        <form name="loginForm" class="login-form" action="" method="post">
             <div class="section-title">이메일 로그인</div>
             <input type="email" name="email" placeholder="이메일" required />
             <div style="position: relative;">
