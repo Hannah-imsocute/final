@@ -14,7 +14,7 @@
         <a href="#" class="nav-link">메시지</a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link">로그아웃</a>
+        <a href="${pageContext.request.contextPath}/member/login" class="nav-link">${not empty sessionScope.member  ? "로그아웃":"로그인" }</a>
       </li>
     </ul>
   </div>

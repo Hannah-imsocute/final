@@ -45,13 +45,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     // 로그인 정보
     Member member = service.findByUserEmail(authentication.getName());
-
+    System.out.println(member);
     SessionInfo info = SessionInfo.builder()
         .memberIdx(member.getMemberIdx())
         .email(member.getEmail())
         .nickName(member.getNickName())
         .build();
-
+    
+    System.out.println(info.getEmail());
+    
     session.setAttribute("member", info);
 
     // redirect 설정
