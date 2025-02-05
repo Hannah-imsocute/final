@@ -15,5 +15,11 @@ public class AdminEventController {
 	public String eventMain() {
 		return "admin/event";
 	}
+
+	@GetMapping("/report")
+	public String reportMain() {
+		return "admin/report";
+	}
+	
 	
 }
