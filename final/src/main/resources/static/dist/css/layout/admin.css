@@ -159,7 +159,7 @@ body {
   color: #ff6600;
 }
 /* 아코디언 버튼 스타일 */
-.accordion-button {
+.menu-item {
   display: block;
   width: 100%;
   padding: 8px;
@@ -172,7 +172,7 @@ body {
   font-weight: 500;
   position: relative; /* 이미지가 오른쪽 끝에 위치하도록 설정 */
 }
-.accordion-button:hover {
+.menu-item:hover {
   background-color: #e9ecef;
 }
 .toggle-icon {
@@ -244,4 +244,20 @@ main {
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center; /* 가로 중앙 정렬 */
 
+}
+
+#main-content {
+    min-height: 100vh; /* 화면을 채우는 최소 높이 */
+}
+
+#main-content {
+    display: block;
+    visibility: visible;
+}
+
+
+/* 클릭된 메뉴에 대해 호버처럼 색이 들어가게 */
+.sidebar-menu li a.active {
+  background-color: #e9ecef;
+  color: #ff6600; /* 원하는 색으로 설정 */
 }
