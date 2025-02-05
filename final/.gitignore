@@ -28,7 +28,7 @@ bin/
 *.iml
 *.ipr
 
-*.xml
+
 .mvn
 mvnw
 mvnw.cmd
