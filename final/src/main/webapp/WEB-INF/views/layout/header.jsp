@@ -3,20 +3,35 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <div class="bg-light py-1">
   <div class="container d-flex justify-content-end">
-    <ul class="nav user-menu">
-      <li class="nav-item">
-        <a href="#" class="nav-link">사용자님</a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">알림</a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">메시지</a>
-      </li>
-      <li class="nav-item">
-        <a href="${pageContext.request.contextPath}/member/login" class="nav-link">${not empty sessionScope.member  ? "로그아웃":"로그인" }</a>
-      </li>
-    </ul>
+    <c:choose>
+      <c:when test="${empty sessionScope.member}">
+        <ul class="nav user-menu">
+
+            <a href="${pageContext.request.contextPath}/member/login" title="로그인" class="nav-link"><i class="bi bi-lock"></i></a>
+          </li>
+          <li class="nav-item">
+            <a href="${pageContext.request.contextPath}/member/account" title="회원가입"><i class="bi bi-person-plus"></i></a>
+          </li>
+        </ul>
+      </c:when>
+      <c:otherwise>
+        <ul class="nav user-menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link">사용자님</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">알림</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">메시지</a>
+          </li>
+          <li class="nav-item">
+            <a href="${pageContext.request.contextPath}/member/logout" title="로그아웃" class="nav-link"><i class="bi bi-unlock"></i></a>
+          </li>
+        </ul>
+      </c:otherwise>
+    </c:choose>
+
   </div>
 </div>
 
@@ -76,15 +91,6 @@
       </a>
     </div>
   </div>
-
-
-
-
-
-
-
-
-
 </div>
 
 <!-- 네비게이션 메뉴 -->
@@ -93,7 +99,7 @@
     <!-- 메뉴 항목들 -->
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a class="nav-link" href="${pageContext.request.contextPath}/product/category">전체 카테고리</a>
+        <a class="nav-link" href="#">전체 카테고리</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">추천 작품</a>
