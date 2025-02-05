@@ -15,7 +15,8 @@ public class SpringMvcConfiguration implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		List<String> excludePaths = new ArrayList<>();
 		excludePaths.add("/");
-		excludePaths.add("/test");
+		excludePaths.add("/test/*");
+		excludePaths.add("/mypage/*");
 		excludePaths.add("/dist/**");
 		excludePaths.add("/member/login");
 		excludePaths.add("/cart/*");
