@@ -27,15 +27,15 @@
 		</div>
 		<div class="carousel-inner">
 			<div class="carousel-item active">
-				<img src="${pageContext.request.contextPath}/dist/gg.png"
+				<img src=""
 					class="d-block w-100" alt="...">
 			</div>
 			<div class="carousel-item">
-				<img src="${pageContext.request.contextPath}/dist/cat.jpg"
+				<img src=""
 					class="d-block w-100" alt="...">
 			</div>
 			<div class="carousel-item">
-				<img src="${pageContext.request.contextPath}/dist/gg.png"
+				<img src=""
 					class="d-block w-100" alt="...">
 			</div>
 		</div>
