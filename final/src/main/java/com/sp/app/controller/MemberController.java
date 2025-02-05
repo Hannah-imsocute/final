@@ -39,11 +39,11 @@ public class MemberController {
 	@RequestMapping(value = "login", method = {RequestMethod.GET, RequestMethod.POST})
 	public String loginForm(@RequestParam(name = "login_error", required = false) String login_error,
 													Model model) {
-
+		
 		if(login_error != null) {
 			model.addAttribute("message", "아이디 또는 패스워드가 일치하지 않습니다.");
 		}
-
+		
 		return "member/login";
 	}
 
