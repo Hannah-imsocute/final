@@ -13,26 +13,16 @@
 	</div>
 	<!--  사이드바 메뉴-->
 		<ul class="sidebar-menu">
-			<li><a href="javascript:void(0)" class="accordion-button"> 권한관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 입점신청관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 멤버십관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 결제 및 정산관리 </a></li>
-				
-			<li><a href="javascript:void(0)" class="accordion-button"> 상품관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 이벤트관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 공지사항관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 문의사항관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 신고관리 </a></li>
-	
-			<li><a href="javascript:void(0)" class="accordion-button"> 통계 및 보고 </a></li>
-			
+		    <li><a href='${pageContext.request.contextPath}/admin/auth' class="accordion-button"> 권한관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/apply' class="accordion-button"> 입점신청관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/membership' class="accordion-button"> 멤버십관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/payment' class="accordion-button"> 결제 및 정산관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/product' class="accordion-button"> 상품관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/event' class="accordion-button"> 이벤트관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/notice' class="accordion-button"> 공지사항관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/inquiry' class="accordion-button"> 문의사항관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/report' class="accordion-button"> 신고관리 </a></li>
+		    <li><a href='${pageContext.request.contextPath}/admin/stats' class="accordion-button"> 통계 및 보고 </a></li>
 		</ul>
 </div>
 <script src="/dist/js/layout/app.js"></script>

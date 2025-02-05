@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/vendor/bootstrap5/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/vendor/bootstrap5/icon/bootstrap-icons.css" type="text/css">
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/layout/seller.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/layout/admin.css">
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/jquery/js/jquery.min.js"></script>
