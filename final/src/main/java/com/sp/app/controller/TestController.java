@@ -12,4 +12,12 @@ public class TestController {
 	  public String cartList() {
 	    return "test/list";
 	  }
+	  
+	  @GetMapping("list2")
+	  public String cartList2() {
+	    return "mypage/home";
+	  }
+	  
+	  
+	  
 }

@@ -14,7 +14,7 @@
         <a href="#" class="nav-link">메시지</a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link">로그아웃</a>
+        <a href="${pageContext.request.contextPath}/member/login" class="nav-link">${not empty sessionScope.member  ? "로그아웃":"로그인" }</a>
       </li>
     </ul>
   </div>
@@ -93,7 +93,7 @@
     <!-- 메뉴 항목들 -->
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">전체 카테고리</a>
+        <a class="nav-link" href="${pageContext.request.contextPath}/product/category">전체 카테고리</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">추천 작품</a>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.MemberMapper">
+
+
+	<select id="loginMember" parameterType="String" resultType="com.sp.app.model.Member">
+		SELECT MEMBERIDX, email, PASSWORD, NICKNAME, BLOCK, REG_DATE, LASTMODIFIED
+		FROM member
+		WHERE email = #{email} AND block = 0
+	</select>
+
+	<update id="updateLastLogin" parameterType="String">
+		UPDATE member SET LASTLOGIN = SYSDATE, FAILCOUNT = 0
+		WHERE email = #{email}
+	</update>
+
+	<insert id="insertMember1" parameterType="com.sp.app.model.Member">
+		INSERT INTO member(memberIdx, email, PASSWORD, NICKNAME,
+						   BLOCK, REG_DATE, LASTMODIFIED, FAILCOUNT)
+		VALUES (SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{username}, 0,
+				SYSDATE, SYSDATE, 0)
+	</insert>
+
+	<select id="findByUserEmail" parameterType="String" resultType="com.sp.app.model.Member">
+		select m.MEMBERIDX, EMAIL, PASSWORD, NICKNAME,
+		       BLOCK, REG_DATE, m.LASTMODIFIED, LASTLOGIN, FAILCOUNT,
+		       ma.ADDNAME, ma.ADDTITLE, ma.ADDDETAIL, ma.FIRSTADD,
+		       mi.PHONE, TO_CHAR(mi.DOB, 'YYYY-MM-DD') AS birth,
+		       r.authority
+		from MEMBER m
+		LEFT JOIN MEMBER_ADDRESS ma ON m.MEMBERIDX = ma.MEMBERIDX
+		LEFT JOIN MEMBER_INFO mi ON m.MEMBERIDX = mi.MEMBERIDX
+		LEFT JOIN ROLES r ON m.MEMBERIDX = r.MEMBERIDX
+		where email = #{email} AND BLOCK = 0
+	</select>
+
+	<!-- 시퀀스값 가져오기 -->
+	<select id="getMemberIdx" parameterType="String" resultType="Long">
+		SELECT memberIdx
+		FROM member
+		WHERE email = #{email} AND BLOCK = 0
+	</select>
+
+	<select id="checkFailureCount" parameterType="String" resultType="int">
+		SELECT FAILCOUNT
+		FROM MEMBER
+		WHERE EMAIL = #{email}
+	</select>
+
+
+	<!-- 패스워드 실패 횟수 증가-->
+	<update id="updateFailureCount" parameterType="String">
+		update MEMBER set FAILCOUNT = FAILCOUNT + 1
+		where EMAIL = #{email}
+	</update>
+
+	<!-- 패스워드 실패 횟수 초기화 -->
+	<update id="updateFailureCountReset" parameterType="String">
+		UPDATE MEMBER SET FAILCOUNT = 0
+		WHERE EMAIL = #{email}
+	</update>
+
+	<!-- 어쏘러티(권한) 테이블 -->
+	<insert id="insertAuthority" parameterType="com.sp.app.model.Member">
+		INSERT INTO ROLES(MEMBERIDX, authority)
+		VALUES (SEQ_MEMBER.nextval, #{authority})
+	</insert>
+
+<!--	<delete id="deleteAuthority" parameterType="map">-->
+<!--		DELETE FROM ROLES-->
+<!--		WHERE MEMBERIDX = (SEQ_MEMBER.nextval) AND authority = #{authority}-->
+<!--	</delete>-->
+
+	<delete id="deleteAuthority" parameterType="map">
+		DELETE FROM ROLES
+		WHERE MEMBERIDX = (
+			SELECT memberIdx FROM MEMBER WHERE email = #{email} AND BLOCK = 0
+		) AND authority = #{authority}
+	</delete>
+
+
+
+	<select id="findByAuthority" parameterType="String" resultType="String">
+		SELECT authority
+		FROM ROLES
+		WHERE MEMBERIDX = (
+			SELECT memberIdx
+			FROM member
+			WHERE email = #{email}
+		)
+	</select>
+
+</mapper>
