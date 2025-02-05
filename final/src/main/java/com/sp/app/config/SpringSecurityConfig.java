@@ -23,7 +23,7 @@ public class SpringSecurityConfig {
     requestCache.setMatchingRequestParameterName(null);
 
     String[] excludeUri = {"/", "/index.jsp", "/member/**", "/member/login", "/member/member", "/member/complete",
-                          "/member/emailCheck", "/member/pwdFind", "/member/expired", "/member/account",
+                          "/member/emailCheck", "/member/pwdFind", "/member/expired", "/member/account","/uploads/event/**","/uploads/product/**",
                           "/dist/**", "/uploads/photo/**", "/favicon.ico","/cart/*", "/kakao/*", "/WEB-INF/views/**"};
 
 //    "/favicon.ico",
