@@ -10,7 +10,9 @@
 </head>
 <body>
 
-	<p>기본페이지입니다용ㅇㅇㅇㅇ통계및 보고티빙</p>
+	<div id="main-content-statsList-section">	
+		<p>기본페이지입니다용ㅇㅇㅇㅇ통계및 보고티빙</p>
+	</div>
 
 </body>
 </html>

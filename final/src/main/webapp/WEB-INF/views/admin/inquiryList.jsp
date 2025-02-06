@@ -9,6 +9,9 @@
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
+	<div id="main-content-inquiryList-section">
+	
+	</div>
 
 </body>
 </html>
