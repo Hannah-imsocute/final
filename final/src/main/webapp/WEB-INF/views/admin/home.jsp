@@ -10,7 +10,7 @@
 
     <!-- 동적 스타일링 -->
     <jsp:include page="/WEB-INF/views/admin/adminimported.jsp"/>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/admin.css' />">
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/layout/admin.css' />">
 </head>
 <body>
 
@@ -20,39 +20,20 @@
 </header>
 
 <main>
-    <h2 id="page-title">통계 및 보고</h2>
-	<!-- 여기서 페이지마다 다른 콘텐츠를 동적으로 불러오기 -->
-    <div id="main-content-authList-" style="display: none;">
-        <p>여기는 권한관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-applyList-" style="display: none;">
-        <p>여기는 입점신청관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-membershipList-" style="display: none;">
-        <p>여기는 멤버십관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-paymentList-" style="display: none;">
-        <p>여기는 결제 및 정산관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-productList-" style="display: none;">
-        <p>여기는 상품관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-eventList-" style="display: none;">
-        <p>여기는 이벤트관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-noticeList-" style="display: none;">
-        <p>여기는 공지사항관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-inquiryList-" style="display: none;">
-        <p>여기는 문의사항관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-reportList-" style="display: none;">
-        <p>여기는 신고관리 관리 콘텐츠입니다.</p>
-    </div>
-    <div id="main-content-statsList-" style="display: none;">
-        <p>여기는 통계 및 보고 관리 콘텐츠입니다.</p>
-    </div>
+    <h3 id="page-title"></h3>
+
+    <div id="main-content-authList-section" style="display: none;"></div>
+    <div id="main-content-applyList-section" style="display: none;"></div>
+    <div id="main-content-membershipList-section" style="display: none;"></div>
+    <div id="main-content-paymentList-section" style="display: none;"></div>
+    <div id="main-content-productList-section" style="display: none;"></div>
+    <div id="main-content-eventList-section" style="display: none;"></div>
+    <div id="main-content-noticeList-section" style="display: none;"></div>
+    <div id="main-content-inquiryList-section" style="display: none;"></div>
+    <div id="main-content-reportList-section" style="display: none;"></div>
+    <div id="main-content-statsList-section" style="display: none;"></div>
 </main>
+
 
 <script>
     var contextPath = "<%= request.getContextPath() %>"; // JSP에서 contextPath를 JavaScript 변수로 전달

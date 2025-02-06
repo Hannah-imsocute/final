@@ -63,9 +63,15 @@ public class MainProductServiceImpl implements MainProductService{
 	}
 
 	@Override
-	public MainProduct findByCategoryId(long CategoryCode) {
+	public MainProduct findByCategoryId(long categoryCode) {
+		MainProduct dto = null;
 		
-		return null;
+		try {
+			mapper.findByCategoryId(categoryCode);
+		} catch (Exception e) {
+
+		}
+		return dto;
 	}
 
 	@Override

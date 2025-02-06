@@ -24,7 +24,7 @@ public class SpringSecurityConfig {
 
     String[] excludeUri = {"/", "/index.jsp", "/member/**", "/member/login", "/member/member", "/member/complete",
                           "/member/emailCheck", "/member/pwdFind", "/member/expired", "/member/account","/uploads/event/**","/uploads/product/**",
-                          "/dist/**", "/uploads/photo/**", "/favicon.ico","/cart/*", "/kakao/*", "/WEB-INF/views/**"};
+                          "/dist/**", "/uploads/photo/**", "/favicon.ico","/cart/*", "/kakao/*", "/WEB-INF/views/**", "/admin/**", "/static/**"};
 
 //    "/favicon.ico",
     http.cors(Customizer.withDefaults())

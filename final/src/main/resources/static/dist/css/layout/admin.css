@@ -62,11 +62,10 @@ body {
   margin-right: 30px; /* 로고와 다른 요소들 사이에 여백 추가 */
 }
 
-
 /* 사이드 메뉴 */
 .sidebar {
   position: fixed;
-  top: 80px;
+  top: 100px;
   left: 0;
   width: 250px;
   height: calc(100% - 80px);
@@ -85,8 +84,8 @@ body {
 .profile-container {
   text-align: center;
   background-color: #ffffff; /* 프로필 영역을 회색으로 설정 */
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 10px;
+  margin-bottom: 15px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -99,7 +98,7 @@ body {
   height: 80px;
   overflow: hidden;
   border-radius: 50%; /* 원형으로 잘리게 */
-  margin-top: 10px;
+  margin-top: 20px;
   margin-bottom: 10px;
   background-color: #d3d3d3;
   display: flex;
@@ -203,7 +202,7 @@ body {
 /* 메인 콘텐츠 영역 */
 main {
   margin-left: 250px; /* 사이드바 너비 만큼 여백 */
-  margin-top: 133px; /* 사용자 메뉴 (33px) + 헤더 (100px) 높이만큼 여백 추가 */
+  margin-top: 115px; /* 사용자 메뉴 (33px) + 헤더 (100px) 높이만큼 여백 추가 */
   padding: 20px;
 }
 
@@ -246,18 +245,34 @@ main {
 
 }
 
-#main-content {
-    min-height: 100vh; /* 화면을 채우는 최소 높이 */
-}
-
-#main-content {
-    display: block;
-    visibility: visible;
-}
-
-
 /* 클릭된 메뉴에 대해 호버처럼 색이 들어가게 */
 .sidebar-menu li a.active {
   background-color: #e9ecef;
   color: #ff6600; /* 원하는 색으로 설정 */
+}
+
+/* 타이틀 달고 밑에 줄 */
+h3 {
+	color: #747474;
+	font-weight: bold;
+    border-bottom: 2px solid #4C4C4C;  /* 검정색, 두께 3px */
+    padding-bottom: 10px;  /* 타이틀과 선 사이의 여백 */
+    margin-bottom: 10px;  /* 타이틀과 다음 요소와의 간격 */
+    width: 80%;
+}
+
+h3 div {
+	position: fi
+}
+
+html, body {
+    height: 100%; /* html과 body에 100% 높이 설정 */
+    margin: 0; /* 기본 여백 제거 */
+    padding: 0; /* 기본 패딩 제거 */
+}
+
+/* #main-content 영역에서만 스크롤이 발생하도록 설정 */
+#main-content {
+    height: calc(100% - 60px); /* 타이틀 높이를 제외한 콘텐츠 영역만 스크롤 */
+    overflow-y: auto;  /* 세로 스크롤이 필요한 경우에만 표시 */
 }
