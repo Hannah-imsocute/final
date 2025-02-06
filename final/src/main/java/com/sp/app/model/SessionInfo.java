@@ -14,12 +14,8 @@ import lombok.Setter;
 @Builder
 public class SessionInfo {
 
-	private long memberIdx; // 기본키
+	private long memberIdx;
 	private String email;
 	private String nickName;
-
-//	private long memberIdx;
-//	private String userId;
-//	private String userName;
-//	private int userLevel;
+	private int userLevel;
 }

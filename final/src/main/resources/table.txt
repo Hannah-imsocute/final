@@ -765,5 +765,40 @@ REFERENCES product (productcode)
 );					
 					
 					
-CREATE SEQUENCE seq_membership_item INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;						
+CREATE SEQUENCE seq_membership_item INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;			
+
+
+
+
+
+
+
+CREATE TABLE CART_ITEM (
+                           CART_ITEM_CODE  NUMBER         NOT NULL,                   -- PK
+                           MEMBERIDX       NUMBER         NOT NULL,                   -- 회원 테이블 MEMBER(MEMBERIDX) 참조
+                           PRODUCTCODE     NUMBER         NOT NULL,                   -- PRODUCT(PRODUCTCODE) 참조
+                           QUANTITY        NUMBER         DEFAULT 1 NOT NULL,         -- 수량
+                           PRICE           NUMBER         NOT NULL,                   -- 담을 당시 단가(옵션/할인 등 반영)
+                           CREATED         DATE           DEFAULT SYSDATE NOT NULL,   -- 항목 생성일
+
+                           CONSTRAINT PK_CART_ITEM PRIMARY KEY (CART_ITEM_CODE)
+);
+
+ALTER TABLE CART_ITEM
+    ADD CONSTRAINT FK_CART_ITEM_MEMBER
+        FOREIGN KEY (MEMBERIDX)
+            REFERENCES MEMBER(MEMBERIDX);
+            
+ALTER TABLE CART_ITEM
+    ADD CONSTRAINT FK_CART_ITEM_PRODUCT
+        FOREIGN KEY (PRODUCTCODE)
+            REFERENCES PRODUCT(PRODUCTCODE);
+
+CREATE SEQUENCE seq_CART_ITEM
+    START WITH 1
+    INCREMENT BY 1
+    NOMAXVALUE
+    NOCYCLE
+    NOCACHE;
+			
 												

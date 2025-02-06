@@ -50,6 +50,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         .memberIdx(member.getMemberIdx())
         .email(member.getEmail())
         .nickName(member.getNickName())
+        .userLevel(NumericRoleGranted.getUserLevel(member.getAuthority())) 
         .build();
 
     session.setAttribute("member", info);
