@@ -72,7 +72,9 @@
 
 			<!-- 메인 패널 -->
 			<div class="main-panel">
-				<h2>추천 작품</h2>
+				<h2>식품</h2>
+				<br>
+				<h3>베이커리</h3>
 				<div class="product-list">
 					<div class="product-item">핸드메이드 케이스</div>
 					<div class="product-item">핸드메이드 케이스</div>
