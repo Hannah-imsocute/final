@@ -766,4 +766,43 @@ REFERENCES product (productcode)
 					
 					
 CREATE SEQUENCE seq_membership_item INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;						
+	
+	
+	
+	
+	
+	
+	
+-- 출석체크 이벤트 테이블 생성
+CREATE TABLE clockin_event (
+    clockin_num   NUMBER         NOT NULL,  -- 기본키
+    event_title   VARCHAR2(100)  NOT NULL,  -- 이벤트명
+    start_date    DATE           NOT NULL,  -- 시작일
+    expire_date   DATE           NOT NULL,  -- 종료일
+    daybyday      NUMBER         NOT NULL,  -- 일일 포인트
+    weekly        NUMBER         NOT NULL,  -- 7일 연속 포인트
+    monthly       NUMBER         NOT NULL,  -- 한 달 연속 포인트
+    CONSTRAINT pk_clockin_event PRIMARY KEY (clockin_num)
+);
+
+
+CREATE SEQUENCE seq_clockin_event INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;		
+
+
+
+-- 출석체크 현황 테이블 생성
+CREATE TABLE clockin_log (
+    log_num      NUMBER  NOT NULL,  -- 기본키
+    clockin_num  NUMBER  NOT NULL,  -- 이벤트 번호 (외래키)
+    memberIdx    NUMBER  NOT NULL,  -- 회원코드
+    clockindate  DATE    NOT NULL,  -- 출석일자
+    CONSTRAINT pk_clockin_log PRIMARY KEY (log_num),
+    CONSTRAINT fk_clockin_log_event FOREIGN KEY (clockin_num) 
+        REFERENCES clockin_event (clockin_num) ON DELETE CASCADE,
+    CONSTRAINT fk_clockin_log_member FOREIGN KEY (memberIdx) 
+        REFERENCES member (memberIdx) ON DELETE CASCADE
+);
+	
+	
+CREATE SEQUENCE seq_clockin_log INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;		
 												
