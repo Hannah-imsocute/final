@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         content.style.display = "none";
     });
 
-    let defaultContentId = `main-content-${defaultPage}-section`;
+    let defaultContentId = 'main-content-'+defaultPage+'-section';
     let defaultContentElement = document.getElementById(defaultContentId);
 
     if (defaultContentElement) {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 📌 기본 페이지 fetch 요청 보내기
-    fetch(`/admin/${page}/loadPage?page=${defaultPage}`)
+    fetch(`/admin/loadPage?page=${defaultPage}`)
         .then(response => {
             return response.text();
         })
@@ -46,7 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let page = this.getAttribute("data-page"); // 클릭한 메뉴의 data-page 값 가져오기
             let pageTitle = this.textContent.trim();  // 클릭한 메뉴 제목
-
+			console.log(page);
+			console.log(pageTitle);
+			
             // 페이지 제목 업데이트
             document.getElementById("page-title").textContent = pageTitle;
 
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 content.style.display = "none";
             });
 
-            let contentId = `main-content-${page}-section`;
+            let contentId = 'main-content-' + page + '-section';
             let contentElement = document.getElementById(contentId);
 
             if (contentElement) {

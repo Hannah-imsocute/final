@@ -2,8 +2,10 @@ package com.sp.app.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminController {
 
 	// 페이지 로드 요청 처리
-	@RequestMapping("/loadPage")
+	@GetMapping("/loadPage")
+	@ResponseBody
 	public String loadPage(@RequestParam("page") String page, Model model) {
 		log.info("페이지 요청: {}", page);
 
