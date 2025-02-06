@@ -20,7 +20,7 @@
 </header>
 
 <main>
-    <h2 id="page-title"></h2>
+    <h3 id="page-title"></h3>
 
     <div id="main-content-authList-section" style="display: none;"></div>
     <div id="main-content-applyList-section" style="display: none;"></div>

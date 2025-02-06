@@ -22,13 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 📌 기본 페이지 fetch 요청 보내기
-    fetch(`/admin/loadPage?page=${defaultPage}`)
+    fetch(`/admin/${page}/loadPage?page=${defaultPage}`)
         .then(response => {
-            console.log(`📌 Fetch Response Status: ${response.status}`);
             return response.text();
         })
         .then(html => {
-            console.log("📌 Loaded HTML:", html.substring(0, 100));  // HTML 일부 출력
             defaultContentElement.innerHTML = html;  // 받아온 HTML 삽입
         })
         .catch(error => console.error("❌ Error loading default page:", error));
@@ -49,8 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let page = this.getAttribute("data-page"); // 클릭한 메뉴의 data-page 값 가져오기
             let pageTitle = this.textContent.trim();  // 클릭한 메뉴 제목
 
-            console.log(`🔹 Page: ${page}, Title: ${pageTitle}`);
-
             // 페이지 제목 업데이트
             document.getElementById("page-title").textContent = pageTitle;
 
@@ -65,21 +61,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (contentElement) {
                 contentElement.style.display = "block";
             } else {
-                console.error(`❌ Error: Element with ID '${contentId}' not found.`);
                 return;
             }
 
             // 해당 페이지의 콘텐츠 로딩
-            fetch(`/admin/loadPage?page=${page}`)
+            fetch('/admin/loadPage?page=' + page)
                 .then(response => {
-                    console.log(`📌 Fetch Response Status: ${response.status}`);
                     return response.text();
                 })
                 .then(html => {
-                    console.log("📌 Loaded HTML:", html.substring(0, 100));  // HTML 일부 출력
                     contentElement.innerHTML = html;  // 받아온 HTML 삽입
                 })
                 .catch(error => console.error("❌ Error loading page:", error));
         });
+    });
+
+    // 🌟 기본 페이지 배너에 active 클래스 추가
+    document.querySelectorAll(".menu-item").forEach(item => {
+        if (item.getAttribute("data-page") === defaultPage) {
+            item.classList.add("active");  // 기본 페이지에 active 클래스 추가
+        }
     });
 });
