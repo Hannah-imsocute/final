@@ -3,6 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.MainProductMapper">
 	<!-- 일반 상품 목록 -->
+	
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0) FROM product
 		WHERE categoryCode = #{categoryCode}
@@ -10,13 +11,19 @@
 	
 	<select id="listProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
 	SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
-		       discount, m.nickname, thumbnail
+		       discount, m.nickname, THUMBNAIL
 		FROM product p
 		JOIN productCategory c ON p.categoryCode = c.categoryCode
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
 		WHERE p.SOLDOUT = 0 AND p.categorycode = 7
-		ORDER BY modify DESC;
+		ORDER BY modify DESC
+	</select>
+
+	<select id="findByCategoryId" parameterType="Integer" resultType="com.sp.app.model.MainProduct">
+		SELECT categoryCode, name, parentCategoryCode
+		FROM productCategory
+		WHERE categoryCode = #{categoryCode}
 	</select>
 
 

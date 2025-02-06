@@ -58,8 +58,8 @@
 <div class="category-dropdown">
     <div class="category-item" data-target="sub-category-1">식품</div>
     <div class="sub-category" id="sub-category-1">
-        <a href="${pageContext.request.contextPath}/product/category">베이커리/전통간식</a>
-        <a href="#">음료/주류</a>
+        <a href="">베이커리/전통간식</a>
+        <a href="">음료/주류</a>
         <a href="#">요리/간편식</a>
         <a href="#">농수산품</a>
     </div>

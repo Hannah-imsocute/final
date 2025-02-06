@@ -29,7 +29,7 @@ public class ProductController {
 
 	@GetMapping("category")
 	public String category(
-			@RequestParam(name = "categoryCode", defaultValue = "1") int categoryCode,
+			@RequestParam(name = "categoryCode", defaultValue = "1") Integer categoryCode,
 			@RequestParam(name = "page", defaultValue = "1") int current_page, 
 			Model model,
 			HttpServletRequest req ) throws Exception{
