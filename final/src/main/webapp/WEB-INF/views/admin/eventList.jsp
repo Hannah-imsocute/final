@@ -13,6 +13,7 @@
 		</tr>
 	</thead>
 	<tbody>
+		<c:forEach>
 		<tr>
 			<td>1</td>
 			<td><a href="#">신년 쿠폰 이벤트</a></td>
@@ -23,5 +24,6 @@
 				<button type="button" class="edit-btn btn">수정</button>
 			</td>
 		</tr>
+		</c:forEach>
 	</tbody>
 </table>

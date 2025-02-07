@@ -26,7 +26,7 @@
             color: #333;
         }
         main {
-            margin-top: 140px; /* 고정 헤더 높이만큼 여백 */
+            margin-top: 3000px; /* 고정 헤더 높이만큼 여백 */
         }
         /* 브레드크럼 스타일 */
         .breadcrumb-area {
@@ -353,7 +353,7 @@
     <jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 </header>
 
-<main>
+<main style="margin-top: 500px;">
     <div class="cart-container">
         <!-- 브레드크럼 -->
 <%--        <div class="breadcrumb-area">--%>

@@ -82,8 +82,8 @@ tbody td {
 }
 
 .se2_inputarea {
-    width: 70% !important;
-    height: 400px !important; /* 원하는 크기로 조정 */
+	width: 70% !important;
+	height: 400px !important; /* 원하는 크기로 조정 */
 }
 </style>
 </head>
@@ -107,7 +107,32 @@ tbody td {
 					data-bs-target="#staticBackdrop">이벤트 등록</button>
 			</div>
 			<div class="eventList">
-				<jsp:include page="/WEB-INF/views/admin/eventList.jsp" />
+				<table>
+					<thead>
+						<tr>
+							<th>번호</th>
+							<th>이벤트명</th>
+							<th>시작일</th>
+							<th>종료일</th>
+							<th>상태</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="dto" items="${couponlist}" varStatus="status">
+							<tr>
+								<td>${status.index}</td>
+								<td><a href="#" data-couponCode="${dto.coupon_code}">${dto.couponName}</a></td>
+								<td>${dto.start}</td>
+								<td>${dto.end}</td>
+								<td class="status">진행중</td>
+								<td>
+									<button type="button" class="edit-btn btn">수정</button>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</main>
@@ -126,12 +151,11 @@ tbody td {
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-
 					<div class="chk-cover">
 						<div class="form-check">
-							<input class="form-check-input" type="radio" name="chk" id="chk1"
-								checked> <label class="form-check-label" for="chk1">
-								쿠폰등록 </label>
+							<input class="form-check-input first" type="radio" name="chk"
+								id="chk1" checked> <label class="form-check-label"
+								for="chk1"> 쿠폰등록 </label>
 						</div>
 						<div class="form-check">
 							<input class="form-check-input" type="radio" name="chk" id="chk2">
@@ -142,14 +166,14 @@ tbody td {
 							<label class="form-check-label" for="chk3"> 댓글 이벤트 등록 </label>
 						</div>
 					</div>
-					<form action="">
+					<form action="" name="chkForm">
 						<div class="content1" style="display: none;">
 							<jsp:include page="/WEB-INF/views/admin/eventcoupon.jsp" />
 						</div>
 						<div class="content2" style="display: none;">
 							<jsp:include page="/WEB-INF/views/admin/eventclockin.jsp" />
 						</div>
-						<div class="content3">
+						<div class="content3" style="display: none;">
 							<jsp:include page="/WEB-INF/views/admin/eventcomm.jsp" />
 						</div>
 					</form>
@@ -157,8 +181,8 @@ tbody td {
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"
 						data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary"
-						onclick="submitContents(this.form)">등록</button>
+					<button type="button" class="btn btn-primary submit"
+						onclick="submitContents()" data-chk="chk1">등록</button>
 				</div>
 			</div>
 		</div>
@@ -167,25 +191,108 @@ tbody td {
 		src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js"
 		charset="utf-8"></script>
 	<script type="text/javascript">
+	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
+		
+		const settings = {
+				type: method, 
+				data: requestParams,
+				dataType: responseType,
+				success:function(data) {
+					callback(data);
+				},
+				beforeSend: function(jqXHR) {
+				},
+				complete: function () {
+				},
+				error: function(jqXHR) {
+					console.log(jqXHR.responseText);
+				}
+		};
+		
+		if(file) {
+			settings.processData = false;  
+			settings.contentType = false; 
+		}
+		
+		if(contentType.toLowerCase() === 'json') {
+			settings.contentType = 'application/json; charset=utf-8';
+		}
+		
+		$.ajax(url, settings);
+	};
+	
+	$(function(){
+			$('input.first').trigger('click');
+	});
+		
+	$('input[name=chk]').each(function() {
+		$(this).on('click',function(){
+				$('.content1').hide();
+				$('.content2').hide();
+				$('.content3').hide();
+				if($(this).attr('id')==='chk1') {
+					$('.content1').show();
+					$('button.submit').attr('data-chk', "chk1");
+				}else if ($(this).attr('id')==='chk2'){
+					$('.content2').show();
+					$('button.submit').attr('data-chk', "chk2");
+				}else if ($(this).attr('id')==='chk3'){
+					$('.content3').show();
+					$('button.submit').attr('data-chk', "chk3");
+				}
+				
+			});
+		});
+		
+		
+		function submitContents(){
+			let chk = $('button.submit').attr('data-chk');
+			
+			if(chk === 'chk1'){
+				let name = $('input[name="couponName"]').val();
+				let rate = $('input[name="couponRate"]').val();
+				let start = $('input[name="couponStart"]').val();
+				let end = $('input[name="couponEnd"]').val();
+				let valid = $('input[name="couponValid"]').val();
+				
+				let url = '${pageContext.request.contextPath}/adminevent/coupon';
+				let param = {name : name , rate : rate ,start : start , end : end,valid : valid};
+				
+				const returnfn = function (resp) {
+					console.log(resp.state);
+				}
+				
+				ajaxRequest(url,'post',param,'json', returnfn)
+			}else if(chk === 'chk2'){
+				
+			}else if(chk === 'chk3'){
+				
+			}			
+			
+		};
+		
+	</script>
+	<script type="text/javascript">
+	/*
 	$('#staticBackdrop').on('shown.bs.modal', function () {
 		var oEditors = [];
-		nhn.husky.EZCreator
-				.createInIFrame({
-					oAppRef : oEditors,
-					elPlaceHolder : 'eventContent',
-					sSkinURI : '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
-					fCreator : 'createSEditor2',
-					fOnAppLoad : function() {
-						oEditors.getById['eventContent'].setDefaultFont('돋움',
-								12);
-					},
-				});
-		console.log($('#eventContent'));
+			nhn.husky.EZCreator
+					.createInIFrame({
+						oAppRef : oEditors,
+						elPlaceHolder : 'eventContent',
+						sSkinURI : '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+						fCreator : 'createSEditor2',
+						fOnAppLoad : function() {
+							oEditors.getById['eventContent'].setDefaultFont('돋움',
+									12);
+						},
+					});
 		function submitContents(elClickedObj) {
 			oEditors.getById['eventContent'].exec('UPDATE_CONTENTS_FIELD', []);
 			elClickedObj.submit();
 		}
 	})
+	*/
 	</script>
 </body>
 </html>

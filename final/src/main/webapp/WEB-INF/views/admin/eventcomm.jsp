@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
-		<div class="col-auto">
+		<div class="col-auto" >
 			<label for="eventContent" class="col-form-label">컨텐츠를 입력해주세요</label>
 		</div>
 		<div class="col-auto">
