@@ -5,11 +5,11 @@
 	<!-- 일반 상품 목록 -->
 	
 	<select id="dataCount" parameterType="map" resultType="Integer">
-		SELECT NVL(COUNT(*), 0) FROM product
+		SELECT NVL(COUNT(*), 0) dataCount FROM product
 		WHERE categoryCode = #{categoryCode}
 	</select>
 	
-	<select id="listProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
+	<select id="listMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
 	SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
 		       discount, m.nickname, THUMBNAIL
 		FROM product p
@@ -17,10 +17,10 @@
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
 		WHERE p.SOLDOUT = 0 AND p.categorycode = 7
-		ORDER BY modify DESC
+		ORDER BY modified DESC
 	</select>
 
-	<select id="findByCategoryId" parameterType="Integer" resultType="com.sp.app.model.MainProduct">
+	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.model.MainProduct">
 		SELECT categoryCode, name, parentCategoryCode
 		FROM productCategory
 		WHERE categoryCode = #{categoryCode}
