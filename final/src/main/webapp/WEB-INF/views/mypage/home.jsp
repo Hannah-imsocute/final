@@ -12,6 +12,8 @@
 
     <style>
         /* ========== 기본 리셋 및 전역 스타일 ========== */
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
             padding: 0;

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/cart/*")
@@ -26,8 +28,11 @@ public class CartController {
     try {
       Long memberIdx = getMemberIdx(session);
 
-      List<CartItem> list = cartItemService.getCartListByMember(memberIdx);
+      Map<String, Object> params = new HashMap<>();
+      params.put("memberIdx", memberIdx);
 
+      List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
+//      cartItemService.getCartItemByMemberAndProduct()
       model.addAttribute("list", list);
     } catch (Exception e) {
       log.info("getCartListByMember", e);
@@ -53,7 +58,7 @@ public class CartController {
     return "redirect:/cart/list";
   }
 
-    @PostMapping("add")
+  @PostMapping("add")
   public String addCartItem(@ModelAttribute("cartItem") CartItem cartItem, HttpSession session) throws Exception {
 
     try {
@@ -73,8 +78,9 @@ public class CartController {
       cartItemService.deleteCartItem(cartItemCode);
       return "redirect:/cart/list";
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      log.info("delete", e);
     }
+    return "redirect:/cart/list";
   }
 
   // Session 에서 회원코드 반환

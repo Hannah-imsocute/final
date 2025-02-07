@@ -6,6 +6,7 @@ import com.sp.app.model.cart.CartItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ public class CartItemServiceImpl implements CartItemService {
   private final MemberMapper memberMapper;
   private final CartItemMapper cartItemMapper;
 
+  @Transactional(rollbackFor = {Exception.class})
   @Override
   public void insertCartItem(CartItem cartItem, Long memberIdx) throws Exception {
     try {
@@ -50,13 +52,27 @@ public class CartItemServiceImpl implements CartItemService {
     List<CartItem> list = null;
 
     try {
-      list = Objects.requireNonNull(cartItemMapper.getCartListByMember(memberIdx));
-    } catch (NullPointerException e) {
-      return new ArrayList<>();
+      list = cartItemMapper.getCartListByMember(memberIdx);
+      if(list == null) {
+        return List.of();
+      }
     } catch (Exception e) {
       log.info("getCartListByMember", e);
     }
+    return list;
+  }
 
+  @Override
+  public List<CartItem> getCartItemsByMemberAndProduct(Map<String, Object> params) throws Exception {
+    List<CartItem> list = null;
+    try {
+      list = cartItemMapper.getCartItemsByMemberAndProduct(params);
+      if(list == null) {
+        return List.of();
+      }
+    } catch (Exception e) {
+      log.info("getCartItemsByMemberAndProduct", e);
+    }
     return list;
   }
 
@@ -66,6 +82,28 @@ public class CartItemServiceImpl implements CartItemService {
       cartItemMapper.deleteCartItem(cartItemCode);
     } catch (Exception e) {
      log.info("deleteCartItem", e);
+    }
+  }
+
+  @Override
+  public CartItem getCartItemByMemberAndProduct(Map<String, Object> params) throws Exception {
+    CartItem cartItem = null;
+    try {
+      cartItem = Objects.requireNonNull(cartItemMapper.getCartItemByMemberAndProduct(params));
+    } catch (Exception e) {
+      log.info("getCartItemByMemberAndProduct", e);
+    }
+    return cartItem;
+  }
+
+
+  @Transactional(rollbackFor = {Exception.class})
+  @Override
+  public void updateCartItemQuantity(Map<String, Object> params) throws Exception {
+    try {
+      cartItemMapper.updateCartItemQuantity(params);
+    } catch (Exception e) {
+     log.info("updateCartItemQuantity", e);
     }
   }
 }

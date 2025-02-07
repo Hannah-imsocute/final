@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.CartItemMapper">
+
+
+
+    <!-- 장바구니 추가 -->
+    <insert id="insertCartItem" parameterType="com.sp.app.model.cart.CartItem">
+        INSERT INTO CART_ITEM (CART_ITEM_CODE, MEMBERIDX, PRODUCTCODE, QUANTITY, PRICE, CREATED, CART_OPTION)
+        VALUES (seq_CART_ITEM.NEXTVAL, #{memberIdx}, #{productCode}, #{quantity}, #{price}, SYSDATE, #{cartOption})
+    </insert>
+
+    <!-- 장바구니 조회 -->
+    <select id="getCartListByMember" parameterType="Long" resultType="com.sp.app.model.cart.CartItem">
+        SELECT * FROM CART_ITEM WHERE MEMBERIDX = #{memberIdx}
+    </select>
+
+    <!-- 장바구니 삭제 -->
+    <delete id="deleteCartItem" parameterType="long">
+        DELETE FROM CART_ITEM WHERE CART_ITEM_CODE = #{cartItemCode}
+    </delete>
+
+    <select id="getCartItemsByMemberAndProduct" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
+        SELECT CART_ITEM_CODE AS cartItemCode, MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT,
+               c.PRODUCTCODE AS productCode,
+               QUANTITY, p.PRICE, CREATED, CART_OPTION AS cartOption
+        FROM CART_ITEM c
+        LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
+        WHERE MEMBERIDX = #{memberIdx}
+    </select>
+
+
+    <!-- 장바구니 항목의 수량 업데이트 -->
+    <update id="updateCartItemQuantity" parameterType="map">
+        UPDATE CART_ITEM
+        SET QUANTITY = #{quantity}
+        WHERE CART_ITEM_CODE = #{cartItemCode}
+    </update>
+
+</mapper>
