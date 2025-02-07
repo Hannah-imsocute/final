@@ -1,14 +1,57 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<link rel="stylesheet" href="/dist/css/layout/headerCategory.css">
-
+<style>
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i, center,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form, label, legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed,
+  figure, figcaption, footer, header, hgroup,
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+  }
+  /* HTML5 display-role reset for older browsers */
+  article, aside, details, figcaption, figure,
+  footer, header, hgroup, menu, nav, section {
+    display: block;
+  }
+  body {
+    line-height: 1;
+  }
+  ol, ul {
+    list-style: none;
+  }
+  blockquote, q {
+    quotes: none;
+  }
+  blockquote:before, blockquote:after,
+  q:before, q:after {
+    content: '';
+    content: none;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+</style>
 <div class="bg-light py-1">
   <div class="container d-flex justify-content-end">
     <c:choose>
       <c:when test="${empty sessionScope.member}">
         <ul class="nav user-menu">
-          <li class="nav-item">
+
             <a href="${pageContext.request.contextPath}/member/login" title="로그인" class="nav-link"><i class="bi bi-lock"></i></a>
           </li>
           <li class="nav-item">
@@ -33,7 +76,6 @@
         </ul>
       </c:otherwise>
     </c:choose>
-
   </div>
 </div>
 
@@ -42,58 +84,25 @@
 <div class="header-top">
   <!-- 로고 -->
   <div class="logo">
-    <img src="/dist/images/layout/top_logo.png" alt="로고">
+    <a href="${pageContext.request.contextPath}/"><img src="/dist/images/layout/top_logo.png" alt="로고"></a>
   </div>
 
   <!-- 전체 카테고리 아이콘 -->
-<div class="category-menu">
+  <div class="category-menu">
     <button class="category-btn">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" class="bi bi-list" viewBox="0 0 16 16">
         <path d="M2 3h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm0 4h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm0 4h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z"/>
       </svg>
       전체 카테고리
     </button>
-</div>
-
-<div class="category-dropdown">
-    <div class="category-item" data-target="sub-category-1">식품</div>
-    <div class="sub-category" id="sub-category-1">
-        <a href="">베이커리/전통간식</a>
-        <a href="">음료/주류</a>
-        <a href="#">요리/간편식</a>
-        <a href="#">농수산품</a>
-    </div>
-
-    <div class="category-item" data-target="sub-category-2">패션</div>
-    <div class="sub-category" id="sub-category-2">
-        <a href="#">주얼리</a>
-        <a href="#">의류</a>
-        <a href="#">패션잡화</a>
-    </div>
-    <div class="category-item" data-target="sub-category-3">리빙</div>
-    <div class="sub-category" id="sub-category-3">
-        <a href="#">캠핑</a>
-        <a href="#">가구</a>
-        <a href="#">홈데코</a>
-        <a href="#">주방용품</a>
-        <a href="#">욕실용품</a>
-    </div>
-    <div class="category-item" data-target="sub-category-4">뷰티</div>
-    <div class="sub-category" id="sub-category-4">
-        <a href="#">스킨케어</a>
-        <a href="#">헤어/바디/클렌징</a>
-        <a href="#">메이크업</a>
-        <a href="#">향수</a>
-    </div>
-    <div class="category-item" data-target="sub-category-5">문구/기타용품</div>
-    <div class="sub-category" id="sub-category-5">
-        <a href="#">케이스</a>
-        <a href="#">사무용품</a>
-        <a href="#">파티용품</a>
-        <a href="#">차량용품</a>
-   </div>
-     
-</div>
+  </div>
+  <div class="category-dropdown">
+    <a href="#">카테고리 1</a>
+    <a href="#">카테고리 2</a>
+    <a href="#">카테고리 3</a>
+    <a href="#">카테고리 4</a>
+    <a href="#">카테고리 5</a>
+  </div>
 
 
   <div class="search-container">
@@ -117,12 +126,16 @@
         <span>찜</span>
       </a>
       <a href="#" class="icon-item">
-        <i class="bi bi-person-circle"></i>
-        <span>내 정보</span>
+<%--        <i class="bi bi-person-circle"></i>--%>
+<%--        <span>내 정보</span>--%>
+        <a href="${pageContext.request.contextPath}/mypage/home">
+          <i class="bi bi-person-circle"></i>
+            내정보
+        </a>
       </a>
       <a href="#" class="icon-item">
-        <i class="bi bi-cart"></i>
-        <span>장바구니</span>
+<%--        <span>장바구니</span>--%>
+        <a href="${pageContext.request.contextPath}/cart/list"><i class="bi bi-cart"></i></a>
       </a>
     </div>
   </div>
@@ -151,5 +164,3 @@
     </ul>
   </div>
 </nav>
-
-<script src="/dist/js/layout/headerCategory.js"></script>
