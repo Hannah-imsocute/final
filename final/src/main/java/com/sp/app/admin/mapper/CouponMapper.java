@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.sp.app.model.Coupon;
+import com.sp.app.admin.model.Coupon;
 
 @Mapper
 public interface CouponMapper  {

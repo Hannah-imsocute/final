@@ -1,4 +1,4 @@
-package com.sp.app.model;
+package com.sp.app.admin.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

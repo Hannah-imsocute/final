@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.sp.app.admin.mapper.CouponMapper;
-import com.sp.app.model.Coupon;
+import com.sp.app.admin.model.Coupon;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
