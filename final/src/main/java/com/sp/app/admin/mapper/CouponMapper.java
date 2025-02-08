@@ -1,4 +1,4 @@
-package com.sp.app.mapper;
+package com.sp.app.admin.mapper;
 
 import java.sql.SQLException;
 import java.util.List;

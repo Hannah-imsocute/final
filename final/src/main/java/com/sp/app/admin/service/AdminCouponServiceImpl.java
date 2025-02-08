@@ -1,11 +1,11 @@
-package com.sp.app.service;
+package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.sp.app.mapper.CouponMapper;
+import com.sp.app.admin.mapper.CouponMapper;
 import com.sp.app.model.Coupon;
 
 import lombok.RequiredArgsConstructor;
