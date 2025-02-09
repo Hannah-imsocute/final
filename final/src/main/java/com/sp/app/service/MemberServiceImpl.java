@@ -4,6 +4,8 @@ import com.sp.app.mail.Mail;
 import com.sp.app.mail.MailSender;
 import com.sp.app.mapper.MemberMapper;
 import com.sp.app.model.Member;
+import com.sp.app.model.ShippingInfo;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -257,6 +259,20 @@ public class MemberServiceImpl implements MemberService {
       throw e;
     }
   }
+  
+  // 회원 이름, 주소, 핸드폰 조회
+  @Override
+  public ShippingInfo getShippingInfo(Long memberIdx) throws Exception {
+    ShippingInfo info = null;
+    try {
+      info = mapper.getShippingInfo(memberIdx);
+    } catch (Exception e) {
+      log.info("getShippingInfo", e);
+      throw e;
+    }
+    return info;
+  }
+
 
 
 }

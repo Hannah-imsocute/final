@@ -1,6 +1,8 @@
 package com.sp.app.mapper;
 
 import com.sp.app.model.Member;
+import com.sp.app.model.ShippingInfo;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.SQLException;
@@ -38,6 +40,8 @@ public interface MemberMapper {
 	public String findByAuthority(String email);
 
 	public void updateFailureCountReset(String userId) throws SQLException;
+
+	ShippingInfo getShippingInfo(Long memberIdx) throws Exception;
 
 
 }

@@ -1,6 +1,7 @@
 package com.sp.app.service;
 
 import com.sp.app.model.Member;
+import com.sp.app.model.ShippingInfo;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,6 +34,10 @@ public interface MemberService {
 
 	public boolean isPasswordCheck(String email, String password);
 	public void updatePassword(Member dto) throws Exception;
+	
+	// 회원 배송지 세션 조회
+	ShippingInfo getShippingInfo(Long memberIdx) throws Exception;
+
 
 
 }

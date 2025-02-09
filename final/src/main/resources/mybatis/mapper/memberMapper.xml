@@ -91,4 +91,14 @@
 		)
 	</select>
 
+<!-- 이름, 배송지, 전화번호 -->
+	<select id="getShippingInfo" parameterType="Long" resultType="com.sp.app.model.ShippingInfo">
+		SELECT MEMBERIDX, NAME AS receiverName, PHONE, ADDNAME AS addName, ADDTITLE AS addTitle, ADDDETAIL AS addDetail,
+		       FIRSTADD AS firstAdd
+		FROM MEMBER_ADDRESS
+		WHERE MEMBERIDX = #{memberIdX} AND FIRSTADD = 1
+	</select>
+
+
+
 </mapper>
