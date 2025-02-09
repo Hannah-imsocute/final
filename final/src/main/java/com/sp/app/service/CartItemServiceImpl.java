@@ -1,7 +1,6 @@
 package com.sp.app.service;
 
 import com.sp.app.mapper.CartItemMapper;
-import com.sp.app.mapper.MemberMapper;
 import com.sp.app.model.cart.CartItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import java.util.*;
 @Slf4j
 public class CartItemServiceImpl implements CartItemService {
 
-  private final MemberMapper memberMapper;
   private final CartItemMapper cartItemMapper;
 
   @Transactional(rollbackFor = {Exception.class})
@@ -76,6 +74,16 @@ public class CartItemServiceImpl implements CartItemService {
     return list;
   }
 
+  @Transactional(rollbackFor = {Exception.class})
+  @Override
+  public void updateCartItemQuantity(Map<String, Object> params) throws Exception {
+    try {
+      cartItemMapper.updateCartItemQuantity(params);
+    } catch (Exception e) {
+      log.info("updateCartItemQuantity", e);
+    }
+  }
+
   @Override
   public void deleteCartItem(Long cartItemCode) throws Exception {
     try {
@@ -85,6 +93,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
   }
 
+  /*
   @Override
   public CartItem getCartItemByMemberAndProduct(Map<String, Object> params) throws Exception {
     CartItem cartItem = null;
@@ -95,17 +104,8 @@ public class CartItemServiceImpl implements CartItemService {
     }
     return cartItem;
   }
+   */
 
-
-  @Transactional(rollbackFor = {Exception.class})
-  @Override
-  public void updateCartItemQuantity(Map<String, Object> params) throws Exception {
-    try {
-      cartItemMapper.updateCartItemQuantity(params);
-    } catch (Exception e) {
-     log.info("updateCartItemQuantity", e);
-    }
-  }
 }
 
 

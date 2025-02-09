@@ -32,7 +32,6 @@ public class CartController {
       params.put("memberIdx", memberIdx);
 
       List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
-//      cartItemService.getCartItemByMemberAndProduct()
       model.addAttribute("list", list);
     } catch (Exception e) {
       log.info("getCartListByMember", e);
@@ -70,6 +69,67 @@ public class CartController {
     }
     return "redirect:/cart/list";
   }
+
+  @PostMapping("updateQuantity")
+  public String updateQuantity(@RequestParam("cartItemCode") Long cartItemCode,
+                               @RequestParam("quantity") Integer quantity,
+                               HttpSession session) throws Exception {
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("cartItemCode", cartItemCode);
+      params.put("quantity", quantity);
+      cartItemService.updateCartItemQuantity(params);
+    } catch (Exception e) {
+      log.info("updateQuantity", e);
+      throw e;
+    }
+    return "redirect:/cart/list";
+  }
+
+  @PostMapping("updateQuantity1")
+  @ResponseBody // AJAX-JSON
+  public Map<String, Object> updateQuantityAjax(@RequestParam("cartItemCode") Long cartItemCode,
+                                            @RequestParam("quantity") Integer quantity,
+                                            HttpSession session) {
+    Map<String, Object> result = new HashMap<>();
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("cartItemCode", cartItemCode);
+      params.put("quantity", quantity);
+      cartItemService.updateCartItemQuantity(params);
+      result.put("status", "success");
+    } catch (Exception e) {
+      log.info("updateQuantity", e);
+      result.put("status", "error");
+      result.put("message", e.getMessage());
+    }
+    return result;
+  }
+
+  /*
+  ResponseEntity 쓰면 body message 쉽게 가능
+  @PostMapping("updateQuantity1")
+  public ResponseEntity<?> updateQuantityAjax(@RequestParam("cartItemCode") Long cartItemCode,
+                                              @RequestParam("quantity") Integer quantity,
+                                              HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("cartItemCode", cartItemCode);
+      params.put("quantity", quantity);
+      cartItemService.updateCartItemQuantity(params);
+      response.put("status", "success");
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      log.info("updateQuantity", e);
+      response.put("status", "error");
+      response.put("message", e.getMessage());
+      return ResponseEntity.status(500).body(response);
+    }
+  }
+   */
+
+
 
   // 장바구니 삭제
   @PostMapping("delete")

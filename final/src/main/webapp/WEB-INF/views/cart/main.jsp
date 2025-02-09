@@ -29,13 +29,14 @@
 
         .cart-container {
             max-width: 1200px;
-            margin: 20px auto;  
+            margin: 20px auto;  /* 상단 여백 추가 */
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
+        /* 장바구니 단계 표시 */
         .cart-steps {
             margin-bottom: 20px;
         }
@@ -49,6 +50,7 @@
         .cart-steps li { color: #ccc; }
         .cart-steps li.current { color: #333; font-weight: bold; }
 
+        /* 좌우 2단 레이아웃 */
         .cart-content {
             display: flex;
             gap: 20px;
@@ -57,6 +59,7 @@
         .cart-left { flex: 3; }
         .cart-summary { flex: 1; }
 
+        /* 테이블 스타일 – 상품 목록 */
         .cart-table {
             width: 100%;
             border-collapse: collapse;
@@ -77,6 +80,7 @@
             border-radius: 5px;
         }
 
+        /* 수량 조정 */
         .cart-item-qty {
             display: flex;
             align-items: center;
@@ -88,6 +92,7 @@
             text-align: center;
         }
 
+        /* 삭제 버튼 */
         .cart-item-delete button {
             background-color: #ff4d4d;
             color: white;
@@ -100,6 +105,7 @@
             background-color: #cc0000;
         }
 
+        /* 주문 금액 요약 – 오른쪽 영역 */
         .cart-summary {
             padding: 20px;
             border: 1px solid #ddd;
@@ -121,6 +127,7 @@
             border-top: 1px solid #eee;
         }
 
+        /* 주문하기 버튼 */
         .btn-order {
             width: 100%;
             padding: 12px 0;
@@ -133,6 +140,26 @@
             font-size: 15px;
         }
         .btn-order:hover { background-color: #b56a24; }
+
+        .quantity-minus, .quantity-plus {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .quantity-minus:hover, .quantity-plus:hover {
+            background-color: #eaeaea;
+        }
+        .quantity {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+            margin: 0 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -142,6 +169,7 @@
 
 <main>
     <div class="cart-container">
+        <!-- 장바구니 단계 표시 -->
         <div class="cart-steps">
             <ol>
                 <li class="current">01 장바구니</li>
@@ -153,6 +181,7 @@
         <h2>장바구니</h2>
 
         <div class="cart-content">
+            <!-- 왼쪽 영역: 상품 목록 (테이블 구조) -->
             <div class="cart-left">
                 <c:if test="${empty list}">
                     <p>장바구니가 비어 있습니다.</p>
@@ -174,12 +203,17 @@
                         <c:forEach var="cart" items="${list}">
                             <tr>
                                 <td>
-<%--                                    <img src="${cart.imageUrl != null ? cart.imageUrl : 'default-image.jpg'}" alt="상품 이미지">--%>
-                                        <img src="#" alt="상품 이미지">
+                                        <%--                                    <img src="${cart.imageUrl != null ? cart.imageUrl : 'default-image.jpg'}" alt="상품 이미지">--%>
+                                    <img src="#" alt="상품 이미지">
                                 </td>
                                 <td><c:out value="${cart.item}"/></td>
                                 <td><c:out value="${cart.cartOption != null ? cart.cartOption : '없음'}"/></td>
-                                <td class="cart-item-qty"><c:out value="${cart.quantity}"/></td>
+<%--                                <td class="cart-item-qty"><c:out value="${cart.quantity}"/></td>--%>
+                                <td class="cart-item-qty">
+                                    <button type="button" class="quantity-minus">−</button>
+                                    <input type="number" class="quantity" value="${cart.quantity}" min="1" readonly data-cartitemcode="${cart.cartItemCode}">
+                                    <button type="button" class="quantity-plus">＋</button>
+                                </td>
                                 <td><c:out value="${cart.price}"/>원</td>
                                 <td><c:out value="${cart.quantity * cart.price}"/>원</td>
                                 <td class="cart-item-delete">
@@ -195,6 +229,7 @@
                 </c:if>
             </div>
 
+            <!-- 오른쪽 영역: 주문 예상 금액 요약 -->
             <div class="cart-summary">
                 <h3>주문 예상 금액</h3>
                 <c:set var="totalPrice" value="0" scope="page"/>
@@ -219,5 +254,78 @@
 <footer>
     <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>
+
+<script>
+    function ajaxFun(url, method, formData, dataType, fn, file = false) {
+        const settings = {
+            type: method,
+            data: formData,
+            dataType:dataType,
+            success:function(data) {
+                fn(data);
+            },
+            beforeSend: function(jqXHR) {
+            },
+            complete: function () {
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR.responseText);
+            }
+        };
+
+        if(file) {
+            settings.processData = false;  // file 전송시 필수. 서버로전송할 데이터를 쿼리문자열로 변환여부
+            settings.contentType = false;  // file 전송시 필수. 서버에전송할 데이터의 Content-Type. 기본:application/x-www-urlencoded
+        }
+
+        $.ajax(url, settings);
+    }
+
+    $('.quantity-minus').click(function () {
+        let $input = $(this).siblings('input.quantity');
+        let currentQty = parseInt($input.val());
+        if(currentQty > 1) {
+            let diff = -1;
+            // data-cartItemCode 속성으로 설정한 경우:
+            let cartItemCode = $input.data('cartitemcode');
+            let url = '${pageContext.request.contextPath}/cart/updateQuantity1';
+            let formData = {
+                cartItemCode: cartItemCode,
+                quantity: diff
+            };
+
+            const fn = function (data) {
+                if(data.status === 'success') {
+                    $input.val(currentQty + diff);
+                } else {
+                    alert('업데이트 실패: ' + data.message);
+                }
+            }
+            ajaxFun(url, 'post', formData, 'json', fn);
+        }
+    });
+
+    $('.quantity-plus').click(function () {
+        let $input = $(this).siblings('input.quantity');
+        let currentQty = parseInt($input.val());
+            let diff = 1;
+            // data-cartItemCode 속성으로 설정한 경우:
+            let cartItemCode = $input.data('cartitemcode');
+            let url = '${pageContext.request.contextPath}/cart/updateQuantity1';
+            let formData = {
+                cartItemCode: cartItemCode,
+                quantity: diff
+            };
+
+            const fn = function (data) {
+                if(data.status === 'success') {
+                    $input.val(currentQty + diff);
+                } else {
+                    alert('업데이트 실패: ' + data.message);
+                }
+            };
+            ajaxFun(url, 'post', formData, 'json', fn);
+        });
+</script>
 </body>
 </html>

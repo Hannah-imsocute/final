@@ -34,7 +34,7 @@
     <!-- 장바구니 항목의 수량 업데이트 -->
     <update id="updateCartItemQuantity" parameterType="map">
         UPDATE CART_ITEM
-        SET QUANTITY = #{quantity}
+        SET QUANTITY = QUANTITY + #{quantity}
         WHERE CART_ITEM_CODE = #{cartItemCode}
     </update>
 
