@@ -6,7 +6,7 @@
 		<c:choose>
 			<c:when test="${empty sessionScope.member}">
 				<ul class="nav user-menu">
-
+                   <li class="nav-item">
 					<a href="${pageContext.request.contextPath}/member/login"
 						title="로그인" class="nav-link"><i class="bi bi-lock"></i></a>
 					</li>
@@ -88,7 +88,7 @@
 	<div class="container">
 		<!-- 메뉴 항목들 -->
 		<ul class="navbar-nav ms-auto">
-			<li class="nav-item"><a class="nav-link" href="#">전체 카테고리</a></li>
+			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/main">전체 카테고리</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">추천 작품</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">인기 작품</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">커뮤니티</a></li>

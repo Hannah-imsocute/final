@@ -11,7 +11,7 @@ public interface MainProductService {
 	
 	public MainProduct findById(long productCode);
 	public List<MainProduct> listMainProductFile(long productCode);
-	public MainProduct findByCategoryId(long CategoryCode);
+	public MainProduct findByCategoryId(int CategoryCode);
 	
 	public List<MainProduct> listAllCategory(); //전체카테고리
 	public List<MainProduct> listCategory(); //카테고리

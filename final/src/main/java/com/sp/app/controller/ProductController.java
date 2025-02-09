@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.model.MainProduct;
@@ -19,31 +20,67 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/product/*")
 public class ProductController {
 	private final MainProductService service;
 	private final PaginateUtil paginateUtil;
-
+    
+	@GetMapping("main")
+	public ModelAndView main(HttpServletRequest req ) throws Exception{ 
+		ModelAndView mav = new ModelAndView("product/main");
+		try {
+			log.info("Main page accessed");
+		} catch (NullPointerException e) {
+			log.error("NullPointerException in main(): ", e);
+		} catch (Exception e) {
+			log.info("main : ", e  );
+		}
+		
+		return mav;
+	}
+	
 	@GetMapping("category")
-	public String category(
-			@RequestParam(name = "categoryCode", defaultValue = "1") Integer categoryCode,
+	public ResponseEntity<Map<String, Object>> category(
+			@RequestParam(name = "categoryName") String categoryName,
 			@RequestParam(name = "page", defaultValue = "1") int current_page, 
-			Model model,
 			HttpServletRequest req ) throws Exception{
 		
+		System.out.println("categoryName : " + categoryName);
+		
+		 Map<String, Object> response = new HashMap<>();
+		
 		try {
-			int size = 10;
-			int total_page;
-			int dataCount;
+			// 받아온 카테고리명을 카테고리코드로 변환
+			 Map<String, Integer> categoryMap = Map.of(
+		                "bakery"    , 1,  // 베이커리/전통간식
+		                "beverage"  , 2,  // 음료/주류
+		                "food"      , 3,  // 요리/간편식
+		                "nongsusan" , 4   // 농수산품
+		        );
+
+		        if (!categoryMap.containsKey(categoryName)) {
+		            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+		        }
+
+		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
+	//		int size = 10;  // 페이지 당 포함 컨텐츠 수
+			int size = 1;  // 페이지 당 포함 컨텐츠 수
+			int total_page; // 전체 페이지 수
+			int dataCount;  // 전체 데이터 컨텐츠 수
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("categoryCode", categoryCode);
 			
+			System.out.println("categoryCode : " + categoryCode);
 			//카테고리 정보
 			MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
+			System.out.println("categoryDto: " + categoryDto);
+			
+			System.out.println("11111111");
 			
 			dataCount = service.dataCount(map);
 			total_page = paginateUtil.pageCount(dataCount, size);
@@ -56,27 +93,35 @@ public class ProductController {
 			map.put("offset", offset);
 			map.put("size", size);
 			
-			List<MainProduct> list = service.listMainProduct(map);
+			List<MainProduct> list = service.listMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 			
-			String cp = req.getContextPath();
-			String listUrl = cp + "/product/category?categoryCode=" + categoryCode;
-			String paging = paginateUtil.paging(current_page, total_page, listUrl);
-			
-			model.addAttribute("list",list);
-			model.addAttribute("categoryCode",categoryCode);
-			model.addAttribute("name",categoryDto.getName());
-			model.addAttribute("page",current_page);
-			model.addAttribute("dataCount",dataCount);
-			model.addAttribute("size",size);
-			model.addAttribute("total_page",total_page);
-			model.addAttribute("paging",paging);
+			// 페이징처리부분
+//			String cp = req.getContextPath();
+//			String listUrl = cp + "/product/category?categoryName=" + categoryName;
+//			String paging = paginateUtil.paging(current_page, total_page, listUrl);
+
+//			System.out.println("listUrl : " + listUrl);
+//			System.out.println("paging : " + paging);
+//			
+			response.put("list", list);
+			response.put("categoryName", categoryName);
+            response.put("categoryCode", categoryCode);
+            response.put("name", categoryDto.getName());
+            response.put("page", current_page);
+            response.put("dataCount", dataCount);
+            response.put("size", size);
+            response.put("total_page", total_page);
+//            response.put("paging", paging);
+
 			
 		} catch (NullPointerException e) {
+			log.info("main NullPointerException : ", e  );
 		} catch (Exception e) {
-			log.info("main : ", e  );
+			log.info("main Exception : ", e  );
+		    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
 		}
+		return ResponseEntity.ok(response);
 		
-		return "product/category";
 	}
 
 }

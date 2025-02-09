@@ -16,8 +16,9 @@
 		JOIN productCategory c ON p.categoryCode = c.categoryCode
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.SOLDOUT = 0 AND p.categorycode = 7
-		ORDER BY modified DESC
+		WHERE p.SOLDOUT = 30 AND p.categoryCode = #{categoryCode}
+		ORDER BY p.upload DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 
 	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.model.MainProduct">

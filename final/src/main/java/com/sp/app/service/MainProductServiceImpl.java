@@ -40,7 +40,7 @@ public class MainProductServiceImpl implements MainProductService{
 			for(MainProduct dto : list) {
 				discountPrice = 0;
 				if(dto.getDiscount()>0) {
-					discountPrice = (int)(dto.getPrice() * dto.getDiscount());
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
 				}
 				dto.setSalePrice(dto.getPrice() - discountPrice);
 			}
@@ -63,13 +63,13 @@ public class MainProductServiceImpl implements MainProductService{
 	}
 
 	@Override
-	public MainProduct findByCategoryId(long categoryCode) {
-		MainProduct dto = null;
+	public MainProduct findByCategoryId(int categoryCode) {
+		MainProduct dto = new MainProduct();
 		
 		try {
-			mapper.findByCategoryId(categoryCode);
+			dto = mapper.findByCategoryId(categoryCode);
 		} catch (Exception e) {
-
+			log.info("MainProductServiceImpl : ", e  );
 		}
 		return dto;
 	}
