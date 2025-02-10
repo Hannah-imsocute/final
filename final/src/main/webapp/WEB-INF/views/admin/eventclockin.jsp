@@ -7,7 +7,7 @@
 			<label for="eventName" class="col-form-label">이벤트명 입력해주세요</label>
 		</div>
 		<div class="col-auto">
-			<input type="text" id="eventName" class="form-control">
+			<input type="text" id="eventName" name="eventName" class="form-control">
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
@@ -15,7 +15,7 @@
 			<label for="daypoint" class="col-form-label">일일 적립 포인트를 입력해주세요</label>
 		</div>
 		<div class="col-auto">
-			<input type="text" id="daypoint" class="form-control">
+			<input type="text" id="daypoint" name="daypoint" class="form-control">
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
@@ -23,7 +23,7 @@
 			<label for="weeklypoint" class="col-form-label">7일연속 출석 적립 포인트를 입력해주세요</label>
 		</div>
 		<div class="col-auto">
-			<input type="text" id="weeklypoint" class="form-control">
+			<input type="text" id="weeklypoint" name="weeklypoint" class="form-control">
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
@@ -31,7 +31,7 @@
 			<label for="monthlypoint" class="col-form-label">한달 연속 출석 적립 포인트를 입력해주세요</label>
 		</div>
 		<div class="col-auto">
-			<input type="text" id="monthlypoint" class="form-control">
+			<input type="text" id="monthlypoint" name="monthlypoint" class="form-control">
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
@@ -39,7 +39,7 @@
 			<label for="couponStart" class="col-form-label">시작일</label>
 		</div>
 		<div class="col-auto">
-			<input type="date" id="couponStart" class="form-control">
+			<input type="date" id="eventStart" name="eventStart" class="form-control">
 		</div>
 	</div>
 	<div class="row g-3 align-items-center eachinput">
@@ -47,7 +47,7 @@
 			<label for="couponEnd" class="col-form-label">종료일</label>
 		</div>
 		<div class="col-auto">
-			<input type="date" id="couponEnd" class="form-control">
+			<input type="date" id="eventEnd" name="eventEnd" class="form-control">
 		</div>
 	</div>
 

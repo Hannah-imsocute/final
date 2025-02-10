@@ -39,7 +39,7 @@
 			<label for="couponValid" class="col-form-label">유효기간</label>
 		</div>
 		<div class="col-auto">
-			<input type="text" id="couponValid" name="couponValid" class="form-control">
+			<input type="text" id="couponValid" name="couponValid" class="form-control" >
 		</div>
 	</div>
 </div>

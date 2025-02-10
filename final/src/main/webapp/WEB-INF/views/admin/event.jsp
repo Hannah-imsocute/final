@@ -105,6 +105,7 @@ tbody td {
 			<div class="btn-cover">
 				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
 					data-bs-target="#staticBackdrop">이벤트 등록</button>
+				<button type="button" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/adminevent/posting'">이벤트 게시글 등록</button>
 			</div>
 			<div class="eventList">
 				<table>
@@ -161,10 +162,6 @@ tbody td {
 							<input class="form-check-input" type="radio" name="chk" id="chk2">
 							<label class="form-check-label" for="chk2"> 출석체크 이벤트 등록 </label>
 						</div>
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="chk" id="chk3">
-							<label class="form-check-label" for="chk3"> 댓글 이벤트 등록 </label>
-						</div>
 					</div>
 					<form action="" name="chkForm">
 						<div class="content1" style="display: none;">
@@ -179,7 +176,7 @@ tbody td {
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
+					<button type="button" class="btn btn-secondary modalClosebtn"
 						data-bs-dismiss="modal">닫기</button>
 					<button type="button" class="btn btn-primary submit"
 						onclick="submitContents()" data-chk="chk1">등록</button>
@@ -249,50 +246,141 @@ tbody td {
 			let chk = $('button.submit').attr('data-chk');
 			
 			if(chk === 'chk1'){
+				if(checkCouponValid()){
+				
+					let name = $('input[name="couponName"]').val();
+					let rate = $('input[name="couponRate"]').val();
+					let start = $('input[name="couponStart"]').val();
+					let end = $('input[name="couponEnd"]').val();
+					let valid = $('input[name="couponValid"]').val();
+					
+					let url = '${pageContext.request.contextPath}/adminevent/coupon';
+					let param = {name : name , rate : rate ,start : start , end : end,valid : valid};
+				
+					const returnfn = function (resp) {
+						$('.modalClosebtn').trigger('click');
+						//$('.modalClosebtn').modal('hide');
+						console.log(resp.state);
+					}
+				
+					ajaxRequest(url,'post',param,'json', returnfn)
+				}
+
+			}else if(chk === 'chk2'){
+				
+				if( checkClockEvent()){
+					
+					let eventName = $('input[name="eventName"]').val();
+					let daypoint = $('input[name="daypoint"]').val();
+					let weeklypoint = $('input[name="weeklypoint"]').val();
+					let monthlypoint = $('input[name="monthlypoint"]').val();
+					let eventStart = $('input[name="eventStart"]').val();
+					let eventEnd = $('input[name="eventEnd"]').val();
+					
+					let url = '${pageContext.request.contextPath}/adminevent/clockin';
+					let param = {eventName : eventName ,  daypoint : daypoint, weeklypoint : weeklypoint, monthlypoint : monthlypoint, eventstart : eventStart , eventend : eventEnd };
+				
+					const eventCallback = function (data) {
+						$('.modalClosebtn').trigger('click');
+						//$('.modalClosebtn').modal('hide');
+						console.log(data.state);
+					}
+					
+					ajaxRequest(url, 'post', param, 'json', eventCallback);
+				}
+			}
+			
+		};
+		
+			function checkCouponValid() {
 				let name = $('input[name="couponName"]').val();
 				let rate = $('input[name="couponRate"]').val();
 				let start = $('input[name="couponStart"]').val();
 				let end = $('input[name="couponEnd"]').val();
 				let valid = $('input[name="couponValid"]').val();
+
+				let startdate = new Date(start);
+				let enddate = new Date(end);
 				
-				let url = '${pageContext.request.contextPath}/adminevent/coupon';
-				let param = {name : name , rate : rate ,start : start , end : end,valid : valid};
-				
-				const returnfn = function (resp) {
-					console.log(resp.state);
+				if(! name){
+					alert('쿠폰명을 입력해주세요');
+					$('input[name="couponName"]').focus();
+					return false;
+				}
+				if(! rate){
+					alert('할인율을 입력해주세요');
+					$('input[name="couponRate"]').focus();
+					return false;
+				}else if( ! /^\d+(\.\d)?$/.test(rate)){
+					alert('할인율은 소수점 한자리까지만 지정가능합니다.');
+				}
+				if(! start){
+					alert('시작일을 지정해주세요');
+					$('input[name="couponStart"]').focus();
+					return false;
+					
+				}else if(startdate > enddate) {
+					alert('시작일이 종료일보다 클 수 없습니다.');
+					return false;
 				}
 				
-				ajaxRequest(url,'post',param,'json', returnfn)
-			}else if(chk === 'chk2'){
+				if(! end){
+					alert('종료일을 지정해주세요');
+					$('input[name="couponEnd"]').focus();
+					return false;
+				}
 				
-			}else if(chk === 'chk3'){
-				
-			}			
+				if(! valid){
+					alert('유효기간을 입력해주세요');
+					$('input[name="couponValid"]').focus();
+					return false;
+				}
+				return true;
+			}
 			
-		};
+			function checkClockEvent() {
+				let eventName = $('input[name="eventName"]').val();
+				let daypoint = $('input[name="daypoint"]').val();
+				let weeklypoint = $('input[name="weeklypoint"]').val();
+				let monthlypoint = $('input[name="monthlypoint"]').val();
+				let eventStart = $('input[name="eventStart"]').val();
+				let eventEnd = $('input[name="eventEnd"]').val();
+				
+				if(! eventName){
+					alert('이벤트 명을 입력해주세요.');
+					$('input[name="eventName"]').focus();
+					return false;
+				}
+				if(! daypoint){
+					alert('일일 적립포인트를 입력해주세요.');
+					$('input[name="daypoint"]').focus();
+					return false;
+				}
+				if(! weeklypoint){
+					alert('주간 적립 포인트를 입력해주세요.');
+					$('input[name="weeklypoint"]').focus();
+					return false;
+				}
+				if(! monthlypoint){
+					alert('월간 적립 포인트를 입력해주세요.');
+					$('input[name="monthlypoint"]').focus();
+					return false;
+				}
+				if(! eventStart){
+					alert('시작일을  지정해주세요.');
+					$('input[name="eventStart"]').focus();
+					return false;
+				}
+				if(! eventEnd){
+					alert('종료일을 지정해주세요.');
+					$('input[name="eventEnd"]').focus();
+					return false;
+				}
+				
+				return true;
+			}
 		
 	</script>
-	<script type="text/javascript">
-	/*
-	$('#staticBackdrop').on('shown.bs.modal', function () {
-		var oEditors = [];
-			nhn.husky.EZCreator
-					.createInIFrame({
-						oAppRef : oEditors,
-						elPlaceHolder : 'eventContent',
-						sSkinURI : '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
-						fCreator : 'createSEditor2',
-						fOnAppLoad : function() {
-							oEditors.getById['eventContent'].setDefaultFont('돋움',
-									12);
-						},
-					});
-		function submitContents(elClickedObj) {
-			oEditors.getById['eventContent'].exec('UPDATE_CONTENTS_FIELD', []);
-			elClickedObj.submit();
-		}
-	})
-	*/
-	</script>
+
 </body>
 </html>
