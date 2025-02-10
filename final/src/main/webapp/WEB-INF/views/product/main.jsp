@@ -87,16 +87,13 @@
 	        <div class="main-panel">
 	            <h5 class="main-top-name">카테고리별 메인페이지입니다</h5>
 	            <br>
-	            <div class="product-list" id="product-list">
+	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0">
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
 	                
-	            </div>
-	            
-	            <button id="loadMore">작품 더보기</button>
+	           </div>
+	            <button id="loadMore" data-page ="${page}" >작품 더보기</button>
 	        </div>
-	        
-	        
-			
+	
 		</div>
 	</main>
 </body>
@@ -110,12 +107,20 @@ $(document).ready(function() {
         var $this = $(this);
         var categoryName = $this.attr('data-categoryName'); // 선택한 카테고리 가져오기
         var topName = $this.find('a').text().trim(); // 카테고리명 가져오기
+        var page = parseInt($this.attr('data-page'), 10); // 페이지 가져오기
+
+        if(isNaN(page)){
+        	page = 1;
+        	$this.attr('data-page', page)
+        }
+        alert("categoryName : " + categoryName); // categoryName 확인
+        alert("page : " + page); // page 확인
         
         // .../product/category?categoryName=bakery
         $.ajax({
             url: '/product/category',  // Spring Boot 서버 엔드포인트
             method: 'GET',
-            data: { categoryName: categoryName },  // 요청 데이터
+            data: { categoryName: categoryName, page:page },  // 요청 데이터
             dataType: 'json',
             success: function(response) {
                 var productList = $('#product-list');
@@ -128,22 +133,21 @@ $(document).ready(function() {
                 if (response && Array.isArray(response.list)) {
                     $.each(response.list, function(arrayIndex, arrayKey) {
                     	alert("arrayKey.item : " + arrayKey.item );
-                        productList.append('<div class="product-price">'     + arrayKey.price     + '</div>');
-                        productList.append('<div class="product-discount">'  + arrayKey.discount  + '</div>');
-                        productList.append('<div class="product-item">'      + arrayKey.item      + '</div>');
-                        productList.append('<div class="product-salePrice">' + arrayKey.salePrice + '</div>');
-                        productList.append('<div class="product-thumbnail">' + arrayKey.thumbnail + '</div>');
-                    });
+                    	
+                    	productList.append('<div class="product-thumbnail">' + arrayKey.thumbnail + '</div>');
+                        productList.append('<div class="product-list">');
+                        productList.append('  <div class="product-brandName">'      + arrayKey.brandName      + '</div>');
+                        productList.append('  <div class="product-item">'      + arrayKey.item      + '</div>');
+                        productList.append('  <div class="product-price">'     + Number(arrayKey.price).toLocaleString()    + '원 </div>');
+                        productList.append('  <div class="product-discount">'  + arrayKey.discount  + '%</div>');
+                        productList.append('  <div class="product-salePrice">' + Number(arrayKey.salePrice).toLocaleString() + '원</div>');
+                        productList.append('</div>');
+                        	});
+
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
                 }
 
-                // 페이지네이션 정보 갱신
-                //$('#pagination').html(response.paging || '');
-
-                // 현재 페이지 및 카테고리 업데이트
-                //window.currentPage = response.page || 1;
-                //window.currentCategory = categoryName;
             },
             error: function(xhr, status, error) {
                 alert('상품 정보를 불러오는 데 실패했습니다.');
@@ -151,28 +155,26 @@ $(document).ready(function() {
             }
         });
     });
-    
-    /*
-    $('#loadMore').on('click', function(event) {
-    	alert("버튼 클릭 테스트");
-        var productList = $('#product-list');
-        productList.append('<div class="product-price">'     + "test"  + '</div>');
-        productList.append('<div class="product-discount">'  + "test"  + '</div>');
-        productList.append('<div class="product-item">'      + "test"  + '</div>');
-        productList.append('<div class="product-salePrice">' + "test"  + '</div>');
-        productList.append('<div class="product-thumbnail">' + "test"  + '</div>');
-    	// ajax 호출
-    });
-    
-    */
-    $('#loadMore').on('click', function(event) {
-        $('.left-menu ul li').on('click', function(event) {
-            event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
 
+    $('#loadMore').on('click', function(event) {
+       event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
             var $this = $(this);
             var categoryName = $this.attr('data-categoryName'); // 선택한 카테고리 가져오기
-            var page = "" ;
             
+            if (!categoryName || categoryName.trim() === "") {
+                categoryName = "bakery"; // 기본값 설정 (필요에 따라 변경)
+                $this.attr('data-categoryName', categoryName); // 버튼 속성 업데이트
+            }      
+          
+            var page = parseInt($this.attr('data-page'), 10);       
+            if(isNaN(page)){
+            	page = 2;
+            	$this.attr('data-page', page)
+            }
+            
+            alert("categoryName : " + categoryName); // categoryName 확인
+            alert("page : " + page); // page 확인
+
             $.ajax({
                 url: '/product/category',  // Spring Boot 서버 엔드포인트
                 method: 'GET',
@@ -186,29 +188,37 @@ $(document).ready(function() {
                     // 응답 데이터가 배열인지 확인 후 처리
                     if (response && Array.isArray(response.list)) {
                         $.each(response.list, function(arrayIndex, arrayKey) {
+                        
                         	alert("arrayKey.item : " + arrayKey.item );
-                            productList.append('<div class="product-price">'     + arrayKey.price     + '</div>');
-                            productList.append('<div class="product-discount">'  + arrayKey.discount  + '</div>');
-                            productList.append('<div class="product-item">'      + arrayKey.item      + '</div>');
-                            productList.append('<div class="product-salePrice">' + arrayKey.salePrice + '</div>');
-                            productList.append('<div class="product-thumbnail">' + arrayKey.thumbnail + '</div>');
-                        });
+                        	
+                        	productList.append('<div class="product-thumbnail">' + arrayKey.thumbnail + '</div>');
+                            productList.append('<div class="product-list">');
+                            productList.append('  <div class="product-brandName">'      + arrayKey.brandName      + '</div>');
+                            productList.append('  <div class="product-item">'      + arrayKey.item      + '</div>');
+                            productList.append('  <div class="product-price">'     + Number(arrayKey.price).toLocaleString()    + '원 </div>');
+                            productList.append('  <div class="product-discount">'  + arrayKey.discount  + '%</div>');
+                            productList.append('  <div class="product-salePrice">' + Number(arrayKey.salePrice).toLocaleString() + '원</div>');
+                            productList.append('</div>');
+                            	});
+                    
+                        if (page >= response.total_page) {
+                            alert("마지막 페이지입니다."); // 🚨 마지막 페이지 알림
+                            $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
+                        } else {
+                            var nextPage = page + 1;
+                            $this.attr('data-page', nextPage);
+                            alert("다음 페이지: " + nextPage);
+                        }
                     } else {
                         console.warn('올바른 상품 데이터가 아닙니다.');
                     }
 
-                    // 페이지네이션 정보 갱신
-                    //$('#pagination').html(response.paging || '');
-
-                    // 현재 페이지 및 카테고리 업데이트
-                    //window.currentPage = response.page || 1;
-                    //window.currentCategory = categoryName;
                 },
                 error: function(xhr, status, error) {
                     alert('상품 정보를 불러오는 데 실패했습니다.');
                     console.error(error, xhr.responseText);
                 }
-            });
+       
         });
         
     });

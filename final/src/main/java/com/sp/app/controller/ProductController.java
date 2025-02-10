@@ -67,14 +67,14 @@ public class ProductController {
 		        }
 
 		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
-	//		int size = 10;  // 페이지 당 포함 컨텐츠 수
+//			int size = 10;  // 페이지 당 포함 컨텐츠 수
 			int size = 1;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("categoryCode", categoryCode);
-			
+
 			System.out.println("categoryCode : " + categoryCode);
 			//카테고리 정보
 			MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
@@ -105,8 +105,8 @@ public class ProductController {
 //			
 			response.put("list", list);
 			response.put("categoryName", categoryName);
+			response.put("name", categoryDto.getCategoryName());
             response.put("categoryCode", categoryCode);
-            response.put("name", categoryDto.getName());
             response.put("page", current_page);
             response.put("dataCount", dataCount);
             response.put("size", size);

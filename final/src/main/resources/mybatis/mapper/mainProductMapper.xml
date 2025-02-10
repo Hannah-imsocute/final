@@ -11,7 +11,7 @@
 	
 	<select id="listMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
 	SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
-		       discount, m.nickname, THUMBNAIL
+		       discount, m.nickname, THUMBNAIL, s.brandname
 		FROM product p
 		JOIN productCategory c ON p.categoryCode = c.categoryCode
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code

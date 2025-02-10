@@ -11,6 +11,7 @@ import lombok.Setter;
 public class MainProduct {
 	private long productCode;
 	private long brandCode;
+	private String brandName;
 	private String item; //작품 명
 	private int price;
 	private double discount;
