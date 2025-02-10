@@ -154,6 +154,13 @@ body {
   font-size: 16px;
 }
 
+/* 사이드바 메뉴 스타일 */
+.sidebar-menu ul {
+    list-style: none; /* 기본 점(•) 제거 */
+    padding: 0; /* 기본 padding 제거 */
+    margin: 0; /* 기본 margin 제거 */
+}
+
 .sidebar-menu li a:hover {
   color: #ff6600;
 }

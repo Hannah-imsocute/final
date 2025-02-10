@@ -12,16 +12,12 @@
 		<td align="right">
 			<div class="wrap-search-check">
 				<div class="form-check-inline">
-					<input type="checkbox" id="enabledCheck1" class="form-check-input" ${enabled == '1' || enabled == '' ? "checked":""}>
-					<label class="form-check-label" for="enabledCheck1">활성</label>
+					<input type="checkbox" id="blockCheck1" class="form-check-input" ${block == '0' || block == '' ? "checked":""}>
+					<label class="form-check-label" for="blockCheck1">활성</label>
 				</div>
 				<div class="form-check-inline">
-					<input type="checkbox" id="enabledCheck2" class="form-check-input" ${enabled == '0' || enabled == '' ? "checked":""}>
-					<label class="form-check-label" for="enabledCheck2">비활성</label>
-				</div>
-				<div class="form-check-inline">
-					<input type="checkbox" id="nonMemberCheckbox" class="form-check-input" ${non == 1 ? "checked":""}>
-					<label class="form-check-label" for="nonMemberCheckbox">비회원 포함</label>
+					<input type="checkbox" id="blockCheck2" class="form-check-input" ${block == '1' || block == '' ? "checked":""}>
+					<label class="form-check-label" for="blockCheck2">비활성</label>
 				</div>
 			</div>
 		</td>
@@ -31,13 +27,13 @@
 <table class="table table-hover board-list">
 	<thead class="table-light">
 		<tr> 
-			<th width="70">번호</th>
-			<th width="130">아이디</th>
-			<th width="100">이름</th>
-			<th width="100">생년월일</th>
-			<th width="120">전화번호</th>
-			<th width="80">권한</th>
-			<th width="70">상태</th>
+			<th width="50">번호</th>
+			<th width="160">아이디</th>
+			<th width="80">이름</th>
+			<th width="130">생년월일</th>
+			<th width="150">전화번호</th>
+			<th width="100">권한</th>
+			<th width="100">상태</th>
 			<th>이메일</th>
 		</tr>
 	</thead>
@@ -46,21 +42,19 @@
 		<c:forEach var="dto" items="${list}" varStatus="status">
 			<tr class="hover" onclick="profile('${dto.memberIdx}', '${page}');"> 
 				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td>${dto.userId}</td>
-				<td>${dto.userName}</td>
-				<td>${dto.birth}</td>
-				<td>${dto.tel}</td>
+				<td>${dto.email}</td>
+				<td>${dto.nickname}</td>
+				<td>${dto.dob}</td>
+				<td>${dto.phone}</td>
 				<td>
 					<c:choose>
 						<c:when test="${dto.authority=='USER'}">회원</c:when>
-						<c:when test="${dto.authority=='INSTRUCTOR'}">강사</c:when>
-						<c:when test="${dto.authority=='INACTIVE'}">비회원</c:when>
-						<c:when test="${dto.authority=='EMP'}">사원</c:when>
-						<c:when test="${dto.authority=='EX_EMP'}">퇴사</c:when>
+						<c:when test="${dto.authority=='AUTHOR'}">작가</c:when>
+						<c:when test="${dto.authority=='ADMIN'}">관리자</c:when>
 						<c:otherwise>기타</c:otherwise>
 					</c:choose>
 				</td>
-				<td>${dto.enabled==1?"활성":"잠금"}</td>
+				<td>${dto.block==0?"활성":"차단"}</td>
 				<td>${dto.email}</td>
 			</tr>
 		</c:forEach>
@@ -79,10 +73,9 @@
 		<div class="row">
 			<div class="col-auto p-1">
 				<select id="searchType" name="schType" class="form-select">
-					<option value="userId"     ${schType=="userId" ? "selected":""}>아이디</option>
-					<option value="userName"   ${schType=="userName" ? "selected":""}>이름</option>
-					<option value="email"      ${schType=="email" ? "selected":""}>이메일</option>
-					<option value="tel"        ${schType=="tel" ? "selected":""}>전화번호</option>
+					<option value="email"     ${schType=="email" ? "selected":""}>아이디</option>
+					<option value="nickname"   ${schType=="nickname" ? "selected":""}>이름</option>
+					<option value="phone"        ${schType=="phone" ? "selected":""}>전화번호</option>
 				</select>
 			</div>
 			<div class="col-auto p-1">

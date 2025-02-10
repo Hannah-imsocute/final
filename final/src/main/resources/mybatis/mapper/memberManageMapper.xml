@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.MemberManageMapper">
+    <!-- 회원 리스트 -->
+	<sql id="search-conditions">
+		<choose>
+			<when test="schType == 'email'">
+				INSTR(m1.email, #{kwd}) &gt;= 1
+			</when>
+			<otherwise>
+				INSTR(${email}, #{kwd}) &gt;= 1
+			</otherwise>
+		</choose>
+	</sql>
+
+	<sql id="role-conditions">
+			<choose>
+				<when test="role == 1">
+					AND ( authority = 'USER' )
+				</when>
+				<when test="role == 2">
+					AND ( authority = 'AUTHOR' )
+				</when>
+				<when test="role == 3">
+					AND ( authority = 'ADMIN' )
+				</when>
+				<otherwise>
+					AND ( authority = 'USER' OR authority = 'maybeUser' )
+				</otherwise>
+			</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM member m1
+		LEFT OUTER JOIN roles m2 ON m1.memberIdx = m2.memberIdx
+		LEFT OUTER JOIN member_Info m3 ON m1.memberIdx = m3.memberIdx
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				<include refid="search-conditions"/>
+			</if>
+			<if test="block != ''">
+				AND block = #{block}
+			</if>
+			<include refid="role-conditions"/>
+		</where> 
+    </select>
+    
+	<select id="listMember" parameterType="map" resultType="com.sp.app.admin.model.MemberManage">
+    	SELECT m1.memberIdx, m1.email, m1.nickname, m2.name, m1.block, 
+			m1.reg_date, m1.lastmodified, m1.lastlogin,
+			m2.phone, TO_CHAR(dob, 'YYYY-MM-DD') dob,
+			NVL(authority, 'maybeUser') authority
+		FROM member m1
+		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx
+		LEFT OUTER JOIN roles m3 ON m1.memberIdx = m3.memberIdx
+		<where>
+			<if test="kwd != null and kwd !='' ">
+				<include refid="search-conditions"/>
+			</if>
+			<if test="block != '' ">
+				AND block = #{block}
+			</if>
+			<include refid="role-conditions"/>
+		</where> 
+		ORDER BY reg_date DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
+        SELECT m1.memberIdx, m1.nickname, m1.password, m3.authority, block,
+			m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount,
+			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
+			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
+			m1.email, m2.phone, 
+			m4.addname, m4.addtitle, m4.adddetail, m4.firstadd,
+			NVL(authority, 'maybeUser') authority
+		FROM member m1
+		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx
+		LEFT OUTER JOIN roles m3 ON m1.memberIdx = m3.memberIdx
+		LEFT OUTER JOIN member_address m4 ON m1.memberIdx = m4.memberIdx
+		WHERE m1.memberIdx = #{memberIdx}
+	</select>
+	
+	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.MemberManage">
+        SELECT m1.memberIdx, m1.nickname, m1.password, m3.authority, block,
+			m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount,
+			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
+			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
+			m1.email, m2.phone, 
+			m4.addname, m4.addtitle, m4.adddetail, m4.firstadd,
+			NVL(authority, 'maybeUser') authority
+		FROM member m1
+		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx
+		LEFT OUTER JOIN roles m3 ON m1.memberIdx = m3.memberIdx
+		LEFT OUTER JOIN member_address m4 ON m1.memberIdx = m4.memberIdx
+		WHERE m1.email = #{email}
+	</select>
+	
+	<update id="updateFailureCountReset" parameterType="Long">
+		UPDATE member SET failcount = 0
+		WHERE memberIdx = #{memberIdx}
+	</update>
+
+    <update id="updateMember1" parameterType="map">
+		UPDATE member SET nickname = #{nickname}, block = #{block}
+		WHERE memberIdx = #{memberIdx}
+    </update>
+    
+    <update id="updateMember2" parameterType="map">
+		UPDATE member_info SET dob=#{dob}
+		WHERE memberIdx = #{memberIdx}
+    </update>
+    
+    <update id="updateMemberEnabled" parameterType="map">
+		UPDATE member SET block = #{block}
+		WHERE memberIdx = #{memberIdx}
+    </update>
+    
+    <delete id="deleteMember1" parameterType="map">
+		DELETE FROM member
+		WHERE memberIdx = #{memberIdx}
+    </delete>
+    
+    <delete id="deleteMember2" parameterType="map">
+		DELETE FROM member_info
+		WHERE memberIdx = #{memberIdx}
+    </delete>
+     
+     <!-- 미정 
+	<insert id="insertMemberStatus" parameterType="com.sp.app.admin.model.MemberManage">
+		INSERT INTO memberStatus(num, memberIdx, statusCode, memo, registerId, reg_date)
+		VALUES (memberStatus_seq.NEXTVAL, #{memberIdx}, #{statusCode}, #{memo}, #{registerId}, SYSDATE)
+	</insert>
+	
+	
+	<select id="listMemberStatus" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
+		SELECT num, memberIdx, statusCode, memo, registerId, reg_date
+		FROM memberStatus
+		WHERE memberIdx = #{memberIdx}
+		ORDER BY num DESC
+	</select>
+
+	
+	<select id="findByStatus" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
+		SELECT num, memberIdx, statusCode, memo, registerId, reg_date
+		FROM memberStatus
+		WHERE memberIdx = #{memberIdx}
+		ORDER BY num DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	 협의 필요 -->
+	
+	<!-- 어쏘러티(권한) 테이블 --> 
+	<update id="updateAuthority" parameterType="map">
+		UPDATE roles SET authority = #{authority}
+		WHERE email = #{email}
+	</update>
+
+	<delete id="deleteAuthority" parameterType="map">
+		DELETE FROM roles
+		WHERE email = #{email}
+	</delete>
+</mapper>
