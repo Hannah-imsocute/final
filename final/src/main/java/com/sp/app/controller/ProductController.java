@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,8 +69,8 @@ public class ProductController {
 		        }
 
 		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
-//			int size = 10;  // 페이지 당 포함 컨텐츠 수
-			int size = 1;  // 페이지 당 포함 컨텐츠 수
+			int size = 10;  // 페이지 당 포함 컨텐츠 수
+		//	int size = 1;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
@@ -104,8 +106,7 @@ public class ProductController {
 //			System.out.println("paging : " + paging);
 //			
 			response.put("list", list);
-			response.put("categoryName", categoryName);
-			response.put("name", categoryDto.getCategoryName());
+			response.put("categoryName", categoryName);		
             response.put("categoryCode", categoryCode);
             response.put("page", current_page);
             response.put("dataCount", dataCount);
@@ -123,5 +124,24 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 		
 	}
+	
+	public String detailRepquest(@PathVariable("productCode") long productCode,
+			Model model) throws Exception{
+		try {
+			//상품
+			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
+		
+		    model.addAttribute("dto", dto);
+			
+		    return "product/detail";
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return "redirect:/product/main";
+	}
+	
+	
 
 }

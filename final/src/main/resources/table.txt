@@ -532,11 +532,12 @@ CONSTRAINT PK_PROFILE_PHOTO PRIMARY KEY (MEMBERIDX)
 -- PAYBYMETHOD							
 -------------------------------------------------------------------------------							
 CREATE TABLE PAYBYMETHOD (							
-ORDER_CODE   NUMBER        NOT NULL,							
-MEMBERIDX    NUMBER        NOT NULL,							
-BYMETHOD     VARCHAR2(100) NOT NULL,							
-COMFIRMCODE  VARCHAR2(100) NOT NULL,							
-PROVIDER     VARCHAR2(100) NOT NULL,							
+MEMBERIDX    NOT NULL NUMBER        
+BYMETHOD     NOT NULL VARCHAR2(100) 
+COMFIRMCODE  NOT NULL VARCHAR2(100) 
+PROVIDER              VARCHAR2(100) 
+COMFIRM_DATE          DATE          
+CARDNUMBER            NUMBER        							
 CONSTRAINT PK_PAYBYMETHOD PRIMARY KEY (ORDER_CODE)							
 );							
 							
@@ -574,7 +575,7 @@ CREATE TABLE EVENT_NOTICE (
 EVT_NOT_NUM  NUMBER         NOT NULL,							
 ADMINIDX     NUMBER         NOT NULL,							
 SUBJECT      VARCHAR2(500)  NOT NULL,							
-TEXTCONTENT  VARCHAR2(4000) NOT NULL,							
+TEXTCONTENT  CLOB NOT NULL,							
 FIXED        NUMBER(1)      NOT NULL,							
 CREATE_DATE  DATE           NOT NULL,							
 CATEGORY_NUM NUMBER         NOT NULL,							
@@ -710,7 +711,24 @@ CREATE TABLE liked_items(
 memberIdx   NUMBER   NOT NULL,					
 productCode NUMBER  NOT NULL,					
 CONSTRAINT pk_liked_items PRIMARY KEY (memberIdx, productCode)					
-)					
+)			
+
+		
+-------------------------------------------------------------------------------					
+- blockUser				
+					
+-------------------------------------------------------------------------------					
+					
+CREATE TABLE blockUser (
+    block_num NUMBER PRIMARY KEY NOT NULL, 
+    memberidx NUMBER NOT NULL,
+    reason  VARCHAR2(255) NOT NULL,
+    block_date DATE NOT NULL,
+    unblock_date DATE NULL
+) ;
+
+CREATE SEQUENCE seq_blockUser
+INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;					
 					
 					
 					

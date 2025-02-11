@@ -2,18 +2,18 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
-<h3 class="form-control-plaintext fs-6 fw-semibold"><i class="bi bi-chevron-double-right"></i> 회원 상세 정보</h3>
+<h3 class="form-control-plaintext fs-6 fw-semibold"><i class="bi bi-list"></i> 회원 상세 정보</h3>
 <table class="table table-bordered">
 	<tr>
-		<td class="bg-light col-sm-2">회원번호</td>
+		<td class="bg-light col-sm-2 fw-bold">회원번호</td>
 		<td class="col-sm-4">${dto.memberIdx}</td>
-		<td class="bg-light col-sm-2">아이디</td>
+		<td class="bg-light col-sm-2 fw-bold">아이디</td>
 		<td class="col-sm-4">${dto.email}</td>
 	</tr>
 	<tr>
-		<td class="bg-light col-sm-2">이 름</td>
+		<td class="bg-light col-sm-2 fw-bold">이 름</td>
 		<td class="col-sm-4">${dto.nickname}</td>
-		<td class="bg-light col-sm-2">권 한</td>
+		<td class="bg-light col-sm-2 fw-bold">권 한</td>
 		<td class="col-sm-4">
 			<c:choose>
 				<c:when test="${dto.authority=='USER'}">회원</c:when>
@@ -24,54 +24,49 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bg-light col-sm-2">생년월일</td>
+		<td class="bg-light col-sm-2 fw-bold">생년월일</td>
 		<td class="col-sm-4">${dto.dob}</td>
-		<td class="bg-light col-sm-2">나이</td>
+		<td class="bg-light col-sm-2 fw-bold">나이</td>
 		<td class="col-sm-4">${empty dto.dob ? '-' : dto.age}</td>
 	</tr>
 	<tr>
-		<td class="bg-light col-sm-2">이메일</td>
+		<td class="bg-light col-sm-2 fw-bold">이메일</td>
 		<td class="col-sm-4">${dto.email}</td>
+		<td class="bg-light col-sm-2 fw-bold">계정상태</td>
+		<td class="col-sm-4">${dto.block==0 ? "활성":"차단"}</td>
 	</tr>
 	<tr>
-		<td class="bg-light col-sm-2">가입일</td>
+		<td class="bg-light col-sm-2 fw-bold">가입일</td>
 		<td class="col-sm-4">${dto.reg_date}</td>
-		<td class="bg-light col-sm-2">최근수정일</td>
+		<td class="bg-light col-sm-2 fw-bold">최근수정일</td>
 		<td class="col-sm-4">${dto.lastModified}</td>
 	</tr>
 	<tr>
-		<td class="bg-light col-sm-2">최근로그인</td>
+		<td class="bg-light col-sm-2 fw-bold">최근로그인</td>
 		<td class="col-sm-4">${dto.lastLogin}</td>
-		<td class="bg-light col-sm-2">로그인실패</td>
+		<td class="bg-light col-sm-2 fw-bold">로그인실패</td>
 		<td class="col-sm-4">${dto.failCount}</td>
+
+
 	</tr>
+	 
 	<tr>
-		<td class="bg-light col-sm-2">계정상태</td>
-		<td class="col-sm-4">${dto.block==0 ? "활성":"차단"}</td>
-	</tr>
-	<!-- 
-	<tr>
-		<td class="bg-light col-sm-2">상태정보</td>
-		<td colspan="3">${memberStatus.memo}</td>
-	</tr>
-	 -->
-	<tr>
-		<td class="bg-light col-sm-2">주 소</td>
+		<td class="bg-light col-sm-2 fw-bold">주 소</td>
 		<td colspan="3">
 			${dto.addTitle}&nbsp;${dto.addDetail}
 		</td>
 	</tr>	
 </table>
 
-<table class="table table-borderless">
+<table class="table table-borderless bg-transparent">
 	<tr> 
-		<td class="text-end">
-			<button type="button" class="btn btn-light" onclick="statusDetailesMember();">계정상태</button>
+		<td class="text-end bg-transparent">
+			<button type="button" class="btn btn-warning fw-bold" onclick="statusDetailesMember();">계정상태</button>
 			<c:if test="${dto.authority =='USER' }">
-				<button type="button" class="btn btn-light" onclick="updateMember();">수정</button>
-				<button type="button" class="btn btn-light" onclick="deleteMember('${dto.memberIdx}');">삭제</button>
+				<button type="button" class="btn btn-warning fw-bold" onclick="updateMember();">수정</button>
+				<button type="button" class="btn btn-warning fw-bold" onclick="deleteMember('${dto.memberIdx}');">삭제</button>
 			</c:if>
-			<button type="button" class="btn btn-light" onclick="listMember('${page}');">리스트</button>
+			<button type="button" class="btn btn-warning fw-bold" onclick="listMember('${page}');">리스트</button>
 		</td>
 	</tr>
 </table>
@@ -108,30 +103,9 @@
 							<td class="bg-light">권한</td>
 							<td>
 								<select name="authority" class="form-select" style="width: 95%;">
-									<c:choose>
-										<c:when test="${dto.authority== 'USER'}">
 											<option value="USER" ${dto.authority=='USER' ? "selected":""}>일반회원</option>
-											<option value="INSTRUCTOR" ${dto.authority=='INSTRUCTOR' ? "selected":""}>강사</option>
-											<option value="INACTIVE" ${dto.authority=='INACTIVE' ? "selected":""}>비회원</option>
-											<c:if test="${sessionScope.member.userLevel > 90}">
-												<option value="EMP" ${dto.authority=='EMP' ? "selected":""}>사원</option>
-											</c:if>
-										</c:when>
-										<c:when test="${dto.authority == 'EX_EMP'}">
-											<option value="EX_EMP" ${dto.authority=='EX_EMP' ? "selected":""}>퇴사</option>
-											<c:if test="${sessionScope.member.userLevel > 90}">
-												<option value="EMP" ${dto.authority=='EMP' ? "selected":""}>사원</option>
-												<option value="USER" ${dto.authority=='USER' ? "selected":""}>일반회원</option>
-												<option value="INSTRUCTOR" ${dto.authority=='INSTRUCTOR' ? "selected":""}>강사</option>
-											</c:if>
-										</c:when>
-										<c:otherwise>
-											<option value="EMP" ${dto.authority=='EMP' ? "selected":""}>사원</option>
-											<c:if test="${sessionScope.member.userLevel > 90}">
-												<option value="EX_EMP" ${dto.authority=='EX_EMP' ? "selected":""}>퇴사</option>
-											</c:if>
-										</c:otherwise>
-									</c:choose>
+											<option value="AUTHOR" ${dto.authority=='AUTHOR' ? "selected":""}>작가</option>
+											<option value="ADMIN" ${dto.authority=='ADMIN' ? "selected":""}>관리자</option>
 								</select>
 							</td>
 						</tr>
@@ -171,8 +145,8 @@
 						<tr>
 							<td class="bg-light align-middle">계정상태</td>
 							<td>
-								<select name="statusCode" id="statusCode" class="form-select" onchange="selectStatusChange()">
-									<option value="">:: 상태코드 ::</option>
+								<select name="reason" id="reason" class="form-select" onchange="selectStatusChange()">
+									<option value="">:: 계정 상태 사유 ::</option>
 									<c:if test="${dto.block==1}">
 										<option value="0">잠금 해제</option>
 									</c:if>
@@ -186,16 +160,10 @@
 								</select>
 							</td>
 						</tr>
-						<tr>
-							<td class="bg-light align-middle">메 모</td>
-							<td>
-								<input type="text" name="memo" id="memo" class="form-control">
-							</td>
-						</tr>
 					</table>
 					<div class="text-end">
 						<input type="hidden" name="memberIdx" value="${dto.memberIdx}">
-						<input type="hidden" name="registerId" value="${sessionScope.member.userId}">
+						<input type="hidden" name="registerId" value="${sessionScope.member.nickname}">
 						
 						<button type="button" class="btn btn-light" onclick="updateStatusOk('${page}');">상태변경</button>
 					</div>
@@ -207,14 +175,14 @@
 						<tr>
 							<th>내용</th>
 							<th width="120">담당자</th>
-							<th width="180">등록일</th>
+							<th width="180">처리일</th>
 						</tr>
 					</thead>
 					
 					<tbody>
 						<c:forEach var="vo" items="${listStatus}">
 							<tr>
-								<td class="left">${vo.memo}</td>
+								<td class="left">${vo.reason}</td>
 								<td>${vo.registerId}</td>
 								<td>${vo.reg_date}</td>
 							</tr>

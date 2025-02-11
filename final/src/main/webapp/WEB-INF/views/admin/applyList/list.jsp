@@ -90,3 +90,70 @@
 		&nbsp;
 	</div>
 </div>
+
+
+<table class="table table-borderless bg-transparent">
+	<tr> 
+		<td class="text-end bg-transparent">
+			<button type="button" class="btn btn-warning fw-bold" onclick="statusDetailesMember();">계정상태</button>
+			<c:if test="${dto.authority =='USER' }">
+				<button type="button" class="btn btn-warning fw-bold" onclick="updateMember();">수정</button>
+				<button type="button" class="btn btn-warning fw-bold" onclick="deleteMember('${dto.memberIdx}');">삭제</button>
+			</c:if>
+			<button type="button" class="btn btn-warning fw-bold" onclick="listMember('${page}');">리스트</button>
+		</td>
+	</tr>
+</table>
+
+<!-- 수정 대화상자 -->
+<div class="modal fade" data-bs-backdrop="static" id="memberUpdateDialogModal" tabindex="-1" aria-labelledby="memberUpdateDialogModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="memberUpdateDialogModalLabel">회원정보수정</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			
+				<form name="memberUpdateForm" id="memberUpdateForm" method="post">
+					<table class="table write-form mb-1">
+						<tr>
+							<td width="110" class="bg-light">아이디</td>
+							<td><p class="form-control-plaintext">${dto.email}</p></td>
+						</tr>
+						<tr>
+							<td class="bg-light">이름</td>
+							<td>
+								<input type="text" name="userName" class="form-control" value="${dto.nickname}" style="width: 95%;">
+							</td>
+						</tr>
+						<tr>
+							<td class="bg-light">생년월일</td>
+							<td>
+								<input type="date" name="birth" class="form-control" value="${dto.dob}" style="width: 95%;">
+							</td>
+						</tr>
+						<tr>
+							<td class="bg-light">권한</td>
+							<td>
+								<select name="authority" class="form-select" style="width: 95%;">
+											<option value="USER" ${dto.authority=='USER' ? "selected":""}>일반회원</option>
+											<option value="AUTHOR" ${dto.authority=='AUTHOR' ? "selected":""}>작가</option>
+											<option value="ADMIN" ${dto.authority=='ADMIN' ? "selected":""}>관리자</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+					<div class="text-end">
+						<input type="hidden" name="memberIdx" value="${dto.memberIdx}">
+						<input type="hidden" name="email" value="${dto.email}">
+						<input type="hidden" name="block" value="${dto.block}">
+						
+						<button type="button" class="btn btn-light" onclick="updateMemberOk('${page}');">수정완료</button>
+					</div>
+				</form>
+			
+			</div>
+		</div>
+	</div>
+</div>

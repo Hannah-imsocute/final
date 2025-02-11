@@ -4,7 +4,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,15 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/admin/authList/*")
-public class MemberManageController {
+@RequestMapping("/admin/applyList/*")
+public class ApplyManageController {
 	private final MemberManageService service;
 	private final PaginateUtil paginateUtil;
 	
 	@GetMapping("")
 	public String memberManage(Model model) throws Exception {
 
-		return "admin/authList/authList";
+		return "admin/applyList/applyList";
 	}
 
 	// 회원 리스트 : AJAX-Text 응답
@@ -101,53 +100,7 @@ public class MemberManageController {
 			throw e;
 		}
 
-		return "admin/authList/list";
-	}
-	
-	// 회원상세 정보 : AJAX-Text 응답
-	@GetMapping("profile")
-	public String detaileMember(@RequestParam(name = "memberIdx") Long memberIdx, 
-			@RequestParam(name = "page") String page,
-			Model model,
-			HttpServletResponse resp) throws Exception {
-		
-		try {
-			MemberManage dto = Objects.requireNonNull(service.findById(memberIdx));
-			MemberManage memberStatus = service.findByStatus(memberIdx);
-			List<MemberManage> listStatus = service.listMemberStatus(memberIdx);
-
-			model.addAttribute("dto", dto);
-			model.addAttribute("memberStatus", memberStatus);
-			model.addAttribute("listStatus", listStatus);
-			model.addAttribute("page", page);
-			
-		} catch (NullPointerException e) {
-			resp.sendError(410);
-			throw e;
-		} catch (Exception e) {
-			resp.sendError(406);
-			throw e;
-		}
-
-		return "admin/authList/profile";
-	}
-
-	// 회원 정보 변경 : AJAX-JSON 응답
-	@ResponseBody
-	@PostMapping("updateMember")
-	public Map<String, ?> updateMember(@RequestParam Map<String, Object> paramMap) throws Exception {
-		Map<String, Object> model = new HashMap<>();
-
-		String state = "true";
-		try {
-			// 회원 정보 변경
-			service.updateMember(paramMap);
-		} catch (Exception e) {
-			state = "false";
-		}
-
-		model.put("state", state);
-		return model;
+		return "admin/applyList/list";
 	}
 
 	// 회원 상태 변경 : AJAX-JSON 응답
@@ -183,4 +136,5 @@ public class MemberManageController {
 		return model;
 	}
 	
+
 }

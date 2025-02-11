@@ -1,3 +1,4 @@
+
 package com.sp.app.model;
 
 import lombok.Getter;
@@ -11,7 +12,6 @@ import lombok.Setter;
 public class MainProduct {
 	private long productCode;
 	private long brandCode;
-	private String brandName;
 	private String item; //작품 명
 	private int price;
 	private double discount;
@@ -28,6 +28,5 @@ public class MainProduct {
 	//상품 카테고리
 	private String name; //상품카테고리 이름
 	private int ParentCategoryCode; //상품 상위카테고리
-	
 
 }

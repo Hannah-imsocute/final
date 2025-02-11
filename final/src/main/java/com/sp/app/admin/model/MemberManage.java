@@ -36,7 +36,7 @@ public class MemberManage {
 	private String rt_value;	
 	
 	private long num;
-	private int statusCode;
-	private String memo;
+	private int reason;
+	private String block_date;
 	private String registerId;
 }

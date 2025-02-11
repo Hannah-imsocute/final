@@ -58,13 +58,13 @@
                     <tbody>
                     <c:forEach var="dto" items="${list}" varStatus="status">
                         <tr class="clickable"
-                            onclick="location.href='${pageContext.request.contextPath}/admin/order/orderManage/${itemId}/${dto.orderNum}?${query}';">
-                            <td>${dto.orderNum}</td>
+                            onclick="location.href='${pageContext.request.contextPath}/artist/orderManage/${tebNum}/${dto.order_code}?${query}';">
+                            <td>${dto.order_code}</td>
                             <td>${dto.orderStateInfo}</td>
-                            <td>${dto.userName}</td>
-                            <td>${dto.orderDate}</td>
-                            <td><fmt:formatNumber value="${dto.payment}"/></td>
-                            <td>${itemId==110 ? dto.invoiceNumber : dto.totalQty}</td>
+                            <td>${dto.nickname}</td>
+                            <td>${dto.order_date}</td>
+                            <td><fmt:formatNumber value="${dto.netPay}"/></td>
+                            <td>${tebNum==110 ? dto.trackingNumber : dto.totalQty}</td>
                             <td>${dto.cancelRequestCount}</td>
                             <td>${dto.exchangeRequestCount}</td>
                             <td>${dto.detailCancelCount}</td>
