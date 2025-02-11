@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,6 +104,25 @@ public class AdminEventController {
 	@GetMapping("/posting")
 	public String writeForm() {
 		return "admin/eventList/eventwrite";
+	}
+	
+	@GetMapping("/eventlist/{eventType}")
+	@ResponseBody
+	public Map<String, Object> getEventList(@PathVariable("eventType") String eventType) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			if(eventType.equals("coupon")) {
+				
+			}else if( eventType.equals("checkin")) {
+				
+			}
+			
+		} catch (Exception e) {
+			log.info("getEventList : ", e);
+		}
+		map.put("state", eventType);
+		return map;
 	}
 	
 	@GetMapping("/report")

@@ -13,4 +13,14 @@
 		WHERE start_date &lt;= TO_DATE(#{today},'YYYY-MM-DD') AND expire_date &gt;= TO_DATE(#{today},'YYYY-MM-DD')
 	</select>
 	
+	<select id="getValidClockin" resultType="com.sp.app.admin.model.ClockinEvent">
+	SELECT clockin_num, event_title, start_date, expire_date, daybyday, weekly, monthly FROM CLOCKIN_EVENT 
+		WHERE start_date &lt;= TO_DATE(#{today},'YYYY-MM-DD') AND expire_date &gt;= TO_DATE(#{today},'YYYY-MM-DD') AND selected = 0 
+	</select>
+
+	<select id="listOfClockin" resultType="com.sp.app.admin.model.ClockinEvent">
+	SELECT clockin_num, event_title, start_date, expire_date, daybyday, weekly, monthly FROM CLOCKIN_EVENT 
+		WHERE start_date &lt;= TO_DATE(#{today},'YYYY-MM-DD') AND expire_date &gt;= TO_DATE(#{today},'YYYY-MM-DD') AND selected = 0 
+	</select>
+	
 </mapper>

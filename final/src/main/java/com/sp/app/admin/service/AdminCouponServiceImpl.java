@@ -62,7 +62,13 @@ public class AdminCouponServiceImpl implements AdminCouponService{
 		}
 		return list;
 	}
-
+	
+	@Override
+	public List<Coupon> getValidCoupons() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public void insertClockEvent(ClockinEvent dto) throws SQLException {
 		try {
@@ -82,6 +88,23 @@ public class AdminCouponServiceImpl implements AdminCouponService{
 
 		}
 		return dto;
+	}
+
+	@Override
+	public List<ClockinEvent> getValidClockin() {
+		List<ClockinEvent> list = null;
+		try {
+			list = clockeventMapper.getValidClockin();
+		} catch (Exception e) {
+			log.info("getValidClockin : ", e);
+		}
+		return list;
+	}
+
+	@Override
+	public List<ClockinEvent> listOfClockin() {
+		List<ClockinEvent> list = null;
+		return list;
 	}
 	
 	

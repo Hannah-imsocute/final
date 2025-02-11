@@ -11,4 +11,5 @@ import com.sp.app.admin.model.Coupon;
 public interface CouponMapper  {
 	public void insertCoupon(Coupon dto) throws SQLException;
 	public List<Coupon> getListOfCoupon();
+	public List<Coupon> getValidCoupons();
 }
