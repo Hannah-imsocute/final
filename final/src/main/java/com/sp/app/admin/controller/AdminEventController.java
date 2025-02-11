@@ -36,7 +36,7 @@ public class AdminEventController {
 		} catch (Exception e) {
 
 		}
-		return "admin/event";
+		return "admin/eventList/event";
 	}
 
 	@PostMapping("/coupon")
@@ -102,7 +102,7 @@ public class AdminEventController {
 	
 	@GetMapping("/posting")
 	public String writeForm() {
-		return "admin/eventwrite";
+		return "admin/eventList/eventwrite";
 	}
 	
 	@GetMapping("/report")
