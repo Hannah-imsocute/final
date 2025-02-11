@@ -198,7 +198,8 @@ $(document).ready(function() {
                         
                      //   	alert("arrayKey.item : " + arrayKey.item );
                      //   	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
-        
+        					alert("상품 코드 확인:" + arrayKey.productCode);
+
                         	productList.append('<div class="product-box">');
                            	productList.append(' <div class="product-thumbnail" data-productCode="' + arrayKey.productCode + '">');
                            	productList.append('     <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/' + arrayKey.thumbnail + '">');
@@ -237,21 +238,21 @@ $(document).ready(function() {
  
     });
     
- // .product-thumbnail은 AJAX 요청이 성공한 후 동적으로 추가되는 요소이기 때문에 이벤트 위임 방식으로 on()을 사용하여 .product-thumbnail 요소에 클릭 이벤트 위임
-    $('.product-list').on('click', '.product-thumbnail', function() {
-        let productCode = $(this).attr('data-productCode'); // 상품 코드 가져오기
-        alert("productCode : "+ productCode);
-        if (productCode) {
-        	let url = '${pageContext.request.contextPath}/product/' + productCode; // 상세 페이지 URL 생성
-      
-            location.href = url; // 페이지 이동
-        } else {
-            console.warn("⚠️ 상품 코드가 없습니다.");
-        }
-    }); 
+
 
 });
-    
+
+
+$(document).on("click", ".thumbnail-img", function() {
+	let productCode = $(this).closest(".product-thumbnail").data("productCode"); 
+    if (!productCode) {
+        console.warn("상품 코드가 없습니다.", $(this).closest(".product-thumbnail"));
+        alert("상품 코드가 없습니다.");
+        return;
+    }
+    // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
+    window.location.href = "/product/detail?productCode=" + productCode;
+});
 
 
 </script>

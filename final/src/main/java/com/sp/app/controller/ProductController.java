@@ -45,7 +45,7 @@ public class ProductController {
 		return mav;
 	}
 	
-	@GetMapping("category")
+	@GetMapping("category") 
 	public ResponseEntity<Map<String, Object>> category(
 			@RequestParam(name = "categoryName") String categoryName,
 			@RequestParam(name = "page", defaultValue = "1") int current_page, 
@@ -124,22 +124,24 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 		
 	}
-	
-	public String detailRepquest(@PathVariable("productCode") long productCode,
+
+	@GetMapping("detail")
+	public String detailRepquest(@RequestParam("productCode") long productCode,
 			Model model) throws Exception{
 		try {
 			//상품
-			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
-		
-		    model.addAttribute("dto", dto);
-			
-		    return "product/detail";
-			
+//			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
+//		
+//		    model.addAttribute("dto", dto);
+//
+			System.out.println("detailRepquest ########## ");
+		} catch (NullPointerException e) {
+			log.info("detailRepquest NullPointerException : ", e  );
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.info("detailRepquest Exception : ", e  );
 		}
+		return "product/detail";
 		
-		return "redirect:/product/main";
 	}
 	
 	
