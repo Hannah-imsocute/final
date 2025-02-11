@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.artist.mapper.OrderManageMapper">
+        <sql id="tebNum-list">
+            <choose>
+                <when test="tepNum == 100">
+                   ( oi.orderState = 0 OR oi.orderState  =1 OR oi.orderState =7 OR oi.orderState=9)
+                </when>
+                <when test="tebNum == 110">
+                    (oi.orderState &gt;= 2  AND oi.orderState &lt;= 5)
+                </when>
+
+            </choose>
+        </sql>
+
+            <sql id="search-list">
+                <choose>
+                    <when test="schType == 'orderNum' ">
+                        ( po.orderNum  = #{kwd} )
+                    </when>
+                    <when test="schType == 'invoiceNumber' ">
+                        ( invoiceNumber  = #{kwd} )
+                    </when>
+                    <when test="schType == 'orderDate' ">
+                        ( TO_CHAR(orderDate, 'YYYYMMDD') = #{kwd}
+                        OR TO_CHAR(orderDate, 'YYYY-MM-DD') = #{kwd} )
+                    </when>
+                    <when test="schType == 'userName'">
+                        INSTR(userName, #{kwd}) &gt; 0
+                    </when>
+                </choose>
+            </sql>
+    <select id="orderCount" parameterType="map" resultType="Integer">
+        SELECT NVL(COUNT(*),0)
+        FROM product_order po
+        LEFT OUTER JOIN member m on po.memberIdx=m.memberIdx
+        <where>
+            <include refid="tebNum-list"/>
+            <if test="kwd!=null and kwd!=''">
+                AND <include refid="search-list"></include>
+            </if>
+        </where>
+    </select>
+
+<!--  통합검색    주문리스트 -->
+    <select id="listOrder" parameterType="map" resultType="com.sp.app.artist.model.OrderManage">
+        SELECT po.order_Code,po.memberIdx,NVL(nickname,'무닉네임')nickname,TOTAL_PRICE,
+               COUPONVALUE,SPENTPOINT,oi.SHIPPING,NETPAY,TO_CHAR(ORDER_DATE,'YYYY-MM-DD HH24:MI')order_Date,
+               ORDER_STATE,p.COMPANY_NAME,p.TRACKINGNUMBER,
+               NVL(totalOrderCount, 0) totalOrderCount, NVL(totalQty, 0) totalQty,
+               NVL(cancelRequestCount, 0) cancelRequestCount,
+               NVL(exchangeRequestCount, 0) exchangeRequestCount,
+               NVL(detailCancelCount, 0) detailCancelCount
+        FROM PRODUCT_ORDER po JOIN ORDER_ITEM oi ON po.ORDER_CODE = oi.ORDER_CODE
+                              JOIN PACKAGE p  ON p.MEMBERIDX = po.MEMBERIDX
+                              LEFT OUTER JOIN MEMBER m ON PO.MEMBERIDX = m.MEMBERIDX
+                              LEFT OUTER JOIN (
+            SELECT ORDER_CODE,COUNT(*) totalOrderCount,SUM(amount) totalQty,
+                   COUNT(DECODE(ORDER_STATE,4,1,10,1,11,1)) cancelRequestCount,
+                   COUNT(DECODE(ORDER_STATE,6,1,7,1)) exchangeRequestCount,
+                   COUNT(DECODE(ORDER_STATE,3,1,5,1,12,1)) detailCancelCount
+
+            FROM ORDER_ITEM
+            GROUP BY ORDER_CODE
+        ) od ON po.ORDER_CODE = od.ORDER_CODE
+        <where>
+            <include refid="tebNum-list"/>
+            <if test="kwd!=null and kwd!=''">
+                AND <include refid="search-list"/>
+            </if>
+        </where>
+            ORDER BY po.ORDER_CODE DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+
+    </select>
+    
+    
+
+
+
+
+
+
+
+</mapper>
