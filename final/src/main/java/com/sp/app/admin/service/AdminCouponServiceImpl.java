@@ -1,11 +1,15 @@
 package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sp.app.admin.mapper.ClockEventMapper;
 import com.sp.app.admin.mapper.CouponMapper;
+import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdminCouponServiceImpl implements AdminCouponService{
 	
-	private final CouponMapper mapper;
+	private final CouponMapper couponMapper;
+	private final ClockEventMapper clockeventMapper;
 
 	@Override
 	public void insertCoupon(Coupon dto) throws Exception {
@@ -39,7 +44,7 @@ public class AdminCouponServiceImpl implements AdminCouponService{
 			
 			dto.setCoupon_code(sb.toString());
 			
-			mapper.insertCoupon(dto);
+			couponMapper.insertCoupon(dto);
 			
 		} catch (Exception e) {
 			log.info("=========insertCoupon : ", e);
@@ -51,11 +56,34 @@ public class AdminCouponServiceImpl implements AdminCouponService{
 	public List<Coupon> getListOfCoupon() {
 		List<Coupon> list = null;
 		try {
-			list = mapper.getListOfCoupon();
+			list = couponMapper.getListOfCoupon();
 		} catch (Exception e) {
 			log.info("===========getListOfCoupon : ", e);
 		}
 		return list;
 	}
+
+	@Override
+	public void insertClockEvent(ClockinEvent dto) throws SQLException {
+		try {
+			clockeventMapper.insertClockEvent(dto);
+		} catch (Exception e) {
+			log.info("========================insertClockEvent : ", e);
+			throw e; 
+		}
+	}
+
+	@Override
+	public ClockinEvent current_event(Date today) {
+		ClockinEvent dto = null;
+		try {
+			dto = clockeventMapper.current_event(today);
+		} catch (Exception e) {
+
+		}
+		return dto;
+	}
+	
+	
 	
 }

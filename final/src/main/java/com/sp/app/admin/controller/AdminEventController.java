@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
 import com.sp.app.admin.service.AdminCouponService;
 
@@ -63,6 +64,47 @@ public class AdminEventController {
 		return map;
 	}
 
+	// 출석체크 이벤트는 현재 진행 중인 출첵 이벤트가 있다면 중복으로 겹칠 수 없게 설정
+	// 현재 진행중인 출석체크 이벤트만 클라이언트에게 보여줌 
+	// 현재 진행중인 출석체크 이벤트를 어떻게 가져오지 // 오늘 날짜를 기준으로 eventstart =< today <= eventend
+	@ResponseBody
+	@PostMapping("/clockin")
+	public Map<String, Object> eventload(
+			@RequestParam(value = "eventName") String eventName,
+			@RequestParam(value = "daypoint") int daypoint,
+			@RequestParam(value = "weeklypoint") int weeklypoint,
+			@RequestParam(value = "monthlypoint") int monthlypoint,
+			@RequestParam(value = "eventstart") String eventstart,
+			@RequestParam(value = "eventend") String eventend
+			) {
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			ClockinEvent dto = ClockinEvent.builder()
+										.event_title(eventName)
+										.daybyday(daypoint)
+										.weekly(weeklypoint)
+										.monthly(monthlypoint)
+										.start_date(eventstart)
+										.expire_date(eventend).build();
+			service.insertClockEvent(dto);
+			
+		} catch (Exception e) {
+			map.put("state", "failed");
+		}
+		
+		map.put("state", "success");
+		
+		return map;
+	}
+	
+	
+	@GetMapping("/posting")
+	public String writeForm() {
+		return "admin/eventwrite";
+	}
+	
 	@GetMapping("/report")
 	public String reportMain() {
 		return "admin/report";
