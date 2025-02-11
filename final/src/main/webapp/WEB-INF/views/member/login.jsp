@@ -45,9 +45,9 @@
         <!-- form 태그에 login-form 클래스를 추가 -->
         <form name="loginForm" class="login-form" action="" method="post">
             <div class="section-title">이메일 로그인</div>
-            <input type="email" name="email" value = "test2@naver.com" placeholder="이메일" required />
+            <input type="email" name="email" placeholder="이메일" required />
             <div style="position: relative;">
-                <input type="password" name="pwd" value = "han123"  placeholder="비밀번호" style="padding-right: 40px;" required />
+                <input type="password" name="pwd"  placeholder="비밀번호" style="padding-right: 40px;" required />
                 <i class="fas fa-eye toggle-password" style="
                     position:absolute;
                     right:10px;
