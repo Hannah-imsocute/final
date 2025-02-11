@@ -161,17 +161,17 @@ public class MemberManageController {
 			// 회원 활성/비활성 변경
 			Map<String, Object> map = new HashMap<>();
 			map.put("memberIdx", dto.getMemberIdx());
-			if (dto.getStatusCode() == 0) {
-				map.put("enabled", 1);
+			if (dto.getReason() == 0) {
+				map.put("block", 0);
 			} else {
-				map.put("enabled", 0);
+				map.put("block", 1);
 			}
 			service.updateMemberEnabled(map);
 
 			// 회원 상태 변경 사항 저장
 			service.insertMemberStatus(dto);
 
-			if (dto.getStatusCode() == 0) {
+			if (dto.getReason() == 0) {
 				// 회원 패스워드 실패횟수 초기화
 				service.updateFailureCountReset(dto.getMemberIdx());
 			}
@@ -183,17 +183,4 @@ public class MemberManageController {
 		return model;
 	}
 	
-	// 회원 연령대별 인원수 : AJAX-JSON 응답
-	@ResponseBody
-	@GetMapping("memberAgeSection")
-	public Map<String, ?> memberAgeSection() throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
-
-		// 연령대별 인원수
-		List<Map<String, Object>> list = service.listAgeSection();
-
-		model.put("list", list);
-
-		return model;
-	}	
 }

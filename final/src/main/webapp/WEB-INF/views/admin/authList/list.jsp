@@ -2,14 +2,14 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 		
-<table class="table table-borderless mt-2 mb-0">
+<table class="table table-borderless mt-0 mb-0 bg-transparent">
 	<tr>
-		<td align="left" width="50%" valign="bottom">
+		<td align="left" width="50%" valign="bottom" class="bg-transparent">
 			<p class="form-control-plaintext p-0">
 				${dataCount}개(${page}/${total_page} 페이지)
 			</p>
 		</td>
-		<td align="right">
+		<td align="right" class="bg-transparent">
 			<div class="wrap-search-check">
 				<div class="form-check-inline">
 					<input type="checkbox" id="blockCheck1" class="form-check-input" ${block == '0' || block == '' ? "checked":""}>

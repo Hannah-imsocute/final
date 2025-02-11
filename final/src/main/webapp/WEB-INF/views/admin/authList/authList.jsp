@@ -13,7 +13,7 @@
 		border-radius: 0;
 		border-top: 1px solid #dbdddf;
 		border-right: 1px solid #dbdddf;
-		color: #333;
+		color: #5D5D5D;
 		font-weight: 600;
 	}
 	
@@ -22,8 +22,8 @@
 	}
 	
 	.nav-tabs .nav-link.active {
-		background: #3d3d4f;
-		color: #fff;
+		background: #ffc107;
+		color: #333;
 	}
 	
 	.tab-pane {
@@ -54,7 +54,7 @@
 								<button class="nav-link" id="tab-2" data-bs-toggle="tab"
 									data-bs-target="#nav-content" type="button" role="tab"
 									aria-selected="true" data-tab="2">
-									<i class="bi bi-mortarboard-fill"></i> 입점작가
+									<i class="bi bi-vector-pen"></i> 입점작가
 								</button>
 							</li>
 							<li class="nav-item" role="presentation">
@@ -66,7 +66,7 @@
 							</li>
 						</ul>
 
-						<div class="tab-content pt-3" id="nav-tabContent"></div>
+						<div class="tab-content pt-1" id="nav-tabContent"></div>
 
 						<form name="memberSearchForm">
 							<input type="hidden" name="schType" value="email"> 
@@ -126,7 +126,6 @@ function resetList() {
 	f.schType.value = 'email';
 	f.kwd.value = '';
 	f.role.value = role;
-	f.non.value = 0;
 	f.block.value = '';
 	
 	listMember(1);
@@ -194,19 +193,17 @@ function statusDetailesMember() {
 function selectStatusChange() {
 	const f = document.memberStatusDetailesForm;
 
-	let code = f.statusCode.value;
-	let memo = f.statusCode.options[f.statusCode.selectedIndex].text;
+	let code = f.reason.value;
 	
-	f.memo.value = '';	
 	if(! code) {
 		return;
 	}
 
 	if(code!=='0' && code!=='8') {
-		f.memo.value = memo;
+		f.reason.value = code;
 	}
 	
-	f.memo.focus();
+	f.reason.focus();
 }
 
 function updateMember() {
@@ -224,7 +221,7 @@ function updateMemberOk(page) {
     }
 
     if (f.authority.value === 'maybeUSer') {
-        f.block.value = '0';    
+        f.block.value = '1';    
     }
 
     if (!confirm('회원 정보를 수정하시겠습니까 ? ')) {
@@ -260,15 +257,9 @@ function updateStatusOk(page) {
     // 회원 상태 변경
     const f = document.memberStatusDetailesForm;
 
-    if (!f.statusCode.value) {
+    if (!f.reason.value) {
         alert('상태 코드를 선택하세요.');
-        f.statusCode.focus();
-        return;
-    }
-
-    if (!f.memo.value.trim()) {
-        alert('상태 메모를 입력하세요.');
-        f.memo.focus();
+        f.reason.focus();
         return;
     }
 
@@ -276,7 +267,7 @@ function updateStatusOk(page) {
         return;
     }
 
-    let url = '${pageContext.request.contextPath}/admin/memberManage/updateMemberStatus';
+    let url = '${pageContext.request.contextPath}/admin/authList/updateMemberStatus';
     let formData = $('#memberStatusDetailesForm').serialize();
 
     $.ajax({

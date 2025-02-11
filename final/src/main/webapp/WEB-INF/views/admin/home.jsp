@@ -11,7 +11,6 @@
 
     <!-- 공통 스타일 -->
     <jsp:include page="/WEB-INF/views/admin/adminimported.jsp"/>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/dist/css/layout/admin.css' />">
 </head>
 <body>
 
@@ -27,12 +26,6 @@
     <jsp:include page="/WEB-INF/views/${contentPage}" />
 </main>
 
-<script>
-    var contextPath = "<%= request.getContextPath() %>"; // JSP에서 contextPath를 JavaScript 변수로 전달
-</script>
-
-<!-- 동적 JS 파일 로드 -->
-<script src="<c:url value='/dist/js/layout/adminSidebar.js' />"></script>
-
 </body>
 </html>
+

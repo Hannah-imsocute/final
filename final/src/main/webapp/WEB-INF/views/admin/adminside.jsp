@@ -27,7 +27,6 @@
 		    <li><a class="menu-item" href="<c:url value='/admin/statsList' />">통계 및 보고</a></li>
 		</ul>
 	</div>
-
 </div>
 
-<script src="/dist/js/layout/app.js"></script>
+<script src="<c:url value='/dist/js/layout/adminSidebar.js' />"></script>

@@ -9,7 +9,7 @@
 				INSTR(m1.email, #{kwd}) &gt;= 1
 			</when>
 			<otherwise>
-				INSTR(${email}, #{kwd}) &gt;= 1
+				INSTR(${schType}, #{kwd}) &gt;= 1
 			</otherwise>
 		</choose>
 	</sql>
@@ -127,31 +127,28 @@
 		DELETE FROM member_info
 		WHERE memberIdx = #{memberIdx}
     </delete>
-     
-     <!-- 미정 
+      
 	<insert id="insertMemberStatus" parameterType="com.sp.app.admin.model.MemberManage">
-		INSERT INTO memberStatus(num, memberIdx, statusCode, memo, registerId, reg_date)
-		VALUES (memberStatus_seq.NEXTVAL, #{memberIdx}, #{statusCode}, #{memo}, #{registerId}, SYSDATE)
+		INSERT INTO blockUser (block_num, memberIdx, reason, registerId, block_date)
+		VALUES (seq_blockUser.NEXTVAL, #{memberIdx}, #{reason}, #{registerId}, SYSDATE)
 	</insert>
 	
 	
 	<select id="listMemberStatus" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
-		SELECT num, memberIdx, statusCode, memo, registerId, reg_date
-		FROM memberStatus
+		SELECT block_num, memberIdx, reason, registerId, block_date
+		FROM blockUser
 		WHERE memberIdx = #{memberIdx}
-		ORDER BY num DESC
+		ORDER BY block_num DESC
 	</select>
 
 	
 	<select id="findByStatus" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
-		SELECT num, memberIdx, statusCode, memo, registerId, reg_date
-		FROM memberStatus
+		SELECT block_num, memberIdx, reason, registerId, block_date
+		FROM blockUser
 		WHERE memberIdx = #{memberIdx}
-		ORDER BY num DESC
+		ORDER BY block_num DESC
 		FETCH FIRST 1 ROWS ONLY
 	</select>
-	
-	 협의 필요 -->
 	
 	<!-- 어쏘러티(권한) 테이블 --> 
 	<update id="updateAuthority" parameterType="map">

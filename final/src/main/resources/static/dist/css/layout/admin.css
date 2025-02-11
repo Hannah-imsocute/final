@@ -178,9 +178,12 @@ body {
   font-weight: 500;
   position: relative; /* 이미지가 오른쪽 끝에 위치하도록 설정 */
 }
+
 .menu-item:hover {
   background-color: #e9ecef;
 }
+
+
 .toggle-icon {
   width: 15px;
   height: 15px;
@@ -252,11 +255,6 @@ main {
 
 }
 
-/* 클릭된 메뉴에 대해 호버처럼 색이 들어가게 */
-.sidebar-menu li a.active {
-  background-color: #e9ecef;
-  color: #ff6600; /* 원하는 색으로 설정 */
-}
 
 /* 타이틀 달고 밑에 줄 */
 h3 {
@@ -283,3 +281,5 @@ html, body {
     height: calc(100% - 60px); /* 타이틀 높이를 제외한 콘텐츠 영역만 스크롤 */
     overflow-y: auto;  /* 세로 스크롤이 필요한 경우에만 표시 */
 }
+
+
