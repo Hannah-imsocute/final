@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.ApplyManageMapper">
+    <!-- 회원 리스트 -->
+	<sql id="search-conditions">
+		<choose>
+			<when test="schType == 'email'">
+				INSTR(m1.email, #{kwd}) &gt;= 1
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt;= 1
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT COUNT(*)
+		FROM seller_apply
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				<include refid="search-conditions"/>
+			</if>
+		</where> 
+    </select>
+    
+	<select id="listApply" parameterType="map" resultType="com.sp.app.admin.model.ApplyManage">
+    	SELECT *
+		FROM seller_apply
+		<where>
+			<if test="kwd != null and kwd !='' ">
+				<include refid="search-conditions"/>
+			</if>
+			<if test="block != '' ">
+				AND block = #{block}
+			</if>
+		</where> 
+		ORDER BY seller_apply_num DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.ApplyManage">
+
+	</select>
+	
+	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.ApplyManage">
+
+	</select>
+	
+	<update id="updateFailureCountReset" parameterType="Long">
+
+	</update>
+
+    <update id="updateMember1" parameterType="map">
+
+    </update>
+    
+    <update id="updateMember2" parameterType="map">
+
+    </update>
+    
+    <update id="updateMemberEnabled" parameterType="map">
+
+    </update>
+    
+    <delete id="deleteMember1" parameterType="map">
+
+    </delete>
+    
+    <delete id="deleteMember2" parameterType="map">
+
+    </delete>
+      
+	<insert id="insertApply" parameterType="com.sp.app.admin.model.ApplyManage">
+	INSERT INTO seller_apply (seller_apply_num, name, email, phone, brandname, brandintro, intropeice, forextra, agreed) VALUES 
+	(seq_seller_apply.NEXTVAL, #{name}, #{email}, #{phone}, #{brandname}, #{brandintro}, #{intropeice}, #{forextra}, #{agreed})
+	</insert>
+	
+</mapper>
