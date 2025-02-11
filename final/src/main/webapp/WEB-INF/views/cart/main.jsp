@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,10 +14,7 @@
     <!-- 폰트 (예시) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
-            rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
 
     <style>
         /* 전역 기본 */
@@ -128,19 +127,25 @@
             margin-top: 0;
         }
 
-        /* 스토어명, 상품정보를 한 줄로 묶거나 자유롭게 배치 */
+        /* 스토어명 및 아이콘 컨테이너 */
+        .store-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
         .store-name {
             font-size: 14px;
             font-weight: bold;
-            margin-bottom: 5px;
             color: #666; /* 살짝 연한 색상 */
         }
 
-        /* 상품 정보 (이미지/수량/옵션/쿠폰/가격 + X버튼) */
+        /* 상품 정보 (이미지/수량/옵션/쿠폰/가격 + 삭제버튼) */
         .cart-item-row {
             display: flex;
-            align-items: center; /* 한 줄에서 수평 정렬 */
+            align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
         .cart-item-check input[type="checkbox"] {
             transform: scale(1.2);
@@ -164,33 +169,33 @@
             color: #888;
         }
 
-        /* 수량, 가격, X버튼을 오른쪽에 */
+        /* 수량, 가격, 삭제버튼 영역 */
         .cart-item-right {
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
-        /* 수량 버튼+인풋 크기 업 */
         .item-quantity {
             display: flex;
             align-items: center;
             gap: 5px;
         }
         .btn-qty {
-            width: 32px;    /* 크기 키움 */
+            width: 32px;
             height: 32px;
             border: 1px solid #ddd;
             background: #fff;
             cursor: pointer;
-            font-size: 16px; /* 폰트도 키움 */
+            font-size: 16px;
         }
         .input-qty {
-            width: 50px;   /* 폭 키움 */
-            height: 32px;  /* 높이 키움 */
+            width: 50px;
+            height: 32px;
             text-align: center;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 15px; /* 폰트 키움 */
+            font-size: 15px;
         }
 
         .coupon-btn {
@@ -206,7 +211,7 @@
             background: #ff8400;
         }
 
-        /* 가격 + X버튼을 나란히 */
+        /* 가격 및 삭제 버튼 (X아이콘) */
         .price-and-delete {
             display: flex;
             align-items: center;
@@ -237,6 +242,7 @@
             align-items: center;
             gap: 20px;
             font-size: 14px;
+            flex-wrap: wrap;
         }
         .cart-card-footer .label {
             color: #999;
@@ -249,10 +255,10 @@
             color: #ccc;
         }
         .cart-card-footer .shipping {
-            color: #ff8200;  /* 오렌지 컬러 */
+            color: #ff8200;
         }
 
-        /* 가격 폰트 예시 */
+        /* 가격 텍스트 */
         .price-text {
             font-size: 18px;
             font-weight: bold;
@@ -323,7 +329,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+            background: rgba(0, 0, 0, 0.5);
         }
 
         /* 모달 창 */
@@ -346,19 +352,15 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
         }
-
         .coupon-modal-header h3 {
             margin: 0;
             font-size: 20px;
         }
-
-        /* 닫기 버튼 (X) */
         .coupon-modal-close {
             font-size: 24px;
             cursor: pointer;
             color: #999;
         }
-
         .coupon-modal-close:hover {
             color: #ff8200;
         }
@@ -369,14 +371,11 @@
             max-height: 300px;
             overflow-y: auto;
         }
-
-        /* 쿠폰 목록 스타일 */
         .coupon-list {
             list-style: none;
             margin: 0;
             padding: 0;
         }
-
         .coupon-item {
             padding: 10px;
             border: 1px solid #f0f0f0;
@@ -385,41 +384,32 @@
             transition: background 0.3s;
             cursor: pointer;
         }
-
         .coupon-item:hover {
             background: #f9f9f9;
         }
-
-        /* 쿠폰 정보 */
         .coupon-info {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-
         .coupon-code {
             font-weight: bold;
             color: #ff8200;
             font-size: 16px;
         }
-
         .coupon-description {
             font-size: 14px;
             color: #555;
         }
-
         .coupon-expiration {
             font-size: 12px;
             color: #999;
         }
-
-        /* 모달 하단 영역 */
         .coupon-modal-footer {
             text-align: right;
             border-top: 1px solid #eee;
             padding-top: 10px;
         }
-
         .coupon-modal-apply {
             background: #ff8200;
             border: none;
@@ -429,12 +419,10 @@
             cursor: pointer;
             font-size: 14px;
         }
-
         .coupon-modal-apply:hover {
             background: #ff6600;
         }
 
-        /* 모달 나타나는 애니메이션 */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -443,6 +431,31 @@
             to {
                 opacity: 1;
                 transform: scale(1);
+            }
+        }
+
+        /* Responsive 스타일 */
+        @media (max-width: 768px) {
+            .cart-page {
+                padding: 0 10px;
+            }
+            .cart-content {
+                flex-direction: column;
+            }
+            .cart-right {
+                order: -1;
+                margin-bottom: 20px;
+            }
+            .cart-item-row, .cart-item-right, .cart-card-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-quantity {
+                margin-bottom: 10px;
+            }
+            .price-and-delete {
+                justify-content: space-between;
+                width: 100%;
             }
         }
     </style>
@@ -495,19 +508,30 @@
                     <c:forEach var="cart" items="${list}">
                         <!-- 상품+푸터 묶음을 감싸는 블록 -->
                         <div class="cart-item-block">
-                            <!-- 스토어명도 상품마다 표시 -->
-                            <span class="store-name">
-<%--                                <c:out value="${cart.storeName != null ? cart.storeName : '스토어이름'}" />--%>
-                                기은샵
-                            </span>
-
+                            <!-- 스토어명과 아이콘을 같은 영역에 배치 -->
+                            <div class="store-info">
+                                <span class="store-name">기은샵</span>
+                                <svg data-v-6d2bd019="" data-v-ec764313=""
+                                     width="24" height="24" viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg" class="BaseIcon"
+                                     style="width: 24px; height: 24px; opacity: 1; fill: currentcolor; --BaseIcon-color: #333333;">
+                                    <g clip-path="url(#clip0_124_2947)">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.53039 5.46973L15.5304 11.4697C15.7967 11.736 15.8209 12.1527 15.603 12.4463L15.5304 12.5304L9.53039 18.5304L8.46973 17.4697L13.9391 12.0001L8.46973 6.53039L9.53039 5.46973Z"></path>
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_124_2947">
+                                            <rect width="24" height="24"></rect>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </div>
                             <!-- 상품 정보 (한 줄) -->
                             <div class="cart-item-row">
                                 <div class="cart-item-check">
                                     <input type="checkbox" checked value="${cart.cartItemCode}"/>
                                 </div>
                                 <div class="cart-item-image">
-                                    <!-- 이미지 (src 실제 경로로 교체) -->
+                                    <!-- 이미지 (실제 경로로 교체) -->
                                     <img src="${pageContext.request.contextPath}/dist/img/우산.jpg" alt="상품 이미지"/>
                                 </div>
                                 <div class="cart-item-details">
@@ -520,23 +544,16 @@
                                 </div>
 
                                 <div class="cart-item-right">
-                                    <!-- 수량 조절 (크기 업) -->
+                                    <!-- 수량 조절 -->
                                     <div class="item-quantity">
                                         <button type="button" class="btn-qty quantity-minus">-</button>
-                                        <input
-                                                type="number"
-                                                class="input-qty"
-                                                value="${cart.quantity}"
-                                                min="1"
-                                                readonly
-                                                data-cartitemcode="${cart.cartItemCode}"
-                                        />
+                                        <input type="number" class="input-qty" value="${cart.quantity}" min="1" readonly data-cartitemcode="${cart.cartItemCode}" data-oldprice="${cart.price}" />
                                         <button type="button" class="btn-qty quantity-plus">+</button>
                                     </div>
                                     <!-- 쿠폰 버튼 -->
                                     <button class="coupon-btn">쿠폰적용</button>
 
-                                    <!-- 쿠폰 목록 모달 (기본적으로 hidden 상태) -->
+                                    <!-- 쿠폰 목록 모달 (기본 숨김) -->
                                     <div class="coupon-modal" id="couponModal">
                                         <div class="coupon-modal-content">
                                             <div class="coupon-modal-header">
@@ -559,7 +576,7 @@
                                                             <span class="coupon-expiration">2025-06-30 까지 사용 가능</span>
                                                         </div>
                                                     </li>
-                                                    <!-- 보유 쿠폰이 여러 개라면 아래에 coupon-item을 추가하세요 -->
+                                                    <!-- 필요한 경우 추가 coupon-item -->
                                                 </ul>
                                             </div>
                                             <div class="coupon-modal-footer">
@@ -568,9 +585,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- 가격 + 삭제 버튼 (X아이콘) 함께 배치 -->
+                                    <!-- 가격 및 삭제 버튼 -->
                                     <div class="price-and-delete">
-                                        <div class="item-price price-text">
+                                        <div class="item-price price-text" data-oldprice="${cart.price}">
                                             <c:out value="${cart.quantity * cart.price}"/>원
                                         </div>
                                         <div class="item-delete">
@@ -583,19 +600,18 @@
                                 </div>
                             </div> <!-- //cart-item-row -->
 
-                            <!-- 상품별 footer (상품금액, 할인금액, 배송비, 주문금액) -->
+                            <!-- 상품별 footer -->
                             <div class="cart-card-footer">
                                 <div>
                                     <span class="label">상품금액</span>
                                     <span class="value price-text">
-                                        <c:out value="${cart.quantity * cart.price}"/>원
+                                        <fmt:formatNumber value="${cart.quantity * cart.price}" pattern="#,###" />원
                                     </span>
                                 </div>
                                 <span class="divider">|</span>
                                 <div>
                                     <span class="label">할인금액</span>
                                     <span class="value price-text" style="color:#f05;">
-                                        <!-- 예: 7,000원 고정 -->
                                         7,000원
                                     </span>
                                 </div>
@@ -608,8 +624,9 @@
                                 <div>
                                     <span class="label">주문금액</span>
                                     <span class="value price-text">
-                                        <!-- 예: (cart.quantity * cart.price) - 7000 -->
-                                        <c:out value="${(cart.quantity * cart.price) - 7000}"/>원
+<%--                                        <c:out value="${(cart.quantity * cart.price) - 7000}"/>원--%>
+                                        <fmt:formatNumber value="${(cart.quantity * cart.price) - 7000}" pattern="#,###" />원
+
                                     </span>
                                 </div>
                             </div>
@@ -636,9 +653,10 @@
                 </div>
                 <div class="summary-item">
                     <span class="label">상품금액</span>
-                    <span class="value price-text"><c:out value="${totalPrice}"/>원</span>
+                    <span class="value price-text">
+                        <fmt:formatNumber value="${totalPrice}" pattern="#,###" />원
+                    </span>
                 </div>
-                <!-- 할인 금액 예시 -->
                 <div class="summary-item">
                     <span class="label">할인금액</span>
                     <span class="value discount-info">-7,000원</span>
@@ -650,16 +668,11 @@
                 <div class="summary-total">
                     총 결제금액:
                     <span style="float:right;" class="price-text">
-                        <!-- 예: totalPrice - (7000 * list.size()) 등등 -->
-                        <c:out value="${totalPrice}"/>원
+                        <fmt:formatNumber value="${totalPrice}" pattern="#,###" />원
                     </span>
                 </div>
 
-                <button
-                        type="button"
-                        class="btn-checkout"
-                        onclick="location.href='${pageContext.request.contextPath}/order/form'"
-                >
+                <button type="button" class="btn-checkout" onclick="location.href='${pageContext.request.contextPath}/order/form'">
                     구매하기
                 </button>
             </div>
@@ -672,7 +685,7 @@
 </footer>
 
 <script>
-    /* 기존 Ajax 함수 그대로 유지 */
+    /* 기존 Ajax 함수 */
     function ajaxFun(url, method, formData, dataType, fn, file = false) {
         const settings = {
             type: method,
@@ -699,6 +712,7 @@
         if(currentQty > 1) {
             let diff = -1;
             let cartItemCode = $input.data('cartitemcode');
+
             let url = '${pageContext.request.contextPath}/cart/updateQuantity1';
             let formData = {
                 cartItemCode: cartItemCode,
@@ -706,7 +720,18 @@
             };
             ajaxFun(url, 'post', formData, 'json', function(data){
                 if(data.status === 'success'){
-                    $input.val(currentQty + diff);
+                    let newCurrentQty = currentQty + diff;
+
+                    $input.val(newCurrentQty);
+
+                    let oldPrice = parseInt($input.data('oldprice'));
+
+                    let newPrice = newCurrentQty * oldPrice;
+
+                    let $price = $('.input-qty').closest('.cart-item-right').find('.item-price');
+
+                    $price.text(newPrice + '원');
+
                 } else {
                     alert('업데이트 실패: ' + data.message);
                 }
@@ -725,9 +750,17 @@
             cartItemCode: cartItemCode,
             quantity: diff
         };
+
         ajaxFun(url, 'post', formData, 'json', function(data){
             if(data.status === 'success'){
-                $input.val(currentQty + diff);
+                let newCurrentQty = currentQty + diff;
+                 $input.val(newCurrentQty);
+
+                let oldPrice = parseInt($input.data('oldprice'));
+                let newPrice = oldPrice * newCurrentQty;
+                // 가격 표시 업데이트
+                let $price = $input.closest('.cart-item-right').find('.item-price');
+                $price.text(newPrice + '원');
             } else {
                 alert('업데이트 실패: ' + data.message);
             }
@@ -738,7 +771,6 @@
         $('.btnSelectRemove').click(function () {
             let selectedItems = [];
             let $form = $('form[name="btnForm"]');
-
 
             $('.cart-item-check input:checked').each(function(){
                 selectedItems.push($(this).val());
@@ -752,48 +784,41 @@
             if(! confirm('선택된 상품을 삭제하시겠습니까?')){
                 return;
             }
-                $form.submit();
+            $form.submit();
         });
     });
 
+    $(function () {
+        $('.selectAll').click(function () {
+            let isChecked = $(this).prop('checked');
+            $('.cart-item-check input[type="checkbox"]').prop('checked', isChecked);
+        });
 
-   $(function () {
-       $('.selectAll').click( function () {
-           // let isChecked = $('.selectAll').prop(checked); // 현재 체크가 되어있는지 확인
-           let isChecked = $(this).prop('checked'); // 현재 체크가 되어있는지 확인
-
-           $('.cart-item-check input[type="checkbox"]').prop('checked', isChecked);
-           // isChecked의 반환값을 통해서 .cart-item-row 안의 input도 체크를 할지 말지 정한다.
-       });
-
-       $('.cart-item-check input[type=checkbox]').click(function (){
-           let length = $('.cart-item-check input[type=checkbox]').length;
-
-           let total = $('.cart-item-check input[type=checkbox]:checked').length;
-
-           $('.selectAll').prop('checked', length === total);
-       });
-   })
+        $('.cart-item-check input[type=checkbox]').click(function (){
+            let length = $('.cart-item-check input[type=checkbox]').length;
+            let total = $('.cart-item-check input[type=checkbox]:checked').length;
+            $('.selectAll').prop('checked', length === total);
+        });
+    });
 
     $(function () {
         $('.coupon-btn').click(function () {
-            alert('dd');
             $("#couponModal").css("display", "block");
         });
-
-
         $('.coupon-modal-close').click(function (){
             $('#couponModal').css("display", "none");
-        })
-
-        // 쿠폰처리는 나중에 ajax 
+        });
         $('.coupon-modal-apply').click(function () {
             let url = '${pageContext.request.contextPath}/coupon/use';
-            // let formData = {};
+            // 쿠폰 적용 로직 추가
+        });
+    });
 
-            
-        })
-    })
+    $(function () {
+        $('.BaseIcon').click(function () {
+            location.href = '${pageContext.request.contextPath}/mypage/home';
+        });
+    });
 </script>
 </body>
 </html>
