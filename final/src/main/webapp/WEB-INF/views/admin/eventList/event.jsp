@@ -96,9 +96,9 @@ tbody td {
 	<main>
 		<div class="content-around">
 			<ul class="nav nav-tabs">
-				<li class="nav-item"><a class="nav-link" aria-current="page"
+				<li class="nav-item"><a class="nav-link active" aria-current="page"
 					href="#">진행중인 이벤트</a></li>
-				<li class="nav-item"><a class="nav-link active" href="#">종료된
+				<li class="nav-item"><a class="nav-link" href="#">종료된
 						이벤트</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">당첨자발표</a></li>
 			</ul>
@@ -169,9 +169,6 @@ tbody td {
 						</div>
 						<div class="content2" style="display: none;">
 							<jsp:include page="/WEB-INF/views/admin/eventList/eventclockin.jsp" />
-						</div>
-						<div class="content3" style="display: none;">
-							<jsp:include page="/WEB-INF/views/admin/eventList/eventcomm.jsp" />
 						</div>
 					</form>
 				</div>

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
-import com.sp.app.admin.service.AdminCouponService;
+import com.sp.app.admin.service.EventService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdminEventController {
 	
-	private final AdminCouponService service;
+	private final EventService service;
 	
 	@GetMapping("/main")
 	public String eventMain(Model model) {
 		try {
-			List<Coupon> list = service.getListOfCoupon();
 			
-			model.addAttribute("couponlist", list);
+			
 		} catch (Exception e) {
 
 		}
@@ -57,10 +56,11 @@ public class AdminEventController {
 			
 			service.insertCoupon(coupon);
 			
+			map.put("state", "success");
+
 		} catch (Exception e) {
 			map.put("state", "failed");
 		}
-		map.put("state", "success");
 		
 		return map;
 	}
@@ -89,7 +89,7 @@ public class AdminEventController {
 										.monthly(monthlypoint)
 										.start_date(eventstart)
 										.expire_date(eventend).build();
-			service.insertClockEvent(dto);
+			service.insertClockin(dto);
 			
 		} catch (Exception e) {
 			map.put("state", "failed");
@@ -113,15 +113,20 @@ public class AdminEventController {
 		try {
 			
 			if(eventType.equals("coupon")) {
-				
+				List<Coupon> list = service.getValidCoupon();
+				System.out.println("==============================");
+				System.out.println(list.size());
+				System.out.println("==============================");
+				map.put("list", list);
 			}else if( eventType.equals("checkin")) {
-				
+				List<ClockinEvent> list = service.getValidClockin();
+				map.put("list", list);
 			}
 			
 		} catch (Exception e) {
 			log.info("getEventList : ", e);
 		}
-		map.put("state", eventType);
+		map.put("type", eventType);
 		return map;
 	}
 	

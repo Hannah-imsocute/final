@@ -121,11 +121,10 @@ th {
 		<!-- 오른쪽: 쿠폰 및 이벤트 테이블 -->
 		<div class="form-container form-small">
 			<h2 class="text-center mb-4">이벤트 목록</h2>
-			<table>
+			<table class="listTable">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="chkAll" name="chkAll">
-							<label for="chkAll"> 전체 </label></th>
+						<th></th>
 						<th>쿠폰 및 이벤트명</th>
 						<th>진행기간</th>
 						<th>상태</th>
@@ -204,7 +203,59 @@ $(function (){
 				let url = "${pageContext.request.contextPath}/adminevent/eventlist/"+$(this).val();
 			
 				const returnfn = function (data) {
-					console.log(data.state);
+					let type = data.type;
+					
+					if(type === 'coupon'){
+						
+						let out = '';
+						
+						out += `<thead>`;
+						out += `	<tr>`;
+						out += `		<th></th>`;
+						out += `		<th>쿠폰명</th>`;
+						out += `		<th>진행기간</th>`;
+						out += `		<th>할인율</th>`;
+						out += `		<th>상태</th>`;
+						out += `	</tr>`;
+						out += `</thead>`;
+						
+						if(! data.list){
+							out += `<tbody>`;
+							out += `	<tr>`;
+							out += `		<td colspan="5">등록된 쿠폰이 없습니다</td>`;
+							out += `	</tr>`;
+							out += `</tbody>`;
+							$('.listTable').empty();
+							$('.listTable').append(out);
+							return false;
+						}
+						
+						for(let dto of data.list){
+							
+							let coupon_code = dto.coupon_code;
+							let couponName = dto.couponName;
+							let rate = dto.rate;
+							let start = dto.start;
+							let end = dto.end;
+							let valid = dto.valid;
+							
+
+							out += `<tbody>`;
+							out += `	<tr>`;
+							out += `		<td><input type='checkbox' id='' name='' data-code='${coupon_code}'></td>`;
+							out += `		<td>${couponName}</td>`;
+							out += `		<td>${start} - ${end}</td>`;
+							out += `		<td>${rate}%</td>`;
+							out += `		<td>${valid}</td>`;
+							out += `	</tr>`;
+							out += `</tbody>`;
+						}
+						$('.listTable').empty();
+						$('.listTable').append(out);
+						
+					}else if(type === 'checkin') {
+						
+					}
 				}
 			
 				ajaxRequest(url, 'get', null, 'json', returnfn);
