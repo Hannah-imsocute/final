@@ -21,6 +21,12 @@ public class Order {
   private int netPay; // 결제 금액
   private String confirmDate; // 주문확인날짜
 
+  private String options; // 옵션
+  private int priceForeach; //  단가
+  private int quantity; // 수량
+  private int shipping; // 배송비
+  private int orderState; // 주문상태
+
   private long memberIdx; // 회원코드
   private String email; // 회원 ID
   private String payment; // 결제수단
