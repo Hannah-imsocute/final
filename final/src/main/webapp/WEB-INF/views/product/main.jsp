@@ -134,23 +134,24 @@ $(document).ready(function() {
                     $.each(response.list, function(arrayIndex, arrayKey) {
                     //	alert("arrayKey.item : " + arrayKey.item );
                     //	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
-                    	productList.append('<div class="product-box">');
-                       	productList.append(' <div class="product-thumbnail" data-productCode="' + arrayKey.productCode + '">');
-                       	productList.append('     <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/' + arrayKey.thumbnail + '">');
-                       	productList.append(' </div>');
-                       	productList.append(' <div class="product-info">');
-                        productList.append('   <div class="product-brandName">'      + arrayKey.brandName      + '</div>');
-                        productList.append('   <div class="product-item">'      + arrayKey.item      + '</div>');
-                        productList.append('   <div class="product-price">'     + Number(arrayKey.price).toLocaleString()    + '원 </div>');
-                        productList.append('   <div class="product-discount">'  + arrayKey.discount  + '%</div>');
-                        productList.append('   <div class="product-salePrice">' + Number(arrayKey.salePrice).toLocaleString() + '원</div>');
-                       	productList.append(' </div>');
-                       	productList.append('</div>');
+                        var productHtml = `
+                            <div class="border rounded product-box" data-productCode="${arrayKey.productCode}">
+                                <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/${arrayKey.thumbnail}">
+                                <div class="product-info">
+                                    <div class="product-brandName">${arrayKey.brandName}작가명</div>
+                                    <div class="product-item">${arrayKey.item}작품명</div>
+                                    <div class="product-price">${arrayKey.price}원</div>
+                                    <div class="product-discount">${arrayKey.discount}%</div>
+                                    <div class="product-salePrice">${arrayKey.salePrice}원</div>
+                                </div>
+                            </div>`;
 
-      
+                        var $productElement = $(productHtml);
+                        $productElement.find('.thumbnail-img').attr('src', '/uploads/product/' + arrayKey.thumbnail);
+
+                        productList.append($productElement);
                     });
                     
-        
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
                 }
@@ -200,21 +201,20 @@ $(document).ready(function() {
                      //   	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
         					alert("상품 코드 확인:" + arrayKey.productCode);
 
-                        	productList.append('<div class="product-box">');
-                           	productList.append(' <div class="product-thumbnail" data-productCode="' + arrayKey.productCode + '">');
-                           	productList.append('     <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/' + arrayKey.thumbnail + '">');
-                           	productList.append(' </div>');
-                           	productList.append(' <div class="product-info">');
-                            productList.append('   <div class="product-brandName">'      + arrayKey.brandName      + '</div>');
-                            productList.append('   <div class="product-item">'      + arrayKey.item      + '</div>');
-                            productList.append('   <div class="product-price">'     + Number(arrayKey.price).toLocaleString()    + '원 </div>');
-                            productList.append('   <div class="product-discount">'  + arrayKey.discount  + '%</div>');
-                            productList.append('   <div class="product-salePrice">' + Number(arrayKey.salePrice).toLocaleString() + '원</div>');
-                           	productList.append(' </div>');
-                           	productList.append('</div>');
+        				    var productHtml = `
+        		                <div class="border rounded product-box" data-productCode="${arrayKey.productCode}">
+        		                    <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/${arrayKey.thumbnail}">
+        		                    <div class="product-info">
+        		                        <div class="product-brandName">${arrayKey.brandName}</div>
+        		                        <div class="product-item">${arrayKey.item}</div>
+        		                        <div class="product-price">${arrayKey.price}원</div>
+        		                        <div class="product-discount">${arrayKey.discount}%</div>
+        		                        <div class="product-salePrice">${arrayKey.salePrice}원</div>
+        		                    </div>
+        		                </div>`;
 
-                        });
-
+        		            productList.append(productHtml);
+        		        });
                     
                         if (page >= response.total_page) {
                             alert("마지막 페이지입니다."); // 마지막 페이지 알림
