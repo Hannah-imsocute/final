@@ -788,10 +788,6 @@ CREATE SEQUENCE seq_membership_item INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYC
 	
 	
 	
-	
-	
-	
-	
 -- 출석체크 이벤트 테이블 생성
 CREATE TABLE clockin_event (
     clockin_num   NUMBER         NOT NULL,  -- 기본키
@@ -824,5 +820,24 @@ CREATE TABLE clockin_log (
 	
 	
 CREATE SEQUENCE seq_clockin_log INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;		
->>>>>>> branch 'main' of https://github.com/Hannah-imsocute/final.git
+
+
+CREATE TABLE event_article (
+	event_article_num  NUMBER NOT NULL PRIMARY KEY,
+	subject VARCHAR2(500) NOT NULL,
+	textcontent CLOB NOT NULL,
+	eventType VARCHAR2(100) NOT NULL,
+	thumbnail  VARCHAR2(1000) NOT NULL,
+	clockin_num  NUMBER NULL,
+	coupon_code VARCHAR2(100) NULL,
+	createdDate DATE NOT NULL,
+CONSTRAINT fk_event_coupon					
+FOREIGN KEY (coupon_code)					
+REFERENCES coupon (coupon_code),
+CONSTRAINT fk_event_clockin					
+FOREIGN KEY (clockin_num)					
+REFERENCES clockin_event (clockin_num)
+);
+
+CREATE SEQUENCE seq_event_article INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;
 												

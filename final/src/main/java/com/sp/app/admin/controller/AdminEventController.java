@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
+import com.sp.app.admin.model.Event;
 import com.sp.app.admin.service.EventService;
 
 import lombok.RequiredArgsConstructor;
@@ -91,12 +92,11 @@ public class AdminEventController {
 										.expire_date(eventend).build();
 			service.insertClockin(dto);
 			
+			map.put("state", "success");
+			
 		} catch (Exception e) {
 			map.put("state", "failed");
 		}
-		
-		map.put("state", "success");
-		
 		return map;
 	}
 	
@@ -114,9 +114,6 @@ public class AdminEventController {
 			
 			if(eventType.equals("coupon")) {
 				List<Coupon> list = service.getValidCoupon();
-				System.out.println("==============================");
-				System.out.println(list.size());
-				System.out.println("==============================");
 				map.put("list", list);
 			}else if( eventType.equals("checkin")) {
 				List<ClockinEvent> list = service.getValidClockin();
@@ -133,6 +130,11 @@ public class AdminEventController {
 	@GetMapping("/report")
 	public String reportMain() {
 		return "admin/report";
+	}
+	
+	@PostMapping("/writeform")
+	public String submitForm( Event dto) {
+		return "";
 	}
 	
 }

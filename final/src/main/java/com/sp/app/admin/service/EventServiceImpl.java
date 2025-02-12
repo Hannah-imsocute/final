@@ -52,32 +52,56 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<Coupon> getValidCoupon() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Coupon> list = null;
+		try {
+			list = eventMapper.getValidCoupon();
+		} catch (Exception e) {
+			log.info("===================getValidCoupon", e);
+		}
+		return list;
 	}
 
 	@Override
 	public List<Coupon> getAllCoupon() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Coupon> list = null;
+		try {
+			list = eventMapper.getAllCoupon();
+		} catch (Exception e) {
+			log.info("===================getAllCoupon", e);
+		}
+		return list;
 	}
 
 	@Override
 	public void insertClockin(ClockinEvent dto) throws Exception {
-		// TODO Auto-generated method stub
-
+		try {
+			eventMapper.insertClockin(dto);
+		} catch (Exception e) {
+			log.info("========================insertClockin : ", e);
+			throw e;
+		}
 	}
 
 	@Override
 	public List<ClockinEvent> getValidClockin() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ClockinEvent> list = null;
+		try {
+			list = eventMapper.getValidClockin();
+		} catch (Exception e) {
+			log.info("===================getValidClockin", e);
+		}
+		return list;
 	}
 
 	@Override
 	public List<ClockinEvent> getAllClockin() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ClockinEvent> list = null;
+		try {
+			list = eventMapper.getAllClockin();
+		} catch (Exception e) {
+			log.info("===================getAllClockin", e);
+		}
+		return list;
 	}
 
 }

@@ -76,44 +76,49 @@ th {
 		<!-- 왼쪽: 이벤트 등록 폼 -->
 		<div class="form-container form-large">
 			<h2 class="text-center mb-4">이벤트 등록</h2>
-			<form>
+			<form name="eventForm" method="post">
 				<!-- 이벤트명 -->
 				<div class="mb-3">
-					<label for="subject" class="form-label">이벤트명</label> 
-					<input type="text" class="form-control" id="subject" name="subject" placeholder="이벤트명을 입력하세요">
+					<label for="subject" class="form-label">이벤트명</label> <input
+						type="text" class="form-control" id="subject" name="subject"
+						placeholder="이벤트명을 입력하세요">
 				</div>
 
 				<!-- 이벤트 설명 -->
 				<div class="mb-3">
 					<label for="textcontent" class="form-label">이벤트 설명</label>
-					<textarea class="form-control" id="textcontent" name="textcontent" rows="5" placeholder="이벤트 내용을 입력하세요"></textarea>
+					<textarea class="form-control" id="textcontent" name="textcontent"
+						rows="5" placeholder="이벤트 내용을 입력하세요"></textarea>
 				</div>
 
 				<!-- 이벤트 설정 -->
 				<fieldset class="mb-3">
 					<legend>이벤트 설정</legend>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="eventType" id="coupon" value="coupon" checked>
-						<label class="form-check-label" for="coupon">쿠폰 이벤트</label>
+						<input class="form-check-input" type="radio" name="eventType"
+							id="coupon" value="coupon" checked> <label
+							class="form-check-label" for="coupon">쿠폰 이벤트</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="eventType" id="checkin" value="checkin">
-						<label class="form-check-label" for="checkin">체크인 이벤트</label>
+						<input class="form-check-input" type="radio" name="eventType"
+							id="checkin" value="checkin"> <label
+							class="form-check-label" for="checkin">체크인 이벤트</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="eventType" id="comm" value="comm">
-						<label class="form-check-label" for="comm">댓글 이벤트</label>
+						<input class="form-check-input" type="radio" name="eventType"
+							id="comm" value="comm"> <label class="form-check-label"
+							for="comm">댓글 이벤트</label>
 					</div>
 				</fieldset>
 
 				<div class="mb-3">
-					<label for="thumbnail"> 썸네일 이미지를 설정해주세요 </label>
-					<input type="file" class="form-control" id="thumbnail" name="thumbnail">
+					<label for="thumbnail"> 썸네일 이미지를 설정해주세요 </label> <input type="file"
+						class="form-control" id="thumbnail" name="thumbnail">
 				</div>
 
 				<!-- 제출 버튼 -->
 				<div class="d-grid">
-					<button type="submit" class="btn btn-primary btn-lg">등록하기</button>
+					<button type="button" class="btn btn-primary btn-lg" onclick="uploadEvent();">등록하기</button>
 				</div>
 			</form>
 		</div>
@@ -122,24 +127,6 @@ th {
 		<div class="form-container form-small">
 			<h2 class="text-center mb-4">이벤트 목록</h2>
 			<table class="listTable">
-				<thead>
-					<tr>
-						<th></th>
-						<th>쿠폰 및 이벤트명</th>
-						<th>진행기간</th>
-						<th>상태</th>
-					</tr>
-				</thead>
-				<tbody> 
-				
-					<tr>
-						<td><input type="checkbox" id="" name=""></td>
-						<td>회원가입 이벤트</td>
-						<td>2월 1일 - 2월 28일</td>
-						<td>대기중</td>
-					</tr>
-				
-				</tbody>
 			</table>
 		</div>
 	</main>
@@ -194,7 +181,6 @@ const ajaxRequest = function(url, method, requestParams, responseType, callback,
 };
 
 $(function (){
-	
 	$('input[name="eventType"]').each(function () {
 		
 		$(this).click(function () {
@@ -206,55 +192,9 @@ $(function (){
 					let type = data.type;
 					
 					if(type === 'coupon'){
-						
-						let out = '';
-						
-						out += `<thead>`;
-						out += `	<tr>`;
-						out += `		<th></th>`;
-						out += `		<th>쿠폰명</th>`;
-						out += `		<th>진행기간</th>`;
-						out += `		<th>할인율</th>`;
-						out += `		<th>상태</th>`;
-						out += `	</tr>`;
-						out += `</thead>`;
-						
-						if(! data.list){
-							out += `<tbody>`;
-							out += `	<tr>`;
-							out += `		<td colspan="5">등록된 쿠폰이 없습니다</td>`;
-							out += `	</tr>`;
-							out += `</tbody>`;
-							$('.listTable').empty();
-							$('.listTable').append(out);
-							return false;
-						}
-						
-						for(let dto of data.list){
-							
-							let coupon_code = dto.coupon_code;
-							let couponName = dto.couponName;
-							let rate = dto.rate;
-							let start = dto.start;
-							let end = dto.end;
-							let valid = dto.valid;
-							
-
-							out += `<tbody>`;
-							out += `	<tr>`;
-							out += `		<td><input type='checkbox' id='' name='' data-code='${coupon_code}'></td>`;
-							out += `		<td>${couponName}</td>`;
-							out += `		<td>${start} - ${end}</td>`;
-							out += `		<td>${rate}%</td>`;
-							out += `		<td>${valid}</td>`;
-							out += `	</tr>`;
-							out += `</tbody>`;
-						}
-						$('.listTable').empty();
-						$('.listTable').append(out);
-						
+						CouponLoading(data);
 					}else if(type === 'checkin') {
-						
+						checkinLoading(data);
 					}
 				}
 			
@@ -262,8 +202,114 @@ $(function (){
 			}
 		});
 	});
+	
+	$('input#coupon').trigger('click');
+	
 });
 
+function CouponLoading(data){
+		let out = '';
+						
+		out += `<thead>`;
+		out += `	<tr>`;
+		out += `		<th></th>`;
+		out += `		<th>쿠폰명</th>`;
+		out += `		<th>진행기간</th>`;
+		out += `		<th>할인율</th>`;
+		out += `		<th>상태</th>`;
+		out += `	</tr>`;
+		out += `</thead>`;
+					
+		if(! data.list){
+			out += `<tbody>`;
+			out += `	<tr>`;
+			out += `		<td colspan="5">등록된 쿠폰이 없습니다</td>`;
+			out += `	</tr>`;
+			out += `</tbody>`;
+			$('.listTable').empty();
+			$('.listTable').append(out);
+			return false;
+		}
+						
+		for(let dto of data.list){
+				
+			let coupon_code = dto.coupon_code;
+			let couponName = dto.couponName;
+			let rate = dto.rate;
+			let start = dto.start;
+			let end = dto.end;
+			let valid = dto.valid;
+			
+			out += '<tbody>';
+			out += '	<tr>';
+			out += '		<td><input type="radio" id="coupon'+coupon_code+'" name="selectdetail" data-code=' + coupon_code +'></td>';
+			out += '		<td>' + couponName + '</td>';
+			out += '		<td> ' + start + ' - ' + end + '</td>';
+			out += '		<td> ' + rate  + '% </td>';
+			out += ' <td>' + valid + ' </td>';
+			out += '</tr>';
+			out += '</tbody>';
+			
+		}
+		$('.listTable').empty();
+		$('.listTable').append(out);
+}
+
+
+function checkinLoading(data) {
+	let out = '';
+	
+	out += `<thead>`;
+	out += `	<tr>`;
+	out += `		<th></th>`;
+	out += `		<th>이벤트명</th>`;
+	out += `		<th>진행기간</th>`;
+	out += `		<th>일일적립포인트</th>`;
+	out += `		<th>주간적립포인트</th>`;
+	out += `		<th>월간적립포인트</th>`;
+	out += `		<th>상태</th>`;
+	out += `	</tr>`;
+	out += `</thead>`;
+	
+	if(! data.list){
+		out += `<tbody>`;
+		out += `	<tr>`;
+		out += `		<td colspan="7">등록된 출석체크일정이 없습니다</td>`;
+		out += `	</tr>`;
+		out += `</tbody>`;
+		$('.listTable').empty();
+		$('.listTable').append(out);
+		return false;
+	}
+	
+	for(let dto of data.list){
+		
+		let clockin_num = dto.clockin_num;
+		let event_title = dto.event_title;
+		let start_date = dto.start_date;
+		let expire_date = dto.expire_date;
+		let daybyday = dto.daybyday;
+		let weekly = dto.weekly;
+		let monthly = dto.monthly;
+		let selected = dto.selected;
+		
+		out += '<tbody>';
+		out += '	<tr>';
+		out += '		<td><input type="radio" id="clockin'+clockin_num+'" name="selectdetail" data-code=' + clockin_num +'></td>';
+		out += '		<td>' + event_title + '</td>';
+		out += '		<td> ' + start_date + ' - ' + expire_date + '</td>';
+		out += '		<td> ' + daybyday +'p</td>';
+		out += '		<td> ' + weekly  +'p</td>';
+		out += '		<td> ' + monthly +'p</td>';
+		out += ' <td>' + selected + ' </td>';
+		out += '</tr>';
+		out += '</tbody>';
+		
+	}
+	$('.listTable').empty();
+	$('.listTable').append(out);
+	
+}
 
 function checkValid() {
 	
@@ -290,6 +336,49 @@ function checkValid() {
 	if(! thumbNail){
 		return false;
 	}
+	
+}
+
+
+function uploadEvent() {
+	
+	let form = $('form[name=eventForm]');
+	
+	let subject = form.subject.value;
+	let content = form.textcontent.value;
+	let type = form.eventType.value;
+	let thumbnail = form.thumbnail.value;
+	
+	let selectdetail = $('input[name=selectdetail]').val();
+	
+	if(! subject){
+		alert('이벤트 제목을 등록해주세요');
+		return false;
+	}
+	
+	if(! content){
+		alert('컨텐츠를 작성해주세요');
+		return false;
+	}
+	
+	if(! type){
+		alert('게시글의 타입을 지정해주세요');
+		return false;
+	}
+	
+	if(! thumbnail){
+		alert('썸네일 이미지를 지정해주세요');
+		return false;
+	}
+	
+	if(! selectdatail){
+		alert('하나의 이벤트를 선택해야합니다');
+		return false;
+	}
+	
+	
+	form.action = "${pageContext.request.contextPath}/adminevent/writeform";
+	form.submit();
 	
 }
 

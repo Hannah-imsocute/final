@@ -18,4 +18,5 @@ public class Coupon {
 	private String start;
 	private String end;
 	private int valid;
+	private int selected;
 }
