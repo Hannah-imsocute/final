@@ -2,11 +2,13 @@ package com.sp.app.admin.mapper;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
+import com.sp.app.admin.model.Event;
 
 @Mapper
 public interface EventMapper {
@@ -28,4 +30,15 @@ public interface EventMapper {
 	
 	// 등록되어있는 모든 출첵 이벤트
 	public List<ClockinEvent> getAllClockin();
+	
+	
+	// 이벤트 글등록
+	public void insertEvent(Event dto) throws SQLException;
+	
+	// 데이터 개수 
+	public int dataCount();
+	
+	// 게시글 가져오깅
+	public List<Event> getEventList(Map<String, Object> map);
+
 }

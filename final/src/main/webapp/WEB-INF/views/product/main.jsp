@@ -106,6 +106,7 @@ $(document).ready(function() {
 
         var $this = $(this);
         var categoryName = $this.attr('data-categoryName'); // 선택한 카테고리 가져오기
+        
         var topName = $this.find('a').text().trim(); // 카테고리명 가져오기
         var page = parseInt($this.attr('data-page'), 10); // 페이지 가져오기
 
@@ -113,45 +114,62 @@ $(document).ready(function() {
         	page = 1;
         	$this.attr('data-page', page)
         }
-   //     alert("categoryName : " + categoryName); // categoryName 확인
-   //     alert("page : " + page); // page 확인
         
-        // .../product/category?categoryName=bakery
+        var contextPath = "${pageContext.request.contextPath}";
+
+        let url = contextPath + "/product/category?categoryName=" + encodeURIComponent(categoryName) + "&page=" + page;
+        
+        
+        console.log("categoryName : " , categoryName); // categoryName 확인
+        console.log("page : " , page); // page 확인
+
+   
         $.ajax({
             url: '/product/category',  // Spring Boot 서버 엔드포인트
             method: 'GET',
             data: { categoryName: categoryName, page:page },  // 요청 데이터
             dataType: 'json',
+            beforeSend: function() {
+                $('#product-list').empty();  // AJAX 요청 전 기존 리스트 초기화
+            },
             success: function(response) {
                 var productList = $('#product-list');
-                productList.empty();  // 기존 리스트 초기화
-
-                // 메인 패널의 제목 변경
+             
+                 // 메인 패널의 제목 변경
                 $('.main-top-name').text(topName);
 
-                // 응답 데이터가 배열인지 확인 후 처리
+                // 응답 데이터가 배열인지 확인 후 처리	
                 if (response && Array.isArray(response.list)) {
-                    $.each(response.list, function(arrayIndex, arrayKey) {
-                    //	alert("arrayKey.item : " + arrayKey.item );
-                    //	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
-                        var productHtml = `
-                            <div class="border rounded product-box" data-productCode="${arrayKey.productCode}">
-                                <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/${arrayKey.thumbnail}">
-                                <div class="product-info">
-                                    <div class="product-brandName">${arrayKey.brandName}작가명</div>
-                                    <div class="product-item">${arrayKey.item}작품명</div>
-                                    <div class="product-price">${arrayKey.price}원</div>
-                                    <div class="product-discount">${arrayKey.discount}%</div>
-                                    <div class="product-salePrice">${arrayKey.salePrice}원</div>
-                                </div>
-                            </div>`;
+                	$.each(response.list, function(arrayIndex, arrayKey) {
+                	    console.log("Processing arrayKey:", arrayKey);
+                	    
+                	    // 빈 HTML을 먼저 추가
+                	    var emptyHtml = `
+                	        <div class="border rounded product-box" data-productCode='${arrayKey.productCode}'>
+                	            <div class="product-info">
+                	                <div class="product-brandName"></div>
+                	                <div class="product-item"></div>
+                	                <div class="product-price"></div>
+                	                <div class="product-discount"></div>
+                	                <div class="product-salePrice"></div>
+                	            </div>
+                	        </div>`;
 
-                        var $productElement = $(productHtml);
-                        $productElement.find('.thumbnail-img').attr('src', '/uploads/product/' + arrayKey.thumbnail);
+                	    var $productBox = $(emptyHtml);  // jQuery 객체로 변환
 
-                        productList.append($productElement);
-                    });
-                    
+                	    // 데이터를 추가
+                	    $productBox.find('.product-brandName').text(arrayKey.brandName + " 작가명");
+                	    $productBox.find('.product-item').text(arrayKey.item + " 작품명");
+                	    $productBox.find('.product-price').text(arrayKey.price + " 원");
+                	    $productBox.find('.product-discount').text(arrayKey.discount + "%");
+                	    $productBox.find('.product-salePrice').text(arrayKey.salePrice + " 원");
+
+                	    console.log("Final productBox:", $productBox.prop('outerHTML'));
+                	    console.log(arrayKey.productCode);
+
+                	    // 최종적으로 productList에 추가
+                	    productList.append($productBox);
+                	})
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
                 }
@@ -197,25 +215,25 @@ $(document).ready(function() {
                     if (response && Array.isArray(response.list)) {
                         $.each(response.list, function(arrayIndex, arrayKey) {
                         
-                     //   	alert("arrayKey.item : " + arrayKey.item );
-                     //   	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
+                        	alert("arrayKey.item : " + arrayKey.item );
+                         	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
         					alert("상품 코드 확인:" + arrayKey.productCode);
 
         				    var productHtml = `
-        		                <div class="border rounded product-box" data-productCode="${arrayKey.productCode}">
-        		                    <img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/product/${arrayKey.thumbnail}">
-        		                    <div class="product-info">
-        		                        <div class="product-brandName">${arrayKey.brandName}</div>
-        		                        <div class="product-item">${arrayKey.item}</div>
-        		                        <div class="product-price">${arrayKey.price}원</div>
-        		                        <div class="product-discount">${arrayKey.discount}%</div>
-        		                        <div class="product-salePrice">${arrayKey.salePrice}원</div>
-        		                    </div>
-        		                </div>`;
+                            <div class="border rounded product-box" data-productCode='${arrayKey.productCode}'>
+                       
+                                <div class="product-info">
+                                    <div class="product-brandName">${arrayKey.brandName}작가명</div>
+                                    <div class="product-item">${arrayKey.item}작품명</div>
+                                    <div class="product-price">${arrayKey.price}원</div>
+                                    <div class="product-discount">${arrayKey.discount}%</div>
+                                    <div class="product-salePrice">${arrayKey.salePrice}원</div>
+                                </div>
+                            </div>`;
 
-        		            productList.append(productHtml);
-        		        });
                     
+                    	 productList.append(productHtml);
+                    });
                         if (page >= response.total_page) {
                             alert("마지막 페이지입니다."); // 마지막 페이지 알림
                             $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
@@ -242,17 +260,20 @@ $(document).ready(function() {
 
 });
 
+$(function(){
+	$('#product-list').on('click', '.product-box', function(){
+		let productCode = $(this).attr('data-productCode');
+		 if (!productCode) {
+		        console.warn("상품 코드가 없습니다.", $(this).attr('data-productCode'));
+		        alert("상품 코드가 없습니다.");
+		        return;
+		    }
+		    // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
+		    window.location.href = "/product/detail?productCode=" + productCode;
 
-$(document).on("click", ".thumbnail-img", function() {
-	let productCode = $(this).closest(".product-thumbnail").data("productCode"); 
-    if (!productCode) {
-        console.warn("상품 코드가 없습니다.", $(this).closest(".product-thumbnail"));
-        alert("상품 코드가 없습니다.");
-        return;
-    }
-    // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
-    window.location.href = "/product/detail?productCode=" + productCode;
+	});
 });
+
 
 
 </script>

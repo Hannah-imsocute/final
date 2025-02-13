@@ -113,19 +113,19 @@ tbody td {
 						<tr>
 							<th>번호</th>
 							<th>이벤트명</th>
-							<th>시작일</th>
-							<th>종료일</th>
+							<th>게시일</th>
+							<th>타입</th>
 							<th>상태</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="dto" items="${couponlist}" varStatus="status">
+						<c:forEach var="dto" items="${list}" varStatus="status">
 							<tr>
 								<td>${status.index}</td>
-								<td><a href="#" data-couponCode="${dto.coupon_code}">${dto.couponName}</a></td>
-								<td>${dto.start}</td>
-								<td>${dto.end}</td>
+								<td><a href="#" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
+								<td>${dto.createdDate}</td>
+								<td>${dto.eventType}</td>
 								<td class="status">진행중</td>
 								<td>
 									<button type="button" class="edit-btn btn">수정</button>

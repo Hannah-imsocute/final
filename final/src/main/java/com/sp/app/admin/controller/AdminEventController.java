@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,22 +18,48 @@ import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.service.EventService;
+import com.sp.app.common.PaginateUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@RequestMapping("/adminevent/")
+@RequestMapping("/adminevent/*")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminEventController {
 	
 	private final EventService service;
+	private final PaginateUtil paginateUtil; 
 	
 	@GetMapping("/main")
-	public String eventMain(Model model) {
+	public String eventMain(Model model, @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+		Map<String, Object> map = new HashMap<>();
 		try {
 			
+			int size = 10;
+			int total = 0;
+			
+			// 데이터 개수 
+			int dataCount = service.dataCount();
+			
+			// 총 페이지 수 
+			total = paginateUtil.pageCount(dataCount, size);
+			
+			int page = Math.min(now_page, total);
+			int offset = (page - 1) * size;
+			
+			map.put("offset", offset);
+			map.put("size", size);
+			
+			// 리스트 가져와야징 
+			List<Event> list = service.getEventList(map);
+			
+			model.addAttribute("list", list);
+			model.addAttribute("offset", offset);
+			model.addAttribute("total", total);
+			model.addAttribute("size", size);
+			model.addAttribute("dataCount", dataCount);
 			
 		} catch (Exception e) {
 
@@ -106,6 +133,7 @@ public class AdminEventController {
 		return "admin/eventList/eventwrite";
 	}
 	
+	
 	@GetMapping("/eventlist/{eventType}")
 	@ResponseBody
 	public Map<String, Object> getEventList(@PathVariable("eventType") String eventType) {
@@ -132,9 +160,19 @@ public class AdminEventController {
 		return "admin/report";
 	}
 	
+	
 	@PostMapping("/writeform")
-	public String submitForm( Event dto) {
-		return "";
+	public String submitForm(@ModelAttribute Event dto) {
+		
+		try {
+			// 딱히 할일 없겠지 ? 
+			service.insertEvent(dto);
+			
+		} catch (Exception e) {
+			log.info("==============submitForm : ", e);
+		}
+		
+		return "redirect:/adminevent/main";
 	}
 	
 }

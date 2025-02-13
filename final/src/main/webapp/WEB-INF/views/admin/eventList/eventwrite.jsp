@@ -118,8 +118,11 @@ th {
 
 				<!-- 제출 버튼 -->
 				<div class="d-grid">
-					<button type="button" class="btn btn-primary btn-lg" onclick="uploadEvent();">등록하기</button>
+					<button type="button" class="btn btn-primary btn-lg"
+						onclick="uploadEvent();">등록하기</button>
 				</div>
+				<input type="hidden" name="coupon_code" value="default"> <input
+					type="hidden" name="clockin_num" value="0">
 			</form>
 		</div>
 
@@ -230,7 +233,8 @@ function CouponLoading(data){
 			$('.listTable').append(out);
 			return false;
 		}
-						
+		
+		let count = 0;
 		for(let dto of data.list){
 				
 			let coupon_code = dto.coupon_code;
@@ -242,7 +246,12 @@ function CouponLoading(data){
 			
 			out += '<tbody>';
 			out += '	<tr>';
-			out += '		<td><input type="radio" id="coupon'+coupon_code+'" name="selectdetail" data-code=' + coupon_code +'></td>';
+			out += '		<td><input type="radio" id="coupon'+coupon_code+'" name="selectdetail" data-code=' + coupon_code;
+			if(count == 0){
+				out += ' checked ></td>';
+			}else {
+				out += ' ></td>';
+			}
 			out += '		<td>' + couponName + '</td>';
 			out += '		<td> ' + start + ' - ' + end + '</td>';
 			out += '		<td> ' + rate  + '% </td>';
@@ -250,6 +259,7 @@ function CouponLoading(data){
 			out += '</tr>';
 			out += '</tbody>';
 			
+			count++;
 		}
 		$('.listTable').empty();
 		$('.listTable').append(out);
@@ -282,6 +292,7 @@ function checkinLoading(data) {
 		return false;
 	}
 	
+	let count = 0;
 	for(let dto of data.list){
 		
 		let clockin_num = dto.clockin_num;
@@ -295,7 +306,12 @@ function checkinLoading(data) {
 		
 		out += '<tbody>';
 		out += '	<tr>';
-		out += '		<td><input type="radio" id="clockin'+clockin_num+'" name="selectdetail" data-code=' + clockin_num +'></td>';
+		out += '		<td><input type="radio" id="clockin'+clockin_num+'" name="selectdetail" data-code=' + clockin_num;
+		if(count == 0){
+		out += ' checked ></td>';
+		}else {
+		out += ' ></td>';
+		}
 		out += '		<td>' + event_title + '</td>';
 		out += '		<td> ' + start_date + ' - ' + expire_date + '</td>';
 		out += '		<td> ' + daybyday +'p</td>';
@@ -305,6 +321,7 @@ function checkinLoading(data) {
 		out += '</tr>';
 		out += '</tbody>';
 		
+		count++;
 	}
 	$('.listTable').empty();
 	$('.listTable').append(out);
@@ -343,13 +360,24 @@ function checkValid() {
 function uploadEvent() {
 	
 	let form = $('form[name=eventForm]');
+	let $form = document.querySelector('form[name=eventForm]');
 	
-	let subject = form.subject.value;
-	let content = form.textcontent.value;
-	let type = form.eventType.value;
-	let thumbnail = form.thumbnail.value;
+	let subject = form.find('[name=subject]').val();
+	let content = oEditors.getById["textcontent"].getIR();
+	oEditors.getById["textcontent"].exec("UPDATE_CONTENTS_FIELD", []);
+
 	
-	let selectdetail = $('input[name=selectdetail]').val();
+	let type = form.find('[name=eventType]').val();
+	let thumbnail = form.find('[name=thumbnail]').val();
+	
+	let selectdetail = $('input[name=selectdetail]').attr('data-code');
+	console.log(selectdetail);
+	if(type == 'coupon'){
+		$('input[name=coupon_code]').val(selectdetail);
+	}else if(type == 'clockin'){
+		$('input[name=clockin_num]').val(selectdetail);
+	}
+	
 	
 	if(! subject){
 		alert('이벤트 제목을 등록해주세요');
@@ -370,15 +398,13 @@ function uploadEvent() {
 		alert('썸네일 이미지를 지정해주세요');
 		return false;
 	}
-	
-	if(! selectdatail){
+	if(! selectdetail && type !='comm'){
 		alert('하나의 이벤트를 선택해야합니다');
 		return false;
 	}
 	
-	
-	form.action = "${pageContext.request.contextPath}/adminevent/writeform";
-	form.submit();
+	$form.action = "${pageContext.request.contextPath}/adminevent/writeform";
+	$form.submit();
 	
 }
 

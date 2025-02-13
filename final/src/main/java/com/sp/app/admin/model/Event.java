@@ -15,5 +15,8 @@ public class Event {
 	private String coupon_code;
 	private long clockin_num;
 	
+	private String clockin_expiredate;
+	private String coupon_expiredate;
+	
 	private String thumbnail;
 }
