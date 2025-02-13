@@ -2,12 +2,14 @@ package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.sp.app.admin.mapper.EventMapper;
 import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
+import com.sp.app.admin.model.Event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +102,38 @@ public class EventServiceImpl implements EventService {
 			list = eventMapper.getAllClockin();
 		} catch (Exception e) {
 			log.info("===================getAllClockin", e);
+		}
+		return list;
+	}
+
+	@Override
+	public void insertEvent(Event dto) throws Exception {
+		try {
+			eventMapper.insertEvent(dto);
+		} catch (Exception e) {
+			log.info("====================insertEvent :", e);
+			throw e;
+		}
+	}
+
+	@Override
+	public int dataCount() {
+		int result = 0;
+		try {
+			result = eventMapper.dataCount();
+		} catch (Exception e) {
+			log.info("=================dataCount :", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Event> getEventList(Map<String, Object> map) {
+		List<Event> list = null;
+		try {
+			list = eventMapper.getEventList(map);
+		} catch (Exception e) {
+			log.info("====================getEventList :", e);
 		}
 		return list;
 	}

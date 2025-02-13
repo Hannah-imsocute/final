@@ -13,8 +13,6 @@
 		0 )
 	</insert>
 
-
-
 	<select id="getValidCoupon"
 		resultType="com.sp.app.admin.model.Coupon">
 		SELECT coupon_code, couponName, TO_CHAR(startdate,
@@ -25,8 +23,6 @@
 		WHERE
 		selected = 0
 	</select>
-
-
 
 	<select id="getAllCoupon"
 		resultType="com.sp.app.admin.model.Coupon">
@@ -50,7 +46,8 @@
 
 	<select id="getValidClockin"
 		resultType="com.sp.app.admin.model.ClockinEvent">
-		SELECT clockin_num, event_title, start_date, expire_date, daybyday, weekly,
+		SELECT clockin_num, event_title, start_date, expire_date,
+		daybyday, weekly,
 		monthly FROM CLOCKIN_EVENT
 		WHERE selected = 0
 	</select>
@@ -58,7 +55,49 @@
 	<select id="getAllClockin"
 		resultType="com.sp.app.admin.model.ClockinEvent">
 		SELECT clockin_num, event_title, start_date,
-		expire_date, daybyday, weekly,monthly
+		expire_date,
+		daybyday, weekly,monthly
 		FROM CLOCKIN_EVENT
 	</select>
+
+
+
+	<insert id="insertEvent"
+		parameterType="com.sp.app.admin.model.Event">
+		INSERT INTO event_article (event_article_num, subject, textcontent,
+		eventType, thumbnail,
+		<if test="eventType == 'coupon'">
+			coupon_code,
+		</if>
+		<if test="eventType == 'checkin'">
+			clockin_num,
+		</if>
+		createdDate)
+		VALUES (seq_event_article.NEXTVAL, #{subject},
+		#{textcontent}, #{eventType}, #{thumbnail},
+		<if test="eventType == 'coupon'">
+			#{coupon_code},
+		</if>
+		<if test="eventType == 'checkin'">
+			#{clockin_num},
+		</if>
+		SYSDATE)
+	</insert>
+
+	<select id="dataCount" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) FROM
+		event_article
+	</select>
+
+	<select id="getEventList" parameterType="java.util.Map" resultType="com.sp.app.admin.model.Event">
+		SELECT event_article_num, subject, textcontent,
+		eventType, thumbnail, ev.clockin_num, ev.coupon_code, createdDate ,
+		cp.expire_date as coupon_expiredate, cv.expire_date as
+		clockin_expiredate
+		FROM event_article ev
+		LEFT OUTER JOIN coupon cp ON cp.coupon_code = ev.coupon_code
+		LEFT OUTER JOIN CLOCKIN_EVENT cv ON cv.clockin_num = ev.clockin_num;
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
+	</select>
+
 </mapper>

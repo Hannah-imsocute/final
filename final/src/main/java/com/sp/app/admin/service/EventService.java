@@ -1,9 +1,11 @@
 package com.sp.app.admin.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.sp.app.admin.model.ClockinEvent;
 import com.sp.app.admin.model.Coupon;
+import com.sp.app.admin.model.Event;
 
 public interface EventService {
 	
@@ -24,4 +26,14 @@ public interface EventService {
 	
 	// 등록되어있는 모든 출첵 이벤트
 	public List<ClockinEvent> getAllClockin();
+	
+	// 이벤트 글등록
+	public void insertEvent(Event dto) throws Exception;
+	
+	// 데이터 개수 
+	public int dataCount();
+	
+	// 게시글 가져오깅
+	public List<Event> getEventList(Map<String, Object> map);
+	
 }
