@@ -100,10 +100,15 @@
 
 <script type="text/javascript">
 
+// 전역변수 설정
+var total_page_count = 0;
+
 $(document).ready(function() {
+	/* 1. 왼쪽 메뉴바 클릭 이벤트 */
     $('.left-menu ul li').on('click', function(event) {
         event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
-
+        $('#loadMore').prop("disabled", false).text("작품 더보기"); // 작품더보기 버튼 초기화
+        
         var $this = $(this);
         var categoryName = $this.attr('data-categoryName'); // 선택한 카테고리 가져오기
         
@@ -142,33 +147,33 @@ $(document).ready(function() {
                 if (response && Array.isArray(response.list)) {
                 	$.each(response.list, function(arrayIndex, arrayKey) {
                 	    console.log("Processing arrayKey:", arrayKey);
-                	    
+
                 	    // 빈 HTML을 먼저 추가
                 	    var emptyHtml = `
-                	        <div class="border rounded product-box" data-productCode='${arrayKey.productCode}'>
+                	        <div class="border rounded product-box">
                 	            <div class="product-info">
                 	                <div class="product-brandName"></div>
                 	                <div class="product-item"></div>
                 	                <div class="product-price"></div>
                 	                <div class="product-discount"></div>
                 	                <div class="product-salePrice"></div>
+                	                <div class="product-productCode"></div>
                 	            </div>
                 	        </div>`;
-
                 	    var $productBox = $(emptyHtml);  // jQuery 객체로 변환
-
+                	    
                 	    // 데이터를 추가
-                	    $productBox.find('.product-brandName').text(arrayKey.brandName + " 작가명");
-                	    $productBox.find('.product-item').text(arrayKey.item + " 작품명");
+                	    $productBox.find('.product-brandName').text(arrayKey.brandName);
+                	    $productBox.find('.product-item').text(arrayKey.item);
                 	    $productBox.find('.product-price').text(arrayKey.price + " 원");
                 	    $productBox.find('.product-discount').text(arrayKey.discount + "%");
                 	    $productBox.find('.product-salePrice').text(arrayKey.salePrice + " 원");
-
-                	    console.log("Final productBox:", $productBox.prop('outerHTML'));
-                	    console.log(arrayKey.productCode);
+                	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
                 	    // 최종적으로 productList에 추가
                 	    productList.append($productBox);
+                	    
+                	    page_total_count = arrayKey.total_page; // 전역변수에 전체페이지갯수 담아두기 
                 	})
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
@@ -182,6 +187,7 @@ $(document).ready(function() {
         });
     });
 
+    /* 2. 컨텐츠 하단 작품 더보기 클릭 이벤트 */
     $('#loadMore').on('click', function(event) {
        event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
             var $this = $(this);
@@ -192,77 +198,76 @@ $(document).ready(function() {
                 $this.attr('data-categoryName', categoryName); // 버튼 속성 업데이트
             }      
           
-            var page = parseInt($this.attr('data-page'), 10);       
-            if(isNaN(page)){
+            var page = parseInt($this.attr('data-page'), 10);
+            	if(isNaN(page)){
             	page = 2;
             	$this.attr('data-page', page)
             }
-            
-    //        alert("categoryName : " + categoryName); // categoryName 확인
-    //        alert("page : " + page); // page 확인
 
             $.ajax({
                 url: '/product/category',  // Spring Boot 서버 엔드포인트
                 method: 'GET',
-                // 요청 데이터
+                /* 요청 데이터 셋팅 */
                 data: { categoryName: categoryName
                 	  , page: page }, 
                 dataType: 'json',
+				/* api 호출전 데이터 체크로직 */
+                beforeSend: function (xhr, settings){
+                	if(page >= total_page_count){ 
+                		 alert("마지막 페이지입니다."); // 마지막 페이지 알림
+                         $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
+                         return false;
+                	}
+                },
                 success: function(response) {
                     var productList = $('#product-list');
 
                     // 응답 데이터가 배열인지 확인 후 처리
                     if (response && Array.isArray(response.list)) {
                         $.each(response.list, function(arrayIndex, arrayKey) {
+                        	var emptyHtml = `
+                     	       <div class="border rounded product-box">
+                     	           <div class="product-info">
+                     	               <div class="product-brandName"></div>
+                     	               <div class="product-item"></div>
+                     	               <div class="product-price"></div>
+                     	               <div class="product-discount"></div>
+                     	               <div class="product-salePrice"></div>
+                     	               <div class="product-productCode"></div>
+                     	           </div>
+                     	       </div>`;
+                     		var $productBox = $(emptyHtml);  // jQuery 객체로 변환
+                     		$productBox.find('.product-brandName').text(arrayKey.brandName);
+                     		$productBox.find('.product-item').text(arrayKey.item);
+                     		$productBox.find('.product-price').text(arrayKey.price + " 원");
+                     		$productBox.find('.product-discount').text(arrayKey.discount + "%");
+                     		$productBox.find('.product-salePrice').text(arrayKey.salePrice + " 원");
+                     		$productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
+                     		productList.append($productBox);
+                 	    });
                         
-                        	alert("arrayKey.item : " + arrayKey.item );
-                         	alert("arrayKey.thumbnail : " + arrayKey.thumbnail );
-        					alert("상품 코드 확인:" + arrayKey.productCode);
-
-        				    var productHtml = `
-                            <div class="border rounded product-box" data-productCode='${arrayKey.productCode}'>
-                       
-                                <div class="product-info">
-                                    <div class="product-brandName">${arrayKey.brandName}작가명</div>
-                                    <div class="product-item">${arrayKey.item}작품명</div>
-                                    <div class="product-price">${arrayKey.price}원</div>
-                                    <div class="product-discount">${arrayKey.discount}%</div>
-                                    <div class="product-salePrice">${arrayKey.salePrice}원</div>
-                                </div>
-                            </div>`;
-
-                    
-                    	 productList.append(productHtml);
-                    });
-                        if (page >= response.total_page) {
-                            alert("마지막 페이지입니다."); // 마지막 페이지 알림
-                            $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
-                        } else {
-                            var nextPage = page + 1;
-                            $this.attr('data-page', nextPage);
-                            alert("다음 페이지: " + nextPage);
-                        }
+	                    total_page_count = response.total_page; // DB 기준 갱신된 전체페이지 갯수를 전역변수에 갱신
+	                    
+	                    $this.attr('data-page', page + 1); // 페이지 갯수 증가
+	                    
                     } else {
                         console.warn('올바른 상품 데이터가 아닙니다.');
                     }
-
                 },
                 error: function(xhr, status, error) {
                     alert('상품 정보를 불러오는 데 실패했습니다.');
                     console.error(error, xhr.responseText);
                 }
        
-        });
- 
-    });
-    
-
-
+      		 });
+       });
 });
 
-$(function(){
+
+/* 3. 컨텐츠 클릭 시 상세보기 이벤트 */
+$(document).ready(function() {
 	$('#product-list').on('click', '.product-box', function(){
-		let productCode = $(this).attr('data-productCode');
+		let productCode = $('.product-productCode').attr('data-productCode');
 		 if (!productCode) {
 		        console.warn("상품 코드가 없습니다.", $(this).attr('data-productCode'));
 		        alert("상품 코드가 없습니다.");
@@ -273,7 +278,6 @@ $(function(){
 
 	});
 });
-
 
 
 </script>
