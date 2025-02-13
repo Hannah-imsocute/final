@@ -67,10 +67,10 @@
 		VALUES (SEQ_MEMBER.nextval, #{authority})
 	</insert>
 
-	<!--	<delete id="deleteAuthority" parameterType="map">-->
-	<!--		DELETE FROM ROLES-->
-	<!--		WHERE MEMBERIDX = (SEQ_MEMBER.nextval) AND authority = #{authority}-->
-	<!--	</delete>-->
+	<!--   <delete id="deleteAuthority" parameterType="map">-->
+	<!--      DELETE FROM ROLES-->
+	<!--      WHERE MEMBERIDX = (SEQ_MEMBER.nextval) AND authority = #{authority}-->
+	<!--   </delete>-->
 
 	<delete id="deleteAuthority" parameterType="map">
 		DELETE FROM ROLES
