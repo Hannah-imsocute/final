@@ -23,7 +23,7 @@ public interface OrderMapper {
   // 또는 registerPayment()
 
   // 주문 상세 정보 등록: 주문에 포함된 개별 상품(주문 상세) 정보 등록
-  void insertOrderDetail(OrderDetail orderDetail) throws SQLException;
+  void insertOrderDetail(Order orderDetail) throws SQLException;
   // 또는 registerOrderDetail()
 
   // 배송지 등록: 배송 정보를 등록할 경우
@@ -39,11 +39,11 @@ public interface OrderMapper {
   // 또는 selectLatestUserPoint()
 
   // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
-  List<OrderDetail> getOrderDetailList(Map<String, Object> params);
+  List<Order> getOrderDetailList(Map<String, Object> params);
   // params에는 userId, 기간 등 다양한 검색 조건이 들어갈 수 있음.
 
   // 주문 상세 정보 조회: 특정 주문 상세 정보를 조회할 경우
-  OrderDetail getOrderDetail(long orderDetailId);
+  Order getOrderDetail(long orderDetailId);
   // 또는 selectOrderDetail()
 
   // 상품 정보 조회: 주문에 포함된 상품 정보를 조회할 경우
