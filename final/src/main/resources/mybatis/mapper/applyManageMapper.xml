@@ -31,13 +31,19 @@
 			<if test="kwd != null and kwd !='' ">
 				<include refid="search-conditions"/>
 			</if>
-			<if test="block != '' ">
-				AND block = #{block}
+			<if test="agreed != '' ">
+				AND agreed = #{agreed}
 			</if>
 		</where> 
 		ORDER BY seller_apply_num DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
+	
+	<select id="getSellerDetailsBySellerApplyNum" resultType="com.sp.app.admin.model.ApplyManage">
+        SELECT seller_Apply_Num, name, email, phone, brandName, brandIntro, intropeice, forextra, agreed
+        FROM seller_apply
+        WHERE seller_Apply_Num = #{seller_Apply_Num}
+    </select>
 
 	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.ApplyManage">
 
