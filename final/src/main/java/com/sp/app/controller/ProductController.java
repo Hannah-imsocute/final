@@ -126,8 +126,8 @@ public class ProductController {
 	}
 
 	@GetMapping("detail")
-	public String detailRepquest(@RequestParam("productCode") long productCode,
-			Model model) throws Exception{
+	public ModelAndView detailRepquest(@RequestParam("productCode") long productCode, Model model) throws Exception{
+		ModelAndView mav = new ModelAndView("product/detail");
 		try {
 			//상품
 //			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
@@ -140,10 +140,8 @@ public class ProductController {
 		} catch (Exception e) {
 			log.info("detailRepquest Exception : ", e  );
 		}
-		return "product/detail";
+		return mav;
 		
 	}
-	
-	
 
 }

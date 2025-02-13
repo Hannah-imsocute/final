@@ -74,7 +74,7 @@
 			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
 			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
 			m1.email, m2.phone, 
-			m4.addname, m4.addtitle, m4.adddetail, m4.firstadd,
+			m4.addrname, m4.addrtitle, m4.addrdetail, m4.firstaddr,
 			NVL(authority, 'maybeUser') authority
 		FROM member m1
 		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx
@@ -89,7 +89,7 @@
 			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
 			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
 			m1.email, m2.phone, 
-			m4.addname, m4.addtitle, m4.adddetail, m4.firstadd,
+			m4.addrname, m4.addrtitle, m4.addrdetail, m4.firstaddr,
 			NVL(authority, 'maybeUser') authority
 		FROM member m1
 		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx

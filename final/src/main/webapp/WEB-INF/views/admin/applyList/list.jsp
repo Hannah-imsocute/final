@@ -12,12 +12,12 @@
 		<td align="right" class="bg-transparent">
 			<div class="wrap-search-check">
 				<div class="form-check-inline">
-					<input type="checkbox" id="blockCheck1" class="form-check-input" ${block == '0' || block == '' ? "checked":""}>
-					<label class="form-check-label" for="blockCheck1">활성</label>
+					<input type="checkbox" id="applyCheck1" class="form-check-input" ${block == '0' || block == '' ? "checked":""}>
+					<label class="form-check-label" for="applyCheck1">승인</label>
 				</div>
 				<div class="form-check-inline">
-					<input type="checkbox" id="blockCheck2" class="form-check-input" ${block == '1' || block == '' ? "checked":""}>
-					<label class="form-check-label" for="blockCheck2">비활성</label>
+					<input type="checkbox" id="applyCheck2" class="form-check-input" ${block == '1' || block == '' ? "checked":""}>
+					<label class="form-check-label" for="applyCheck2">미승인</label>
 				</div>
 			</div>
 		</td>
@@ -27,35 +27,24 @@
 <table class="table table-hover board-list">
 	<thead class="table-light">
 		<tr> 
-			<th width="50">번호</th>
-			<th width="160">아이디</th>
-			<th width="80">이름</th>
-			<th width="130">생년월일</th>
-			<th width="150">전화번호</th>
-			<th width="100">권한</th>
-			<th width="100">상태</th>
-			<th>이메일</th>
+			<th width="70">번호</th>
+			<th width="120">작가이름</th>
+			<th width="120">전화번호</th>
+			<th width="120">브랜드명</th>
+			<th width="120">대표작품명</th>
+			<th width="80">승인여부</th>
 		</tr>
 	</thead>
 	
 	<tbody>
 		<c:forEach var="dto" items="${list}" varStatus="status">
-			<tr class="hover" onclick="profile('${dto.memberIdx}', '${page}');"> 
+			<tr class="hover" onclick="apply('${dto.sellerApplyNum}', '${page}');"> 
 				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td>${dto.email}</td>
-				<td>${dto.nickname}</td>
-				<td>${dto.dob}</td>
+				<td>${dto.name}</td>
 				<td>${dto.phone}</td>
-				<td>
-					<c:choose>
-						<c:when test="${dto.authority=='USER'}">회원</c:when>
-						<c:when test="${dto.authority=='AUTHOR'}">작가</c:when>
-						<c:when test="${dto.authority=='ADMIN'}">관리자</c:when>
-						<c:otherwise>기타</c:otherwise>
-					</c:choose>
-				</td>
-				<td>${dto.block==0?"활성":"차단"}</td>
-				<td>${dto.email}</td>
+				<td>${dto.brandName}</td>
+				<td>${dto.introPeice}</td>
+				<td>${dto.agreed==0?"승인":"미승인"}</td>
 			</tr>
 		</c:forEach>
 	</tbody>
@@ -91,69 +80,39 @@
 	</div>
 </div>
 
-
-<table class="table table-borderless bg-transparent">
-	<tr> 
-		<td class="text-end bg-transparent">
-			<button type="button" class="btn btn-warning fw-bold" onclick="statusDetailesMember();">계정상태</button>
-			<c:if test="${dto.authority =='USER' }">
-				<button type="button" class="btn btn-warning fw-bold" onclick="updateMember();">수정</button>
-				<button type="button" class="btn btn-warning fw-bold" onclick="deleteMember('${dto.memberIdx}');">삭제</button>
-			</c:if>
-			<button type="button" class="btn btn-warning fw-bold" onclick="listMember('${page}');">리스트</button>
-		</td>
-	</tr>
-</table>
-
-<!-- 수정 대화상자 -->
-<div class="modal fade" data-bs-backdrop="static" id="memberUpdateDialogModal" tabindex="-1" aria-labelledby="memberUpdateDialogModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="memberUpdateDialogModalLabel">회원정보수정</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-			
-				<form name="memberUpdateForm" id="memberUpdateForm" method="post">
-					<table class="table write-form mb-1">
-						<tr>
-							<td width="110" class="bg-light">아이디</td>
-							<td><p class="form-control-plaintext">${dto.email}</p></td>
-						</tr>
-						<tr>
-							<td class="bg-light">이름</td>
-							<td>
-								<input type="text" name="userName" class="form-control" value="${dto.nickname}" style="width: 95%;">
-							</td>
-						</tr>
-						<tr>
-							<td class="bg-light">생년월일</td>
-							<td>
-								<input type="date" name="birth" class="form-control" value="${dto.dob}" style="width: 95%;">
-							</td>
-						</tr>
-						<tr>
-							<td class="bg-light">권한</td>
-							<td>
-								<select name="authority" class="form-select" style="width: 95%;">
-											<option value="USER" ${dto.authority=='USER' ? "selected":""}>일반회원</option>
-											<option value="AUTHOR" ${dto.authority=='AUTHOR' ? "selected":""}>작가</option>
-											<option value="ADMIN" ${dto.authority=='ADMIN' ? "selected":""}>관리자</option>
-								</select>
-							</td>
-						</tr>
-					</table>
-					<div class="text-end">
-						<input type="hidden" name="memberIdx" value="${dto.memberIdx}">
-						<input type="hidden" name="email" value="${dto.email}">
-						<input type="hidden" name="block" value="${dto.block}">
-						
-						<button type="button" class="btn btn-light" onclick="updateMemberOk('${page}');">수정완료</button>
-					</div>
-				</form>
-			
-			</div>
-		</div>
-	</div>
+<!-- JSP 코드 -->
+<div class="modal fade" data-bs-backdrop="static" id="sellerStatusDetailesDialogModal" tabindex="-1" aria-labelledby="sellerStatusDetailesDialogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 650px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sellerStatusDetailesModalLabel">작가상세정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3 class="form-control-plaintext fs-6 fw-semibold pt-1"><i class="bi bi-chevron-double-right"></i> 상태 변경</h3>            
+                <form name="sellerStatusDetailesForm" id="sellerStatusDetailesForm" method="post">
+                    <table class="table table-bordered mb-1">
+                        <tr>
+                            <td width="110" class="bg-light align-middle">이름(아이디)</td>
+                            <td>
+                                <p class="form-control-plaintext">${dto.name}(${dto.email})</p> <!-- 서버 측에서 데이터 렌더링 -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light align-middle">계정상태</td>
+                            <td>
+                                <p class="form-control-plaintext">${dto.agreed}</p> <!-- 서버 측에서 데이터 렌더링 -->
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-end">
+                        <input type="hidden" name="sellerApplyNum" value="${dto.sellerApplyNum}">
+                        <input type="hidden" name="page" value="${page}">
+                        <button type="button" class="btn btn-light" onclick="updateStatusOk('${page}');">상태변경</button>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
 </div>
+

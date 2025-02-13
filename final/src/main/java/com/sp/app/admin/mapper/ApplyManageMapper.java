@@ -7,29 +7,26 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sp.app.admin.model.ApplyManage;
-import com.sp.app.admin.model.MemberManage;
 
 @Mapper
 public interface ApplyManageMapper {
+	// 입점 신청 데이터 수
 	public int dataCount(Map<String, Object> map);
+
+	// 입점 신청 데이터 삽입
+	public void insertApply(ApplyManage dto) throws SQLException;
+	
+	public ApplyManage getSellerDetailsBySellerApplyNum(long sellerApplyNum);
+	
+	// 입점 신청 리스트
 	public List<ApplyManage> listApply(Map<String, Object> map);
-	
-	public MemberManage findById(Long memberIdx);
-	public MemberManage findByUserId(String userId);
-	
-	public void updateMember1(Map<String, Object> map) throws SQLException;
-	public void updateMember2(Map<String, Object> map) throws SQLException;
-	public void updateMemberEnabled(Map<String, Object> map) throws SQLException;
-	public void updateFailureCountReset(Long memberIdx) throws SQLException;
-	public void deleteMember1(Map<String, Object> map) throws SQLException;
-	public void deleteMember2(Map<String, Object> map) throws SQLException;
-	
-	public void insertMemberStatus(MemberManage dto) throws SQLException;
-	public List<MemberManage> listMemberStatus(Long memberIdx);
-	public MemberManage findByStatus(Long memberIdx);
-	
-	public List<Map<String, Object>> listAgeSection();
-	
-	public void updateAuthority(Map<String, Object> map) throws SQLException;
-	public void deleteAuthority(Map<String, Object> map) throws SQLException;
+
+	// 승인 여부 업데이트 (승인/거절)
+	public void updateApply(Map<String, Object> map) throws SQLException;
+
+    // 권한 수정 (관리자가 권한을 수정)
+    public void updateSeller(Map<String, Object> map) throws SQLException;
+
+    // 회원 탈퇴 처리
+    public void deleteSeller(Map<String, Object> map) throws SQLException;
 }

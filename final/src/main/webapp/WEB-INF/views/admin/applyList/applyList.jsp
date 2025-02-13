@@ -58,18 +58,6 @@
 	</div>
 	<script type="text/javascript">
 $(function(){
-	$('#tab-0').addClass('active');
-	
-    $('button[role="tab"]').on('click', function(e){
-    	const tab = $(this).attr('data-tab');
-    	
-		if(tab !== '4') {
-			resetList();
-		} 
-    });	
-});
-
-$(function(){
 	listMember(1);
 });
 
@@ -123,11 +111,11 @@ $(function(){
 		let block = '';
 		let non = 0;
 		
-		if($('#blockCheck1').is(':checked') && $('#blockCheck2').is(':checked')) {
+		if($('#applyCheck1').is(':checked') && $('#applyCheck2').is(':checked')) {
 			block = '';
-		} else if($('#blockCheck1').is(':checked')) {
+		} else if($('#applyCheck1').is(':checked')) {
 			block = '0';
-		} else if($('#blockCheck2').is(':checked')) {
+		} else if($('#applyCheck2').is(':checked')) {
 			block = '1';
 		}
 		
@@ -144,7 +132,7 @@ $(function(){
 });
 
 function statusDetailesMember() {
-	$('#memberStatusDetailesDialogModal').modal('show');	
+
 }
 
 function selectStatusChange() {
@@ -166,6 +154,37 @@ function selectStatusChange() {
 function updateMember() {
 	$('#memberUpdateDialogModal').modal('show');
 }
+
+function apply(sellerApplyNum, page) {
+    // AJAX 요청을 통해 서버에서 sellerApplyNum에 해당하는 데이터를 가져옵니다.
+    $.ajax({
+        url: '/admin/getSellerDetailsBySellerApplyNum',  // 매핑된 URL
+        type: 'GET',
+        data: { sellerApplyNum: sellerApplyNum },  // sellerApplyNum을 서버로 전송
+        dataType: 'json',  // 반환받을 데이터 타입
+        success: function(response) {
+            // 서버에서 받은 데이터를 모달에 채워넣습니다.
+            $('#sellerName').text(response.name);
+            $('#sellerEmail').text(response.email);
+            $('#sellerPhone').text(response.phone);
+            $('#sellerBrandName').text(response.brandName);
+            $('#sellerBrandIntro').text(response.brandIntro);
+            $('#sellerIntropeice').text(response.intropeice);
+            $('#sellerForextra').text(response.forextra);
+            $('#sellerStatus').text(response.agreed === 0 ? "미승인" : "승인");
+
+            // 모달을 띄웁니다.
+            $('#sellerStatusDetailesDialogModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX 요청 실패:', error);
+        }
+    });
+}
+
+
+
+
 
 function updateMemberOk(page) {
     // 회원 정보 변경(권한, 이름, 생년월일)
