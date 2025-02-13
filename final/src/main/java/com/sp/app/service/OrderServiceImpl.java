@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService{
   }
 
   @Override
-  public void insertOrderDetail(OrderDetail orderDetail) throws SQLException {
+  public void insertOrderDetail(Order orderDetail) throws SQLException {
 
   }
 
@@ -104,12 +104,12 @@ public class OrderServiceImpl implements OrderService{
   }
 
   @Override
-  public List<OrderDetail> getOrderDetailList(Map<String, Object> params) {
+  public List<Order> getOrderDetailList(Map<String, Object> params) {
     return List.of();
   }
 
   @Override
-  public OrderDetail getOrderDetail(long orderDetailId) {
+  public Order getOrderDetail(long orderDetailId) {
     return null;
   }
 
