@@ -15,10 +15,11 @@
         values (SEQ_PRODUCT_ORDER.nextval, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode}, #{couponValue}, #{spentPoint}, #{netPay})
     </insert>
 
-
-
-
-
+    <!--  배송지 등록 -->
+    <insert id="insertShippingAddress" parameterMap="com.sp.app.model.ShippingInfo">
+        insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, addtitle, adddetail, firstadd)
+        values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd})
+    </insert>
 
 
 </mapper>
