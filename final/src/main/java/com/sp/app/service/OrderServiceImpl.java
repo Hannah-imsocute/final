@@ -22,7 +22,7 @@ public class OrderServiceImpl implements OrderService{
 
   private static AtomicLong count = new AtomicLong(0);
 
-//  @Override
+  //  @Override
   public String productOrderNumber() {
     // 상품 주문 번호 생성
     String result = "";
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService{
     try {
       orderMapper.insertOrder(order);
     } catch (Exception e) {
-     log.info("insertOrder", e);
+      log.info("insertOrder", e);
     }
   }
 

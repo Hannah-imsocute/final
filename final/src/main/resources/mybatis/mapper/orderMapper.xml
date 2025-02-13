@@ -7,7 +7,7 @@
         select ORDER_CODE
         from PRODUCT_ORDER
         order by ORDER_DATE desc
-        fetch first 1 rows only
+            fetch first 1 rows only
     </select>
 
     <insert id="insertOrder" parameterType="com.sp.app.model.Order">
@@ -17,40 +17,65 @@
 
     <!-- 결제 내역 등록 -->
     <insert id="insertPayment" parameterType="com.sp.app.model.Payment">
-
+        insert into PAYBYMETHOD (ORDER_CODE, MEMBERIDX, BYMETHOD, COMFIRMCODE, PROVIDER, confirm_date, card)
+        values (SEQ_PRODUCT_ORDER.currentval, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_CHAR(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{card} )
     </insert>
 
     <!--  주문 상세 정보 등록  -->
     <insert id="insertOrderDetail" parameterType="com.sp.app.model.Order">
-
+        insert into ORDER_ITEM(ITEM_CODE, ORDER_CODE, PRODUCTCODE, OPTIONS, PRICEFOREACH, QUANTITY, PRICE, SHIPPING, ORDER_STATE)
+        values (SEQ_ORDER_ITEM.nextval, #{orderCode}, #{productCode}, #{options}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 0)
     </insert>
 
+    <!--     0: 주문접수, 1: 결제완료, 2: 배송준비중 -->
+
+
     <!--  배송지 등록 -->
-<!--    <insert id="insertShippingAddress" parameterMap="com.sp.app.model.ShippingInfo">
-        insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, addtitle, adddetail, firstadd)
-        values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd})
-    </insert>-->
+    <insert id="insertShippingAddress" parameterType="com.sp.app.model.ShippingInfo">
+        insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, ADDRTITLE, ADDRDETAIL, FIRSTADDR)
+        values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAddr})
+    </insert>
 
     <!-- 포인트 등록 -->
     <insert id="insertUserPoint" parameterType="com.sp.app.model.MemberPoint">
-
+        insert into POINT_SAVE (POINT_SAVE_NUM, MEMBERIDX, SAVEAMOUNT, SAVEDATE, EXPIREDATE, REASON, ENABLE, BALANCE)
+        VALUES (SEQ_POINT_SAVE.nextval, #{memberIdx}, #{saveAmount}, #{saveDate}, #{expireDate}, #{reason}, #{enable}, #{balance})
     </insert>
 
-    <insert id="">
-
-    </insert>
-
-    <!-- 주문 내역 상세 리스트 조회 -->
-    <select id="getOrderDetailList"  parameterType="map" resultType="com.sp.app.model.Order">
-
+    <!-- 주문 상세 정보 가져오기 -->
+    <select id="getOrderDetailList" parameterType="map" resultType="com.sp.app.model.Order">
+        select
+            o.ORDER_CODE as orderCode, OPTIONS as options,
+            PRICEFOREACH as priceForeach, quantity as quantity, PRICE as totalPrice,
+            SHIPPING as shippqing, ORDER_STATE as orderState,  BYMETHOD   as payment,
+            CONFIRMCODE  as couponCode,
+            TO_CHAR(CONFIRM_DATE, 'YYYY-MM-DD HH24:MI:SS') as confirmDate
+        from ORDER_ITEM o
+                 join PAYBYMETHOD p on p.ORDER_CODE = o.ORDER_CODE
+        where o.ORDER_CODE = #{orderCode}
     </select>
 
     <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
-    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.MainProduct">
-        select PRODUCTCODE
-        from product
+    <!-- 상품 정보 -->
+    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.Order">
+        select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
+        from ORDER_ITEM
+        where PRODUCTCODE = #{productCode}
     </select>
 
+    <!--유저의 가장 최근 포인트 조회-->
+    <select id="getLatestUserPoint" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+        select point_save_num as pointSaveNum, memberidx, saveamount as saveAmount, savedate as saveDate, expiredate as expireDate,
+               reason, enable, balance
+        from POINT_SAVE
+        where MEMBERIDX = #{memberIdx}
+        order by EXPIREDATE desc
+            fetch first 1 rows only
+    </select>
+
+
     <!-- 옵션 -->
+
+
 
 </mapper>

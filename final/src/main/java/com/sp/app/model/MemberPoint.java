@@ -11,7 +11,8 @@ import lombok.Setter;
 public class MemberPoint {
 
     private long memberIdx; // 회원코드
-    private int saveAount; // 포인트금액
+    private int pointSaveNum;
+    private int saveAmount; // 포인트금액
     private String saveDate; // 포인트적립일
     private String expireDate; // 포인트사용일
     private String reason; // 적립경로

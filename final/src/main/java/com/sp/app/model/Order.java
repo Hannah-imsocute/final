@@ -5,13 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
 
+  private List<Order> orders;
+
   private long orderCode; // 주문번호
+  private long productCode;
   private String orderDate; // 주문일시
   private String addrNum; // 기본 배송지 주소
   private int totalPrice; // 총 주문 금액
@@ -20,6 +25,7 @@ public class Order {
   private int spentPoint; // 포인트 사용 금액
   private int netPay; // 결제 금액
   private String confirmDate; // 주문확인날짜
+  private int price;
 
   private String options; // 옵션
   private int priceForeach; //  단가
