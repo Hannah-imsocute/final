@@ -7,7 +7,7 @@
         select ORDER_CODE
         from PRODUCT_ORDER
         order by ORDER_DATE desc
-        fetch first 1 rows only
+            fetch first 1 rows only
     </select>
 
     <insert id="insertOrder" parameterType="com.sp.app.model.Order">
@@ -15,11 +15,44 @@
         values (SEQ_PRODUCT_ORDER.nextval, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode}, #{couponValue}, #{spentPoint}, #{netPay})
     </insert>
 
-    <!--  배송지 등록 -->
-    <insert id="insertShippingAddress" parameterMap="com.sp.app.model.ShippingInfo">
-        insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, addtitle, adddetail, firstadd)
-        values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd})
+
+
+    <!-- 결제 내역 등록 -->
+    <insert id="insertPayment" parameterType="com.sp.app.model.Payment">
+
     </insert>
 
+    <!--  주문 상세 정보 등록  -->
+    <insert id="insertOrderDetail" parameterType="com.sp.app.model.Order">
+
+    </insert>
+
+    <!--  배송지 등록 -->
+    <!--    <insert id="insertShippingAddress" parameterMap="com.sp.app.model.ShippingInfo">
+            insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, addtitle, adddetail, firstadd)
+            values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd})
+        </insert>-->
+
+    <!-- 포인트 등록 -->
+    <insert id="insertUserPoint" parameterType="com.sp.app.model.MemberPoint">
+
+    </insert>
+
+    <insert id="">
+
+    </insert>
+
+    <!-- 주문 내역 상세 리스트 조회 -->
+    <select id="getOrderDetailList"  parameterType="map" resultType="com.sp.app.model.Order">
+
+    </select>
+
+    <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
+    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+        select PRODUCTCODE
+        from product
+    </select>
+
+    <!-- 옵션 -->
 
 </mapper>
