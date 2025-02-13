@@ -24,14 +24,14 @@
 
 	<select id="findByUserEmail" parameterType="String" resultType="com.sp.app.model.Member">
 		select m.MEMBERIDX, EMAIL, PASSWORD, NICKNAME,
-			   BLOCK, REG_DATE, m.LASTMODIFIED, LASTLOGIN, FAILCOUNT,
-			   ma.ADDRNAME, ma.ADDRTITLE, ma.ADDRDETAIL, ma.FIRSTADDR,
-			   mi.PHONE, TO_CHAR(mi.DOB, 'YYYY-MM-DD') AS birth,
-			   r.authority
+		       BLOCK, REG_DATE, m.LASTMODIFIED, LASTLOGIN, FAILCOUNT,
+		       ma.ADDNAME, ma.ADDTITLE, ma.ADDDETAIL, ma.FIRSTADD,
+		       mi.PHONE, TO_CHAR(mi.DOB, 'YYYY-MM-DD') AS birth,
+		       r.authority
 		from MEMBER m
-				 LEFT JOIN MEMBER_ADDRESS ma ON m.MEMBERIDX = ma.MEMBERIDX
-				 LEFT JOIN MEMBER_INFO mi ON m.MEMBERIDX = mi.MEMBERIDX
-				 LEFT JOIN ROLES r ON m.MEMBERIDX = r.MEMBERIDX
+		LEFT JOIN MEMBER_ADDRESS ma ON m.MEMBERIDX = ma.MEMBERIDX
+		LEFT JOIN MEMBER_INFO mi ON m.MEMBERIDX = mi.MEMBERIDX
+		LEFT JOIN ROLES r ON m.MEMBERIDX = r.MEMBERIDX
 		where email = #{email} AND BLOCK = 0
 	</select>
 
@@ -67,10 +67,10 @@
 		VALUES (SEQ_MEMBER.nextval, #{authority})
 	</insert>
 
-	<!--	<delete id="deleteAuthority" parameterType="map">-->
-	<!--		DELETE FROM ROLES-->
-	<!--		WHERE MEMBERIDX = (SEQ_MEMBER.nextval) AND authority = #{authority}-->
-	<!--	</delete>-->
+<!--	<delete id="deleteAuthority" parameterType="map">-->
+<!--		DELETE FROM ROLES-->
+<!--		WHERE MEMBERIDX = (SEQ_MEMBER.nextval) AND authority = #{authority}-->
+<!--	</delete>-->
 
 	<delete id="deleteAuthority" parameterType="map">
 		DELETE FROM ROLES
@@ -91,10 +91,10 @@
 		)
 	</select>
 
-	<!-- 이름, 배송지, 전화번호 -->
+<!-- 이름, 배송지, 전화번호 -->
 	<select id="getShippingInfo" parameterType="Long" resultType="com.sp.app.model.ShippingInfo">
-		SELECT MEMBERIDX, NAME AS receiverName, PHONE, ADDRNAME AS addName, ADDRTITLE AS addTitle, ADDRDETAIL AS addDetail,
-			   FIRSTADD AS firstAdd
+		SELECT MEMBERIDX, NAME AS receiverName, PHONE, ADDNAME AS addName, ADDTITLE AS addTitle, ADDDETAIL AS addDetail,
+		       FIRSTADD AS firstAdd
 		FROM MEMBER_ADDRESS
 		WHERE MEMBERIDX = #{memberIdX} AND FIRSTADD = 1
 	</select>
