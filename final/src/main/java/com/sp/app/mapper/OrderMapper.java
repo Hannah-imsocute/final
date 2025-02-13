@@ -1,7 +1,6 @@
 package com.sp.app.mapper;
 
 import com.sp.app.model.*;
-import com.sp.app.model.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.SQLException;
