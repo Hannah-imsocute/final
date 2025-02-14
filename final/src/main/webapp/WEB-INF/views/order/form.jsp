@@ -453,7 +453,9 @@
                 </div>
 
                 <!-- 결제하기 버튼 추가 -->
-                <button class="btn-submit-order">결제하기</button>
+                <form action="${pageContext.request.contextPath}/order/submit">
+                    <button class="btn-submit-order">결제하기</button>
+                </form>
             </div>
         </div> <!-- //order-right -->
     </div> <!-- //order-content -->

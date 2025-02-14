@@ -7,275 +7,161 @@
 <head>
   <meta charset="UTF-8">
   <title>주문결제</title>
-
-  <!-- 공통 CSS/JS 로드 -->
+  <!-- 공통 CSS/JS 로드 (jQuery 포함 여부 확인) -->
   <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
-
+  <!-- 만약 jQuery가 없다면 아래 주석을 해제 -->
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
   <!-- 폰트 로드 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- 다음 우편번호 API -->
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
   <style>
-    /* 기존 CSS 스타일 그대로 유지 */
-    header {
-      position: relative !important;
+    /* 기존 스타일 유지 */
+    header { position: relative !important; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans KR', sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    a:hover { color: #555; }
+    .order-page-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px 40px; min-height: 80vh; }
+    .order-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .order-header .order-title { margin: 0; font-size: 28px; font-weight: bold; }
+    .cart-steps { font-size: 14px; color: #999; }
+    .cart-steps ol { list-style: none; display: flex; gap: 15px; margin: 0; padding: 0; }
+    .cart-steps li { padding: 4px 8px; border-radius: 4px; background: #eaeaea; }
+    .cart-steps li.current { font-weight: bold; color: #333; }
+    .order-content { display: flex; gap: 20px; flex-wrap: wrap; }
+    .order-left { flex: 1 1 0; min-width: 320px; }
+    .order-right { width: 380px; flex-shrink: 0; }
+    .order-section { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .order-section h3 { margin-bottom: 10px; font-size: 18px; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .order-section .sub-info { font-size: 14px; color: #666; margin-bottom: 10px; }
+    .order-section button { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 6px 12px; font-size: 14px; cursor: pointer; transition: background-color 0.3s; }
+    .order-section button:hover { background: #f9f9f9; }
+    .shipping-box .addr-text { background-color: #fff; border: 1px solid #eee; border-radius: 4px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.4; min-height: 60px; }
+    .memo-input { width: 100%; padding: 8px; margin-top: 10px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; background-color: #fff; }
+    .discount-box select { margin-left: 5px; padding: 5px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; }
+    .discount-box input[type="text"] { padding: 5px; font-size: 14px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+    .payment-box .card-list { display: flex; gap: 10px; flex-wrap: wrap; }
+    .payment-box .card-item { width: 120px; height: 60px; background-color: #f2f2f2; border-radius: 4px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #666; cursor: pointer; transition: background-color 0.3s; }
+    .payment-box .card-item:hover { background-color: #ebebeb; }
+    .payment-box .sub-info { margin-bottom: 10px; }
+    .order-summary-box { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .order-summary-box h3 { font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .product-list { margin-bottom: 20px; }
+    .product-list-header, .product-list-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .product-list-header { font-weight: bold; background-color: #f9f9f9; }
+    .product-list-item:last-child { border-bottom: none; }
+    .product-list .column { text-align: center; flex: 1; }
+    .product-list .column.image { flex: 0 0 60px; }
+    .product-list .column.image img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+    .sum-area { font-size: 14px; line-height: 1.6; text-align: right; }
+    .sum-area .highlight { font-size: 16px; font-weight: bold; color: #333; }
+    .btn-submit-order { display: block; width: 100%; padding: 14px 0; background-color: #ff8200; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px; transition: background-color 0.3s; }
+    .btn-submit-order:hover { background-color: #ff8400; }
+
+    @media (max-width: 768px) {
+      .order-right { width: 100%; order: -1; }
     }
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+
+    /* 모달창 관련 CSS */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #f0f2f5;
-      color: #333;
-      line-height: 1.6;
+    .modal {
+      display: block !important;
+      background-color: #fff;
+      border-radius: 8px;
+      width: 320px;
+      max-width: 90%;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 10000;
+      border: 1px solid #ccc;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    a:hover {
-      color: #555;
-    }
-    .order-page-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px 40px;
-      min-height: 80vh;
-    }
-    .order-header {
+    .modal-header {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .order-header .order-title {
-      margin: 0;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .cart-steps {
-      font-size: 14px;
-      color: #999;
-    }
-    .cart-steps ol {
-      list-style: none;
-      display: flex;
-      gap: 15px;
-      margin: 0;
-      padding: 0;
-    }
-    .cart-steps li {
-      padding: 4px 8px;
-      border-radius: 4px;
-      background: #eaeaea;
-    }
-    .cart-steps li.current {
-      font-weight: bold;
-      color: #333;
-    }
-    .order-content {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .order-left {
-      flex: 1 1 0;
-      min-width: 320px;
-    }
-    .order-right {
-      width: 380px;
-      flex-shrink: 0;
-    }
-    .order-section {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    .order-section h3 {
       margin-bottom: 10px;
+    }
+    .modal-header h3 {
+      margin: 0;
       font-size: 18px;
       font-weight: 600;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
     }
-    .order-section .sub-info {
+    .modal-header .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal-body label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
       font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
     }
-    .order-section button {
-      background: #fff;
+    .modal-body input {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      padding: 6px 12px;
       font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s;
     }
-    .order-section button:hover {
-      background: #f9f9f9;
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
     }
-    .shipping-box .addr-text {
-      background-color: #fff;
-      border: 1px solid #eee;
+    .modal-footer button {
+      padding: 8px 16px;
+      border: none;
       border-radius: 4px;
-      padding: 12px;
-      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .modal-footer .modal-save {
+      background-color: #ff8200;
+      color: #fff;
+    }
+    .modal-footer .modal-cancel {
+      background-color: #ccc;
+    }
+    /* 배송지 목록 항목 스타일 */
+    .address-item {
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .address-info {
       font-size: 14px;
       line-height: 1.4;
     }
-    .memo-input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 10px;
-      font-size: 14px;
+    .btn-select-address {
+      padding: 4px 8px;
       border: 1px solid #ddd;
+      background: #fff;
       border-radius: 4px;
-      background-color: #fff;
-    }
-    .discount-box select {
-      margin-left: 5px;
-      padding: 5px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #fff;
-    }
-    .discount-box input[type="text"] {
-      padding: 5px;
-      font-size: 14px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .payment-box .card-list {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .payment-box .card-item {
-      width: 120px;
-      height: 60px;
-      background-color: #f2f2f2;
-      border-radius: 4px;
-      border: 1px solid #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      color: #666;
       cursor: pointer;
       transition: background-color 0.3s;
+      font-size: 12px;
     }
-    .payment-box .card-item:hover {
-      background-color: #ebebeb;
-    }
-    .payment-box .sub-info {
-      margin-bottom: 10px;
-    }
-    .order-summary-box {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    .order-summary-box h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-top: 0;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    }
-    .product-list {
-      margin-bottom: 20px;
-    }
-    .product-list-header,
-    .product-list-item {
-      display: flex;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .product-list-header {
-      font-weight: bold;
+    .btn-select-address:hover {
       background-color: #f9f9f9;
-    }
-    .product-list-item:last-child {
-      border-bottom: none;
-    }
-    .product-list .column {
-      text-align: center;
-      flex: 1;
-    }
-    .product-list .column.image {
-      flex: 0 0 60px;
-    }
-    .product-list .column.image img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-    .sum-area {
-      font-size: 14px;
-      line-height: 1.6;
-      text-align: right;
-    }
-    .sum-area .highlight {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-    }
-    .order-form {
-      margin-top: 15px;
-      border-top: 1px solid #eee;
-      padding-top: 15px;
-    }
-    .order-form label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    .order-form input,
-    .order-form textarea {
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 8px;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-    .btn-submit-order {
-      display: block;
-      width: 100%;
-      padding: 14px 0;
-      background-color: #ff8200;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s;
-    }
-    .btn-submit-order:hover {
-      background-color: #ff8400;
-    }
-    @media (max-width: 768px) {
-      .order-right {
-        width: 100%;
-        order: -1;
-      }
     }
   </style>
 </head>
@@ -307,14 +193,15 @@
       <div class="order-section shipping-box">
         <h3>배송지 정보</h3>
         <div class="sub-info">
-          받는 분: <strong><c:out value="${receiverName}" /></strong>
-          <button type="button">배송지 변경</button>
+          받는 분:
+          <strong><c:out value="${receiverName}" /></strong>
+          <button type="button" class="btn-addr-info">배송지 변경</button>
         </div>
         <div class="addr-text">
           <c:if test="${not empty addTitle}">
             <c:out value="${addTitle}" /> <c:out value="${addDetail}" /><br/>
           </c:if>
-          ( <c:out value="${phone}" /> )
+          <c:out value="${phone}" />
         </div>
         <select class="memo-input">
           <option value="">배송시 요청사항을 선택해주세요.</option>
@@ -325,7 +212,7 @@
           <option value="other">기타 입력</option>
         </select>
         <div id="otherRequestDiv" style="display:none; margin-top:10px;">
-          <input type="text" maxlength="50" placeholder="최대 50자 입력이 가능합니다." style="width:100%; padding:8px; font-size:14px; border:1px solid #ddd; border-radius:4px;">
+          <input type="text" maxlength="50" placeholder="최대 50자 입력이 가능합니다." style="width:100%; padding:8px; font-size:14px; border:1px solid #ddd; border-radius:4px;" />
         </div>
       </div>
 
@@ -349,7 +236,7 @@
           <button type="button">전액사용</button>
         </div>
         <div style="margin-top: 15px; font-size:14px; color:#999;">
-          제휴포인트도 스마일캐시로 전환하세요!<br>
+          제휴포인트도 스마일캐시로 전환하세요!<br/>
           <small>(SSG MONEY / PAYCO / L.POINT 등)</small>
         </div>
       </div>
@@ -373,7 +260,6 @@
     <div class="order-right">
       <div class="order-summary-box">
         <h3>주문 상품 목록</h3>
-
         <!-- 상품 목록 -->
         <div class="product-list">
           <div class="product-list-header">
@@ -386,7 +272,7 @@
           <c:forEach var="cart" items="${cartItems}">
             <div class="product-list-item">
               <div class="column image">
-                <img src="${pageContext.request.contextPath}/dist/img/우산.jpg" alt="상품 이미지"/>
+                <img src="#" alt="상품 이미지"/>
               </div>
               <div class="column name">
                 <c:out value="${cart.item}" />
@@ -403,20 +289,19 @@
             </div>
           </c:forEach>
         </div>
-
         <!-- 합계 영역 -->
         <div class="sum-area">
-          상품금액: <span>
-                        <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-                    </span><br/>
+          상품금액:
+          <span>
+            <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
+          </span><br/>
           할인금액: <span style="color:#f05;">-0원</span><br/>
           배송비: 0원<br/><br/>
           총 결제금액:
           <span class="highlight">
-                        <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-                    </span>
+            <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
+          </span>
         </div>
-
         <!-- 결제하기 버튼 -->
         <button class="btn-submit-order">결제하기</button>
       </div>
@@ -424,20 +309,292 @@
   </div> <!-- //order-content -->
 </div> <!-- //order-page-container -->
 
+<!-- 모달창 (배송지 변경) -->
+<div id="modalOverlay" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>배송지 변경</h3>
+      <!-- 닫기 버튼 -->
+      <button type="button" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- 주소 목록 영역 (초기에는 목록 모드) -->
+      <div id="modalAddressList">
+        <c:choose>
+          <c:when test="${not empty shippingAddresses}">
+            <ul style="list-style:none; padding-left:0;">
+              <c:forEach var="addr" items="${shippingAddresses}">
+                <li class="address-item"
+                    data-receiverName="${addr.receiverName}"
+                    data-addTitle="${addr.addTitle}"
+                    data-addDetail="${addr.addDetail}"
+                    data-phone="${addr.phone}">
+                  <div class="address-info">
+                    <strong>${addr.receiverName}</strong> - ${addr.addTitle} ${addr.addDetail} - ${addr.phone}
+                    <c:if test="${addr.firstAdd == 1}">(기본 배송지)</c:if>
+                  </div>
+                  <button type="button" class="btn-select-address">선택</button>
+                </li>
+              </c:forEach>
+            </ul>
+          </c:when>
+          <c:otherwise>
+            <p>등록된 배송지가 없습니다.</p>
+          </c:otherwise>
+        </c:choose>
+        <button type="button" id="btnAddNewAddress">배송지 추가하기</button>
+      </div>
+      <!-- 새 배송지 등록 폼 (초기에는 숨김) -->
+      <div id="modalAddressForm" style="display: none;">
+        <label for="modalReceiverName">받는 분</label>
+        <input type="text" name="receiverName" id="modalReceiverName" placeholder="수령인 예) 홍길동" />
+        <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
+
+        <label for="modalAddName">배송지명</label>
+        <input type="text" name="addName" id="modalAddName" placeholder="배송지명 예) 집" />
+
+        <label for="modalPostCode">우편번호</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+          <input type="text" name="postCode" id="modalPostCode" placeholder="우편번호" style="flex:1;" readonly />
+          <button type="button" id="btnSearchPostCode" style="padding: 8px;">우편번호 찾기</button>
+        </div>
+
+        <label for="modalAddress">주소</label>
+        <input type="text" name="addTitle" id="modalAddress" placeholder="기본주소 입력" />
+
+        <label for="modalAddressDetail">상세주소</label>
+        <input type="text" name="addDetail" id="modalAddressDetail" placeholder="상세주소 입력" />
+
+        <label for="modalPhone">연락처</label>
+        <input type="text" name="phone" id="modalPhone" placeholder="예) 010-1234-5678" />
+
+        <label for="modalFirstAdd" style="display:block; margin-top:10px;">
+          <input type="checkbox" name="firstAdd" id="modalFirstAdd" value="1">
+          기본 배송지로 사용
+        </label>
+        <button type="button" id="btnShowAddressList">목록 보기</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-save">저장</button>
+      <button type="button" class="modal-cancel modal-close">취소</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 </footer>
 
-<!-- JS -->
 <script>
-  window.addEventListener('DOMContentLoaded', function() {
-    const shippingSelect = document.querySelector('.shipping-box .memo-input');
-    const otherRequestDiv = document.getElementById('otherRequestDiv');
-    if (shippingSelect && otherRequestDiv) {
-      shippingSelect.addEventListener('change', function() {
-        otherRequestDiv.style.display = this.value === 'other' ? 'block' : 'none';
-      });
+  // AJAX 유틸 함수
+  function ajaxFun(url, method, formData, dataType, fn, file = false) {
+    const settings = {
+      type: method,
+      data: formData,
+      dataType: dataType,
+      success: function(data) { fn(data); },
+      error: function(jqXHR) { console.log(jqXHR.responseText); }
+    };
+    if(file){
+      settings.processData = false;
+      settings.contentType = false;
     }
+    $.ajax(url, settings);
+  }
+</script>
+
+<script>
+  // 다음 우편번호 API를 모달 input 필드에 적용
+  function sample6_execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        var addr = '';
+        var extraAddr = '';
+
+        if (data.userSelectedType === 'R') {
+          addr = data.roadAddress;
+        } else {
+          addr = data.jibunAddress;
+        }
+
+        if (data.userSelectedType === 'R') {
+          if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+            extraAddr += data.bname;
+          }
+          if(data.buildingName !== '' && data.apartment === 'Y'){
+            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+          }
+          if(extraAddr !== ''){
+            extraAddr = ' (' + extraAddr + ')';
+          }
+        } else {
+          extraAddr = '';
+        }
+
+        document.getElementById("modalPostCode").value = data.zonecode;
+        document.getElementById("modalAddress").value = addr;
+        document.getElementById("modalAddressDetail").focus();
+      }
+    }).open();
+  }
+
+  $(document).ready(function() {
+    // 로컬스토리지에서 저장된 배송지 정보 불러오기
+    const storedAddress = localStorage.getItem('selectedShippingAddress');
+    if(storedAddress) {
+      const address = JSON.parse(storedAddress);
+      $('.shipping-box .sub-info strong').text(address.receiverName);
+      let newAddrHtml = address.addTitle;
+      if(address.addDetail) { newAddrHtml += ' ' + address.addDetail; }
+      newAddrHtml += '<br/>' + address.phone;
+      $('.shipping-box .addr-text').html(newAddrHtml);
+    }
+
+    // 배송메모 select (기존 코드)
+    const $shippingSelect = $('.shipping-box .memo-input');
+    const $otherRequestDiv = $('#otherRequestDiv');
+    $shippingSelect.change(function() {
+      if ($(this).val() === 'other') {
+        $otherRequestDiv.show();
+      } else {
+        $otherRequestDiv.hide();
+      }
+    });
+
+    // 모달 관련
+    const $modalOverlay = $('#modalOverlay');
+    const $btnAddrChange = $('.btn-addr-info');
+    const $closeButtons = $('.modal-close');
+    const $btnSave = $('.modal-save');
+
+    // 배송지 변경 버튼 클릭 -> 모달 열기 (목록 모드로 시작)
+    $btnAddrChange.click(function() {
+      $('#modalAddressList').show();
+      $('#modalAddressForm').hide();
+      $modalOverlay.css('display','flex');
+    });
+
+    // "배송지 추가하기" 버튼 클릭 -> 등록 폼으로 전환
+    $('#btnAddNewAddress').click(function() {
+      $('#modalAddressList').hide();
+      $('#modalAddressForm').show();
+      // 폼 내부 값 초기화
+      $('#modalReceiverName').val('');
+      $('#modalAddName').val('');
+      $('#modalPostCode').val('');
+      $('#modalAddress').val('');
+      $('#modalAddressDetail').val('');
+      $('#modalFirstAdd').prop('checked', false);
+      $('#modalPhone').val('');
+    });
+
+    // "목록 보기" 버튼 클릭 -> 주소 목록으로 전환
+    $('#btnShowAddressList').click(function() {
+      $('#modalAddressForm').hide();
+      $('#modalAddressList').show();
+    });
+
+    // 닫기(×), 취소 버튼 -> 모달 닫기
+    $closeButtons.click(function() {
+      $modalOverlay.hide();
+    });
+
+    // 우편번호 찾기 -> 다음 우편번호 API 호출
+    $('#btnSearchPostCode').click(function() {
+      sample6_execDaumPostcode();
+    });
+
+    // 배송지 선택 버튼 클릭 이벤트 (주소 목록 내)
+    $(document).on('click', '.btn-select-address', function() {
+      const $li = $(this).closest('.address-item');
+      const receiverName = $li.data('receivername');
+      const addTitle = $li.data('addtitle');
+      const addDetail = $li.data('adddetail');
+      const phone = $li.data('phone');
+
+      // 메인 페이지의 배송 정보 업데이트
+      $('.shipping-box .sub-info strong').text(receiverName);
+      let newAddrHtml = addTitle;
+      if(addDetail) { newAddrHtml += ' ' + addDetail; }
+      newAddrHtml += '<br/>' + phone;
+      $('.shipping-box .addr-text').html(newAddrHtml);
+
+      // 선택한 배송지 정보를 로컬스토리지에 저장
+      const selectedAddress = {
+        receiverName: receiverName,
+        addTitle: addTitle,
+        addDetail: addDetail,
+        phone: phone
+      };
+      localStorage.setItem('selectedShippingAddress', JSON.stringify(selectedAddress));
+
+      $modalOverlay.hide();
+    });
+
+    // 저장 버튼 클릭 -> AJAX 호출 (새 주소 등록 폼일 때)
+    $btnSave.click(function() {
+      if ($('#modalAddressForm').is(':visible')) {
+
+        const receiverName  = $('#modalReceiverName').val();
+        const addName       = $('#modalAddName').val();
+        const postCode      = $('#modalPostCode').val();
+        const addTitle      = $('#modalAddress').val();
+        const addDetail     = $('#modalAddressDetail').val();
+        const phone         = $('#modalPhone').val();
+        const firstAdd      = $('#modalFirstAdd').is(':checked') ? 1 : 0;
+
+        if (!receiverName) {
+          alert('받는 분(수령인)을 입력하세요.');
+          return;
+        }
+        if (!addTitle) {
+          alert('주소를 입력하세요.');
+          return;
+        }
+        if (!phone) {
+          alert('연락처를 입력하세요.');
+          return;
+        }
+
+        let formData = {
+          receiverName: receiverName,
+          addName: addName,
+          postCode: postCode,
+          addTitle: addTitle,
+          addDetail: addDetail,
+          phone: phone,
+          firstAdd: firstAdd
+        };
+
+        let url = '${pageContext.request.contextPath}/order/addr';
+        const fn = function(data) {
+          if(data.status === 'success') {
+            alert('배송지 등록 성공');
+            $('.shipping-box .sub-info strong').text(receiverName);
+            let newAddrHtml = addTitle;
+            if(addDetail) { newAddrHtml += ' ' + addDetail; }
+            newAddrHtml += '<br/>' + phone;
+            $('.shipping-box .addr-text').html(newAddrHtml);
+            // 새로 등록한 배송지도 로컬스토리지에 저장
+            const selectedAddress = {
+              receiverName: receiverName,
+              addTitle: addTitle,
+              addDetail: addDetail,
+              phone: phone
+            };
+            localStorage.setItem('selectedShippingAddress', JSON.stringify(selectedAddress));
+            $modalOverlay.hide();
+          } else {
+            alert('등록 실패: ' + (data.message || '알 수 없는 오류'));
+          }
+        };
+
+        ajaxFun(url, 'post', formData, 'json', fn);
+      } else {
+        $modalOverlay.hide();
+      }
+    });
   });
 </script>
 </body>

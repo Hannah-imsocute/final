@@ -2,11 +2,15 @@ package com.sp.app.service;
 
 import com.sp.app.mapper.OrderMapper;
 import com.sp.app.model.*;
+import com.sp.app.model.cart.CartItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +25,7 @@ public class OrderServiceImpl implements OrderService{
 //  private final MyPageMapper myPageMapper;
 
   private static AtomicLong count = new AtomicLong(0);
+  private final CartItemService cartItemService;
 
   //  @Override
   public String productOrderNumber() {
@@ -89,8 +94,19 @@ public class OrderServiceImpl implements OrderService{
   }
 
   @Override
-  public void insertShippingAddress(ShippingInfo shippingInfo) throws Exception {
+  public void insertShippingAddress(ShippingInfo info) throws Exception {
+    try {
+      info.setReceiverName(info.getReceiverName());
+      info.setPhone(info.getPhone());
+      info.setAddDetail(info.getAddDetail());
+      info.setAddTitle(info.getAddTitle());
+      info.setFirstAdd(info.getFirstAdd()); // 기본 배송지로 저장
 
+
+      orderMapper.insertShippingAddress(info);
+    } catch(Exception e) {
+      log.info("insertShippingAddress", e);
+    }
   }
 
   @Override
@@ -122,4 +138,66 @@ public class OrderServiceImpl implements OrderService{
   public void decreaseProductStock(long productId, int quantity) throws SQLException {
 
   }
+
+  @Override
+  @Transactional
+  public Order processOrder(SessionInfo sessionInfo) throws Exception {
+    List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
+    if (cartItems == null || cartItems.isEmpty()) {
+      throw new Exception("장바구니가 비어 있습니다.");
+    }
+
+    List<OrderItem> orderItems = new ArrayList<>();
+    int overallNetPay = 0;
+    for (CartItem cartItem : cartItems) {
+      int totalPrice = cartItem.getQuantity() * cartItem.getPrice();
+      int shipping = totalPrice >= 20000 ? 0 : 3000;
+      int couponValue = cartItem.getCouponValue() != null ? cartItem.getCouponValue() : 0;
+      int spentPoint = cartItem.getSpentPoint() != null ? cartItem.getSpentPoint() : 0;
+      int netPay = totalPrice + shipping - couponValue - spentPoint;
+      overallNetPay += netPay;
+
+      OrderItem orderItem = OrderItem.builder()
+              .productCode(cartItem.getProductCode())
+              .options(cartItem.getCartOption())
+              .priceForeach(cartItem.getPrice())
+              .quantity(cartItem.getQuantity())
+              .price(totalPrice)
+              .shipping(shipping)
+              .orderState(0) // 0이 기본값
+              .build();
+      orderItems.add(orderItem);
+    }
+
+    Order order = Order.builder()
+            .memberIdx(sessionInfo.getMemberIdx())
+            .email(sessionInfo.getEmail())
+            .orderDate(java.time.LocalDateTime.now().toString())
+            .addrNum(1)
+            .totalPrice(overallNetPay)
+            .couponCode(null)
+            .couponValue(0)
+            .spentPoint(0)
+            .netPay(overallNetPay)
+            .payment("카드")
+            .orderItems(orderItems)
+            .build();
+
+    orderMapper.insertOrder(order);
+    long orderCode = order.getOrderCode(); // selectKey 등을 통해 orderCode가 할당되었다고 가정
+
+    // 5. 각 주문 항목에 주문번호 할당 후 주문 상세 등록
+    // 매퍼의 insertOrderDetail은 OrderItem 파라미터를 받도록 수정 필요 (XML의 parameterType을 변경)
+    for (OrderItem orderItem : orderItems) {
+      orderItem.setOrderCode(orderCode);
+      orderMapper.insertOrderDetail(orderItem);
+    }
+
+    cartItemService.deleteCartItem(sessionInfo.getMemberIdx());
+
+    return order;
+  }
+
+
+
 }

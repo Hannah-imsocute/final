@@ -46,4 +46,7 @@ public interface OrderService {
 
   // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우
   void decreaseProductStock(long productId, int quantity) throws SQLException;
+
+
+  Order processOrder(SessionInfo sessionInfo) throws Exception;
 }

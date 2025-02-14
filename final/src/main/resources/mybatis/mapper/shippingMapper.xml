@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.ShippingMapper">
+
+    <select id="getShippingInfo" parameterType="Long" resultType="com.sp.app.model.ShippingInfo">
+        SELECT MEMBERIDX, NAME AS receiverName, PHONE, ADDRNAME AS addName, ADDRTITLE AS addTitle, ADDRDETAIL AS addDetail,
+               FIRSTADDR AS firstAdd, postcode as postCode
+        FROM MEMBER_ADDRESS
+        WHERE MEMBERIDX = #{memberIdx}
+        order by ADDR_NUM DESC
+    </select>
+
+    <insert id="insertShippingAddress" parameterType="com.sp.app.model.ShippingInfo">
+        insert into MEMBER_ADDRESS (addr_num, memberidx, name, phone, addrname, ADDRTITLE, ADDRDETAIL, FIRSTADDR, POSTCODE)
+        values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd}, #{postCode})
+    </insert>
+
+
+</mapper>

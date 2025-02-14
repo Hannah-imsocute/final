@@ -10,6 +10,7 @@ import lombok.*;
 public class ShippingInfo {
   private Long memberIdx;      // 회원 번호
   private String receiverName; // 수령인 이름
+  private String postCode; // 우편번호
   private String addName; // 배송지 ex:집
   private String addTitle; // 배송지 주소 ex: 서울특별시 마포구
   private String addDetail; // 배송지 상세 주소 ex:101

@@ -16,4 +16,7 @@ public class CartItem {
   private String item;
   private String created;       // 생성일
   private String cartOption; // 상품 옵션 text 값
+
+  private Integer couponValue = 0;
+  private Integer spentPoint = 0;
 }

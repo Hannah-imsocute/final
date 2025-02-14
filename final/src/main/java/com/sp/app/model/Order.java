@@ -1,9 +1,6 @@
 package com.sp.app.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,10 +8,24 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Order {
 
-  private List<Order> orders;
+  private long orderCode;       // 주문번호
+  private long memberIdx;       // 회원 번호
+  private String email;         // 회원 이메일
+  private String orderDate;     // 주문일시
+  private int addrNum;       // 배송지 주소
+  private int totalPrice;       // 전체 주문 금액
+  private String couponCode;    //  쿠폰 코드
+  private int couponValue;      //  쿠폰 할인 금액
+  private int spentPoint;       //  사용 포인트
+  private int netPay;           // 최종 결제 금액
+  private String confirmDate;   // 주문 확인일시
+  private String payment;       // 결제 수단
+  private List<OrderItem> orderItems; // 개별 주문 항목 리스트
 
+  /*
   private long orderCode; // 주문번호
   private long productCode;
   private String orderDate; // 주문일시
@@ -36,8 +47,5 @@ public class Order {
   private long memberIdx; // 회원코드
   private String email; // 회원 ID
   private String payment; // 결제수단
-
-
-
-
+  */
 }

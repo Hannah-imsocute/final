@@ -22,13 +22,15 @@ public interface OrderMapper {
   // 또는 registerPayment()
 
   // 주문 상세 정보 등록: 주문에 포함된 개별 상품(주문 상세) 정보 등록
-  void insertOrderDetail(Order orderDetail) throws SQLException;
+  void insertOrderDetail(OrderItem orderItem) throws SQLException;
   // 또는 registerOrderDetail()
 
   // 배송지 등록: 배송 정보를 등록할 경우
   void insertShippingAddress(ShippingInfo shippingInfo) throws SQLException;
-  // 또는 registerShippingAddress()
 
+  // 배송지 수정
+
+  void updateShippingAddress(ShippingInfo shippingInfo) throws SQLException;
   // 포인트 등록: 사용자의 포인트 내역 등록
   void insertUserPoint(MemberPoint userPoint) throws SQLException;
   // 또는 registerUserPoint()
@@ -56,4 +58,6 @@ public interface OrderMapper {
 
   // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우
   void decreaseProductStock(long productId, int quantity) throws SQLException;
+
+
 }
