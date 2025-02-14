@@ -26,6 +26,14 @@
 		FROM productCategory
 		WHERE categoryCode = #{categoryCode}
 	</select>
+	
+	<select id="findById" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+	    SELECT productCode, p.brand_code, s.brandName, item, price, discount, addOptions, describe, upload, modified, p.categoryCode, name, thumbnail, soldOut
+		FROM product p
+        JOIN SELLER_BRAND S ON P.brand_code = s.brand_code 
+        JOIN productCategory c ON c.categoryCode = p.categoryCode 
+		WHERE productCode = #{productCode}
+	</select>
 
 
 </mapper>

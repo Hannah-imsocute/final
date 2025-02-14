@@ -1,0 +1,135 @@
+﻿@charset "UTF-8";
+
+body {
+    font-family: Arial, sans-serif;
+    margin-top: 200px;
+  
+}
+
+.container {
+display: grid;
+    grid-template-columns: 1fr; /* 한 개의 열(세로 정렬) */
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+.product-detail {
+    display: flex;
+    gap: 20px;
+}
+
+.product-images {
+    flex: 1;
+}
+
+.main-image {
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+.thumbnail-list {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.product-info {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 세로 방향 정렬 */
+    justify-content: flex-start; /* 세로 방향(수직) 가운데 정렬 */
+    align-items: flex-start; /* 가로 방향(수평) 가운데 정렬 */
+    padding-left: 50px;
+    text-align: center; /* 텍스트 요소 가운데 정렬 */
+    width:60%; /* 전체 너비 사용 */
+    gap: 10px; /* 요소 간 간격 추가 */
+}
+
+.product-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.seller {
+    font-size: 14px;
+    color: #555;
+}
+
+.rating {
+    margin: 10px 0;
+}
+
+.discount {
+    color: red;
+    font-size: 18px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #888;
+    margin-left: 5px;
+}
+
+.price {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.promotion {
+    background-color: #f8f8f8;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px; /* 버튼 사이 간격 */
+    justify-content: center; /* 버튼 가운데 정렬 */
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-btn {
+    background-color: #ffcc00;
+}
+
+.buy-btn {
+    background-color: #ff5733;
+    color: white;
+}
+
+.inquiry-btn {
+    background-color: #ddd;
+}
+
+.tabs {
+    margin-top: 30px;
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.tab.active {
+    font-weight: bold;
+    color: #ff6600;
+}

@@ -22,7 +22,6 @@ public class MainProduct {
 	private String upload;  //upload한 날짜 
 	private String modified; //수정한 날짜 
 	private int categoryCode;
-	private String categoryName;
 	private String thumbnail;
 	private int soldOut; //품절여부
 	

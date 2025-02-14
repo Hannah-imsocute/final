@@ -1,7 +1,9 @@
 package com.sp.app.controller;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -125,23 +127,46 @@ public class ProductController {
 		
 	}
 
-	@GetMapping("detail")
-	public ModelAndView detailRepquest(@RequestParam("productCode") long productCode, Model model) throws Exception{
-		ModelAndView mav = new ModelAndView("product/detail");
+	@GetMapping("{productCode}")
+	public ModelAndView productDetail(@PathVariable("productCode") long productCode,
+			Model model) throws Exception{
+			ModelAndView mav = new ModelAndView("product/detail");
+
+		
 		try {
 			//상품
-//			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
-//		
-//		    model.addAttribute("dto", dto);
-//
-			System.out.println("detailRepquest ########## ");
+			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
+			System.out.println(productCode);
+	//		List<MainProduct> listFile = service.listMainProductFile(productCode);
+					    
+		    NumberFormat formatter = NumberFormat.getInstance(Locale.KOREA);
+		    
+		    String fmdPrice = formatter.format(dto.getPrice());
+		    String fmdSalePrice= formatter.format(dto.getSalePrice());
+		    
+
+		    String categoryName = dto.getName();
+		    System.out.println(categoryName);
+		    
+		    String categoryUrl = "/product/category?categoryName="+categoryName;
+		    
+		    mav.addObject("dto", dto);
+		    mav.addObject("fmdPrice", fmdPrice);
+		    mav.addObject("fmdSalePrice", fmdSalePrice);
+		    mav.addObject("categoryUrl",categoryUrl);
+		    
+//		    mav.setViewName("redirect:" + categoryUrl);
+		    
 		} catch (NullPointerException e) {
-			log.info("detailRepquest NullPointerException : ", e  );
+			log.info("detailRequest NullPointerException : ", e  );
 		} catch (Exception e) {
-			log.info("detailRepquest Exception : ", e  );
+			log.info("detailRequest Exception : ", e  );
+			
 		}
 		return mav;
 		
 	}
+	
+
 
 }

@@ -102,9 +102,11 @@
 
 // 전역변수 설정
 var total_page_count = 0;
+var contextPath = "${pageContext.request.contextPath}";
 
 $(document).ready(function() {
 	/* 1. 왼쪽 메뉴바 클릭 이벤트 */
+
     $('.left-menu ul li').on('click', function(event) {
         event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         $('#loadMore').prop("disabled", false).text("작품 더보기"); // 작품더보기 버튼 초기화
@@ -152,6 +154,9 @@ $(document).ready(function() {
                 	    var emptyHtml = `
                 	        <div class="border rounded product-box">
                 	            <div class="product-info">
+                	                <div class="product-thumbnail">
+                	                	<img class="thumbnail-img">
+                	                <div>
                 	                <div class="product-brandName"></div>
                 	                <div class="product-item"></div>
                 	                <div class="product-price"></div>
@@ -163,11 +168,12 @@ $(document).ready(function() {
                 	    var $productBox = $(emptyHtml);  // jQuery 객체로 변환
                 	    
                 	    // 데이터를 추가
+                	    $productBox.find('.thumbnail-img').attr("src",contextPath + "/uploads/product/" + arrayKey.thumbnail);
                 	    $productBox.find('.product-brandName').text(arrayKey.brandName);
                 	    $productBox.find('.product-item').text(arrayKey.item);
-                	    $productBox.find('.product-price').text(arrayKey.price + " 원");
+                	    $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
                 	    $productBox.find('.product-discount').text(arrayKey.discount + "%");
-                	    $productBox.find('.product-salePrice').text(arrayKey.salePrice + " 원");
+                	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
                 	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
                 	    // 최종적으로 productList에 추가
@@ -192,7 +198,7 @@ $(document).ready(function() {
        event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
             var $this = $(this);
             var categoryName = $this.attr('data-categoryName'); // 선택한 카테고리 가져오기
-            
+         
             if (!categoryName || categoryName.trim() === "") {
                 categoryName = "bakery"; // 기본값 설정 (필요에 따라 변경)
                 $this.attr('data-categoryName', categoryName); // 버튼 속성 업데이트
@@ -228,6 +234,9 @@ $(document).ready(function() {
                         	var emptyHtml = `
                      	       <div class="border rounded product-box">
                      	           <div class="product-info">
+                     	               <div class="product-thumbnail">
+              	                	     <img class="thumbnail-img">
+              	                       <div>
                      	               <div class="product-brandName"></div>
                      	               <div class="product-item"></div>
                      	               <div class="product-price"></div>
@@ -237,11 +246,12 @@ $(document).ready(function() {
                      	           </div>
                      	       </div>`;
                      		var $productBox = $(emptyHtml);  // jQuery 객체로 변환
+                     	    $productBox.find('.thumbnail-img').attr("src",contextPath + "/uploads/product/" + arrayKey.thumbnail);
                      		$productBox.find('.product-brandName').text(arrayKey.brandName);
                      		$productBox.find('.product-item').text(arrayKey.item);
-                     		$productBox.find('.product-price').text(arrayKey.price + " 원");
+                     		$productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
                      		$productBox.find('.product-discount').text(arrayKey.discount + "%");
-                     		$productBox.find('.product-salePrice').text(arrayKey.salePrice + " 원");
+                     		$productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
                      		$productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
                      		productList.append($productBox);
                  	    });
@@ -266,15 +276,18 @@ $(document).ready(function() {
 
 /* 3. 컨텐츠 클릭 시 상세보기 이벤트 */
 $(document).ready(function() {
-	$('#product-list').on('click', '.product-box', function(){
-		let productCode = $('.product-productCode').attr('data-productCode');
+	$('.product-list').on('click', '.product-box', function(){
+		let productCode = $(this).find('.product-productCode').attr('data-productCode');
+		 alert(productCode)
 		 if (!productCode) {
 		        console.warn("상품 코드가 없습니다.", $(this).attr('data-productCode'));
 		        alert("상품 코드가 없습니다.");
 		        return;
-		    }
-		    // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
-		    window.location.href = "/product/detail?productCode=" + productCode;
+		 }
+		 // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
+		
+		 let url = '${pageContext.request.contextPath}/product/'+productCode;
+		 location.href = url;
 
 	});
 });
