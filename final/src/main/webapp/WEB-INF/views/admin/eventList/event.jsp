@@ -88,6 +88,7 @@ tbody td {
 </style>
 </head>
 <body>
+
 	<header>
 		<jsp:include page="/WEB-INF/views/admin/adminheader.jsp" />
 		<jsp:include page="/WEB-INF/views/admin/adminside.jsp" />
@@ -96,16 +97,14 @@ tbody td {
 	<main>
 		<div class="content-around">
 			<ul class="nav nav-tabs">
-				<li class="nav-item"><a class="nav-link active" aria-current="page"
-					href="#">진행중인 이벤트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">종료된
-						이벤트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">당첨자발표</a></li>
+				<li class="nav-item"><a class="nav-link active"
+					aria-current="page" href="#">진행중인 이벤트</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">종료된 이벤트</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">당첨자 발표</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">쿠폰 관리</a></li>
 			</ul>
 			<div class="btn-cover">
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-					data-bs-target="#staticBackdrop">이벤트 등록</button>
-				<button type="button" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/adminevent/posting'">이벤트 게시글 등록</button>
+				<button type="button" class="btn btn-primary btn-upload-event">이벤트	등록</button>
 			</div>
 			<div class="eventList">
 				<table>
@@ -113,77 +112,30 @@ tbody td {
 						<tr>
 							<th>번호</th>
 							<th>이벤트명</th>
-							<th>게시일</th>
-							<th>타입</th>
-							<th>상태</th>
+							<th>시작일</th>
+							<th>종료일</th>
+							<th>진행상태</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="dto" items="${list}" varStatus="status">
-							<tr>
-								<td>${status.count}</td>
-								<td><a href="#" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
-								<td>${dto.createdDate}</td>
-								<td>${dto.eventType}</td>
-								<td class="status">고민중</td>
-								<td>
-									<button type="button" class="edit-btn btn">수정</button>
-								</td>
-							</tr>
-						</c:forEach>
+
+						<tr>
+							<td></td>
+							<td><a href="#" data-eventnum=""></a></td>
+							<td></td>
+							<td></td>
+							<td class="status"></td>
+							<td>
+								<button type="button" class="edit-btn btn">수정</button>
+							</td>
+						</tr>
+
 					</tbody>
 				</table>
 			</div>
 		</div>
 	</main>
-
-
-
-	<!-- Modal -->
-	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
-		data-bs-keyboard="false" tabindex="-1"
-		aria-labelledby="staticBackdropLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="staticBackdropLabel">이벤트 등록</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="chk-cover">
-						<div class="form-check">
-							<input class="form-check-input first" type="radio" name="chk"
-								id="chk1" checked> <label class="form-check-label"
-								for="chk1"> 쿠폰등록 </label>
-						</div>
-						<div class="form-check">
-							<input class="form-check-input" type="radio" name="chk" id="chk2">
-							<label class="form-check-label" for="chk2"> 출석체크 이벤트 등록 </label>
-						</div>
-					</div>
-					<form action="" name="chkForm">
-						<div class="content1" style="display: none;">
-							<jsp:include page="/WEB-INF/views/admin/eventList/eventcoupon.jsp" />
-						</div>
-						<div class="content2" style="display: none;">
-							<jsp:include page="/WEB-INF/views/admin/eventList/eventclockin.jsp" />
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary modalClosebtn"
-						data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary submit"
-						onclick="submitContents()" data-chk="chk1">등록</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js"
-		charset="utf-8"></script>
 	<script type="text/javascript">
 	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
 		
@@ -216,168 +168,11 @@ tbody td {
 	};
 	
 	$(function(){
-			$('input.first').trigger('click');
-	});
-		
-	$('input[name=chk]').each(function() {
-		$(this).on('click',function(){
-				$('.content1').hide();
-				$('.content2').hide();
-				$('.content3').hide();
-				if($(this).attr('id')==='chk1') {
-					$('.content1').show();
-					$('button.submit').attr('data-chk', "chk1");
-				}else if ($(this).attr('id')==='chk2'){
-					$('.content2').show();
-					$('button.submit').attr('data-chk', "chk2");
-				}else if ($(this).attr('id')==='chk3'){
-					$('.content3').show();
-					$('button.submit').attr('data-chk', "chk3");
-				}
-				
-			});
+		$('.btn-upload-event').click(function(){
+			let url = "${pageContext.request.contextPath}/admin/event/write";
+			location.href = url;
 		});
-		
-		
-		function submitContents(){
-			let chk = $('button.submit').attr('data-chk');
-			
-			if(chk === 'chk1'){
-				if(checkCouponValid()){
-				
-					let name = $('input[name="couponName"]').val();
-					let rate = $('input[name="couponRate"]').val();
-					let start = $('input[name="couponStart"]').val();
-					let end = $('input[name="couponEnd"]').val();
-					let valid = $('input[name="couponValid"]').val();
-					
-					let url = '${pageContext.request.contextPath}/adminevent/coupon';
-					let param = {name : name , rate : rate ,start : start , end : end,valid : valid};
-				
-					const returnfn = function (resp) {
-						$('.modalClosebtn').trigger('click');
-						//$('.modalClosebtn').modal('hide');
-						console.log(resp.state);
-					}
-				
-					ajaxRequest(url,'post',param,'json', returnfn)
-				}
-
-			}else if(chk === 'chk2'){
-				
-				if( checkClockEvent()){
-					
-					let eventName = $('input[name="eventName"]').val();
-					let daypoint = $('input[name="daypoint"]').val();
-					let weeklypoint = $('input[name="weeklypoint"]').val();
-					let monthlypoint = $('input[name="monthlypoint"]').val();
-					let eventStart = $('input[name="eventStart"]').val();
-					let eventEnd = $('input[name="eventEnd"]').val();
-					
-					let url = '${pageContext.request.contextPath}/adminevent/clockin';
-					let param = {eventName : eventName ,  daypoint : daypoint, weeklypoint : weeklypoint, monthlypoint : monthlypoint, eventstart : eventStart , eventend : eventEnd };
-				
-					const eventCallback = function (data) {
-						$('.modalClosebtn').trigger('click');
-						//$('.modalClosebtn').modal('hide');
-						console.log(data.state);
-					}
-					
-					ajaxRequest(url, 'post', param, 'json', eventCallback);
-				}
-			}
-			
-		};
-		
-			function checkCouponValid() {
-				let name = $('input[name="couponName"]').val();
-				let rate = $('input[name="couponRate"]').val();
-				let start = $('input[name="couponStart"]').val();
-				let end = $('input[name="couponEnd"]').val();
-				let valid = $('input[name="couponValid"]').val();
-
-				let startdate = new Date(start);
-				let enddate = new Date(end);
-				
-				if(! name){
-					alert('쿠폰명을 입력해주세요');
-					$('input[name="couponName"]').focus();
-					return false;
-				}
-				if(! rate){
-					alert('할인율을 입력해주세요');
-					$('input[name="couponRate"]').focus();
-					return false;
-				}else if( ! /^\d+(\.\d)?$/.test(rate)){
-					alert('할인율은 소수점 한자리까지만 지정가능합니다.');
-				}
-				if(! start){
-					alert('시작일을 지정해주세요');
-					$('input[name="couponStart"]').focus();
-					return false;
-					
-				}else if(startdate > enddate) {
-					alert('시작일이 종료일보다 클 수 없습니다.');
-					return false;
-				}
-				
-				if(! end){
-					alert('종료일을 지정해주세요');
-					$('input[name="couponEnd"]').focus();
-					return false;
-				}
-				
-				if(! valid){
-					alert('유효기간을 입력해주세요');
-					$('input[name="couponValid"]').focus();
-					return false;
-				}
-				return true;
-			}
-			
-			function checkClockEvent() {
-				let eventName = $('input[name="eventName"]').val();
-				let daypoint = $('input[name="daypoint"]').val();
-				let weeklypoint = $('input[name="weeklypoint"]').val();
-				let monthlypoint = $('input[name="monthlypoint"]').val();
-				let eventStart = $('input[name="eventStart"]').val();
-				let eventEnd = $('input[name="eventEnd"]').val();
-				
-				if(! eventName){
-					alert('이벤트 명을 입력해주세요.');
-					$('input[name="eventName"]').focus();
-					return false;
-				}
-				if(! daypoint){
-					alert('일일 적립포인트를 입력해주세요.');
-					$('input[name="daypoint"]').focus();
-					return false;
-				}
-				if(! weeklypoint){
-					alert('주간 적립 포인트를 입력해주세요.');
-					$('input[name="weeklypoint"]').focus();
-					return false;
-				}
-				if(! monthlypoint){
-					alert('월간 적립 포인트를 입력해주세요.');
-					$('input[name="monthlypoint"]').focus();
-					return false;
-				}
-				if(! eventStart){
-					alert('시작일을  지정해주세요.');
-					$('input[name="eventStart"]').focus();
-					return false;
-				}
-				if(! eventEnd){
-					alert('종료일을 지정해주세요.');
-					$('input[name="eventEnd"]').focus();
-					return false;
-				}
-				
-				return true;
-			}
-		
+	});
 	</script>
-
 </body>
 </html>
