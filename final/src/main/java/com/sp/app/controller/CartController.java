@@ -33,17 +33,20 @@ public class CartController {
 
       List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
       model.addAttribute("list", list);
+      for (CartItem cartItem : list) {
+        model.addAttribute("cartItemCode", cartItem.getCartItemCode());
+      }
     } catch (Exception e) {
       log.info("getCartListByMember", e);
     }
     return "cart/main";
   }
 
-//  @PostMapping("add")
+  //  @PostMapping("add")
   public String addCartItem(
-      @RequestParam("productCode") Long productCode,
-      @RequestParam("quantity") Integer quantity,
-      @RequestParam("price") Integer price, HttpSession session) throws Exception {
+          @RequestParam("productCode") Long productCode,
+          @RequestParam("quantity") Integer quantity,
+          @RequestParam("price") Integer price, HttpSession session) throws Exception {
 
     Long memberIdx = getMemberIdx(session);
 
@@ -89,8 +92,8 @@ public class CartController {
   @PostMapping("updateQuantity1")
   @ResponseBody // AJAX-JSON
   public Map<String, Object> updateQuantityAjax(@RequestParam("cartItemCode") Long cartItemCode,
-                                            @RequestParam("quantity") Integer quantity,
-                                            HttpSession session) {
+                                                @RequestParam("quantity") Integer quantity,
+                                                HttpSession session) {
     Map<String, Object> result = new HashMap<>();
     try {
       Map<String, Object> params = new HashMap<>();
