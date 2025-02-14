@@ -11,7 +11,7 @@
 						title="로그인" class="nav-link"><i class="bi bi-lock"></i></a>
 					</li>
 					<li class="nav-item"><a
-						href="${pageContext.request.contextPath}/member/account"
+						href="${pageContext.request.contextPath}/member/register"
 						title="회원가입"><i class="bi bi-person-plus"></i></a></li>
 				</ul>
 			</c:when>

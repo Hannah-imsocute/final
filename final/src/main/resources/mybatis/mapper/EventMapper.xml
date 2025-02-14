@@ -17,7 +17,7 @@
 		resultType="com.sp.app.admin.model.Coupon">
 		SELECT coupon_code, couponName, TO_CHAR(startdate,
 		'YYYY-MM-DD') "start"
-		,TO_CHAR(enddate, 'YYYY-MM-DD') "end" ,valid
+		,TO_CHAR(expire_date, 'YYYY-MM-DD') "end" ,valid
 		FROM
 		coupon
 		WHERE
@@ -28,7 +28,7 @@
 		resultType="com.sp.app.admin.model.Coupon">
 		SELECT coupon_code, couponName, TO_CHAR(startdate,
 		'YYYY-MM-DD') "start"
-		,TO_CHAR(enddate, 'YYYY-MM-DD') "end" ,valid FROM
+		,TO_CHAR(expire_date, 'YYYY-MM-DD') "end" ,valid FROM
 		coupon
 	</select>
 
@@ -72,7 +72,7 @@
 		<if test="eventType == 'checkin'">
 			clockin_num,
 		</if>
-		createdDate)
+		createdDate, expiredate)
 		VALUES (seq_event_article.NEXTVAL, #{subject},
 		#{textcontent}, #{eventType}, #{thumbnail},
 		<if test="eventType == 'coupon'">
@@ -81,7 +81,7 @@
 		<if test="eventType == 'checkin'">
 			#{clockin_num},
 		</if>
-		SYSDATE)
+		#{createdDate}, #{expiredate})
 	</insert>
 
 	<select id="dataCount" resultType="Integer">
@@ -91,12 +91,12 @@
 
 	<select id="getEventList" parameterType="java.util.Map" resultType="com.sp.app.admin.model.Event">
 		SELECT event_article_num, subject, textcontent,
-		eventType, thumbnail, ev.clockin_num, ev.coupon_code, createdDate ,
+		eventType, thumbnail, ev.clockin_num, ev.coupon_code, createdDate , ev.expiredate,
 		cp.expire_date as coupon_expiredate, cv.expire_date as
 		clockin_expiredate
 		FROM event_article ev
 		LEFT OUTER JOIN coupon cp ON cp.coupon_code = ev.coupon_code
-		LEFT OUTER JOIN CLOCKIN_EVENT cv ON cv.clockin_num = ev.clockin_num;
+		LEFT OUTER JOIN CLOCKIN_EVENT cv ON cv.clockin_num = ev.clockin_num
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
 	</select>
 

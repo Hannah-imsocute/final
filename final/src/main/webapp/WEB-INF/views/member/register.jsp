@@ -14,8 +14,7 @@
 	<header>
 		<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 	</header>
-	<main>
-
+	<main style="margin-top: 400px;">
 		<div class="join-container">
 			<!-- 상단 로고/타이틀 -->
 			<div class="join-header">
@@ -40,13 +39,13 @@
 					<label>이메일 <span class="required">*</span></label>
 					<div class="email-wrap">
 						<!-- 아이디(@앞) -->
-						<input type="text" class="email-user" name="email" placeholder="예) abc123"
-							required />
+						<input type="text" class="email-user" name="email"
+							placeholder="예) abc123" required />
 						<!-- @ 기호 표시 -->
 						<div class="at-symbol">@</div>
 						<!-- 도메인 직접입력 -->
-						<input type="text" class="email-domain" name="domain" placeholder="예) naver.com"
-							required />
+						<input type="text" class="email-domain" name="domain"
+							placeholder="예) naver.com" required />
 						<!-- 도메인 select (원하는 도메인 추가 가능) -->
 						<select class="domain-select" name="domain">
 							<option value="" selected>직접입력</option>
@@ -62,20 +61,21 @@
 
 				<!-- 이름 -->
 				<div class="form-group">
-					<label>이름 <span class="required">*</span></label> <input name="name"
-						type="text" placeholder="이름을 입력해주세요." required >
+					<label>이름 <span class="required">*</span></label> <input
+						name="name" type="text" placeholder="이름을 입력해주세요." required>
 				</div>
 
 				<!-- 닉네임 -->
 				<div class="form-group">
-					<label>닉네임 <span class="required">*</span></label> <input name="nickname"
-						type="text" placeholder="닉네임을 입력해주세요." required>
+					<label>닉네임 <span class="required">*</span></label> <input
+						name="nickname" type="text" placeholder="닉네임을 입력해주세요." required>
 				</div>
 
 				<!-- 비밀번호 -->
 				<div class="form-group">
-					<label>비밀번호 <span class="required">*</span></label> <input name="password"
-						type="password" placeholder="영문+숫자+특수문자 포함 8자 이상" required>
+					<label>비밀번호 <span class="required">*</span></label> <input
+						name="password" type="password" placeholder="영문+숫자+특수문자 포함 8자 이상"
+						required>
 				</div>
 
 				<!-- 비밀번호 확인 -->
@@ -85,43 +85,47 @@
 
 				<!-- 전화번호 -->
 				<div class="form-group">
-					<label>전화번호 <span class="required">*</span></label> <input	name="phone"
-						type="text" placeholder="- 를 제외한 번호만 입력해주세요." required pattern="/^[0-9]{9,11}$/">
+					<label>전화번호 <span class="required">*</span></label> <input
+						name="phone" type="text" placeholder="- 를 제외한 번호만 입력해주세요."
+						required pattern="/^[0-9]{9,11}$/">
 				</div>
 
 				<!-- 생년월일 -->
 				<div class="form-group">
-					<label>생년월일 <span class="required">*</span></label> <input name="birth"
-						type="date" required>
+					<label>생년월일 <span class="required">*</span></label> <input
+						name="birth" type="date" required>
 				</div>
 
 				<!-- 동의 체크박스 영역 (필요한 만큼 추가) -->
 				<div class="checkbox-group">
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> 모두 동의합니다.
+						<label> <input type="checkbox" class="chkAll"> 모두
+							동의합니다.
 						</label>
 					</div>
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> [필수] 만 14세 이상입니다.
+						<label> <input type="checkbox" class="chk"> [필수] 만
+							14세 이상입니다.
 						</label>
 					</div>
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> [필수] 이용약관 동의
+						<label> <input type="checkbox" class="chk"> [필수]
+							이용약관 동의
 						</label> <span class="option-link">보기</span>
 					</div>
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> [필수] 개인정보 수집 및 이용
-							동의
+						<label> <input type="checkbox" class="chk"> [필수]
+							개인정보 수집 및 이용 동의
 						</label> <span class="option-link">보기</span>
 					</div>
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> [선택] 개인정보 수집 및 이용
-							동의
+						<label> <input type="checkbox" class="chk"> [선택]
+							개인정보 수집 및 이용 동의
 						</label> <span class="option-link">보기</span>
 					</div>
 					<div class="checkbox-item">
-						<label> <input type="checkbox"> [선택] 할인쿠폰/이벤트/뉴스레터
-							수신 동의
+						<label> <input type="checkbox" class="chk"> [선택]
+							할인쿠폰/이벤트/뉴스레터 수신 동의
 						</label> <span class="option-link">보기</span>
 					</div>
 				</div>
@@ -134,5 +138,45 @@
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
+
+	<script type="text/javascript">
+	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
+		
+		const settings = {
+				type: method, 
+				data: requestParams,
+				dataType: responseType,
+				success:function(data) {
+					callback(data);
+				},
+				beforeSend: function(jqXHR) {
+				},
+				complete: function () {
+				},
+				error: function(jqXHR) {
+					console.log(jqXHR.responseText);
+				}
+		};
+		
+		if(file) {
+			settings.processData = false;  
+			settings.contentType = false; 
+		}
+		
+		if(contentType.toLowerCase() === 'json') {
+			settings.contentType = 'application/json; charset=utf-8';
+		}
+		
+		$.ajax(url, settings);
+	};
+	
+	$(function (){
+		//$('dup-check-btn').click(fun)
+	});
+	
+	$('.chkAll').click(function() {
+			
+	});
+	</script>
 </body>
 </html>

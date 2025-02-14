@@ -10,6 +10,7 @@ public class Event {
 	private String subject;
 	private String textcontent;
 	private String createdDate;
+	private String expiredate;
 	
 	private String eventType;
 	private String coupon_code;
@@ -17,6 +18,7 @@ public class Event {
 	
 	private String clockin_expiredate;
 	private String coupon_expiredate;
+	
 	
 	private String thumbnail;
 }

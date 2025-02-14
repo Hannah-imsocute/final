@@ -122,11 +122,11 @@ tbody td {
 					<tbody>
 						<c:forEach var="dto" items="${list}" varStatus="status">
 							<tr>
-								<td>${status.index}</td>
+								<td>${status.count}</td>
 								<td><a href="#" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
 								<td>${dto.createdDate}</td>
 								<td>${dto.eventType}</td>
-								<td class="status">진행중</td>
+								<td class="status">고민중</td>
 								<td>
 									<button type="button" class="edit-btn btn">수정</button>
 								</td>

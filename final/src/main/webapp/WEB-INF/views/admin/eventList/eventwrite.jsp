@@ -115,6 +115,13 @@ th {
 					<label for="thumbnail"> 썸네일 이미지를 설정해주세요 </label> <input type="file"
 						class="form-control" id="thumbnail" name="thumbnail">
 				</div>
+				
+				<div>
+					<label>시작일</label>
+					<input type="date" class="form-control" id="createdDate" name="createdDate">
+					<label>종료일</label>
+					<input type="date" class="form-control" id="expiredate" name="expiredate">
+				</div>
 
 				<!-- 제출 버튼 -->
 				<div class="d-grid">
@@ -371,7 +378,10 @@ function uploadEvent() {
 	let thumbnail = form.find('[name=thumbnail]').val();
 	
 	let selectdetail = $('input[name=selectdetail]').attr('data-code');
-	console.log(selectdetail);
+	
+	let createdDate = $('input[name=createdDate]').val();
+	let expiredate = $('input[name=expiredate]').val();
+	
 	if(type == 'coupon'){
 		$('input[name=coupon_code]').val(selectdetail);
 	}else if(type == 'clockin'){
@@ -402,6 +412,15 @@ function uploadEvent() {
 		alert('하나의 이벤트를 선택해야합니다');
 		return false;
 	}
+	if(! createdDate ){
+		alert('시작일을 지정해주세요');
+		return false;
+	}
+	if(! expiredate ){
+		alert('종료일을 지정해주세요');
+		return false;
+	}
+	
 	
 	$form.action = "${pageContext.request.contextPath}/adminevent/writeform";
 	$form.submit();
