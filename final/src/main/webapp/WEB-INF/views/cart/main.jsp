@@ -481,7 +481,7 @@
     <div class="cart-actions">
         <div class="left-actions">
             <label>
-                <input type="checkbox" class="selectAll"/> 전체선택 ( <c:out value="${fn:length(list)}"/> / <c:out value="${fn:length(list)}"/> 개 )
+                <input type="checkbox" class="selectAll" checked/> 전체선택 ( <c:out value="${fn:length(list)}"/> / <c:out value="${fn:length(list)}"/> 개 )
             </label>
         </div>
         <div class="right-actions">
@@ -820,5 +820,7 @@
         });
     });
 </script>
+
+
 </body>
 </html>

@@ -17,7 +17,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
   <!-- 다음 우편번호 API -->
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
   <style>
     /* 기존 스타일 유지 */
     header { position: relative !important; }
@@ -61,11 +60,9 @@
     .sum-area .highlight { font-size: 16px; font-weight: bold; color: #333; }
     .btn-submit-order { display: block; width: 100%; padding: 14px 0; background-color: #ff8200; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px; transition: background-color 0.3s; }
     .btn-submit-order:hover { background-color: #ff8400; }
-
     @media (max-width: 768px) {
       .order-right { width: 100%; order: -1; }
     }
-
     /* 모달창 관련 CSS */
     .modal-overlay {
       position: fixed;
@@ -166,7 +163,6 @@
   </style>
 </head>
 <body>
-
 <!-- 고정 헤더 (일반 헤더) -->
 <header>
   <jsp:include page="/WEB-INF/views/layout/header.jsp" />
@@ -293,14 +289,14 @@
         <div class="sum-area">
           상품금액:
           <span>
-            <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-          </span><br/>
+              <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
+            </span><br/>
           할인금액: <span style="color:#f05;">-0원</span><br/>
           배송비: 0원<br/><br/>
           총 결제금액:
           <span class="highlight">
-            <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-          </span>
+              <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
+            </span>
         </div>
         <!-- 결제하기 버튼 -->
         <button class="btn-submit-order">결제하기</button>
@@ -440,18 +436,6 @@
   }
 
   $(document).ready(function() {
-    // 로컬스토리지에서 저장된 배송지 정보 불러오기
-    const storedAddress = localStorage.getItem('selectedShippingAddress');
-    if(storedAddress) {
-      const address = JSON.parse(storedAddress);
-      $('.shipping-box .sub-info strong').text(address.receiverName);
-      let newAddrHtml = address.addTitle;
-      if(address.addDetail) { newAddrHtml += ' ' + address.addDetail; }
-      newAddrHtml += '<br/>' + address.phone;
-      $('.shipping-box .addr-text').html(newAddrHtml);
-    }
-
-    // 배송메모 select (기존 코드)
     const $shippingSelect = $('.shipping-box .memo-input');
     const $otherRequestDiv = $('#otherRequestDiv');
     $shippingSelect.change(function() {
@@ -468,14 +452,14 @@
     const $closeButtons = $('.modal-close');
     const $btnSave = $('.modal-save');
 
-    // 배송지 변경 버튼 클릭 -> 모달 열기 (목록 모드로 시작)
+    // 배송지 변경 버튼 클릭시 목록
     $btnAddrChange.click(function() {
       $('#modalAddressList').show();
       $('#modalAddressForm').hide();
       $modalOverlay.css('display','flex');
     });
 
-    // "배송지 추가하기" 버튼 클릭 -> 등록 폼으로 전환
+    // 배송지 추가하기 버튼 클릭시 등록 폼
     $('#btnAddNewAddress').click(function() {
       $('#modalAddressList').hide();
       $('#modalAddressForm').show();
@@ -489,13 +473,13 @@
       $('#modalPhone').val('');
     });
 
-    // "목록 보기" 버튼 클릭 -> 주소 목록으로 전환
+    // 목록 보기 버튼 클릭 -> 주소 목록으로 전환
     $('#btnShowAddressList').click(function() {
       $('#modalAddressForm').hide();
       $('#modalAddressList').show();
     });
 
-    // 닫기(×), 취소 버튼 -> 모달 닫기
+    // 취소 버튼 -> 모달 닫기
     $closeButtons.click(function() {
       $modalOverlay.hide();
     });
@@ -505,7 +489,7 @@
       sample6_execDaumPostcode();
     });
 
-    // 배송지 선택 버튼 클릭 이벤트 (주소 목록 내)
+    // 배송지 선택 버튼 클릭 이벤트
     $(document).on('click', '.btn-select-address', function() {
       const $li = $(this).closest('.address-item');
       const receiverName = $li.data('receivername');
@@ -513,29 +497,39 @@
       const addDetail = $li.data('adddetail');
       const phone = $li.data('phone');
 
-      // 메인 페이지의 배송 정보 업데이트
+      // 화면에 배송 정보 업데이트
       $('.shipping-box .sub-info strong').text(receiverName);
       let newAddrHtml = addTitle;
       if(addDetail) { newAddrHtml += ' ' + addDetail; }
       newAddrHtml += '<br/>' + phone;
       $('.shipping-box .addr-text').html(newAddrHtml);
 
-      // 선택한 배송지 정보를 로컬스토리지에 저장
-      const selectedAddress = {
-        receiverName: receiverName,
-        addTitle: addTitle,
-        addDetail: addDetail,
-        phone: phone
-      };
-      localStorage.setItem('selectedShippingAddress', JSON.stringify(selectedAddress));
-
-      $modalOverlay.hide();
+      // 배송지 선택하여 바꿀 수 있음
+      $.ajax({
+        url: '${pageContext.request.contextPath}/order/selectAddress',
+        type: 'post',
+        data: {
+          receiverName: receiverName,
+          addTitle: addTitle,
+          addDetail: addDetail,
+          phone: phone
+        },
+        success: function(response) {
+          if(response.status === "success") {
+            $modalOverlay.hide();
+          } else {
+            alert("배송지 선택에 실패했습니다: " + response.message);
+          }
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText);
+        }
+      });
     });
 
-    // 저장 버튼 클릭 -> AJAX 호출 (새 주소 등록 폼일 때)
+    //  AJAX 호출
     $btnSave.click(function() {
       if ($('#modalAddressForm').is(':visible')) {
-
         const receiverName  = $('#modalReceiverName').val();
         const addName       = $('#modalAddName').val();
         const postCode      = $('#modalPostCode').val();
@@ -567,30 +561,29 @@
           firstAdd: firstAdd
         };
 
-        let url = '${pageContext.request.contextPath}/order/addr';
-        const fn = function(data) {
-          if(data.status === 'success') {
-            alert('배송지 등록 성공');
-            $('.shipping-box .sub-info strong').text(receiverName);
-            let newAddrHtml = addTitle;
-            if(addDetail) { newAddrHtml += ' ' + addDetail; }
-            newAddrHtml += '<br/>' + phone;
-            $('.shipping-box .addr-text').html(newAddrHtml);
-            // 새로 등록한 배송지도 로컬스토리지에 저장
-            const selectedAddress = {
-              receiverName: receiverName,
-              addTitle: addTitle,
-              addDetail: addDetail,
-              phone: phone
-            };
-            localStorage.setItem('selectedShippingAddress', JSON.stringify(selectedAddress));
-            $modalOverlay.hide();
-          } else {
-            alert('등록 실패: ' + (data.message || '알 수 없는 오류'));
+        // 신규 배송지 등록
+        $.ajax({
+          url: '${pageContext.request.contextPath}/order/insertAddress',
+          type: 'post',
+          data: formData,
+          dataType: 'json',
+          success: function(data) {
+            if(data.status === 'success') {
+              alert('배송지 등록 성공');
+              $('.shipping-box .sub-info strong').text(receiverName);
+              let newAddrHtml = addTitle;
+              if(addDetail) { newAddrHtml += ' ' + addDetail; }
+              newAddrHtml += '<br/>' + phone;
+              $('.shipping-box .addr-text').html(newAddrHtml);
+              $modalOverlay.hide();
+            } else {
+              alert('등록 실패: ' + (data.message || '알 수 없는 오류'));
+            }
+          },
+          error: function(xhr) {
+            console.log(xhr.responseText);
           }
-        };
-
-        ajaxFun(url, 'post', formData, 'json', fn);
+        });
       } else {
         $modalOverlay.hide();
       }

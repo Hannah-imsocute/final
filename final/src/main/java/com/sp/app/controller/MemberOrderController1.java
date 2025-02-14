@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,22 +45,24 @@ public class MemberOrderController1 {
     params.put("memberIdx", memberIdx);
 
     List<CartItem> cartItems = cartItemService.getCartItemsByMemberAndProduct(params);
-
     model.addAttribute("cartItems", cartItems);
 
-    ShippingInfo shippingInfo = memberService.getShippingInfo(memberIdx);
-    List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
-    model.addAttribute("shippingAddresses", list);
-    if(shippingInfo != null) {
-      model.addAttribute("receiverName", shippingInfo.getReceiverName());
-      model.addAttribute("addName", shippingInfo.getAddName());
-      model.addAttribute("addTitle", shippingInfo.getAddTitle());
-      model.addAttribute("addDetail", shippingInfo.getAddDetail());
-      model.addAttribute("phone", shippingInfo.getPhone());
-      model.addAttribute("firstAdd", shippingInfo.getFirstAdd());
-
+    ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
+    if (addressInfo == null) {
+      addressInfo = memberService.getShippingInfo(memberIdx);
     }
 
+    if (addressInfo != null) {
+      model.addAttribute("receiverName", addressInfo.getReceiverName());
+      model.addAttribute("addName", addressInfo.getAddName());
+      model.addAttribute("addTitle", addressInfo.getAddTitle());
+      model.addAttribute("addDetail", addressInfo.getAddDetail());
+      model.addAttribute("phone", addressInfo.getPhone());
+      model.addAttribute("firstAdd", addressInfo.getFirstAdd());
+    }
+
+    List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
+    model.addAttribute("shippingAddresses", list);
     return "order/formtest";
   }
 
@@ -69,11 +70,14 @@ public class MemberOrderController1 {
   public String submitOrder(HttpSession session, Model model) {
     try {
       SessionInfo info = (SessionInfo) session.getAttribute("member");
+
       if (info == null) {
         return "redirect:/login";
       }
+
       Order processedOrder = orderService.processOrder(info);
       model.addAttribute("order", processedOrder);
+
       return "order/complete";
     } catch (Exception e) {
       log.error("주문 처리 중 오류 발생", e);
@@ -82,31 +86,25 @@ public class MemberOrderController1 {
     }
   }
 
-/*
- @GetMapping("addr")
-  public String addressForm(@RequestParam("receiverName") String receiverName,
-                            @RequestParam("addName") String addName,
-                            @RequestParam@)
-
-                            */
-
   @GetMapping("addr")
   public String addressForm(ShippingInfo info) {
-
     return "redirect:/order/formtest";
   }
 
-  @PostMapping("addr")
+  @PostMapping("insertAddress")
   @ResponseBody
   public Map<String, Object> addressSubmit(
           @ModelAttribute("infolist") ShippingInfo shippingInfo,
           HttpSession session) {
     Map<String, Object> map = new HashMap<>();
+
     try {
       SessionInfo info = (SessionInfo) session.getAttribute("member");
       long memberIdx = info.getMemberIdx();
-      if(memberIdx == 0) {
-        log.error("회원값없음", memberIdx);
+
+      if (memberIdx == 0) {
+        log.error("회원값 없음: {}", memberIdx);
+        return map;
       }
 
       shippingInfo.setMemberIdx(memberIdx);
@@ -116,33 +114,44 @@ public class MemberOrderController1 {
 
       List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
 
+      // 등록한 배송지를 세션에 저장
+      session.setAttribute("memberAddress", shippingInfo);
+
       map.put("status", "success");
-      map.put("shippingAddresses", list);
-    } catch(Exception e) {
+      map.put("memberAddressList", list);
+    } catch (Exception e) {
       map.put("status", "error");
       map.put("message", e.getMessage());
     }
     return map;
   }
 
- /* @PostMapping("/selectShippingAddress")
-  public ResponseEntity<String> selectShippingAddress(
-          @RequestParam String receiverName,
-          @RequestParam String addTitle,
-          @RequestParam String addDetail,
-          @RequestParam String phone,
+
+  @PostMapping("selectAddress")
+  @ResponseBody
+  public ResponseEntity<Map<String, Object>> selectShippingAddress(
+          @ModelAttribute ShippingInfo shippingInfo,
           HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+      SessionInfo info = (SessionInfo) session.getAttribute("member");
+      if (info == null) {
+        response.put("status", "error");
+        response.put("message", "로그인이 필요합니다.");
+        return ResponseEntity.status(401).body(response);
+      }
 
-    ShippingInfo selectedAddress = new ShippingInfo();
-    selectedAddress.setReceiverName(receiverName);
-    selectedAddress.setAddTitle(addTitle);
-    selectedAddress.setAddDetail(addDetail);
-    selectedAddress.setPhone(phone);
+      shippingInfo.setMemberIdx(info.getMemberIdx());
+      session.setAttribute("memberAddress", shippingInfo);
 
-    session.setAttribute("selectedShippingAddress", selectedAddress);
-
-    return ResponseEntity.ok("배송지가 선택되었습니다.");
-  }*/
-
+      response.put("status", "success");
+      response.put("message", "배송지가 선택되었습니다.");
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      response.put("status", "error");
+      response.put("message", e.getMessage());
+      return ResponseEntity.status(500).body(response);
+    }
+  }
 
 }
