@@ -37,17 +37,18 @@
 	</thead>
 	
 	<tbody>
-		<c:forEach var="dto" items="${list}" varStatus="status">
-			<tr class="hover" onclick="apply('${dto.sellerApplyNum}', '${page}');"> 
-				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td>${dto.name}</td>
-				<td>${dto.phone}</td>
-				<td>${dto.brandName}</td>
-				<td>${dto.introPeice}</td>
-				<td>${dto.agreed==0?"승인":"미승인"}</td>
-			</tr>
-		</c:forEach>
+	    <c:forEach var="dto" items="${list}" varStatus="status">
+	        <tr class="hover" onclick="apply('${dto.sellerApplyNum}', '${page}');"> 
+	            <td>${dataCount - (page-1) * size - status.index}</td>
+	            <td>${dto.name}</td>
+	            <td>${dto.phone}</td>
+	            <td>${dto.brandName}</td>
+	            <td>${dto.introPeice}</td>
+	            <td>${dto.agreed==0 ? "승인" : "미승인"}</td>
+	        </tr>
+	    </c:forEach>
 	</tbody>
+
 </table>
 		 
 <div class="page-navigation">
@@ -80,39 +81,62 @@
 	</div>
 </div>
 
-<!-- JSP 코드 -->
-<div class="modal fade" data-bs-backdrop="static" id="sellerStatusDetailesDialogModal" tabindex="-1" aria-labelledby="sellerStatusDetailesDialogModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 650px;">
+
+<div class="modal fade" id="sellerStatusDetailesDialogModal" tabindex="-1" aria-labelledby="sellerStatusDetailesDialogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 850px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="sellerStatusDetailesModalLabel">작가상세정보</h5>
+                <h5 class="modal-title" id="sellerStatusDetailesModalLabel">입점신청정보</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h3 class="form-control-plaintext fs-6 fw-semibold pt-1"><i class="bi bi-chevron-double-right"></i> 상태 변경</h3>            
+                <h3 class="form-control-plaintext fs-6 fw-semibold pt-1"><i class="bi bi-chevron-double-right"></i>입점 상세 정보</h3>            
                 <form name="sellerStatusDetailesForm" id="sellerStatusDetailesForm" method="post">
                     <table class="table table-bordered mb-1">
+					    <tr>
+					        <td class="bg-light col-sm-2 align-middle" style="width: 10%;">작가이름</td>
+					        <td class="align-middle"  style="width: 30%;">
+					            <p class="col-sm-4 m-0" id="sellerName"></p> <!-- 서버 측에서 데이터 렌더링 -->
+					        </td>
+					        <td class="bg-light col-sm-2 align-middle" style="width: 10%;">브랜드이름</td>
+					        <td class="align-middle" style="width: 30%;">
+					            <p class="col-sm-4 m-0" id="sellerBrandName"></p> <!-- 서버 측에서 데이터 렌더링 -->
+					        </td>                            
+					    </tr>	
                         <tr>
-                            <td width="110" class="bg-light align-middle">이름(아이디)</td>
-                            <td>
-                                <p class="form-control-plaintext">${dto.name}(${dto.email})</p> <!-- 서버 측에서 데이터 렌더링 -->
+ 					        <td class="bg-light col-sm-2 align-middle">이메일</td>
+					        <td class="align-middle">
+					            <p class="col-sm-4 m-0" id="sellerEmail"></p> <!-- 서버 측에서 데이터 렌더링 -->
+					        </td>
+					        <td class="bg-light col-sm-2 align-middle">전화번호</td>
+					        <td class="align-middle">
+					            <p class="col-sm-4 m-0" id="sellerPhone"></p> <!-- 서버 측에서 데이터 렌더링 -->
+					        </td>                      
+                        </tr>
+                        
+                        <tr>
+                            <td class="bg-light align-middle">브랜드설명</td>
+                            <td colspan="4">
+                                <p class="form-control-plaintext" id="sellerBrandIntro"></p> <!-- 서버 측에서 데이터 렌더링 -->
                             </td>
                         </tr>
+                        
                         <tr>
-                            <td class="bg-light align-middle">계정상태</td>
-                            <td>
-                                <p class="form-control-plaintext">${dto.agreed}</p> <!-- 서버 측에서 데이터 렌더링 -->
+                            <td class="bg-light align-middle">승인여부</td>
+                            <td colspan="4">
+                                <p class="form-control-plaintext" id="sellerStatus"></p> <!-- 서버 측에서 데이터 렌더링 -->
                             </td>
                         </tr>
+                        
                     </table>
-                    <div class="text-end">
-                        <input type="hidden" name="sellerApplyNum" value="${dto.sellerApplyNum}">
+                    <div class="text-center">
+                        <input type="hidden" name="sellerApplyNum" id="sellerApplyNum">
                         <input type="hidden" name="page" value="${page}">
-                        <button type="button" class="btn btn-light" onclick="updateStatusOk('${page}');">상태변경</button>
+                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('${page}');">승인</button>
+                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('${page}');">반려</button>
                     </div>
                 </form> 
             </div>
         </div>
     </div>
 </div>
-

@@ -68,7 +68,7 @@ public class ApplyManageServiceImpl implements ApplyManageService {
 	}
 
 	@Override
-	public ApplyManage getSellerDetailsBySellerApplyNum(long sellerApplyNum) {
+	public ApplyManage getSellerDetailsBySellerApplyNum(Long sellerApplyNum) {
 		
 		return mapper.getSellerDetailsBySellerApplyNum(sellerApplyNum);
 	}

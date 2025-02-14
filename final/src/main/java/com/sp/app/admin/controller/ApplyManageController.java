@@ -8,7 +8,6 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -127,19 +126,12 @@ public class ApplyManageController {
 		return model;
 	}
 
-	@GetMapping("/{sellerApplyNum}")
+	// 컨트롤러에서 데이터 반환
+	@GetMapping("getSellerDetails")
 	@ResponseBody
-		 public String getSellerDetails(@PathVariable Long sellerApplyNum, Model model) {
-		// 예시로 DB에서 데이터를 가져오는 서비스 호출
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		List<ApplyManage> sellerList = service.listApply(map);
-
-		// Model에 값 추가
-		model.addAttribute("sellerList", sellerList);
-		
-			 ApplyManage sellerDetails = service.getSellerDetailsBySellerApplyNum(sellerApplyNum); // 데이터 가져오기
-		        model.addAttribute("dto", sellerDetails); // JSP에 전달할 데이터
-		        return "sellerDetail"; // JSP 페이지로 반환
+	public ApplyManage getSellerDetails(@RequestParam(name = "sellerApplyNum") Long sellerApplyNum,
+            @RequestParam(name = "page") String page) {
+	    return service.getSellerDetailsBySellerApplyNum(sellerApplyNum);  // 해당 번호의 셀러 정보 반환
 	}
+
 }

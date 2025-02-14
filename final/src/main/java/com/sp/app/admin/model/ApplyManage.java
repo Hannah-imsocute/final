@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ApplyManage {
-	private long sellerApplyNum;
+	private Long sellerApplyNum;
 	private String name;
 	private String email;
 	private String phone;

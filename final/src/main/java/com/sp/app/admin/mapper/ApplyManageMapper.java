@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.sp.app.admin.model.ApplyManage;
 
 @Mapper
+
 public interface ApplyManageMapper {
 	// 입점 신청 데이터 수
 	public int dataCount(Map<String, Object> map);
@@ -16,7 +17,7 @@ public interface ApplyManageMapper {
 	// 입점 신청 데이터 삽입
 	public void insertApply(ApplyManage dto) throws SQLException;
 	
-	public ApplyManage getSellerDetailsBySellerApplyNum(long sellerApplyNum);
+	public ApplyManage getSellerDetailsBySellerApplyNum(Long sellerApplyNum);
 	
 	// 입점 신청 리스트
 	public List<ApplyManage> listApply(Map<String, Object> map);

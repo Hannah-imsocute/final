@@ -9,7 +9,7 @@ public interface ApplyManageService {
 	// 입점 신청 데이터 수
 	public int dataCount(Map<String, Object> map);
 	
-	public ApplyManage getSellerDetailsBySellerApplyNum(long sellerApplyNum);
+	public ApplyManage getSellerDetailsBySellerApplyNum(Long sellerApplyNum);
 	
 	public void insertApply(ApplyManage dto) throws Exception;
 

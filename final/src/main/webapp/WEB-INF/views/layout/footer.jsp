@@ -5,7 +5,7 @@
   <div class="footer-links">
     <a href="#">이용약관</a>
     <a href="#">개인정보 처리방침</a>
-    <a href="#">입점신청</a>
+    <a href="${pageContext.request.contextPath}/main/write">입점신청</a>
   </div>
 
   <!-- 첫 번째 구분선 (이용약관, 개인정보 처리방침, 입점신청 위에 위치) -->

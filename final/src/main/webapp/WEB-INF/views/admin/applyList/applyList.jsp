@@ -156,33 +156,33 @@ function updateMember() {
 }
 
 function apply(sellerApplyNum, page) {
-    // AJAX 요청을 통해 서버에서 sellerApplyNum에 해당하는 데이터를 가져옵니다.
+    // 셀러 넘버와 페이지 정보를 서버로 보냄
     $.ajax({
-        url: '/admin/getSellerDetailsBySellerApplyNum',  // 매핑된 URL
+        url: '/admin/applyList/getSellerDetails', // 서버의 해당 URL로 요청
         type: 'GET',
-        data: { sellerApplyNum: sellerApplyNum },  // sellerApplyNum을 서버로 전송
-        dataType: 'json',  // 반환받을 데이터 타입
+        data: { sellerApplyNum: sellerApplyNum, page: page }, // sellerApplyNum과 page 값을 보냄
+        dataType: 'json', // 서버에서 JSON으로 응답을 받음
         success: function(response) {
-            // 서버에서 받은 데이터를 모달에 채워넣습니다.
-            $('#sellerName').text(response.name);
-            $('#sellerEmail').text(response.email);
-            $('#sellerPhone').text(response.phone);
-            $('#sellerBrandName').text(response.brandName);
-            $('#sellerBrandIntro').text(response.brandIntro);
-            $('#sellerIntropeice').text(response.intropeice);
-            $('#sellerForextra').text(response.forextra);
-            $('#sellerStatus').text(response.agreed === 0 ? "미승인" : "승인");
-
-            // 모달을 띄웁니다.
-            $('#sellerStatusDetailesDialogModal').modal('show');
+            if (response) {
+                // 서버에서 받은 데이터를 모달에 채워 넣음
+                $('#sellerName').text(response.name);
+                $('#sellerEmail').text(response.email);
+                $('#sellerPhone').text(response.phone);
+                $('#sellerBrandName').text(response.brandName);
+                $('#sellerBrandIntro').text(response.brandIntro);
+                $('#sellerIntropeice').text(response.introPeice);
+                $('#sellerForextra').text(response.forExtra);
+                $('#sellerStatus').text(response.agreed === 0 ? "미승인" : "승인");
+                
+                // 모달을 보여줌
+                $('#sellerStatusDetailesDialogModal').modal('show');
+            }
         },
         error: function(xhr, status, error) {
             console.error('AJAX 요청 실패:', error);
         }
     });
 }
-
-
 
 
 
