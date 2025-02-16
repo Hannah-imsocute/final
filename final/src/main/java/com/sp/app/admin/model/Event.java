@@ -1,3 +1,4 @@
+
 package com.sp.app.admin.model;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
+	
 	private long event_article_num;
 	
 	private String subject;
