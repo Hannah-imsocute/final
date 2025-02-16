@@ -75,8 +75,16 @@ public class MainProductServiceImpl implements MainProductService{
 
 	@Override
 	public List<MainProduct> listMainProductFile(long productCode) {
-		// TODO Auto-generated method stub
-		return null;
+		List<MainProduct> list = null;
+		
+		try {
+			list = mapper.listMainProductFile(productCode);
+			
+		} catch (Exception e) {
+			log.info("listMainProductFile : ", e);
+		}
+
+		return list;
 	}
 
 	@Override
@@ -93,20 +101,26 @@ public class MainProductServiceImpl implements MainProductService{
 	}
 
 	@Override
-	public List<MainProduct> listAllCategory() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MainProduct> listMainProductReview(long productCode) {
+		List<MainProduct> list = null;
+		
+		try {
+			list = mapper.listMainProductReview(productCode);
+			
+		} catch (Exception e) {
+			log.info("listMainProductReview : " , e);
+		}
+		return list;
 	}
 
 	@Override
-	public List<MainProduct> listCategory() {
-		return null;
+	public void insertReveiwReport(Map<String, Object> params) {
+		try {
+			mapper.insertReveiwReport(params);
+		}catch(Exception e) {
+			log.info("insertReveiwReport : ", e  );
+		}
 	}
 
-	@Override
-	public List<MainProduct> listSubCategory(long parentCategoryCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

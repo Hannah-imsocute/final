@@ -32,6 +32,7 @@ display: grid;
     display: flex;
     gap: 10px;
     margin-top: 10px;
+
 }
 
 .thumbnail {
@@ -39,7 +40,19 @@ display: grid;
     height: 60px;
     border: 1px solid #ddd;
     cursor: pointer;
+    display: flex;  /* 이미지를 감싸도록 설정 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    overflow: hidden; /* 넘치는 부분 감추기 */
 }
+
+.thumbnail img {
+    width: 100%;  /* 부모 요소 크기에 맞게 설정 */
+    height: 100%;
+    object-fit: cover; /* 비율을 유지하면서 넘치는 부분을 자름 */
+    border-radius: 5px; /* 둥근 모서리 추가 (선택 사항) */
+}
+
 
 .product-info {
     display: flex; /* Flexbox 사용 */
@@ -51,6 +64,8 @@ display: grid;
     width:60%; /* 전체 너비 사용 */
     gap: 10px; /* 요소 간 간격 추가 */
 }
+
+
 
 .product-name {
     font-size: 24px;
@@ -95,7 +110,7 @@ display: grid;
     justify-content: center; /* 버튼 가운데 정렬 */
 }
 
-.btn {
+.btn,  {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -116,20 +131,196 @@ display: grid;
 }
 
 .tabs {
-    margin-top: 30px;
-    border-top: 2px solid #ddd;
-    padding-top: 10px;
+    margin-top: 20px;
+    display: flex;
+    justify-content:flex-start;
+    gap: 10px;
+    width:80%;
+    max-width: 800px; /* 선택 사항: 최대 너비 설정 */
+    position: relative; /* 탭 컨텐츠 배치를 위해 상대 위치 지정 */
+  
 }
 
-.tab {
-    background: none;
+
+.product-info-tab, .product-review-tab {
     border: none;
-    font-size: 16px;
-    cursor: pointer;
-    margin-right: 20px;
+    width: 50%;
 }
 
-.tab.active {
-    font-weight: bold;
-    color: #ff6600;
+.product-detail-info, 
+.product-review {
+    width: 100%; /* 부모(.tabs) 기준으로 100% 너비 설정 */
+    box-sizing: border-box; /* padding과 border를 포함하여 크기 유지 */
+    padding: 15px; /* 내부 여백 추가 */
+    background-color: #f9f9f9; /* 배경색 추가 (선택 사항) */
+    border-radius: 5px; /* 모서리 둥글게 (선택 사항) */
+    position: absolute; /* ✅ tabs 내부에서 절대 위치 지정 */
+    top: 50px; /* ✅ 버튼 아래로 컨텐츠 표시 */
+    left: 0;
+    display: none; /* 기본적으로 숨김 */
 }
+
+
+.tab-button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+
+}
+
+
+
+.tab-button:hover {
+    background: #ddd;
+}
+
+/* 후기글 영역*/
+.product-review {
+    width: 100%; /* 부모 컨테이너의 전체 너비 사용 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 설정 */
+    padding: 20px; /* 내부 여백 추가 */
+    background-color: #ffffff; /* 배경색을 흰색으로 변경 */
+    border-radius: 10px; /* 모서리를 둥글게 */
+    display: block; /* 기본적으로 표시 */
+}
+
+.product-review ul {
+    list-style: none; /* 목록 스타일 제거 */
+    padding: 0;
+}
+
+
+.product-review ul {
+	list-style: none; /* 목록 스타일 제거 */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #f9f9f9; /* 후기 배경 */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.review-container{
+	position: relative;
+}
+
+.review-report {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    margin-bottom: 5px; /* 아래 간격 */
+ 
+}
+
+.review-content {
+    display: block;
+    background: #f9f9f9; /* 후기 배경색 */
+    padding: 20px; /* 내부 여백 */
+    border-radius: 10px;
+    margin-top: 10px; /* 간격 */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 150px; /* 최소 높이 설정 */
+    line-height: 1.6;
+}
+
+
+
+ .btn-report {
+    justify-content: flex-end; 
+    background-color: white;
+    color: #ff5733;
+    border: none;
+    border-radius: 5px;
+    
+}
+
+
+
+/* ✅ jQuery UI 모달 스타일 */
+.ui-dialog {
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    border: none;
+    background: #fff;
+}
+
+/* ✅ 모달 타이틀바 스타일 */
+.ui-dialog-titlebar {
+    background: #007bff;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-bottom: 2px solid #0056b3;
+}
+
+/* ✅ 닫기 버튼 */
+.ui-dialog-titlebar-close {
+    background: white !important;
+    border: none !important;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+.ui-dialog-titlebar-close:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ✅ 모달 내용 */
+.ui-dialog-content {
+    max-height: 350px;  /* 내부 높이 제한 */
+    overflow-y: auto;   /* 스크롤 자동 생성 */
+    padding: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* ✅ 입력 필드 */
+#report-reason, #report-description {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* ✅ 신고하기 & 닫기 버튼 */
+.modal-buttons {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #ddd;
+}
+.modal-buttons button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+#submit-report {
+    background: #dc3545;
+    color: white;
+}
+#submit-report:hover {
+    background: #c82333;
+}
+#close-report {
+    background: #6c757d;
+    color: white;
+}
+#close-report:hover {
+    background: #5a6268;
+}
+

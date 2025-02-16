@@ -1,38 +1,68 @@
 package com.sp.app.controller;
 
 import java.text.NumberFormat;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.model.MainProduct;
+import com.sp.app.model.SessionInfo;
 import com.sp.app.service.MainProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/product/*")
 public class ProductController {
 	private final MainProductService service;
 	private final PaginateUtil paginateUtil;
-    
+
+	// 카테고리명 카테고리코드로 변환
+    public static final Map<String, Integer> categoryMap = Map.ofEntries(
+            new AbstractMap.SimpleEntry<>("bakery"             ,  1),  // 베이커리/전통간식
+            new AbstractMap.SimpleEntry<>("beverage"           ,  2),  // 음료/주류
+            new AbstractMap.SimpleEntry<>("dish"               ,  3),  // 요리/간편식
+            new AbstractMap.SimpleEntry<>("nongsusan"          ,  4),  // 농수산품
+            new AbstractMap.SimpleEntry<>("clothing"           ,  5),  // 의류
+            new AbstractMap.SimpleEntry<>("jewelry"            ,  6),  // 주얼리
+            new AbstractMap.SimpleEntry<>("fashion-accessory"  ,  7),  // 패션잡화
+            new AbstractMap.SimpleEntry<>("camping"            ,  8),  // 캠핑
+            new AbstractMap.SimpleEntry<>("furniture"          ,  9),  // 가구
+            new AbstractMap.SimpleEntry<>("home-decor"         , 10),  // 홈데코
+            new AbstractMap.SimpleEntry<>("kitchenware"        , 11),  // 주방용품
+            new AbstractMap.SimpleEntry<>("bathroom"           , 12),  // 욕실용품
+            new AbstractMap.SimpleEntry<>("case"               , 13),  // 케이스
+            new AbstractMap.SimpleEntry<>("stationery"         , 14),  // 문구용품
+            new AbstractMap.SimpleEntry<>("party-supplies"     , 15),  // 파티용품
+            new AbstractMap.SimpleEntry<>("car-accessory"      , 16),  // 차량용품
+            new AbstractMap.SimpleEntry<>("skincare"           , 17),  // 스킨케어
+            new AbstractMap.SimpleEntry<>("hair-body-cleansing", 18),  // 헤어/바디/클렌징
+            new AbstractMap.SimpleEntry<>("perfume"            , 19),  // 향수
+            new AbstractMap.SimpleEntry<>("makeup"             , 20)   // 메이크업
+        );
+	
 	@GetMapping("main")
 	public ModelAndView main(HttpServletRequest req ) throws Exception{ 
 		ModelAndView mav = new ModelAndView("product/main");
@@ -47,6 +77,8 @@ public class ProductController {
 		return mav;
 	}
 	
+	// 작품 카테고리 별 조회
+	@ResponseBody
 	@GetMapping("category") 
 	public ResponseEntity<Map<String, Object>> category(
 			@RequestParam(name = "categoryName") String categoryName,
@@ -59,20 +91,12 @@ public class ProductController {
 		
 		try {
 			// 받아온 카테고리명을 카테고리코드로 변환
-			 Map<String, Integer> categoryMap = Map.of(
-		                "bakery"    , 1,  // 베이커리/전통간식
-		                "beverage"  , 2,  // 음료/주류
-		                "food"      , 3,  // 요리/간편식
-		                "nongsusan" , 4   // 농수산품
-		        );
-
-		        if (!categoryMap.containsKey(categoryName)) {
-		            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
-		        }
+	        if (!categoryMap.containsKey(categoryName)) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+	        }
 
 		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
 			int size = 10;  // 페이지 당 포함 컨텐츠 수
-		//	int size = 1;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
@@ -83,8 +107,6 @@ public class ProductController {
 			//카테고리 정보
 			MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
 			System.out.println("categoryDto: " + categoryDto);
-			
-			System.out.println("11111111");
 			
 			dataCount = service.dataCount(map);
 			total_page = paginateUtil.pageCount(dataCount, size);
@@ -99,14 +121,6 @@ public class ProductController {
 			
 			List<MainProduct> list = service.listMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 			
-			// 페이징처리부분
-//			String cp = req.getContextPath();
-//			String listUrl = cp + "/product/category?categoryName=" + categoryName;
-//			String paging = paginateUtil.paging(current_page, total_page, listUrl);
-
-//			System.out.println("listUrl : " + listUrl);
-//			System.out.println("paging : " + paging);
-//			
 			response.put("list", list);
 			response.put("categoryName", categoryName);		
             response.put("categoryCode", categoryCode);
@@ -114,11 +128,10 @@ public class ProductController {
             response.put("dataCount", dataCount);
             response.put("size", size);
             response.put("total_page", total_page);
-//            response.put("paging", paging);
-
 			
 		} catch (NullPointerException e) {
 			log.info("main NullPointerException : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
 		} catch (Exception e) {
 			log.info("main Exception : ", e  );
 		    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
@@ -127,35 +140,38 @@ public class ProductController {
 		
 	}
 
+	// 상품상세보기 초화면 조회
 	@GetMapping("{productCode}")
-	public ModelAndView productDetail(@PathVariable("productCode") long productCode,
+	public String productDetail(@PathVariable("productCode") long productCode,
 			Model model) throws Exception{
-			ModelAndView mav = new ModelAndView("product/detail");
-
 		
 		try {
 			//상품
 			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
-			System.out.println(productCode);
-	//		List<MainProduct> listFile = service.listMainProductFile(productCode);
-					    
+			
+			//상품가격 1000단위 쉼표
 		    NumberFormat formatter = NumberFormat.getInstance(Locale.KOREA);
-		    
 		    String fmdPrice = formatter.format(dto.getPrice());
 		    String fmdSalePrice= formatter.format(dto.getSalePrice());
 		    
+		    //추가 이미지
+		    List<MainProduct> listFile = service.listMainProductFile(productCode);
+		    
+		    // 추가 이미지 리스트 확인
+		    System.out.println("listFile size: " + (listFile != null ? listFile.size() : "null"));
 
-		    String categoryName = dto.getName();
-		    System.out.println(categoryName);
+		    if (listFile != null) {
+		        for (MainProduct file : listFile) {
+		            System.out.println("File: " + file.getImageFileName());
+		        }
+		    }
 		    
-		    String categoryUrl = "/product/category?categoryName="+categoryName;
+		    model.addAttribute("dto", dto);
+		    model.addAttribute("fmdPrice", fmdPrice);
+		    model.addAttribute("fmdSalePrice", fmdSalePrice);
+		    model.addAttribute("listFile", listFile);
 		    
-		    mav.addObject("dto", dto);
-		    mav.addObject("fmdPrice", fmdPrice);
-		    mav.addObject("fmdSalePrice", fmdSalePrice);
-		    mav.addObject("categoryUrl",categoryUrl);
-		    
-//		    mav.setViewName("redirect:" + categoryUrl);
+		    return "product/detail";
 		    
 		} catch (NullPointerException e) {
 			log.info("detailRequest NullPointerException : ", e  );
@@ -163,10 +179,107 @@ public class ProductController {
 			log.info("detailRequest Exception : ", e  );
 			
 		}
-		return mav;
-		
+		return "redirect:/product/main";
 	}
 	
+	// 상품상세페이지 하단 작품정보, 후기글 조회
+    @ResponseBody
+	@GetMapping("tabContent/{productCode}")
+	public  ResponseEntity<Map<String, Object>> getTabContent(
+			@RequestParam("tab") String tab, 
+			@PathVariable("productCode") long productCode,
+			Model model) {
+    	Map<String, Object> map = new HashMap<>();
 
+		try {
+			if(tab.equals(".product-detail-info")) {
+				
+				MainProduct dto = service.findById(productCode);
+				
+				 if (dto == null) {
+					 map.put("error", "상품 정보를 찾을 수 없습니다.");
+					 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+		            }
+				 
+				 map.put("dto", dto);
 
+			}else if (tab.equals(".product-review")) {
+				List<MainProduct> listReview = service.listMainProductReview(productCode);
+				
+				if (listReview == null) {
+					 map.put("error", "상품 정보를 찾을 수 없습니다.");
+					 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+		            }
+				map.put("listReview", listReview);
+	        }
+			
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+			    System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+			}
+			return  ResponseEntity.ok(map);
+			
+		} catch (Exception e) {
+			log.info("getTabContent Exception : ", e  );
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+	}
+    
+    // 후기글 신고하기
+    @PostMapping("reveiwReport")
+	public ResponseEntity productReviewReport(
+			@RequestParam(name = "reviewNum") String review_num,
+			@RequestParam(name = "categoryName") String category_name,
+			@RequestParam(name = "content") String content,
+			HttpSession session) throws Exception{
+    	
+    	Long memberIdx = getMemberIdx(session);
+	    if (memberIdx == null) {
+	    	return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 세션입니다."));
+	    }
+	    Map<String, Object> response = new HashMap<>();
+	    
+		try {
+			System.out.println("memberIdx : " + memberIdx);
+		    System.out.println("review_num : " + review_num);
+		    System.out.println("category_name : " + category_name);
+		    System.out.println("content : " + content);
+		    
+			// 받아온 카테고리명을 카테고리번호로 변환
+			 Map<String, Integer> categoryMap = Map.of(
+		                "spam"      , 1,  // 스팸 또는 광고
+		                "offensive" , 2,  // 부적절한 콘텐츠
+		                "copyright" , 3,  // 저작권 침해
+		                "other"     , 4   // 기타
+		                );
+
+	        if (!categoryMap.containsKey(category_name)) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+	        }
+
+		    int categoryNum = categoryMap.get(category_name); // 카테고리명을 카테고리번호로 변환 - 신고하기/문의하기 테이블 카테고리 정보
+		    System.out.println("categoryNum : " + categoryNum);
+		    
+		    Map<String, Object> params = new HashMap<>();
+		    params.put("memberIdx", memberIdx);
+		    params.put("review_num", review_num);
+		    params.put("categoryNum", categoryNum);
+		    params.put("content", content);
+		    
+		    service.insertReveiwReport(params); // 후기글 신고등록
+		    
+		} catch (NullPointerException e) {
+			log.info("detailRequest NullPointerException : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		} catch (Exception e) {
+			log.info("detailRequest Exception : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		}
+		return ResponseEntity.ok("신고가 성공적으로 접수 되었습니다");
+	}
+    
+    // Session 에서 회원코드 반환
+    private static Long getMemberIdx(HttpSession session) {
+      SessionInfo member = (SessionInfo) session.getAttribute("member");
+      return member.getMemberIdx();
+    }
 }

@@ -35,6 +35,41 @@
 		WHERE productCode = #{productCode}
 	</select>
 
+	<select id="listMainProductFile" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, image_code, imageFileName
+		FROM productImage i
+		JOIN product p
+		ON i.productCode = p.productCode
+		WHERE p.productCode = #{productCode}
+	</select>
+	
+	<select id="listMainProductReview" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+		SELECT review_num, p.productCode, nickName, content
+		FROM product p 
+		JOIN productReview r
+		ON p.productCode = r.productCode 
+		JOIN MEMBER m
+		ON m.memberIdx = r.memberIdx
+		WHERE p.productCode = #{productCode}
+	</select>
+
+	<select id="insertReveiwReport" parameterType="map">
+		INSERT INTO productreivewreport (
+		    report_code,
+		    memberidx,
+		    review_num,
+		    category_num,
+		    content,
+		    report_date
+		) VALUES (
+		    SEQ_PRODUCTREIVEWREPORT.NEXTVAL,
+		    #{memberIdx},
+		    #{review_num},
+		    #{categoryNum},
+		    #{content},
+		    sysdate
+		)
+	</select>
 
 </mapper>
 	
