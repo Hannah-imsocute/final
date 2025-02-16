@@ -16,9 +16,10 @@
 	</header>
 
 	<main class="container mt-9">
-		<div class="card shadow-lg p-4 mx-auto ms-9" style="min-height: 800px; max-width: 900px;">
+		<div class="card shadow-lg p-4 mx-auto ms-9"
+			style="min-height: 800px; max-width: 900px;">
 			<h3 class="mb-4 text-center">이벤트 등록</h3>
-			<form name="articleForm" method="post">
+			<form name="articleForm" method="post" enctype="multipart/form-data">
 				<div class="mb-3">
 					<label for="subject" class="form-label">이벤트 제목</label> <input
 						type="text" class="form-control" id="subject" name="subject"
@@ -51,8 +52,8 @@
 					<label class="form-label">이벤트 유형</label>
 					<div class="d-flex gap-3">
 						<div class="form-check">
-							<input class="form-check-input couponchk" type="radio" name="eventType"
-								id="eventType1" value="coupon"> <label
+							<input class="form-check-input couponchk" type="radio"
+								name="eventType" id="eventType1" value="coupon"> <label
 								class="form-check-label" for="eventType1">쿠폰</label>
 						</div>
 						<div class="form-check">
@@ -72,7 +73,8 @@
 					</div>
 				</div>
 				<div>
-					<input type="text" class="form-control" name="eventdetail" data-status="false" readonly>
+					<input type="text" class="form-control" name="eventdetail"
+						data-status="false" readonly>
 				</div>
 				<div class="text-center">
 					<button type="button" class="btn submitbtn">이벤트 게시</button>
@@ -92,13 +94,13 @@
 							aria-label="Close"></button>
 					</div>
 					<div class="modal-body text-center">
-						<form name="typeForm" enctype="multipart/form-data">
-						</form>
+						<form name="typeForm" enctype="multipart/form-data"></form>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"
 							data-bs-dismiss="modal">취소</button>
-						<button type="button" class="btn btn-primary btnupload" data-type="coupon">등록</button>
+						<button type="button" class="btn btn-primary btnupload"
+							data-type="coupon">등록</button>
 					</div>
 				</div>
 			</div>
@@ -231,13 +233,15 @@
 			
 			
 			// 게시글 유효성검사
-			function boolean articleCheck( form ){
+			function articleCheck( form ){
 				return true;
 			}
 			
 			
 			// submit 
 			$(function (){
+				
+				
 				$('.submitbtn').click(function (){
 					let url = "${pageContext.request.contextPath}/admin/event/write";
 					
@@ -252,7 +256,11 @@
 					$form.action = url;
 					$form.submit();
 				});
+		
+				
+				
 			});
+			
 	</script>
 </body>
 </html>

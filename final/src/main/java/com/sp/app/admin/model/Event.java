@@ -15,20 +15,12 @@ public class Event {
 	private String subject;
 	private String textcontent;
 	private String eventType;
+	
 	private String thumbnail;
+	
 	private String startdate;
 	private String enddate;
 	private String created;
 	
-	private String coupon_code;
-	private String couponname;
-	private int valid;
-	private int rate;
-	private String couponstart;
-	private String expiredate;
-	
-	private long clickin_num;
-	private int daybyday;
-	private int weekly;
-	private int monthly;
+	private EventType event;
 }

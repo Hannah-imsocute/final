@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.EventManageMapper">
+	<insert id="insertEvent" parameterType="com.sp.app.admin.model.Event">
+		INSERT INTO event_article (event_article_num, subject, textcontent, eventtype, thumbnail, startdate, enddate, created) 
+		VALUES (SEQ_EVENT_ARTICLE.NEXTVAL, #{subject}, #{textcontent}, #{eventType}, #{thumbnail}, #{startdate}, #{enddate}, SYSDATE ) 
+	</insert>
+	<insert id="insertEventType" parameterType="com.sp.app.admin.model.EventType">
+		<choose>
+			<when test="eventType == 'coupon'">
+				INSERT INTO coupon (coupon_code, couponname, valid, rate, couponstart, expiredate, event_article_num) VALUES (#{coupon_code}, #{couponname}, #{valid}, #{rate}, #{couponstart}, #{expiredate},SEQ_EVENT_ARTICLE.CURRVAL )
+			</when>
+			<when test="eventType == 'clockin'">
+				INSERT INTO clockin_event (clockin_num, daybyday, weekly, monthly, event_article_num) VALUES (SEQ_CLOCKIN_EVENT.NEXTVAL, #{daybyday}, #{weekly}, #{monthly}, SEQ_EVENT_ARTICLE.CURRVAL)
+			</when>
+		</choose>
+	</insert>
+</mapper>

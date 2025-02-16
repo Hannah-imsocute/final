@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.EventMapper">
+
+	<sql id="type-list">
+		<if test="type == 'coupon'">
+			, coupon_code
+		</if>
+		<if test="type == 'clockin'">
+			, clockin_num
+		</if>
+	</sql>
+
+	<select id="eventList" resultType="com.sp.app.admin.model.Event">
+		SELECT event_article_num,
+		subject, textcontent, eventType, thumbnail,
+		TO_CHAR(startdate,
+		'YYYY-MM-DD') startdate , TO_CHAR(enddate,'YYYY-MM-DD') enddate FROM
+		event_article
+	</select>
+	<select id="findById" parameterType="map"
+		resultType="com.sp.app.admin.model.Event">
+		SELECT er.event_article_num,
+		subject, textcontent, eventType,
+		thumbnail,
+		TO_CHAR(startdate, 'YYYY-MM-DD') startdate ,
+		TO_CHAR(enddate,'YYYY-MM-DD') enddate 
+		<include refid="type-list"/>
+		FROM event_article er
+		LEFT OUTER JOIN coupon c ON er.event_article_num = c.event_article_num
+		LEFT OUTER JOIN clockin_event ce ON ce.event_article_num =	er.event_article_num
+		WHERE er.event_article_num = #{eventNum}
+	</select>
+</mapper>

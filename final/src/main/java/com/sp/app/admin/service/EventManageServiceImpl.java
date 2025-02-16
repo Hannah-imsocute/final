@@ -3,6 +3,7 @@ package com.sp.app.admin.service;
 import java.security.SecureRandom;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.EventManageMapper;
 import com.sp.app.admin.model.Event;
@@ -37,10 +38,20 @@ public class EventManageServiceImpl implements EventManageService {
 			return sb.toString();
 	}
 
-	
+	@Transactional
 	@Override
-	public void insertEvent(Event dto, Event value) throws Exception {
-		
+	public void insertEvent(Event dto) throws Exception {
+		try {
+			
+			mapper.insertEvent(dto);
+			
+			if(! dto.getEventType().equalsIgnoreCase("comment")) {
+				mapper.insertEventType(dto.getEvent());
+			}
+			
+		} catch (Exception e) {
+			log.info("=============insertEvent", e);
+		}
 	}
 
 	

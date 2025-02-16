@@ -13,10 +13,10 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-}  
+}
 
 header {
-    position: relative !important; /* 기존 fixed 해제 */
+	position: relative !important; /* 기존 fixed 해제 */
 }
 
 body {
@@ -90,24 +90,40 @@ h2 {
 	<header>
 		<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 	</header>
-		<section class="event-section">
-			<h2>이벤트</h2>
-			<div class="event-container">
-			
-				<!--  여기서부터 반복 -->
-				
-					<div class="event-card">
-						<img src="event1.jpg" alt="새해 쿠폰 이벤트">
-						<h3>새해 쿠폰 이벤트</h3>
-						<p>역대급 혜택이얌</p>
-						<span class="event-date">25.01.01 ~ 25.03.20</span>
-					</div>
-				<!--  여기까징  -->
-			
-			</div>
-		</section>
+	<section class="event-section">
+		<h2>이벤트</h2>
+		<div class="event-container">
+
+			<c:forEach var="dto" items="${list}">
+
+				<div class="event-card" data-eventNum="${dto.event_article_num}" data-eventType="${dto.eventType}">
+					<img src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}" alt="새해 쿠폰 이벤트">
+					<h3>${dto.subject}</h3>
+					<p>${dto.eventType}</p>
+					<span class="event-date">${dto.startdate} ~ ${dto.enddate}</span>
+				</div>
+
+			</c:forEach>
+		</div>
+	</section>
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
+	
+	<script type="text/javascript">
+		$(function(){
+			$('.event-card').each(function(){
+				$(this).click(function (){
+					
+					let articleNumber = $(this).attr('data-eventNum');
+					let Type = $(this).attr('data-eventType');
+					
+					let url = "${pageContext.request.contextPath}/event/article/"+Type + "/" +articleNumber;
+					
+					location.href = url;
+				});
+			});
+		});
+	</script>
 </body>
 </html>
