@@ -29,5 +29,15 @@ public class MainProduct {
 	private String name; //상품카테고리 이름
 	private int ParentCategoryCode; //상품 상위카테고리
 	
+	//상품 이미지
+	private long imageCode;
+	private String imageFileName;
+	
+	//상품 별 후기
+	private long review_num;
+	private String nickName;
+	private String content;
 
+	private long category_num;
+	
 }

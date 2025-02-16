@@ -22,48 +22,48 @@
 				<div class="left-menu">
 					<h3>전체 카테고리</h3>
 					<ul>
-						<li>식품 ▾
+						<li data-categoryName="food">식품 ▾
 							<ul class="sub-menu">
-                                <li data-categoryName="bakery"><a href="#">베이커리/전통간식</a></li>
+								<li data-categoryName="bakery"><a href="#">베이커리/전통간식</a></li>
 								<li data-categoryName="beverage"><a href="#">음료/주류</a></li>
-								<li data-categoryName="food"><a href="#">요리/간편식</a></li>
+								<li data-categoryName="dish"><a href="#">요리/간편식</a></li>
 								<li data-categoryName="nongsusan"><a href="#">농수산품</a></li>
 							</ul>
 						</li>
 
-						<li>패션 ▾
+						<li data-categoryName="fashion">패션 ▾
 							<ul class="sub-menu">
-								<li><a href="#">의류</a></li>
-								<li><a href="#">주얼리</a></li>
-								<li><a href="#">패션잡화</a></li>
+								<li data-categoryName="clothing"><a href="#">의류</a></li>
+								<li data-categoryName="jewelry"><a href="#">주얼리</a></li>
+								<li data-categoryName="fashion-accessory"><a href="#">패션잡화</a></li>
 							</ul>
 						</li>
-
-						<li>리빙 ▾
+						
+						<li data-categoryName="living">리빙 ▾
 							<ul class="sub-menu">
-								<li><a href="#">캠핑</a></li>
-								<li><a href="#">가구</a></li>
-								<li><a href="#">홈데코</a></li>
-								<li><a href="#">주방용품</a></li>
-								<li><a href="#">욕실용품</a></li>
+								<li data-categoryName="camping"><a href="#">캠핑</a></li>
+								<li data-categoryName="furniture"><a href="#">가구</a></li>
+								<li data-categoryName="home-decor"><a href="#">홈데코</a></li>
+								<li data-categoryName="kitchenware"><a href="#">주방용품</a></li>
+								<li data-categoryName="bathroom"><a href="#">욕실용품</a></li>
 							</ul>
 						</li>
-
-						<li>문구/기타용품 ▾
+						
+						<li data-categoryName="stationery">문구/기타용품 ▾
 							<ul class="sub-menu">
-								<li><a href="#">케이스</a></li>
-								<li><a href="#">문구용품</a></li>
-								<li><a href="#">파티용품</a></li>
-								<li><a href="#">차량용품</a></li>
+								<li data-categoryName="case"><a href="#">케이스</a></li>
+								<li data-categoryName="stationery"><a href="#">문구용품</a></li>
+								<li data-categoryName="party-supplies"><a href="#">파티용품</a></li>
+								<li data-categoryName="car-accessory"><a href="#">차량용품</a></li>
 							</ul>
 						</li>
-
-						<li>뷰티 ▾
+						
+						<li data-categoryName="beauty">뷰티 ▾
 							<ul class="sub-menu">
-								<li><a href="#">스킨케어</a></li>
-								<li><a href="#">헤어/바디/클렌징</a></li>
-								<li><a href="#">향수</a></li>
-								<li><a href="#">메이크업</a></li>
+								<li data-categoryName="skincare"><a href="#">스킨케어</a></li>
+								<li data-categoryName="hair-body-cleansing"><a href="#">헤어/바디/클렌징</a></li>
+								<li data-categoryName="perfume"><a href="#">향수</a></li>
+								<li data-categoryName="makeup"><a href="#">메이크업</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -121,16 +121,11 @@ $(document).ready(function() {
         	page = 1;
         	$this.attr('data-page', page)
         }
-        
-        var contextPath = "${pageContext.request.contextPath}";
 
-        let url = contextPath + "/product/category?categoryName=" + encodeURIComponent(categoryName) + "&page=" + page;
-        
-        
-        console.log("categoryName : " , categoryName); // categoryName 확인
-        console.log("page : " , page); // page 확인
 
    
+        var contextPath = "${pageContext.request.contextPath}";
+
         $.ajax({
             url: '/product/category',  // Spring Boot 서버 엔드포인트
             method: 'GET',

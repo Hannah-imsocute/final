@@ -14,11 +14,8 @@ public interface MainProductMapper {
 	public MainProduct findById(long productCode);
 	public List<MainProduct> listMainProductFile(long productCode);
 	public MainProduct findByCategoryId(int CategoryCode);
-	
-	public List<MainProduct> listAllCategory(); //전체카테고리
-	public List<MainProduct> listCategory(); //카테고리
-	public List<MainProduct> listSubCategory(long parentCategoryCode); //하위카테고리
-	
+	public List<MainProduct> listMainProductReview(long productCode); 
+	public void insertReveiwReport(Map<String, Object> params);
 
 
 }
