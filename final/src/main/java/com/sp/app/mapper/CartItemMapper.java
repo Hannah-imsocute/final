@@ -15,4 +15,7 @@ public interface CartItemMapper {
   CartItem getCartItemByMemberAndProduct(Map<String, Object> params);
   List<CartItem> getCartItemsByMemberAndProduct(Map<String, Object> params) throws Exception;
   void updateCartItemQuantity(Map<String, Object> params);
+//  List<CartItem> getCartItemsByCodes() throws Exception;
+  List<CartItem> getCartItemsByCodes(Map<String, Object> params) throws Exception;
+  void deleteCartItems(Map<String, Object> params) throws Exception;
 }
