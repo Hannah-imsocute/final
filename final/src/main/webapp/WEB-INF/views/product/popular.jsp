@@ -85,7 +85,7 @@
  -->
 	        <!-- 메인 패널 -->
 	        <div class="main-panel">
-	            <h5 class="main-top-name">카테고리별 메인페이지입니다</h5>
+	            <h5 class="main-top-name">인기작품별 메인페이지입니다</h5>
 	            <div class="count">
 	              <p class="dataCount">${dataCount}개<p>
 	            </div>
@@ -130,7 +130,7 @@ $(document).ready(function() {
         var contextPath = "${pageContext.request.contextPath}";
 
         $.ajax({
-            url: '/product/category',  // Spring Boot 서버 엔드포인트
+            url: '/product/byPopularWorks',  // Spring Boot 서버 엔드포인트
             method: 'GET',
             data: { categoryName: categoryName, page:page },  // 요청 데이터
             dataType: 'json',
@@ -143,13 +143,12 @@ $(document).ready(function() {
                  // 메인 패널의 제목 변경
                 $('.main-top-name').text(topName);
                 $('.dataCount').text(response.dataCount+"개");
-                 
-
+                
                 // 응답 데이터가 배열인지 확인 후 처리	
-                if (response && Array.isArray(response.list)) {
-                	$.each(response.list, function(arrayIndex, arrayKey) {
+                if (response && Array.isArray(response.popularList)) {
+                	$.each(response.popularList, function(arrayIndex, arrayKey) {
                 	    console.log("Processing arrayKey:", arrayKey);
-
+                	  
                 	    // 빈 HTML을 먼저 추가
                 	    var emptyHtml = `
                 	        <div class="border rounded product-box">
@@ -180,6 +179,7 @@ $(document).ready(function() {
                 	    productList.append($productBox);
                 	    
                 	    page_total_count = arrayKey.total_page; // 전역변수에 전체페이지갯수 담아두기 
+                	    
                 	})
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
@@ -211,7 +211,7 @@ $(document).ready(function() {
             }
 
             $.ajax({
-                url: '/product/category',  // Spring Boot 서버 엔드포인트
+                url: '/product/byPopularWorks/',  // Spring Boot 서버 엔드포인트
                 method: 'GET',
                 /* 요청 데이터 셋팅 */
                 data: { categoryName: categoryName
@@ -229,8 +229,8 @@ $(document).ready(function() {
                     var productList = $('#product-list');
 
                     // 응답 데이터가 배열인지 확인 후 처리
-                    if (response && Array.isArray(response.list)) {
-                        $.each(response.list, function(arrayIndex, arrayKey) {
+                    if (response && Array.isArray(response.popularList)) {
+                        $.each(response.popularList, function(arrayIndex, arrayKey) {
                         	var emptyHtml = `
                      	       <div class="border rounded product-box">
                      	           <div class="product-info">

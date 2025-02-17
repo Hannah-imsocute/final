@@ -69,7 +69,9 @@ body {
     color: #FF8000;
 }
 
-
+.count{
+	text-align: left
+}
 
 
 .product-list {

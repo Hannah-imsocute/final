@@ -57,7 +57,7 @@ public class ProductController {
             new AbstractMap.SimpleEntry<>("stationery"         , 14),  // 문구용품
             new AbstractMap.SimpleEntry<>("party-supplies"     , 15),  // 파티용품
             new AbstractMap.SimpleEntry<>("car-accessory"      , 16),  // 차량용품
-            new AbstractMap.SimpleEntry<>("skincare"           , 17),  // 스킨케어
+            new AbstractMap.SimpleEntry<>("skincare"           , 17),  	// 스킨케어
             new AbstractMap.SimpleEntry<>("hair-body-cleansing", 18),  // 헤어/바디/클렌징
             new AbstractMap.SimpleEntry<>("perfume"            , 19),  // 향수
             new AbstractMap.SimpleEntry<>("makeup"             , 20)   // 메이크업
@@ -66,6 +66,35 @@ public class ProductController {
 	@GetMapping("main")
 	public ModelAndView main(HttpServletRequest req ) throws Exception{ 
 		ModelAndView mav = new ModelAndView("product/main");
+		try {
+			log.info("Main page accessed");
+		} catch (NullPointerException e) {
+			log.error("NullPointerException in main(): ", e);
+		} catch (Exception e) {
+			log.info("main : ", e  );
+		}
+		
+		return mav;
+	}
+	
+	@GetMapping("recommend")
+	public ModelAndView recommend(HttpServletRequest req ) throws Exception{ 
+		ModelAndView mav = new ModelAndView("product/recommend");
+		try {
+			log.info("Main page accessed");
+		} catch (NullPointerException e) {
+			log.error("NullPointerException in main(): ", e);
+		} catch (Exception e) {
+			log.info("main : ", e  );
+		}
+		
+		return mav;
+	}
+	
+	
+	@GetMapping("popular")
+	public ModelAndView popular(HttpServletRequest req ) throws Exception{ 
+		ModelAndView mav = new ModelAndView("product/popular");
 		try {
 			log.info("Main page accessed");
 		} catch (NullPointerException e) {
@@ -102,8 +131,7 @@ public class ProductController {
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("categoryCode", categoryCode);
-
-			System.out.println("categoryCode : " + categoryCode);
+			
 			//카테고리 정보
 			MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
 			System.out.println("categoryDto: " + categoryDto);
@@ -121,7 +149,7 @@ public class ProductController {
 			
 			List<MainProduct> list = service.listMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 			
-			response.put("list", list);
+			response.put("list", list);			
 			response.put("categoryName", categoryName);		
             response.put("categoryCode", categoryCode);
             response.put("page", current_page);
@@ -139,6 +167,69 @@ public class ProductController {
 		return ResponseEntity.ok(response);
 		
 	}
+	
+	
+	// 인기작품 별 조회
+		@ResponseBody
+		@GetMapping("byPopularWorks") 
+		public ResponseEntity<Map<String, Object>> byPopularWorks(
+				@RequestParam(name = "categoryName") String categoryName,
+				@RequestParam(name = "page", defaultValue = "1") int current_page, 
+				HttpServletRequest req ) throws Exception{
+			
+			System.out.println("categoryName : " + categoryName);
+			
+			 Map<String, Object> response = new HashMap<>();
+			
+			try {
+				// 받아온 카테고리명을 카테고리코드로 변환
+		        if (!categoryMap.containsKey(categoryName)) {
+		            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+		        }
+
+			    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
+				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int total_page; // 전체 페이지 수
+				int dataCount;  // 전체 데이터 컨텐츠 수
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("categoryCode", categoryCode);
+				
+				//카테고리 정보
+				MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
+				System.out.println("categoryDto: " + categoryDto);
+				
+				dataCount = service.dataCount(map);
+				total_page = paginateUtil.pageCount(dataCount, size);
+				
+				current_page = Math.min(current_page, total_page);
+				
+				int offset = (current_page - 1) * size;
+				if(offset < 0) offset = 0;
+				
+				map.put("offset", offset);
+				map.put("size", size);
+				
+				List<MainProduct> popularList = service.listPopularProduct(map);
+		
+				response.put("popularList", popularList);			
+				response.put("categoryName", categoryName);		
+	            response.put("categoryCode", categoryCode);
+	            response.put("page", current_page);
+	            response.put("dataCount", dataCount);
+	            response.put("size", size);
+	            response.put("total_page", total_page);
+				
+			} catch (NullPointerException e) {
+				log.info("main NullPointerException : ", e  );
+				return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			} catch (Exception e) {
+				log.info("main Exception : ", e  );
+			    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			}
+			return ResponseEntity.ok(response);
+			
+		}
 
 	// 상품상세보기 초화면 조회
 	@GetMapping("{productCode}")
@@ -156,6 +247,7 @@ public class ProductController {
 		    
 		    //추가 이미지
 		    List<MainProduct> listFile = service.listMainProductFile(productCode);
+
 		    
 		    // 추가 이미지 리스트 확인
 		    System.out.println("listFile size: " + (listFile != null ? listFile.size() : "null"));

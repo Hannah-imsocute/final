@@ -1,8 +1,6 @@
 package com.sp.app.service;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -49,6 +47,30 @@ public class MainProductServiceImpl implements MainProductService{
 		} catch (Exception e) {
 			log.info("listMainProduct : ", e);
 		}
+		return list;
+	}
+	
+	//인기작품별 작품 리스트
+	@Override
+	public List<MainProduct> listPopularProduct(Map<String, Object> map) {
+		List<MainProduct> list = null;
+		
+		try {
+			list = mapper.listPopularProduct(map);
+			
+			int discountPrice; //할인되는 가격
+			for(MainProduct dto : list) {
+				discountPrice = 0;
+				if(dto.getDiscount()>0) {
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+				}
+				dto.setSalePrice(dto.getPrice() - discountPrice);
+			}
+			
+		} catch (Exception e) {
+			log.info("listPopularProduct");
+		}
+		
 		return list;
 	}
 
@@ -121,6 +143,8 @@ public class MainProductServiceImpl implements MainProductService{
 			log.info("insertReveiwReport : ", e  );
 		}
 	}
+
+	
 
 
 }

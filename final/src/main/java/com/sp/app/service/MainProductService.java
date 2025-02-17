@@ -8,6 +8,7 @@ import com.sp.app.model.MainProduct;
 public interface MainProductService {
 	public int dataCount(Map<String, Object> map);
 	public List<MainProduct> listMainProduct(Map<String, Object> map);
+	public List<MainProduct> listPopularProduct(Map<String, Object> map);
 	
 	public MainProduct findById(long productCode);
 	public List<MainProduct> listMainProductFile(long productCode);

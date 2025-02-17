@@ -85,10 +85,7 @@
  -->
 	        <!-- 메인 패널 -->
 	        <div class="main-panel">
-	            <h5 class="main-top-name">카테고리별 메인페이지입니다</h5>
-	            <div class="count">
-	              <p class="dataCount">${dataCount}개<p>
-	            </div>
+	            <h5 class="main-top-name">추천작품별 메인페이지입니다</h5>
 	            <br>
 	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0" >
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
@@ -142,8 +139,6 @@ $(document).ready(function() {
              
                  // 메인 패널의 제목 변경
                 $('.main-top-name').text(topName);
-                $('.dataCount').text(response.dataCount+"개");
-                 
 
                 // 응답 데이터가 배열인지 확인 후 처리	
                 if (response && Array.isArray(response.list)) {
