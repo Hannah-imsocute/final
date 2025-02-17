@@ -88,7 +88,7 @@
 	<div class="container">
 		<!-- 메뉴 항목들 -->
 		<ul class="navbar-nav ms-auto">
-			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/main">전체 카테고리</a></li>
+			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/category">전체 카테고리</a></li>
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/recommend">추천 작품</a></li>
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/popular">인기 작품</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">커뮤니티</a></li>
