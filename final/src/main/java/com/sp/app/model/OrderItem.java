@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class OrderItem {
     private long itemCode;      // 주문 항목 코드
-    private long orderCode;     // 연결된 주문 번호
+    private String orderCode;     // 연결된 주문 번호
     private long productCode;   // 상품 코드
     private String options;     // 상품 옵션
     private int priceForeach;   // 단가

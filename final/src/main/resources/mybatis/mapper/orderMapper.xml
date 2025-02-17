@@ -3,23 +3,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.OrderMapper">
 
-    <select id="getLatestOrderCode" resultType="Long">
+    <!-- 최근 마지막 주문번호 가지고오기 -->
+    <select id="getLatestOrderCode" resultType="String">
         select ORDER_CODE
         from PRODUCT_ORDER
         order by ORDER_DATE desc
         fetch first 1 rows only
     </select>
 
- <!--   <insert id="insertOrder" parameterType="com.sp.app.model.Order">
-        insert into PRODUCT_ORDER (order_code, memberidx, order_date, addr_num, total_price, coupon_code, couponvalue, spentpoint, netpay)
-        values (SEQ_PRODUCT_ORDER.nextval, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode}, #{couponValue}, #{spentPoint}, #{netPay})
-    </insert>-->
 
+    <!-- 주문 번호 등록 -->
     <insert id="insertOrder" parameterType="com.sp.app.model.Order">
         INSERT INTO PRODUCT_ORDER
         (order_code, memberidx, order_date, addr_num, total_price, coupon_code, couponvalue, spentpoint, netpay)
         VALUES
-            (SEQ_PRODUCT_ORDER.nextval, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode, jdbcType=VARCHAR}, #{couponValue}, #{spentPoint}, #{netPay})
+            (#{orderCode}, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode, jdbcType=VARCHAR}, #{couponValue}, #{spentPoint}, #{netPay})
     </insert>
 
 
@@ -64,14 +62,14 @@
 
     <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
     <!-- 상품 정보 -->
-    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.Order">
+    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
         select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
         from ORDER_ITEM
         where PRODUCTCODE = #{productCode}
     </select>
 
     <!--유저의 가장 최근 포인트 조회-->
-    <select id="getLatestUserPoint" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+    <select id="getLatestUserPoint" parameterType="Long" resultType="com.sp.app.model.MemberPoint">
         select point_save_num as pointSaveNum, memberidx, saveamount as saveAmount, savedate as saveDate, expiredate as expireDate,
                reason, enable, balance
         from POINT_SAVE
@@ -80,6 +78,10 @@
             fetch first 1 rows only
     </select>
 
+<!--    // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우-->
+    <update id="decreaseProductStock" parameterType="map">
+
+    </update>
 
     <!-- 옵션 -->
 

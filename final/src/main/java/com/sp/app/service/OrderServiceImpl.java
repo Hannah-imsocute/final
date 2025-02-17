@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,10 +25,34 @@ public class OrderServiceImpl implements OrderService{
 
 
   @Override
-  public long getLatestOrderCode() {
-    long result = 0;
+  public String getLatestOrderCode() {
+    String result = "";
     try {
-      result = orderMapper.getLatestOrderCode();
+      LocalDate now = LocalDate.now();
+      String preNumber = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+      String savedPreNumber = "";
+      long savedLastNumber = 0;
+      String maxOrderNumber = orderMapper.getLatestOrderCode();
+
+      if (maxOrderNumber != null && maxOrderNumber.length() > 8) {
+        savedPreNumber = maxOrderNumber.substring(0, 8);
+        savedLastNumber = Long.parseLong(maxOrderNumber.substring(8));
+      }
+
+      long lastNumber = 1;
+      if (!preNumber.equals(savedPreNumber)) {
+        count.set(0);
+        lastNumber = count.incrementAndGet();
+      } else {
+        lastNumber = count.incrementAndGet();
+        if (savedLastNumber >= lastNumber) {
+          count.set(savedLastNumber);
+          lastNumber = count.incrementAndGet();
+        }
+      }
+
+      result = preNumber + String.format("%09d", lastNumber);
+
     } catch(Exception e) {
       log.info("getLatestOrderCode()", e);
     }
@@ -45,12 +70,21 @@ public class OrderServiceImpl implements OrderService{
 
   @Override
   public void insertPayment(Payment payment) throws Exception {
-
+    try {
+      orderMapper.insertPayment(payment);
+    } catch(Exception e) {
+      log.info("insertPayment", e);
+    }
   }
 
   @Override
-  public void insertOrderDetail(Order orderDetail) throws SQLException {
+  public void insertOrderDetail(OrderItem item) throws SQLException {
+    try {
+      orderMapper.insertOrderDetail(item);
 
+    } catch(Exception e) {
+      log.info("insertOrderDetail", e);
+    }
   }
 
   @Override
@@ -69,19 +103,37 @@ public class OrderServiceImpl implements OrderService{
     }
   }
 
+  /*유저 포인트 등록 구매할때 x 리뷰 참여시에 포인트준다..*/
   @Override
   public void insertUserPoint(MemberPoint userPoint) throws Exception {
-
+    try {
+      orderMapper.insertUserPoint(userPoint);
+    } catch(Exception e) {
+      log.info("userPoint", e);
+      throw e;
+    }
   }
 
   @Override
-  public MemberPoint getLatestUserPoint(long userId) {
-    return null;
+  public MemberPoint getLatestUserPoint(long memberIdx) {
+    MemberPoint memberPoint = null;
+    try {
+      memberPoint = orderMapper.getLatestUserPoint(memberIdx); // memberIdx
+    } catch(Exception e) {
+      log.info("getLatestUserPoint", e);
+    }
+    return memberPoint;
   }
 
   @Override
   public List<Order> getOrderDetailList(Map<String, Object> params) {
-    return List.of();
+    List<Order> list = null;
+    try {
+      list = orderMapper.getOrderDetailList(params);
+    } catch(Exception e) {
+      log.info("getOrderDetailList");
+    }
+    return list;
   }
 
   @Override
@@ -97,6 +149,15 @@ public class OrderServiceImpl implements OrderService{
   @Override
   public void decreaseProductStock(long productId, int quantity) throws SQLException {
 
+  }
+
+  @Override
+  public void decreaseProductStock(Map<String, Object> map) throws SQLException {
+    try {
+      orderMapper.decreaseProductStock(map);
+    } catch(Exception e) {
+      log.info("decreaseProductStock", e);
+    }
   }
 
   @Override
@@ -128,11 +189,13 @@ public class OrderServiceImpl implements OrderService{
               .build();
       orderItems.add(orderItem);
     }
+    String orderCode = getLatestOrderCode();
 
     Order order = Order.builder()
             .memberIdx(sessionInfo.getMemberIdx())
             .email(sessionInfo.getEmail())
             .orderDate(java.time.LocalDateTime.now().toString())
+            .orderCode(orderCode)
             .addrNum(1)
             .totalPrice(overallNetPay)
             .couponCode(null)
@@ -144,7 +207,6 @@ public class OrderServiceImpl implements OrderService{
             .build();
 
     orderMapper.insertOrder(order);
-    long orderCode = order.getOrderCode();
 
     for (OrderItem orderItem : orderItems) {
       orderItem.setOrderCode(orderCode);
@@ -193,22 +255,23 @@ public class OrderServiceImpl implements OrderService{
     Order order = Order.builder()
             .memberIdx(sessionInfo.getMemberIdx())
             .email(sessionInfo.getEmail())
-            .orderDate(java.time.LocalDateTime.now().toString())
-            .addrNum(1)
-            .totalPrice(overallNetPay)
-            .couponCode(null)
-            .couponValue(0)
-            .spentPoint(0)
-            .netPay(overallNetPay)
-            .payment("카드")
-            .orderItems(orderItems)
+            .orderDate(java.time.LocalDateTime.now().toString()) // 주문일시
+            .orderCode(getLatestOrderCode())
+            .addrNum(1) // 배송지 주소(기본값)
+            .totalPrice(overallNetPay) // 전체 가격
+            .couponCode(null) // 쿠폰코드
+            .couponValue(0) // 쿠폰가격
+            .spentPoint(0) // 사용 포인트
+            .netPay(overallNetPay) // 최종 결제 금액
+            .payment("카드") //
+            .orderItems(orderItems) // 개별 주문 항목 리스트
             .build();
 
     orderMapper.insertOrder(order);
-    long orderCode = order.getOrderCode();
+//    String orderCode = order.getOrderCode();
 
     for (OrderItem orderItem : orderItems) {
-      orderItem.setOrderCode(orderCode);
+      orderItem.setOrderCode(getLatestOrderCode());
       orderMapper.insertOrderDetail(orderItem);
     }
 

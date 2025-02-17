@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class Order {
 
-  private long orderCode;       // 주문번호
+  private String orderCode;       // 주문번호`
   private long memberIdx;       // 회원 번호
   private String email;         // 회원 이메일
   private String orderDate;     // 주문일시

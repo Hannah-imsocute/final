@@ -8,7 +8,9 @@ import java.util.Map;
 
 public interface OrderService {
   // 주문번호(혹은 주문 코드) 조회: 가장 최신 주문번호 또는 최대 주문번호를 가져오는 경우
-  long getLatestOrderCode(); // 또는 getMaxOrderCode()
+//  long getLatestOrderCode(); // 또는 getMaxOrderCode()
+
+  String getLatestOrderCode(); //
 
   // 주문(결제) 등록: 주문 정보를 DB에 삽입하는 경우
   void insertOrder(Order order) throws Exception;
@@ -17,7 +19,7 @@ public interface OrderService {
   void insertPayment(Payment payment) throws Exception;
 
   // 주문 상세 정보 등록: 주문에 포함된 개별 상품(주문 상세) 정보 Exception
-  void insertOrderDetail(Order orderDetail) throws SQLException;
+  void insertOrderDetail(OrderItem item) throws SQLException;
 
   // 배송지 등록: 배송 정보를 등록할 경우
   void insertShippingAddress(ShippingInfo shippingInfo) throws Exception;
@@ -46,6 +48,7 @@ public interface OrderService {
 
   // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우
   void decreaseProductStock(long productId, int quantity) throws SQLException;
+  void decreaseProductStock(Map<String, Object> map) throws SQLException;
 
 
   Order processOrder(SessionInfo sessionInfo) throws Exception;
