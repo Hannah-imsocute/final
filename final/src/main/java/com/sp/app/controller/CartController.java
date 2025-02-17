@@ -32,10 +32,11 @@ public class CartController {
       params.put("memberIdx", memberIdx);
 
       List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
-      model.addAttribute("list", list);
       for (CartItem cartItem : list) {
         model.addAttribute("cartItemCode", cartItem.getCartItemCode());
       }
+      model.addAttribute("cartList", list); //
+
     } catch (Exception e) {
       log.info("getCartListByMember", e);
     }
