@@ -37,19 +37,19 @@
 </style>
 
 
-	<div id="main-content-authList-section">
+	<div id="main-content-applyList-section">
 			<div class="wrapper">
 				<div class="body-container">
 					<div class="body-main">
 
 						<div class="tab-content pt-1" id="nav-tabContent"></div>
 
-						<form name="memberSearchForm">
-							<input type="hidden" name="schType" value="email"> 
+						<form name="ApplySearchForm">
+							<input type="hidden" name="schType" value="name"> 
 							<input type="hidden" name="kwd" value=""> 
 							<input type="hidden" name="role" value="1"> 
 							<input type="hidden" name="non" value="0">
-							<input type="hidden" name="block" value="">
+							<input type="hidden" name="agreed" value="">
 						</form>
 
 					</div>
@@ -57,103 +57,99 @@
 			</div>
 	</div>
 	<script type="text/javascript">
-$(function(){
-	listMember(1);
-});
-
-function listMember(page) {
-    let url = '${pageContext.request.contextPath}/admin/applyList/list';    
-    let formData = $('form[name=memberSearchForm]').serialize();
-    formData += '&page=' + page;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: formData,
-        dataType: 'text',
-        success: function(data) {
-            $('#nav-tabContent').html(data);        
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);
-        }
-    });
-}
-
-function resetList() {
-	// 초기화
-	const $tab = $('button[role="tab"].active');
-	let role = $tab.attr('data-tab');
-
-	const f = document.memberSearchForm;
 	
-	f.schType.value = 'email';
-	f.kwd.value = '';
-	f.role.value = role;
-	f.block.value = '';
-	
-	listMember(1);
-}
-
-function searchList() {
-	// 검색
-	const f = document.memberSearchForm;
-	
-	f.schType.value = $('#searchType').val();
-	f.kwd.value = $('#keyword').val();
-	
-	listMember(1);
-}
-
-$(function(){
-	// 회원 리스트 상단 검색 checkbox
-	$('#nav-tabContent').on('click', '.wrap-search-check input[type=checkbox]', function(){
-		let block = '';
-		let non = 0;
-		
-		if($('#applyCheck1').is(':checked') && $('#applyCheck2').is(':checked')) {
-			block = '';
-		} else if($('#applyCheck1').is(':checked')) {
-			block = '0';
-		} else if($('#applyCheck2').is(':checked')) {
-			block = '1';
-		}
-		
-		if($('#nonMemberCheckbox').is(':checked')){
-			non = 1;
-		}
-		
-		const f = document.memberSearchForm;
-		f.non.value = non;
-		f.block.value = block;
-		
-		listMember(1);
+	$(function(){
+	    // 페이지 로드 시, 기본적으로 리스트를 불러옴
+	    listApply(1);
 	});
-});
 
-function statusDetailesMember() {
+	// 리스트 불러오기
+	function listApply(page) {
+	    let url = '${pageContext.request.contextPath}/admin/applyList/list';   
 
-}
+	    // 검색 조건 값 가져오기
+	    let schType = $('#searchType').val();
+	    let kwd = $('#keyword').val();
 
-function selectStatusChange() {
-	const f = document.memberStatusDetailesForm;
+	    // 데이터를 폼 대신 직접 객체로 생성
+	    let formData = {
+	        page: page,
+	        schType: schType,
+	        kwd: kwd
+	    };
 
-	let code = f.reason.value;
-	
-	if(! code) {
-		return;
+	    $.ajax({
+	        url: url,
+	        type: 'GET',
+	        data: formData, // formData를 객체로 보냄
+	        dataType: 'text',
+	        success: function(data) {
+	            $('#nav-tabContent').html(data);        
+	        },
+	        error: function(xhr, status, error) {
+	            console.error('AJAX 요청 실패:', error);
+	        }
+	    });
 	}
 
-	if(code!=='0' && code!=='8') {
-		f.reason.value = code;
-	}
-	
-	f.reason.focus();
-}
+	// 초기화 함수
+	function resetList() {
+	    // 초기화
+	    $('#searchType').val('name');
+	    $('#keyword').val('');
+	    $('#applyCheck1').prop('checked', true);
+	    $('#applyCheck2').prop('checked', true);
 
-function updateMember() {
-	$('#memberUpdateDialogModal').modal('show');
-}
+	    listApply(1);
+	}
+
+	// 검색 함수
+	function searchList() {
+	    // 검색 후 리스트 불러오기
+	    listApply(1);
+	}
+
+	function toggleCheckbox(id) {
+	    if (id === 'applyCheck1') {
+	        $('#applyCheck2').prop('checked', false); // 미승인 체크박스를 체크 해제
+	    } else if (id === 'applyCheck2') {
+	        $('#applyCheck1').prop('checked', false); // 승인 체크박스를 체크 해제
+	    }
+	    // 필터링된 값을 전송
+	    filterData();
+	}
+
+	function filterData() {
+	    let agreed = ''; // 빈 값으로 초기화
+
+	    if ($('#applyCheck1').is(':checked')) {
+	        agreed = '0'; // 승인 상태
+	    } else if ($('#applyCheck2').is(':checked')) {
+	        agreed = '1'; // 미승인 상태
+	    }
+
+	    // 폼 데이터에서 agreed 값을 설정
+	    const f = document.ApplySearchForm;
+	    f.agreed.value = agreed;  // 이제 agreed 값이 제대로 설정됩니다.
+
+	    // 폼 데이터를 시리얼라이즈하여 AJAX로 전송
+	    let formData = $(f).serialize();
+	    formData += '&page=1';  // 페이지 번호를 추가
+
+	    // AJAX 요청을 통해 필터링된 데이터를 서버로 전송
+	    $.ajax({
+	        url: '${pageContext.request.contextPath}/admin/applyList/list',  // 서버 URL 수정
+	        type: 'GET',
+	        data: formData,
+	        dataType: 'text',
+	        success: function(data) {
+	            $('#nav-tabContent').html(data);
+	        },
+	        error: function(xhr, status, error) {
+	            console.error('AJAX 요청 실패:', error);
+	        }
+	    });
+	  }
 
 function apply(sellerApplyNum, page) {
     // 셀러 넘버와 페이지 정보를 서버로 보냄
@@ -166,13 +162,20 @@ function apply(sellerApplyNum, page) {
             if (response) {
                 // 서버에서 받은 데이터를 모달에 채워 넣음
                 $('#sellerName').text(response.name);
+                $('#sellerName2').text(response.name);
                 $('#sellerEmail').text(response.email);
                 $('#sellerPhone').text(response.phone);
                 $('#sellerBrandName').text(response.brandName);
                 $('#sellerBrandIntro').text(response.brandIntro);
                 $('#sellerIntropeice').text(response.introPeice);
                 $('#sellerForextra').text(response.forExtra);
-                $('#sellerStatus').text(response.agreed === 0 ? "미승인" : "승인");
+                $('#sellerAgreed').text(response.agreed === 0 ? "미승인" : "승인");
+                
+             	// sellerApplyNum을 hidden input에 넣기
+                $('#sellerApplyNum').val(response.sellerApplyNum);  
+                
+                // agreed 값을 hidden input에 저장
+                $('#hiddenAgreed').val(response.agreed);
                 
                 // 모달을 보여줌
                 $('#sellerStatusDetailesDialogModal').modal('show');
@@ -184,85 +187,38 @@ function apply(sellerApplyNum, page) {
     });
 }
 
+function updateStatusOk() {
+    const sellerApplyNum = $('#sellerApplyNum').val(); // sellerApplyNum을 가져옴
+    const agreed = 0; // 승인 버튼 클릭 시 `agreed` 값은 항상 0
 
+    console.log("전송할 sellerApplyNum:", sellerApplyNum);
+    console.log("전송할 agreed 값:", agreed);
 
-function updateMemberOk(page) {
-    // 회원 정보 변경(권한, 이름, 생년월일)
-    const f = document.memberUpdateForm;
-
-    if (!f.email.value) {
-        alert('이름을 입력 하세요.');
-        f.email.focus();
+    if (!confirm('상태 정보를 수정하시겠습니까?')) {
         return;
     }
 
-    if (f.authority.value === 'maybeUSer') {
-        f.block.value = '1';    
-    }
-
-    if (!confirm('회원 정보를 수정하시겠습니까 ? ')) {
-        return;
-    }
-
-    let url = '${pageContext.request.contextPath}/admin/applyList/updateMember';
-    let formData = $('#memberUpdateForm').serialize();
+    let url = '${pageContext.request.contextPath}/admin/applyList/updateApply';
+    let formData = {
+        sellerApplyNum: sellerApplyNum,  // sellerApplyNum만 전달
+    };
 
     $.ajax({
         url: url,
         type: 'POST',
         data: formData,
         dataType: 'json',
-        success: function(data) {
-            listMember(page);  // 회원 목록을 갱신
+        success: function (data) {
+            alert('처리가 완료되었습니다.');
+            location.reload(); // 리스트 갱신
         },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);  // 에러 처리
+        error: function (xhr, status, error) {
+            console.error('AJAX 요청 실패:', error);
         }
     });
 
-    $('#memberUpdateDialogModal').modal('hide');
+    $('#sellerStatusDetailesDialogModal').modal('hide');
 }
-
-
-function deleteMember(memberIdx) {
-	// 회원 삭제
-	
-}
-
-function updateStatusOk(page) {
-    // 회원 상태 변경
-    const f = document.memberStatusDetailesForm;
-
-    if (!f.reason.value) {
-        alert('상태 코드를 선택하세요.');
-        f.reason.focus();
-        return;
-    }
-
-    if (!confirm('상태 정보를 수정하시겠습니까 ? ')) {
-        return;
-    }
-
-    let url = '${pageContext.request.contextPath}/admin/applyList/updateMemberStatus';
-    let formData = $('#memberStatusDetailesForm').serialize();
-
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        dataType: 'json',
-        success: function(data) {
-            listMember(page);  // 회원 목록 갱신
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);  // 에러 처리
-        }
-    });
-
-    $('#memberStatusDetailesDialogModal').modal('hide');
-}
-
-
 
 $(function(){
 	// 모달창이 닫힐때 aria-hidden="true"와 포커스 충돌로 발생하는 에러 해결

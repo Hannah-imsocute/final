@@ -10,17 +10,21 @@
 			</p>
 		</td>
 		<td align="right" class="bg-transparent">
-			<div class="wrap-search-check">
-				<div class="form-check-inline">
-					<input type="checkbox" id="applyCheck1" class="form-check-input" ${block == '0' || block == '' ? "checked":""}>
-					<label class="form-check-label" for="applyCheck1">승인</label>
-				</div>
-				<div class="form-check-inline">
-					<input type="checkbox" id="applyCheck2" class="form-check-input" ${block == '1' || block == '' ? "checked":""}>
-					<label class="form-check-label" for="applyCheck2">미승인</label>
-				</div>
-			</div>
-		</td>
+		    <div class="wrap-search-check">
+		        <div class="form-check-inline">
+		            <input type="checkbox" id="applyCheck1" class="form-check-input" 
+		                ${agreed == '0' ? "checked" : ""} 
+		                onclick="toggleCheckbox('applyCheck1')">
+		            <label class="form-check-label" for="applyCheck1">승인</label>
+		        </div>
+		        <div class="form-check-inline">
+		            <input type="checkbox" id="applyCheck2" class="form-check-input" 
+		                ${agreed == '1' ? "checked" : ""} 
+		                onclick="toggleCheckbox('applyCheck2')">
+		            <label class="form-check-label" for="applyCheck2">미승인</label>
+		        </div>
+		    </div>
+</td>
 	</tr>
 </table>
 	
@@ -63,8 +67,8 @@
 		<div class="row">
 			<div class="col-auto p-1">
 				<select id="searchType" name="schType" class="form-select">
-					<option value="email"     ${schType=="email" ? "selected":""}>아이디</option>
-					<option value="nickname"   ${schType=="nickname" ? "selected":""}>이름</option>
+					<option value="name"     ${schType=="name" ? "selected":""}>이름</option>
+					<option value="brandName"   ${schType=="brandName" ? "selected":""}>브랜드이름</option>
 					<option value="phone"        ${schType=="phone" ? "selected":""}>전화번호</option>
 				</select>
 			</div>
@@ -90,7 +94,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h3 class="form-control-plaintext fs-6 fw-semibold pt-1"><i class="bi bi-chevron-double-right"></i>입점 상세 정보</h3>            
+                <h3 class="form-control-plaintext fs-6 fw-semibold pt-1"><i class="bi bi-chevron-double-right"></i> 입점 상세 정보</h3>            
                 <form name="sellerStatusDetailesForm" id="sellerStatusDetailesForm" method="post">
                     <table class="table table-bordered mb-1">
 					    <tr>
@@ -124,16 +128,41 @@
                         <tr>
                             <td class="bg-light align-middle">승인여부</td>
                             <td colspan="4">
-                                <p class="form-control-plaintext" id="sellerStatus"></p> <!-- 서버 측에서 데이터 렌더링 -->
+                                <p class="form-control-plaintext" id="sellerAgreed"></p> <!-- 서버 측에서 데이터 렌더링 -->
                             </td>
-                        </tr>
-                        
+                        </tr> 
                     </table>
+                    
+                    			
+				<h3 class="form-control-plaintext fs-6 fw-semibold pt-3">
+				  <i class="bi bi-chevron-double-right"></i> 반려사유
+				</h3>
+				
+				<table class="table table-bordered">
+				  <tr>
+				    <td class="bg-light col-sm-2 align-middle" style="width: 10%;">작가이름</td>
+				    <td class="align-middle">
+					      <p class="col-sm-4 m-0" id="sellerName2">${sellerName}</p> <!-- 서버 측에서 데이터 렌더링 -->
+				    </td>
+				  </tr>
+				  <tr>
+				    <td class="bg-light col-sm-2 align-middle" style="width: 10%;">반려사유</td>
+				    <td>
+				      <!-- 반려사유를 작성할 수 있는 textarea 추가 -->
+				      <textarea class="form-control" style="width: 100%; height: 100px;" placeholder="반려사유를 입력해주세요."></textarea>
+				    </td>
+				  </tr>
+				</table>
+
+
+                    
+                    
                     <div class="text-center">
                         <input type="hidden" name="sellerApplyNum" id="sellerApplyNum">
-                        <input type="hidden" name="page" value="${page}">
-                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('${page}');">승인</button>
-                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('${page}');">반려</button>
+                        <input type="hidden" id="hiddenAgreed">
+                        
+                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('1');">승인</button>
+                        <button type="button" class="btn btn-warning" onclick="updateStatusOk('0');">반려</button>
                     </div>
                 </form> 
             </div>

@@ -98,32 +98,20 @@ public class ApplyManageController {
 	}
 
 	// 회원 상태 변경 : AJAX-JSON 응답
-	@ResponseBody
 	@PostMapping("updateApply")
-	public Map<String, ?> updateMemberStatus(ApplyManage dto) throws Exception {
-		Map<String, Object> model = new HashMap<>();
-
-		String state = "true";
-		try {
-			// 회원 활성/비활성 변경
-			Map<String, Object> map = new HashMap<>();
-			map.put("memberIdx", dto.getSellerApplyNum());
-			if (dto.getSellerApplyNum() == 0) {
-				map.put("agreed", 0);
-			} else {
-				map.put("agreed", 1);
-			}
-			service.updateApply(map);
-
-			// 회원 상태 변경 사항 저장
-			service.insertApply(dto);
-
-		} catch (Exception e) {
-			state = "false";
-		}
-
-		model.put("state", state);
-		return model;
+	@ResponseBody
+	public Map<String, Object> updateApply(@RequestParam(name = "sellerApplyNum") Long sellerApplyNum) {
+	    Map<String, Object> map = new HashMap<>();
+	    try {
+	    	map.put("sellerApplyNum", sellerApplyNum);
+	        // `agreed` 값을 0으로 업데이트
+	        service.updateApply(map);
+	        map.put("success", true);
+	    } catch (Exception e) {
+	    	map.put("success", false);
+	    	map.put("error", e.getMessage());
+	    }
+	    return map;
 	}
 
 	// 컨트롤러에서 데이터 반환

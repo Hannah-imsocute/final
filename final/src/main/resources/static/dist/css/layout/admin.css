@@ -183,7 +183,6 @@ body {
   background-color: #e9ecef;
 }
 
-
 .toggle-icon {
   width: 15px;
   height: 15px;
@@ -252,9 +251,13 @@ main {
   flex-direction: column; /* 아이콘과 텍스트 세로 정렬 */
   justify-content: center; /* 세로 중앙 정렬 */
   align-items: center; /* 가로 중앙 정렬 */
-
 }
 
+.menu-item.active {
+  background-color: #e9ecef;
+  color: #ff6600;
+  font-weight: bold;
+}
 
 /* 타이틀 달고 밑에 줄 */
 h3 {

@@ -14,19 +14,20 @@
 
     <!-- 사이드바 메뉴 -->
 	<div class="sidebar-menu">
-		<ul>
-		    <li><a class="menu-item" href="<c:url value='/admin/authList' />">권한관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/applyList' />">입점 신청 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/membershipList' />">멤버십 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/paymentList' />">결제 및 정산 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/productList' />">상품 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/eventList' />">이벤트 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/noticeList' />">공지사항 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/inquiryList' />">문의사항 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/reportList' />">신고 관리</a></li>
-		    <li><a class="menu-item" href="<c:url value='/admin/statsList' />">통계 및 보고</a></li>
-		</ul>
+	    <ul>
+	        <li><a class="menu-item" href="<c:url value='/admin/authList' />">권한관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/applyList' />">입점 신청 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/membershipList' />">멤버십 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/paymentList' />">결제 및 정산 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/productList' />">상품 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/eventList' />">이벤트 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/noticeList' />">공지사항 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/inquiryList' />">문의사항 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/reportList' />">신고 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/statsList' />">통계 및 보고</a></li>
+	    </ul>
 	</div>
+
 </div>
 
 <script src="<c:url value='/dist/js/layout/adminSidebar.js' />"></script>

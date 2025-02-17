@@ -15,16 +15,21 @@
     <result property="agreed" column="AGREED"/>
 </resultMap>
 
-    <!-- 회원 리스트 -->
 	<sql id="search-conditions">
-		<choose>
-			<when test="schType == 'email'">
-				INSTR(m1.email, #{kwd}) &gt;= 1
-			</when>
-			<otherwise>
-				INSTR(${schType}, #{kwd}) &gt;= 1
-			</otherwise>
-		</choose>
+	    <choose>
+	        <when test="schType == 'name'">
+	            INSTR(name, #{kwd}) &gt;= 1
+	        </when>
+	        <when test="schType == 'brandName'">
+	            INSTR(brandName, #{kwd}) &gt;= 1
+	        </when>
+	        <when test="schType == 'phone'">
+	            INSTR(phone, #{kwd}) &gt;= 1
+	        </when>
+	        <otherwise>
+	            INSTR(${schType}, #{kwd}) &gt;= 1
+	        </otherwise>
+	    </choose>
 	</sql>
 	
 	<select id="dataCount" parameterType="map" resultType="Integer">
@@ -65,13 +70,9 @@
 	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.ApplyManage">
 
 	</select>
-	
-	<update id="updateFailureCountReset" parameterType="Long">
 
-	</update>
-
-    <update id="updateMember1" parameterType="map">
-
+    <update id="updateApply" parameterType="map" >
+	UPDATE seller_apply SET agreed = 0 WHERE seller_apply_num = #{sellerApplyNum, jdbcType=BIGINT}
     </update>
     
     <update id="updateMember2" parameterType="map">
@@ -92,7 +93,7 @@
       
 	<insert id="insertApply" parameterType="com.sp.app.admin.model.ApplyManage">
 	INSERT INTO seller_apply (seller_apply_num, name, email, phone, brandname, brandintro, intropeice, forextra, agreed) VALUES 
-	(seq_seller_apply.NEXTVAL, #{name}, #{email}, #{phone}, #{brandname}, #{brandintro}, #{intropeice}, #{forextra}, #{agreed})
+	(seq_seller_apply.NEXTVAL, #{name}, #{email}, #{phone}, #{brandName}, #{brandIntro}, #{introPeice}, #{forExtra}, #{agreed})
 	</insert>
 	
 </mapper>

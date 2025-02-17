@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.ApplyManageMapper;
 import com.sp.app.admin.model.ApplyManage;
@@ -44,14 +45,26 @@ public class ApplyManageServiceImpl implements ApplyManageService {
 	}
 
 	@Override
+	@Transactional
 	public void insertApply(ApplyManage dto) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			mapper.insertApply(dto);
+		} catch (Exception e) {
+			log.info("insertApply : ", e);
+			
+			throw e;
+		}
 		
 	}
 
 	@Override
+	@Transactional
 	public void updateApply(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			mapper.updateApply(map);
+		} catch (Exception e) {
+			log.info("updateApply : ", e);
+		}
 		
 	}
 
