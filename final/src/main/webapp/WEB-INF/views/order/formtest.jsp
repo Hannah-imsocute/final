@@ -299,7 +299,10 @@
             </span>
         </div>
         <!-- 결제하기 버튼 -->
-        <button class="btn-submit-order">결제하기</button>
+        <form action="${pageContext.request.contextPath}/order/submit" name="orderSubmit" method="post">
+          <button class="btn-submit-order">결제하기</button>
+        </form>
+<%--        <button class="btn-submit-order">결제하기</button>--%>
       </div>
     </div> <!-- //order-right -->
   </div> <!-- //order-content -->
@@ -588,6 +591,12 @@
         $modalOverlay.hide();
       }
     });
+
+    $('.btn-submit-order').click(function () {
+      alert('구매하기버튼');
+    })
+
+
   });
 </script>
 </body>

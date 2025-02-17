@@ -12,4 +12,8 @@ public interface CartItemService {
   void deleteCartItem(Long cartItemCode) throws Exception;  // 장바구니 항목 삭제
 //  CartItem getCartItemByMemberAndProduct(Map<String, Object> params) throws Exception;
   void updateCartItemQuantity(Map<String, Object> params) throws Exception;
+  List<CartItem> getCartItemsByCodes(Map<String, Object> params) throws Exception;
+  void deleteCartItems(Long memberIdx, List<Long> selectedCartItemCodes) throws Exception; // 선택된거 삭제
+
+
 }

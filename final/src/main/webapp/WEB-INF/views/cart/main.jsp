@@ -481,31 +481,33 @@
     <div class="cart-actions">
         <div class="left-actions">
             <label>
-                <input type="checkbox" class="selectAll" checked/> 전체선택 ( <c:out value="${fn:length(list)}"/> / <c:out value="${fn:length(list)}"/> 개 )
+                <input type="checkbox" class="selectAll" checked/> 전체선택 ( <c:out value="${fn:length(cartList)}"/> / <c:out value="${fn:length(cartList)}"/> 개 )
             </label>
         </div>
+<%--        <c:forEach var="cart" items="${cartList}">--%>
         <div class="right-actions">
             <form name="btnForm" action="${pageContext.request.contextPath}/cart/delete" method="post">
                 <input type="hidden" name="cartItemCode" value="${cartItemCode}">
                 <button type="button" class="btnSelectRemove">선택삭제</button>
             </form>
         </div>
+<%--        </c:forEach>--%>
     </div>
 
     <!-- 본문: 좌측(상품), 우측(결제) -->
     <div class="cart-content">
         <div class="cart-left">
             <!-- 장바구니 비어있을때 -->
-            <c:if test="${empty list}">
+            <c:if test="${empty cartList}">
                 <div class="cart-card" style="text-align:center;">
                     <p>장바구니가 비어 있습니다.</p>
                 </div>
             </c:if>
 
             <!-- 장바구니 있을때 -->
-            <c:if test="${not empty list}">
+            <c:if test="${not empty cartList}">
                 <div class="cart-card">
-                    <c:forEach var="cart" items="${list}">
+                    <c:forEach var="cart" items="${cartList}">
                         <!-- 상품+푸터 묶음을 감싸는 블록 -->
                         <div class="cart-item-block">
                             <!-- 스토어명과 아이콘을 같은 영역에 배치 -->
@@ -642,14 +644,14 @@
                 <h3>결제정보</h3>
                 <!-- 전체 totalPrice 계산 -->
                 <c:set var="totalPrice" value="0" scope="page"/>
-                <c:forEach var="citem" items="${list}">
+                <c:forEach var="citem" items="${cartList}">
                     <c:set var="lineTotal" value="${citem.quantity * citem.price}"/>
                     <c:set var="totalPrice" value="${totalPrice + lineTotal}" scope="page"/>
                 </c:forEach>
 
                 <div class="summary-item">
                     <span class="label">상품수</span>
-                    <span class="value"><c:out value="${fn:length(list)}"/>개</span>
+                    <span class="value"><c:out value="${fn:length(cartList)}"/>개</span>
                 </div>
                 <div class="summary-item">
                     <span class="label">상품금액</span>
@@ -672,7 +674,12 @@
                     </span>
                 </div>
 
-                <button type="button" class="btn-checkout" onclick="location.href='${pageContext.request.contextPath}/order/form'">
+             <%--
+             <button type="button" class="btn-checkout" onclick="location.href='${pageContext.request.contextPath}/order/form'">
+                    구매하기
+                </button>
+--%>
+                <button type="button" class="btn-checkout" onclick="goToOrderForm()">
                     구매하기
                 </button>
             </div>
@@ -704,6 +711,24 @@
         }
         $.ajax(url, settings);
     }
+
+    function goToOrderForm() {
+        var selectedItems = [];
+        $('.cart-item-check input:checked').each(function () { // 체크된거만
+            selectedItems.push($(this).val()); // selectedItems 배열에 담기
+        });
+
+        if(selectedItems.length === 0) {
+            alert('선택된 상품이 없습니다.')
+            return;
+        }
+
+        var queryString = selectedItems.join(',');
+        var url = '${pageContext.request.contextPath}/order/form?selectedItems=' + encodeURIComponent(queryString);
+        location.href = url;
+        // 배열에 담긴 값을 ,로 연결해서 하나의 문자열로 만들기
+    }
+
 
     // 수량 감소
     $('.quantity-minus').click(function () {
@@ -819,6 +844,7 @@
             location.href = '${pageContext.request.contextPath}/mypage/home';
         });
     });
+
 </script>
 
 

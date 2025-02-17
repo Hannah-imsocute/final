@@ -149,7 +149,7 @@
       <div class="info-row">
         <div class="label">주문번호</div>
         <div class="value">
-          <c:out value="${orderNumber}" />
+          <c:out value="${orderCode}" />
         </div>
       </div>
 
@@ -157,8 +157,8 @@
       <div class="info-row">
         <div class="label">배송지</div>
         <div class="value">
-          <c:out value="${receiverName}" /> / <c:out value="${receiverPhone}" /><br />
-          <c:out value="${receiverAddress}" />
+          <c:out value="${receiverName}" /> / <c:out value="${phone}" /><br />
+          <c:out value="${addrTitle}" />
         </div>
       </div>
 

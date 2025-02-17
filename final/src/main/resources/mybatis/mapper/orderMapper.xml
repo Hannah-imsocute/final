@@ -3,11 +3,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.OrderMapper">
 
-    <select id="getLatestOrderCode" parameterType="Long">
+    <select id="getLatestOrderCode" resultType="Long">
         select ORDER_CODE
         from PRODUCT_ORDER
         order by ORDER_DATE desc
-            fetch first 1 rows only
+        fetch first 1 rows only
     </select>
 
  <!--   <insert id="insertOrder" parameterType="com.sp.app.model.Order">

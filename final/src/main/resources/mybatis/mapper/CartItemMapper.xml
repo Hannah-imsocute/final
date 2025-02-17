@@ -34,8 +34,42 @@
     <!-- 장바구니 항목의 수량 업데이트 -->
     <update id="updateCartItemQuantity" parameterType="map">
         UPDATE CART_ITEM
-        SET QUANTITY = QUANTITY + #{quantity}
+        SET QUANTITY = #{quantity}
         WHERE CART_ITEM_CODE = #{cartItemCode}
     </update>
 
+    <select id="getCartItemByMemberAndProduct" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
+        SELECT CART_ITEM_CODE AS cartItemCode, MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT,
+               c.PRODUCTCODE AS productCode,
+               QUANTITY, p.PRICE, CREATED, CART_OPTION AS cartOption
+        FROM CART_ITEM c
+                 LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
+        WHERE MEMBERIDX = #{memberIdx}
+    </select>
+
+
+    <select id="getCartItemsByCodes" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
+        SELECT
+        CART_ITEM_CODE AS cartItemCode,
+        MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT, c.PRODUCTCODE AS productCode, QUANTITY,
+        p.PRICE, CREATED, CART_OPTION AS cartOption
+        FROM CART_ITEM c
+        LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
+        WHERE MEMBERIDX = #{memberIdx}
+        <if test="selectedCodes != null and selectedCodes.size() > 0">
+            AND CART_ITEM_CODE IN
+            <foreach collection="selectedCodes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+    </select>
+
+    <delete id="deleteCartItems" parameterType="map">
+        DELETE FROM CART_ITEM
+        WHERE MEMBERIDX = #{memberIdx}
+        AND CART_ITEM_CODE IN
+        <foreach collection="selectedCodes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </delete>
 </mapper>

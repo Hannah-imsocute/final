@@ -15,7 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +35,9 @@ public class MemberOrderController1 {
   private final CartItemService cartItemService;
   private final ShippingService shippingService;
 
-  @GetMapping("form")
-  public String orderForm(HttpSession session, Model model) throws Exception {
+//  @GetMapping("form")
+  public String orderForm(
+          HttpSession session, Model model) throws Exception {
     SessionInfo info = (SessionInfo) session.getAttribute("member");
 
     if (info == null) {
@@ -45,6 +50,7 @@ public class MemberOrderController1 {
     params.put("memberIdx", memberIdx);
 
     List<CartItem> cartItems = cartItemService.getCartItemsByMemberAndProduct(params);
+
     model.addAttribute("cartItems", cartItems);
 
     ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
@@ -66,8 +72,62 @@ public class MemberOrderController1 {
     return "order/formtest";
   }
 
-  @PostMapping("submit")
-  public String submitOrder(HttpSession session, Model model) {
+
+//  새로 추가
+  @GetMapping("form")
+  public String orderForm(
+          @RequestParam(value = "selectedItems", required = false) String selectedItems,
+          HttpSession session, Model model, Order order) throws Exception {
+
+    SessionInfo info = (SessionInfo) session.getAttribute("member");
+    if (info == null) {
+      return "redirect:/login";
+    }
+//    model.addAttribute("order", order);
+    long memberIdx = info.getMemberIdx();
+
+    List<CartItem> cartItems;
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      // 1,2,3 ,-> 로  문자 나눠서 담기
+      String[] arr = selectedItems.split(",");
+      List<Long> selectedCodes = new ArrayList<>();
+      for (String s : arr) {
+        selectedCodes.add(Long.parseLong(s));
+      }
+
+      Map<String, Object> params = new HashMap<>();
+      params.put("memberIdx", memberIdx);
+      params.put("selectedCodes", selectedCodes); // 장바구니
+      cartItems = cartItemService.getCartItemsByCodes(params);
+    } else {
+      // 전체 조회
+      Map<String, Object> params = new HashMap<>();
+      params.put("memberIdx", memberIdx);
+      cartItems = cartItemService.getCartItemsByMemberAndProduct(params);
+    }
+
+    model.addAttribute("cartItems", cartItems);
+
+    ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
+    if (addressInfo == null) {
+      addressInfo = memberService.getShippingInfo(memberIdx);
+    }
+    if (addressInfo != null) {
+      model.addAttribute("receiverName", addressInfo.getReceiverName());
+      model.addAttribute("addName", addressInfo.getAddName());
+      model.addAttribute("addTitle", addressInfo.getAddTitle());
+      model.addAttribute("addDetail", addressInfo.getAddDetail());
+      model.addAttribute("phone", addressInfo.getPhone());
+      model.addAttribute("firstAdd", addressInfo.getFirstAdd());
+    }
+    List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
+    model.addAttribute("shippingAddresses", list);
+
+    return "order/formtest";
+  }
+
+//  @PostMapping("submit")
+  public String submitOrder1(HttpSession session, Model model) {
     try {
       SessionInfo info = (SessionInfo) session.getAttribute("member");
 
@@ -82,6 +142,54 @@ public class MemberOrderController1 {
     } catch (Exception e) {
       log.error("주문 처리 중 오류 발생", e);
       model.addAttribute("Message", "주문 처리 중 오류 발생..");
+      return "redirect:/";
+    }
+  }
+
+
+  @PostMapping("submit")
+  public String submitOrder(
+          @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
+          HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+    try {
+      SessionInfo info = (SessionInfo) session.getAttribute("member");
+      if (info == null) {
+        return "redirect:/login";
+      }
+
+      Order processedOrder;
+      if (selectedItems != null && !selectedItems.isEmpty()) {
+        processedOrder = orderService.processOrder(info, selectedItems);
+      } else {
+        processedOrder = orderService.processOrder(info);
+        // 일반 경로로 구매하기 ?
+      }
+
+      long lastOrderCode = orderService.getLatestOrderCode();
+      log.info("orderService.getLatestOrderCode(){}", orderService.getLatestOrderCode());
+      String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+      String orderCode = formattedDate + String.format("%09d", lastOrderCode);
+
+      redirectAttributes.addFlashAttribute("order", processedOrder);
+      redirectAttributes.addFlashAttribute("orderCode", orderCode);
+      log.info("orderCode {}", orderCode);
+
+      ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
+      log.info("addressInfo {}", addressInfo);
+
+      if(addressInfo == null) {
+        addressInfo = memberService.getShippingInfo(info.getMemberIdx());
+      }
+
+      if (addressInfo != null) {
+        redirectAttributes.addFlashAttribute("receiverName", addressInfo.getReceiverName());
+        redirectAttributes.addFlashAttribute("phone", addressInfo.getPhone());
+        redirectAttributes.addFlashAttribute("addrTitle", addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
+      }
+      return "redirect:/order/complete";
+    } catch (Exception e) {
+      log.error("Error processing order", e);
+      redirectAttributes.addFlashAttribute("Message", "주문 처리 중 오류 발생..");
       return "redirect:/";
     }
   }
@@ -154,4 +262,8 @@ public class MemberOrderController1 {
     }
   }
 
+  @GetMapping("complete")
+  public String complete() {
+    return "order/complete";
+  }
 }

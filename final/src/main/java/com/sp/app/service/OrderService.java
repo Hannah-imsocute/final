@@ -49,4 +49,5 @@ public interface OrderService {
 
 
   Order processOrder(SessionInfo sessionInfo) throws Exception;
+  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes) throws Exception;
 }
