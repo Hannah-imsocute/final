@@ -60,6 +60,83 @@
         where o.ORDER_CODE = #{orderCode}
     </select>
 
+    <!-- 여러 개의 (orderCode, productCode) 쌍을 파라미터로 받아
+       해당 주문 상세 내역(주문+주문상품+배송+결제)을 한번에 조회하는 예시 -->
+    <select id="listOrderProduct" parameterType="java.util.List"
+            resultType="com.sp.app.model.Order">
+        SELECT o.order_code         AS orderCode
+        , o.order_date         AS orderDate
+        , o.total_price        AS totalPrice
+        , o.coupon_code        AS couponCode
+        , o.coupon_value       AS couponValue
+        , o.spent_point        AS spentPoint
+        , o.net_pay            AS netPay
+        , o.confirm_date       AS confirmDate
+        , o.payment            AS payment
+
+        , i.product_code       AS productCode
+        , i.price              AS price
+--         , i.options1           AS options1
+        , i.options            AS options
+--         , i.options2           AS options2
+        , i.price_foreach      AS priceForeach
+        , i.quantity           AS quantity
+        , i.shipping           AS shipping
+        , i.order_state        AS orderState
+        , i.discount           AS discount
+
+        , s.receiver_name      AS receiverName
+        , s.post_code          AS postCode
+        , s.add_name           AS addName
+        , s.add_title          AS addTitle
+        , s.add_detail         AS addDetail
+        , s.phone              AS phone
+        , s.first_add          AS firstAdd
+
+        , p.confirm_code       AS confirmCode
+        , p.provider           AS provider
+        , p.by_method          AS byMethod
+        , p.card_number        AS cardNumber
+
+        FROM (
+        <!-- 먼저 필요한 (orderCode, productCode) 쌍에 해당하는
+             주문 항목만 가져오기 위한 서브쿼리 예시 -->
+        SELECT order_code, product_code
+        FROM order_item
+        WHERE (order_code, product_code) IN
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="," close=")">
+            (#{item.orderCode}, #{item.productCode})
+        </foreach>
+        ) sub
+        /* 실제 order_item 레코드와 조인 */
+        JOIN order_item i
+        ON sub.order_code   = i.order_code
+        AND sub.product_code = i.product_code
+
+        /* 주문 테이블과 조인 */
+        JOIN orders o
+        ON i.order_code = o.order_code
+
+        /* 배송 정보 테이블 (예: shipping_info)와 조인 */
+        LEFT OUTER JOIN shipping_info s
+        ON o.order_code = s.order_code
+
+        /* 결제 정보 테이블 (예: payment)와 조인 */
+        LEFT OUTER JOIN payment p
+        ON o.order_code = p.order_code
+
+        <!-- 필요하다면 추가로 product, productStock, productOption 등도 조인 가능 -->
+        <!--
+            LEFT OUTER JOIN product pr
+              ON i.product_code = pr.product_code
+            LEFT OUTER JOIN product_stock ps
+              ON i.product_code = ps.product_num
+            ...
+        -->
+    </select>
+
+
     <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
     <!-- 상품 정보 -->
     <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
@@ -85,6 +162,14 @@
 
     <!-- 옵션 -->
 
+    <!--유저 쿠폰 조회-->
+    <select id="getCouponList" parameterType="Long" resultType="com.sp.app.model.Order">
+        select COUPONCODE, c.VALID as couponValid, c.RATE as couponRate,
+               c.EXPIREDATE as expireDate
+        from USER_HAVE_COUPON uc
+        left join COUPON c on c.COUPON_CODE = uc.COUPONCODE
+        where memberIdx = #{memberIdx}
+    </select>
 
 
 <!--    &lt;!&ndash; 배송지 변경  &ndash;&gt;

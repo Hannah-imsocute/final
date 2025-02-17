@@ -1,9 +1,6 @@
 package com.sp.app.controller;
 
-import com.sp.app.model.Order;
-import com.sp.app.model.OrderItem;
-import com.sp.app.model.SessionInfo;
-import com.sp.app.model.ShippingInfo;
+import com.sp.app.model.*;
 import com.sp.app.model.cart.CartItem;
 import com.sp.app.service.CartItemService;
 import com.sp.app.service.OrderService;
@@ -36,102 +33,23 @@ public class MemberOrderController {
   private final CartItemService cartItemService;
   private final ShippingService shippingService;
 
-  //  @GetMapping("form")
+
+  @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
   public String orderForm(
+          @RequestParam(name = "cartItemCode", required=false) List<Long> cartItemCodes,
+          @RequestParam(name = "productCode", required = false) List<Long> productCodes,
+          @RequestParam(name = "quantity", required = false) List<Long> quantities,
           HttpSession session, Model model) throws Exception {
-    SessionInfo info = (SessionInfo) session.getAttribute("member");
 
-    if (info == null) {
-      return "redirect:/login";
+    // 회원 정보 확인
+    SessionInfo info = (SessionInfo)session.getAttribute("member");
+    if(info == null) {
+      return "redirect:/member/login";
     }
-
     long memberIdx = info.getMemberIdx();
+    Member member = memberService.findByUserEmail(info.getEmail());
 
-    Map<String, Object> params = new HashMap<>();
-    params.put("memberIdx", memberIdx);
-
-    List<CartItem> cartItems = cartItemService.getCartItemsByMemberAndProduct(params);
-
-    model.addAttribute("cartItems", cartItems);
-
-    ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
-    if (addressInfo == null) {
-      addressInfo = memberService.getShippingInfo(memberIdx);
-    }
-
-    if (addressInfo != null) {
-      model.addAttribute("receiverName", addressInfo.getReceiverName());
-      model.addAttribute("addName", addressInfo.getAddName());
-      model.addAttribute("addTitle", addressInfo.getAddTitle());
-      model.addAttribute("addDetail", addressInfo.getAddDetail());
-      model.addAttribute("phone", addressInfo.getPhone());
-      model.addAttribute("firstAdd", addressInfo.getFirstAdd());
-    }
-
-    List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
-    model.addAttribute("shippingAddresses", list);
-    return "order/formtest";
-  }
-
-  @PostMapping("form")
-//  @RequestMapping(name = "form", )
-  public String orderForm(@RequestParam(value="cartItemCode", required=false) List<Long> cartItemCode,
-                          HttpSession session, Model model) throws Exception {
-    // cartItemCode 리스트에는 체크된 항목의 값들이 들어있습니다.
-    // 해당 값을 이용해서 주문서 작성 로직을 진행합니다.
-    // 예: 선택된 장바구니 항목들을 조회하여 주문 정보를 구성
-    return "order/formtest";
-  }
-
-  //  새로 추가
-  @GetMapping("form")
-  public String orderForm(
-          @RequestParam(name = "selectedItems", required = false) String selectedItems,
-          @RequestParam(name = "product", required = false) String product,
-          HttpSession session, Model model, Order order,
-          OrderItem orderItem) throws Exception {
-
-    SessionInfo info = (SessionInfo) session.getAttribute("member");
-
-    if (info == null) {
-      return "redirect:/login";
-    }
-
-    long memberIdx = info.getMemberIdx();
-
-    String productOrderCode = ""; // 주문번호
-    String productItemCode = ""; // 주문상품번호
-    int totalMoney = 0; // 상품합
-    int shipping = 0; // 배송비
-    int totalPrice = 0; // 결제할 금액(상품합 + 배송비)
-    int usePoint = 0; // 포인트 사용금액
-    int totalDiscountPrice = 0; // 총 할인액
-
-    productOrderCode = orderService.getLatestOrderCode(); // 주문번호
-
-    List<CartItem> cartItems;
-    if (selectedItems != null && !selectedItems.isEmpty()) {
-      // 1,2,3 ,-> 로  문자 나눠서 담기
-      String[] arr = selectedItems.split(",");
-      List<Long> selectedCodes = new ArrayList<>();
-      for (String s : arr) {
-        selectedCodes.add(Long.parseLong(s));
-      }
-
-
-      Map<String, Object> params = new HashMap<>();
-      params.put("memberIdx", memberIdx);
-      params.put("selectedCodes", selectedCodes); // 장바구니
-      cartItems = cartItemService.getCartItemsByCodes(params);
-    } else {
-      // 전체 조회
-      Map<String, Object> params = new HashMap<>();
-      params.put("memberIdx", memberIdx);
-      cartItems = cartItemService.getCartItemsByMemberAndProduct(params);
-    }
-
-    model.addAttribute("cartItems", cartItems);
-
+    // 배송지 정보 가져오기
     ShippingInfo addressInfo = (ShippingInfo) session.getAttribute("memberAddress");
     if (addressInfo == null) {
       addressInfo = memberService.getShippingInfo(memberIdx);
@@ -144,30 +62,61 @@ public class MemberOrderController {
       model.addAttribute("phone", addressInfo.getPhone());
       model.addAttribute("firstAdd", addressInfo.getFirstAdd());
     }
-    List<ShippingInfo> list = shippingService.getShippingInfo(memberIdx);
-    model.addAttribute("shippingAddresses", list);
+    List<ShippingInfo> shippingInfolist = shippingService.getShippingInfo(memberIdx);
+    List<Order> couponList = orderService.getCouponList(memberIdx);
+    model.addAttribute("shippingAddresses", shippingInfolist);
+    model.addAttribute("couponList", couponList);
+
+
+    List<CartItem> items = new ArrayList<>();
+    if (cartItemCodes != null && !cartItemCodes.isEmpty()) {
+      // 장바구니 구매 -> 선택된거만
+      Map<String, Object> params = new HashMap<>();
+      params.put("memberIdx", member.getMemberIdx());
+      params.put("selectedCodes", cartItemCodes);
+      items = cartItemService.getCartItemsByCodes(params);
+    } else if (productCodes != null && quantities != null
+            && !productCodes.isEmpty() && !quantities.isEmpty()) {
+      // 바로 구매하기
+      for (int i = 0; i < productCodes.size(); i++) {
+        CartItem item = new CartItem();
+        item.setProductCode(productCodes.get(i));
+        item.setQuantity(quantities.get(i).intValue());
+        item.setPrice(10000);
+        // 옵션
+        items.add(item);
+      }
+    }
+    model.addAttribute("cartItems", items);
+
+    int totalMoney = 0;   // 상품 금액
+    int shippingFee = 0;  // 배송비
+    MemberPoint memberPoint = orderService.getLatestUserPoint(memberIdx);
+    model.addAttribute("memberPoint", memberPoint);
+
+    for (CartItem cart : items) {
+      int itemTotal = cart.getQuantity() * cart.getPrice();
+      totalMoney += itemTotal;
+      //  상품 금액이 20,000원 미만이면 배송비 3,000원
+      if (itemTotal < 20000) {
+        shippingFee += 3000;
+      }
+    }
+    int overallNetPay = totalMoney + shippingFee;
+
+    // 주문번호 생성
+    String productOrderCode = orderService.getLatestOrderCode();
+
+    Order order = new Order();
+    order.setOrderCode(productOrderCode);
+    order.setTotalPrice(overallNetPay);
+
+    model.addAttribute("productTotal", totalMoney);
+    model.addAttribute("shippingFee", shippingFee);
+    model.addAttribute("overallNetPay", overallNetPay);
+    model.addAttribute("order", order);
 
     return "order/formtest";
-  }
-
-  //  @PostMapping("submit")
-  public String submitOrder1(HttpSession session, Model model) {
-    try {
-      SessionInfo info = (SessionInfo) session.getAttribute("member");
-
-      if (info == null) {
-        return "redirect:/login";
-      }
-
-      Order processedOrder = orderService.processOrder(info);
-      model.addAttribute("order", processedOrder);
-
-      return "order/complete";
-    } catch (Exception e) {
-      log.error("주문 처리 중 오류 발생", e);
-      model.addAttribute("Message", "주문 처리 중 오류 발생..");
-      return "redirect:/";
-    }
   }
 
 
@@ -186,7 +135,6 @@ public class MemberOrderController {
         processedOrder = orderService.processOrder(info, selectedItems);
       } else {
         processedOrder = orderService.processOrder(info);
-        // 일반 경로로 구매하기 ?
       }
 
       redirectAttributes.addFlashAttribute("order", processedOrder);
@@ -279,8 +227,9 @@ public class MemberOrderController {
     }
   }
 
+
   @GetMapping("complete")
-  public String complete() {
+  public String complete(@ModelAttribute("order") Order order, Model model) {
     return "order/complete";
   }
 }

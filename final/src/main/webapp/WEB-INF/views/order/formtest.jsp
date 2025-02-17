@@ -163,7 +163,6 @@
   </style>
 </head>
 <body>
-<!-- 고정 헤더 (일반 헤더) -->
 <header>
   <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 </header>
@@ -220,16 +219,20 @@
         </div>
         <label>
           쿠폰을 선택해 주세요:
-          <select>
-            <option>선택 없음</option>
-            <option>쿠폰 적용</option>
-            <option>카드 즉시 할인</option>
+          <select name="couponCode">
+            <option value="">선택 없음</option>
+            <c:forEach var="coupon" items="${couponList}">
+              <option value="${coupon.couponCode}">
+<%--                  ${coupon.couponName} (${coupon.couponRate}% 할인)--%>
+                      ${coupon.couponCode} (${coupon.couponRate}% 할인)
+              </option>
+            </c:forEach>
           </select>
         </label>
         <div style="margin-top:10px;">
-          나의 포인트 0원
-          <input type="text" value="0" size="5">
-          <button type="button">전액사용</button>
+          나의 포인트 <strong>${memberPoint.balance}원</strong>
+          <input type="text" name="balance" style="width:80px; text-align:right;" />
+          <button type="button" class="point-btn">전액사용</button>
         </div>
         <div style="margin-top: 15px; font-size:14px; color:#999;">
           제휴포인트도 스마일캐시로 전환하세요!<br/>
@@ -289,20 +292,23 @@
         <div class="sum-area">
           상품금액:
           <span>
-              <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-            </span><br/>
+            <fmt:formatNumber value="${productTotal}" pattern="#,###" />원
+          </span><br/>
           할인금액: <span style="color:#f05;">-0원</span><br/>
-          배송비: 0원<br/><br/>
+          배송비:
+          <span>
+            <fmt:formatNumber value="${shippingFee}" pattern="#,###" />원
+          </span><br/><br/>
           총 결제금액:
-          <span class="highlight">
-              <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
-            </span>
+          <span class="highlight" id="finalNetPay">
+            <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
+          </span>
         </div>
         <!-- 결제하기 버튼 -->
         <form action="${pageContext.request.contextPath}/order/submit" name="orderSubmit" method="post">
-          <button class="btn-submit-order">결제하기</button>
+          <!-- 필요 시 hidden 필드 추가 -->
+          <button class="btn-submit-order" type="submit">결제하기</button>
         </form>
-<%--        <button class="btn-submit-order">결제하기</button>--%>
       </div>
     </div> <!-- //order-right -->
   </div> <!-- //order-content -->
@@ -507,7 +513,7 @@
       newAddrHtml += '<br/>' + phone;
       $('.shipping-box .addr-text').html(newAddrHtml);
 
-      // 배송지 선택하여 바꿀 수 있음
+      // 배송지 선택 AJAX 호출
       $.ajax({
         url: '${pageContext.request.contextPath}/order/selectAddress',
         type: 'post',
@@ -530,7 +536,31 @@
       });
     });
 
-    //  AJAX 호출
+    // 포인트 전액사용 버튼 클릭: input 필드에 전액값을 넣고 결제금액 업데이트
+    $('.point-btn').click(function (){
+      const fullPoint = parseInt("${memberPoint.balance}", 10);
+      $("input[name=balance]").val(fullPoint);
+      updateFinalPrice();
+    });
+
+    // 포인트 사용 입력 필드 변경 시 최종 결제금액 업데이트
+    $("input[name=balance]").on("input", function(){
+      updateFinalPrice();
+    });
+
+    function updateFinalPrice() {
+      let originalTotal = parseInt("${overallNetPay}", 10);
+      let usedPoint = parseInt($("input[name=balance]").val(), 10) || 0;
+      // 사용포인트가 결제금액보다 많으면 결제금액은 0으로 처리
+      if(usedPoint > originalTotal) {
+        usedPoint = originalTotal;
+        $("input[name=balance]").val(usedPoint);
+      }
+      let finalTotal = originalTotal - usedPoint;
+      $("#finalNetPay").html(finalTotal.toLocaleString() + "원");
+    }
+
+    // 기타 모달 및 AJAX 코드 유지
     $btnSave.click(function() {
       if ($('#modalAddressForm').is(':visible')) {
         const receiverName  = $('#modalReceiverName').val();
@@ -594,9 +624,7 @@
 
     $('.btn-submit-order').click(function () {
       alert('구매하기버튼');
-    })
-
-
+    });
   });
 </script>
 </body>

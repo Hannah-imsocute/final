@@ -122,26 +122,16 @@
   <div class="complete-container">
     <!-- 타이틀 -->
     <h2>주문완료</h2>
-    <p class="desc">아래 계좌정보로 입금해 주시면 결제 완료처리가 됩니다.</p>
+    <p class="desc">구매해주셔서 감사합니다.</p>
 
     <!-- 주문 정보 요약 박스 -->
     <div class="order-info-box">
-      <!-- 입금 계좌 안내 -->
-      <div class="info-row">
-        <div class="label">입금계좌 안내</div>
-        <div class="value highlight">
-          <!-- 예: 기업은행 123-456-789012 (예금주 홍길동) -->
-          <c:out value="${depositBank}" />
-          <c:out value="${depositAccount}" />
-          (<c:out value="${depositHolder}" />)
-        </div>
-      </div>
 
       <!-- 결제 금액 -->
       <div class="info-row">
         <div class="label">결제 금액</div>
         <div class="value highlight">
-          <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
+          <fmt:formatNumber value="${order.netPay}" pattern="#,###"/>원
         </div>
       </div>
 
@@ -149,7 +139,7 @@
       <div class="info-row">
         <div class="label">주문번호</div>
         <div class="value">
-          <c:out value="${orderCode}" />
+          ${order.orderCode}
         </div>
       </div>
 

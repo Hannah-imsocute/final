@@ -30,8 +30,11 @@ public interface OrderService {
   // 유저의 가장 최근 포인트 조회: 특정 유저의 최신 포인트 내역을 가져오는 경우
   MemberPoint getLatestUserPoint(long userId);
 
-  // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
+  // 유저 쿠폰 조회
+  List<Order> getCouponList(long memberIdx);  // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
+
   List<Order> getOrderDetailList(Map<String, Object> params);
+  List<Order> listOrderProduct(List<Map<String, Long>> list);
   // params에는 userId, 기간 등 다양한 검색 조건이 들어갈 수 있음.
 
   // 주문 상세 정보 조회: 특정 주문 상세 정보를 조회할 경우
@@ -47,8 +50,10 @@ public interface OrderService {
 //  OptionDetail getOptionDetail(long optionDetailId);
 
   // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우
-  void decreaseProductStock(long productId, int quantity) throws SQLException;
-  void decreaseProductStock(Map<String, Object> map) throws SQLException;
+//  void decreaseProductStock(long productId, int quantity) throws SQLException;
+//  void decreaseProductStock(Map<String, Object> map) throws SQLException;
+
+
 
 
   Order processOrder(SessionInfo sessionInfo) throws Exception;

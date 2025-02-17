@@ -41,7 +41,9 @@ public interface OrderMapper {
 
   // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
   List<Order> getOrderDetailList(Map<String, Object> params);
-  // params에는 userId, 기간 등 다양한 검색 조건이 들어갈 수 있음.
+
+//  주문 내역 상세 리스트
+  List<Order> listOrderProduct(List<Map<String, Long>> list);
 
   // 주문 상세 정보 조회: 특정 주문 상세 정보를 조회할 경우
 //  Order getOrderDetail(long orderDetailId);
@@ -50,6 +52,12 @@ public interface OrderMapper {
   // 상품 정보 조회: 주문에 포함된 상품 정보를 조회할 경우
 //  MainProduct getProduct(long productId);
   OrderItem getProduct(long productId);
+
+  // 포인트 관련 시작
+  MemberPoint getLatestUserPoint();
+  // 포인트 관련 끝
+
+  List<Order> getCouponList(long memberIdx);
 
 
   // 옵션 상세 리스트 조회: 상품에 관련된 옵션(예, 색상, 사이즈 등) 리스트 조회
@@ -60,7 +68,7 @@ public interface OrderMapper {
 
   // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우
 //  void decreaseProductStock(long productId, int quantity) throws SQLException;
-  void decreaseProductStock(Map<String, Object> map) throws SQLException;
+//  void decreaseProductStock(Map<String, Object> map) throws SQLException;
 
 
 }

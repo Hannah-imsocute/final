@@ -126,6 +126,19 @@ public class OrderServiceImpl implements OrderService{
   }
 
   @Override
+  public List<Order> getCouponList(long memberIdx) {
+    List<Order> list = null;
+
+    try {
+      list = orderMapper.getCouponList(memberIdx);
+    } catch(Exception e) {
+      log.info("getCouponList", e);
+      throw e;
+    }
+    return list;
+  }
+
+  @Override
   public List<Order> getOrderDetailList(Map<String, Object> params) {
     List<Order> list = null;
     try {
@@ -134,6 +147,27 @@ public class OrderServiceImpl implements OrderService{
       log.info("getOrderDetailList");
     }
     return list;
+  }
+
+  @Override
+  public List<Order> listOrderProduct(List<Map<String, Long>> list) {
+    List<Order> listProduct = null;
+
+    try {
+      listProduct = orderMapper.listOrderProduct(list);
+      for(Order dto : listProduct) {
+        int discountPrice = 0;
+        if(dto.getDiscount() > 0) {
+          discountPrice = (int)(dto.getPrice() * (dto.getDiscount() / 100.0));
+          dto.setDiscount(discountPrice);
+        }
+//        dto.setSalePrice(dto.getPrice() - discountPrice);
+      }
+    } catch (Exception e) {
+      log.info("listOrderProduct : ", e);
+    }
+
+    return listProduct;
   }
 
   @Override
@@ -146,19 +180,7 @@ public class OrderServiceImpl implements OrderService{
     return null;
   }
 
-  @Override
-  public void decreaseProductStock(long productId, int quantity) throws SQLException {
 
-  }
-
-  @Override
-  public void decreaseProductStock(Map<String, Object> map) throws SQLException {
-    try {
-      orderMapper.decreaseProductStock(map);
-    } catch(Exception e) {
-      log.info("decreaseProductStock", e);
-    }
-  }
 
   @Override
   @Transactional
@@ -280,6 +302,25 @@ public class OrderServiceImpl implements OrderService{
 
     return order;
   }
+
+
+
+
+  /*
+  @Override
+  public void decreaseProductStock(long productId, int quantity) throws SQLException {
+
+  }
+
+ @Override
+  public void decreaseProductStock(Map<String, Object> map) throws SQLException {
+    try {
+      orderMapper.decreaseProductStock(map);
+    } catch(Exception e) {
+      log.info("decreaseProductStock", e);
+    }
+  }*/
+
 
 
 }
