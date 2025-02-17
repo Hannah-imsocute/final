@@ -126,8 +126,6 @@ $(document).ready(function() {
         }
 
 
-   
-        var contextPath = "${pageContext.request.contextPath}";
 
         $.ajax({
             url: '/product/byPopularWorks',  // Spring Boot 서버 엔드포인트

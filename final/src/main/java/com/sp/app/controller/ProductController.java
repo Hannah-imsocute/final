@@ -63,9 +63,24 @@ public class ProductController {
             new AbstractMap.SimpleEntry<>("makeup"             , 20)   // 메이크업
         );
 	
-	@GetMapping("main")
+    @GetMapping("main")
 	public ModelAndView main(HttpServletRequest req ) throws Exception{ 
 		ModelAndView mav = new ModelAndView("product/main");
+		try {
+			log.info("Main page accessed");
+		} catch (NullPointerException e) {
+			log.error("NullPointerException in main(): ", e);
+		} catch (Exception e) {
+			log.info("main : ", e  );
+		}
+		
+		return mav;
+	}
+    
+    
+	@GetMapping("category")
+	public ModelAndView category(HttpServletRequest req ) throws Exception{ 
+		ModelAndView mav = new ModelAndView("product/category");
 		try {
 			log.info("Main page accessed");
 		} catch (NullPointerException e) {
@@ -106,10 +121,63 @@ public class ProductController {
 		return mav;
 	}
 	
+
+	// 작품 카테고리 별 초화면(메인) 
+	@ResponseBody
+	@GetMapping("categoryMain") 
+	public ResponseEntity<Map<String, Object>> categoryMain(
+			@RequestParam(name = "page", defaultValue = "1") int current_page, 
+			HttpServletRequest req ) throws Exception{
+
+		 Map<String, Object> response = new HashMap<>();
+		
+		try {
+
+			int size = 10;  // 페이지 당 포함 컨텐츠 수
+			int total_page; // 전체 페이지 수
+			int dataCount;  // 전체 데이터 컨텐츠 수
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+
+
+			
+			dataCount = service.totalDataCount(map);
+			System.out.println("dataCount : " + dataCount);
+			total_page = paginateUtil.pageCount(dataCount, size);
+			
+			current_page = Math.min(current_page, total_page);
+			
+			int offset = (current_page - 1) * size;
+			if(offset < 0) offset = 0;
+			
+			map.put("offset", offset);
+			map.put("size", size);
+			
+			List<MainProduct> list = service.listCategoryMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
+			
+			response.put("list", list);			
+            response.put("page", current_page);
+            response.put("dataCount", dataCount);
+            response.put("size", size);
+            response.put("total_page", total_page);
+			
+		} catch (NullPointerException e) {
+			log.info("main NullPointerException : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		} catch (Exception e) {
+			log.info("main Exception : ", e  );
+		    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		}
+		return ResponseEntity.ok(response);
+		
+	}
+	
+	
+	
 	// 작품 카테고리 별 조회
 	@ResponseBody
-	@GetMapping("category") 
-	public ResponseEntity<Map<String, Object>> category(
+	@GetMapping("byCategoryWorks") 
+	public ResponseEntity<Map<String, Object>> byCategoryWorks(
 			@RequestParam(name = "categoryName") String categoryName,
 			@RequestParam(name = "page", defaultValue = "1") int current_page, 
 			HttpServletRequest req ) throws Exception{
@@ -147,7 +215,7 @@ public class ProductController {
 			map.put("offset", offset);
 			map.put("size", size);
 			
-			List<MainProduct> list = service.listMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
+			List<MainProduct> list = service.listCategoryProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 			
 			response.put("list", list);			
 			response.put("categoryName", categoryName);		
@@ -230,6 +298,69 @@ public class ProductController {
 			return ResponseEntity.ok(response);
 			
 		}
+		
+		
+		// 추천작품 별 조회
+				@ResponseBody
+				@GetMapping("byRecommendWorks") 
+				public ResponseEntity<Map<String, Object>> byRecommendWorks(
+						@RequestParam(name = "categoryName") String categoryName,
+						@RequestParam(name = "page", defaultValue = "1") int current_page, 
+						HttpServletRequest req ) throws Exception{
+					
+					System.out.println("categoryName : " + categoryName);
+					
+					 Map<String, Object> response = new HashMap<>();
+					
+					try {
+						// 받아온 카테고리명을 카테고리코드로 변환
+				        if (!categoryMap.containsKey(categoryName)) {
+				            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+				        }
+
+					    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
+						int size = 10;  // 페이지 당 포함 컨텐츠 수
+						int total_page; // 전체 페이지 수
+						int dataCount;  // 전체 데이터 컨텐츠 수
+						
+						Map<String, Object> map = new HashMap<String, Object>();
+						map.put("categoryCode", categoryCode);
+						
+						//카테고리 정보
+						MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
+						System.out.println("categoryDto: " + categoryDto);
+						
+						dataCount = service.dataCount(map);
+						total_page = paginateUtil.pageCount(dataCount, size);
+						
+						current_page = Math.min(current_page, total_page);
+						
+						int offset = (current_page - 1) * size;
+						if(offset < 0) offset = 0;
+						
+						map.put("offset", offset);
+						map.put("size", size);
+						
+						List<MainProduct> recommendList = service.listRecommendProduct(map);
+				
+						response.put("recommendList", recommendList);			
+						response.put("categoryName", categoryName);		
+			            response.put("categoryCode", categoryCode);
+			            response.put("page", current_page);
+			            response.put("dataCount", dataCount);
+			            response.put("size", size);
+			            response.put("total_page", total_page);
+						
+					} catch (NullPointerException e) {
+						log.info("main NullPointerException : ", e  );
+						return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+					} catch (Exception e) {
+						log.info("main Exception : ", e  );
+					    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+					}
+					return ResponseEntity.ok(response);
+					
+				}
 
 	// 상품상세보기 초화면 조회
 	@GetMapping("{productCode}")

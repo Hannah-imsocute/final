@@ -86,7 +86,11 @@
 	        <!-- 메인 패널 -->
 	        <div class="main-panel">
 	            <h5 class="main-top-name">추천작품별 메인페이지입니다</h5>
+	             <div class="count">
+	              <p class="dataCount">${dataCount}개<p>
+	            </div>
 	            <br>
+	            
 	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0" >
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
 	                
@@ -123,11 +127,8 @@ $(document).ready(function() {
         }
 
 
-   
-        var contextPath = "${pageContext.request.contextPath}";
-
         $.ajax({
-            url: '/product/category',  // Spring Boot 서버 엔드포인트
+            url: '/product/byRecommendWorks',  // Spring Boot 서버 엔드포인트
             method: 'GET',
             data: { categoryName: categoryName, page:page },  // 요청 데이터
             dataType: 'json',
@@ -139,10 +140,11 @@ $(document).ready(function() {
              
                  // 메인 패널의 제목 변경
                 $('.main-top-name').text(topName);
+                $('.dataCount').text(response.dataCount + "개");
 
                 // 응답 데이터가 배열인지 확인 후 처리	
-                if (response && Array.isArray(response.list)) {
-                	$.each(response.list, function(arrayIndex, arrayKey) {
+                if (response && Array.isArray(response.recommendList)) {
+                	$.each(response.recommendList, function(arrayIndex, arrayKey) {
                 	    console.log("Processing arrayKey:", arrayKey);
 
                 	    // 빈 HTML을 먼저 추가

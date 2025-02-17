@@ -4,12 +4,26 @@
 <mapper namespace="com.sp.app.mapper.MainProductMapper">
 	<!-- 일반 상품 목록 -->
 	
-	<select id="dataCount" parameterType="map" resultType="Integer">
+	<select id="totalDataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0) dataCount FROM product
-		WHERE categoryCode = #{categoryCode}
 	</select>
 	
-	<select id="listMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
+	<!-- 카테고리 별 작품 조회 초화면 (메인) 리스트-->
+	<select id="listCategoryMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
+	SELECT p.productCode, p.item, price, 
+		       discount, m.nickname, THUMBNAIL, s.brandname
+		FROM product p
+        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+        JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		WHERE p.SOLDOUT = 0
+		ORDER BY p.upload DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	
+	
+	<!-- 카테고리 별 작품 리스트-->
+	<select id="listCategoryProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
 	SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
 		       discount, m.nickname, THUMBNAIL, s.brandname
 		FROM product p
@@ -21,6 +35,14 @@
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 	
+	
+	<!-- 카테고리별 조회시 데이터 개수 -->
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) dataCount FROM product
+		WHERE categoryCode = #{categoryCode}
+	</select>
+	
+	<!-- 인기작품 순 작품 리스트-->
 	<select id="listPopularProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
 	   SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
 		       discount, m.nickname, THUMBNAIL, s.brandname, 
@@ -33,6 +55,27 @@
 		ORDER BY buyCount DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
+	
+	<!-- 추천작품 순 작품 리스트 (현재 광고중인 작품 > 광고중이지는 않지만 멤버십구매이력있는 작품 > 그 외 작품 최신순)-->
+	<select id="listRecommendProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
+    	   SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
+		       discount, m.nickname, THUMBNAIL, s.brandname, i.startDate AS 광고시작일자, i.expireDate AS 광고종료일자 
+		FROM product p
+		JOIN productCategory c ON p.categoryCode = c.categoryCode
+        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+        JOIN MEMBER m ON m.memberIdx = s.memberIdx
+        LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
+		WHERE p.SOLDOUT = 0 AND p.categoryCode = #{categoryCode} 
+		ORDER BY 
+		  CASE 
+		    WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
+		    WHEN i.product_Code IS NOT NULL THEN 2
+		    ELSE 3
+		  END,
+		  p.upload DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
 
 	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.model.MainProduct">
 		SELECT categoryCode, name, parentCategoryCode
@@ -65,6 +108,9 @@
 		ON m.memberIdx = r.memberIdx
 		WHERE p.productCode = #{productCode}
 	</select>
+	
+	
+	
 
 	<select id="insertReveiwReport" parameterType="map">
 		INSERT INTO productreivewreport (

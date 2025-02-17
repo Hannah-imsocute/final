@@ -18,6 +18,20 @@ public class MainProductServiceImpl implements MainProductService{
 	private final MainProductMapper mapper;
 	
 	@Override
+	public int totalDataCount(Map<String, Object> map) {
+        int result = 0;
+		
+		try {
+			result = mapper.totalDataCount(map);
+		} catch (Exception e) {
+			log.info("dataCount : ", e);
+		}
+		return result;
+	}
+
+
+	
+	@Override
 	public int dataCount(Map<String, Object> map) {
 		int result = 0;
 		
@@ -29,12 +43,14 @@ public class MainProductServiceImpl implements MainProductService{
 		return result;
 	}
 	
+	
+	// 카테고리별 작품 조회 초화면(메인)
 	@Override
-	public List<MainProduct> listMainProduct(Map<String, Object> map) {
+	public List<MainProduct> listCategoryMainProduct(Map<String, Object> map) {
 		List<MainProduct> list = null;
 		
 		try {
-			list = mapper.listMainProduct(map);
+			list = mapper.listCategoryMainProduct(map);
 			
 			int discountPrice; //할인되는 가격
 			for(MainProduct dto : list) {
@@ -49,6 +65,28 @@ public class MainProductServiceImpl implements MainProductService{
 		}
 		return list;
 	}
+	
+	@Override
+	public List<MainProduct> listCategoryProduct(Map<String, Object> map) {
+       List<MainProduct> list = null;
+		
+		try {
+			list = mapper.listCategoryProduct(map);
+			
+			int discountPrice; //할인되는 가격
+			for(MainProduct dto : list) {
+				discountPrice = 0;
+				if(dto.getDiscount()>0) {
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+				}
+				dto.setSalePrice(dto.getPrice() - discountPrice);
+			}
+		} catch (Exception e) {
+			log.info("listCategoryProduct : ", e);
+		}
+		return list;
+	}
+
 	
 	//인기작품별 작품 리스트
 	@Override
@@ -73,6 +111,30 @@ public class MainProductServiceImpl implements MainProductService{
 		
 		return list;
 	}
+	
+	@Override
+	public List<MainProduct> listRecommendProduct(Map<String, Object> map) {
+        List<MainProduct> list = null;
+		
+		try {
+			list = mapper.listRecommendProduct(map);
+			
+			int discountPrice; //할인되는 가격
+			for(MainProduct dto : list) {
+				discountPrice = 0;
+				if(dto.getDiscount()>0) {
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+				}
+				dto.setSalePrice(dto.getPrice() - discountPrice);
+			}
+			
+		} catch (Exception e) {
+			log.info("listRecommendProduct");
+		}
+		
+		return list;
+	}
+	
 
 	@Override
 	public MainProduct findById(long productCode) {
@@ -94,6 +156,9 @@ public class MainProductServiceImpl implements MainProductService{
 		}
 		return dto;
 	}
+	
+	
+
 
 	@Override
 	public List<MainProduct> listMainProductFile(long productCode) {
@@ -144,7 +209,6 @@ public class MainProductServiceImpl implements MainProductService{
 		}
 	}
 
-	
 
 
 }
