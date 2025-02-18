@@ -239,6 +239,15 @@ display: grid;
 }
 
 
+ .btn-product-report {
+    justify-content: flex-end; 
+    background-color: white;
+    color: #ff5733;
+    border: none;
+    border-radius: 5px;
+    
+}
+
 
 /* ✅ jQuery UI 모달 스타일 */
 .ui-dialog {
@@ -321,6 +330,33 @@ display: grid;
     color: white;
 }
 #close-report:hover {
+    background: #5a6268;
+}
+
+
+/* 작품 신고*/
+/* ✅ 입력 필드 */
+#productReport-reason, #productReport-description {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#submit-productReport {
+    background: #dc3545;
+    color: white;
+}
+#submit-productReport:hover {
+    background: #c82333;
+}
+#close-productReport {
+    background: #6c757d;
+    color: white;
+}
+#close-productReport:hover {
     background: #5a6268;
 }
 
