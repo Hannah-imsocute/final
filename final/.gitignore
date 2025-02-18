@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 application.yml
 
-MailSender.java
+
 
 ### STS ###
 .apt_generated
