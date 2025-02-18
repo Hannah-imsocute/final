@@ -91,8 +91,9 @@
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/category">전체 카테고리</a></li>
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/recommend">추천 작품</a></li>
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/product/popular">인기 작품</a></li>
-			<li class="nav-item"><a class="nav-link" href="#">커뮤니티</a></li>
+			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/community/list">커뮤니티</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">이벤트</a></li>
+			<li class="nav-item"><a class="nav-link" href="#">공지사항</a></li>
 		</ul>
 	</div>
 </nav>
