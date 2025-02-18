@@ -239,6 +239,15 @@ display: grid;
 }
 
 
+ .btn-product-report {
+    justify-content: flex-end; 
+    background-color: white;
+    color: #ff5733;
+    border: none;
+    border-radius: 5px;
+    
+}
+
 
 /* ✅ jQuery UI 모달 스타일 */
 .ui-dialog {

@@ -56,6 +56,9 @@
                 </div>
 
                 <button class="btn inquiry-btn">📩 작품문의</button>
+           		<div class="product-report">
+           		   <button class="btn-product-report">신고하기></button>
+           		</div>
             </div>
         </section>
 
@@ -216,7 +219,7 @@ $.fn.center = function () {
     return this;
 };
 
-
+// 작품 후기글 신고하기
 $(document).ready(function () {
     // 모달 생성
     const dlg = $(".report-modal-dialog").dialog({
@@ -282,6 +285,69 @@ $(document).ready(function () {
     });
 });
 
+
+// 작품 신고하기
+$(document).ready(function () {
+    // 모달 생성
+    const dlg = $(".report-modal-dialog").dialog({
+        autoOpen: false,  
+        modal: true,
+        height: 450,
+        width: 450,
+        title: "신고",
+        close: function(event, ui) {
+            // 모달이 닫힐 때 내용 초기화
+            $("#report-reason").val("spam");
+            $("#report-description").val("");
+        }
+    });
+
+    // ✅ 신고 버튼 클릭 시 모달 열기
+    $(".product-report").on('click', '.btn-product-report', function(event){
+        event.stopPropagation();  // 이벤트 전파 방지
+
+        dlg.dialog("open");  // 모달 열기
+    });
+
+    // ✅ 닫기 버튼 기능
+    $("#close-report").on("click", function () {
+        dlg.dialog("close");
+    });
+
+    // ✅ 신고 버튼 기능 (데이터 처리 예시)
+    $("#submit-report").on("click", function () {
+    	const productCode = "${dto.productCode}";
+        const reason = $("#report-reason").val();
+        const description = $("#report-description").val();
+
+        console.log("신고 내용:", {
+        	productCode,
+            reason,
+            description
+        });
+        $.ajax({
+	    	url: contextPath + "/product/productReport",
+	        type: "POST",
+	        data: { memberidx: "2",          // 사용자 session
+	        	   productCode: productCode,    // 작품글번호
+	        	   categoryName: reason,     // 신고사유
+	        	   content: description      // 상세내용
+	        	   }, 
+	        // dataType: "json", // 응답 타입 설정 (HTML 또는 JSON)
+	        beforeSend: function(xhr, settings) {
+	            
+	        },
+	        success: function(response) {
+        		alert("신고가 접수되었습니다.");
+	        },
+            error: function(xhr, status, error) {
+                alert('신고 접수를 실패했습니다.');
+                console.error(error, xhr.responseText);
+            }
+	    });
+        dlg.dialog("close");
+    });
+});
 	
 	
 </script>
