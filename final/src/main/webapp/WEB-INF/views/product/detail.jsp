@@ -79,7 +79,7 @@
        </section>
        
        
-	<!-- 신고 모달 -->
+	<!-- 후기글 신고 모달 -->
 	<div class="report-modal-dialog" style="display: none;">
 	    <p>리뷰 번호 : <span id="modal-reviewNum"></span></p>
 	
@@ -100,6 +100,31 @@
 	    <div class="modal-buttons">
 	        <button id="submit-report">신고하기</button>
 	        <button id="close-report">닫기</button>
+	    </div>
+	</div>
+
+
+	<!-- 작품 신고 모달 -->
+	<div class="productReport-modal-dialog" style="display: none;">
+	    <p>리뷰 번호 : <span id="modal-reviewNum"></span></p>
+	
+	    <!-- 신고 사유 선택 -->
+	    <label for="productReport-reason">신고 사유:</label>
+	    <select id="productReport-reason">
+	        <option value="spam">스팸 또는 광고</option>
+	        <option value="offensive">부적절한 콘텐츠</option>
+	        <option value="copyright">저작권 침해</option>
+	        <option value="other">기타</option>
+	    </select>
+	
+	    <!-- 상세 설명 -->
+	    <label for="productReport-description">상세 내용:</label>
+	    <textarea id="productReport-description" placeholder="자세한 내용을 입력해주세요."></textarea>
+	
+	    <!-- 신고 버튼 -->
+	    <div class="modal-buttons">
+	        <button id="submit-productReport">신고하기</button>
+	        <button id="close-productReport">닫기</button>
 	    </div>
 	</div>
         
@@ -227,7 +252,7 @@ $(document).ready(function () {
         modal: true,
         height: 450,
         width: 450,
-        title: "신고",
+        title: "작품 후기글 신고",
         close: function(event, ui) {
             // 모달이 닫힐 때 내용 초기화
             $("#report-reason").val("spam");
@@ -264,7 +289,7 @@ $(document).ready(function () {
         $.ajax({
 	    	url: contextPath + "/product/reveiwReport",
 	        type: "POST",
-	        data: { memberidx: "2",          // 사용자 session
+	        data: { 
 	        	   reviewNum: reviewNum,    // 리뷰번호
 	        	   categoryName: reason,     // 신고사유
 	        	   content: description      // 상세내용
@@ -289,16 +314,16 @@ $(document).ready(function () {
 // 작품 신고하기
 $(document).ready(function () {
     // 모달 생성
-    const dlg = $(".report-modal-dialog").dialog({
+    const dlg = $(".productReport-modal-dialog").dialog({
         autoOpen: false,  
         modal: true,
         height: 450,
         width: 450,
-        title: "신고",
+        title: "작품신고",
         close: function(event, ui) {
             // 모달이 닫힐 때 내용 초기화
-            $("#report-reason").val("spam");
-            $("#report-description").val("");
+            $("#productReport-reason").val("spam");
+            $("#productReport-description").val("");
         }
     });
 
@@ -310,15 +335,15 @@ $(document).ready(function () {
     });
 
     // ✅ 닫기 버튼 기능
-    $("#close-report").on("click", function () {
+    $("#close-productReport").on("click", function () {
         dlg.dialog("close");
     });
 
     // ✅ 신고 버튼 기능 (데이터 처리 예시)
-    $("#submit-report").on("click", function () {
+    $("#submit-productReport").on("click", function () {
     	const productCode = "${dto.productCode}";
-        const reason = $("#report-reason").val();
-        const description = $("#report-description").val();
+        const reason = $("#productReport-reason").val();
+        const description = $("#productReport-description").val();
 
         console.log("신고 내용:", {
         	productCode,
@@ -328,7 +353,7 @@ $(document).ready(function () {
         $.ajax({
 	    	url: contextPath + "/product/productReport",
 	        type: "POST",
-	        data: { memberidx: "2",          // 사용자 session
+	        data: {
 	        	   productCode: productCode,    // 작품글번호
 	        	   categoryName: reason,     // 신고사유
 	        	   content: description      // 상세내용

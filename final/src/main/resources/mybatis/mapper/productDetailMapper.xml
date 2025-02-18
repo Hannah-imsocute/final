@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.ProductDetailMapper">
+	<!-- 일반 상품 목록 -->
+	
+
+	<select id="insertProductReport" parameterType="map">
+			INSERT INTO item_report (
+			    sellerreport_num,
+			    productcode,
+			    memberidx2,
+			    reason,
+			    report_date,
+			    category_num
+			) VALUES (
+			    SEQ_ITEM_REPORT.NEXTVAL,
+			    #{productCode},
+			    #{memberIdx},
+			    #{content},
+			    sysdate,
+			    #{categoryNum}
+			)
+	</select>
+
+</mapper>
+	
