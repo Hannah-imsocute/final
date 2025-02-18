@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.ApplyManageMapper;
 import com.sp.app.admin.model.ApplyManage;
+import com.sp.app.mail.MailSender;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApplyManageServiceImpl implements ApplyManageService {
 	private final ApplyManageMapper mapper;
+	private final MailSender mailSender;
 
 	@Override
 	public int dataCount(Map<String, Object> map) {
