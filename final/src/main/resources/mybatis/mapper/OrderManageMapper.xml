@@ -117,13 +117,6 @@
     </select>
 
 
-    <select id="findByDeliveryId" parameterType="String" resultType="com.sp.app.model.Destination">
-        SELECT orderNum, recipientName, tel, zip, addr1, addr2, destMemo
-        FROM orderDelivery
-        WHERE orderNum = #{orderNum}
-    </select>
-
-
 </mapper>
 
 

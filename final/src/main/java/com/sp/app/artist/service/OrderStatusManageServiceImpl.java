@@ -1,17 +1,17 @@
 package com.sp.app.artist.service;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.sp.app.artist.mapper.OrderManageMapper;
 import com.sp.app.artist.model.OrderManage;
 import com.sp.app.artist.model.OrderProduct;
-import com.sp.app.model.Destination;
 import com.sp.app.state.OrderState;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -86,8 +86,4 @@ public class OrderStatusManageServiceImpl implements OrderStatusManageService{
         return null;
     }
 
-    @Override
-    public Destination findByDeliveryId(String item_code) {
-        return null;
-    }
 }
