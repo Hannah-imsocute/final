@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class OrderManage {
-    private String order_code;
-    private Long memberIdx;
+    private String item_code;
+    private long memberIdx;
     private String userId;
     private String nickname;
     private String order_date;
@@ -36,7 +36,7 @@ public class OrderManage {
 
     //결제 정보
     private String payMethod;
-    private String cardNam;
+    private String cardName;
 
     private String authNumber;
     private String authDate;

@@ -31,6 +31,48 @@
                 <h3><i class="bi bi-app"></i> 제목 </h3>
             </div>
 
+
+            <div class="row board-list-footer">
+                <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/admin/order/orderManage/${tebNum}';" title="새로고침">
+                        <i class="bi bi-arrow-counterclockwise"></i> 새로고침
+                    </button>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <form class="row g-3" name="searchForm">
+                        <div class="col-auto">
+                            <select name="schType" class="form-select">
+                                <option value="orderNum" ${schType=="orderNum"?"selected":""}>주문번호</option>
+                                <c:if test="${tebNum==110}">
+                                    <option value="invoiceNumber" ${schType=="invoiceNumber"?"selected":""}>송장번호</option>
+                                </c:if>
+                                <option value="userName" ${schType=="userName"?"selected":""}>주문자</option>
+                                <option value="orderDate" ${schType=="orderDate"?"selected":""}>주문일자</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" name="kwd" value="${kwd}" class="form-control" placeholder="검색어 입력">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary" onclick="searchList()"> <i class="bi bi-search"></i> 검색</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-12 text-end">
+                    <!-- 여기에 추가적인 요소나 내용이 있을 경우 삽입 가능 -->
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
             <div class="body-main">
 
                 <div class="row board-list-header">
@@ -48,7 +90,7 @@
                         <th width="95">주문자</th>
                         <th width="150">주문일자</th>
                         <th width="130">결제금액</th>
-                        <th width="160">${itemId==110 ? "송장번호":"주문수량"}</th>
+                        <th width="160">${tebNum==110 ? "송장번호":"주문수량"}</th>
                         <th width="85">취소요청</th>
                         <th width="85">교환요청</th>
                         <th width="85">취소완료</th>
@@ -57,9 +99,10 @@
 
                     <tbody>
                     <c:forEach var="dto" items="${list}" varStatus="status">
+
                         <tr class="clickable"
-                            onclick="location.href='${pageContext.request.contextPath}/artist/orderManage/${tebNum}/${dto.order_code}?${query}';">
-                            <td>${dto.order_code}</td>
+                            onclick="location.href='${pageContext.request.contextPath}/artist/orderManage/${tebNum}/${dto.item_code}?${query}';">
+                            <td>${dto.item_code}</td>
                             <td>${dto.orderStateInfo}</td>
                             <td>${dto.nickname}</td>
                             <td>${dto.order_date}</td>
@@ -77,39 +120,40 @@
                     ${dataCount==0 ? "등록된 주문정보가 없습니다." : paging}
                 </div>
 
-                <div class="row board-list-footer">
-                    <div class="col">
-                        <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/admin/order/orderManage/${itemId}';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
-                    </div>
-                    <div class="col-6 text-center">
-                        <form class="row" name="searchForm">
-                            <div class="col-auto p-1">
-                                <select name="schType" class="form-select">
-                                    <option value="orderNum" ${schType=="orderNum"?"selected":""}>주문번호</option>
-                                    <c:if test="${itemId==110}">
-                                        <option value="invoiceNumber" ${schType=="invoiceNumber"?"selected":""}>송장번호</option>
-                                    </c:if>
-                                    <option value="userName" ${schType=="userName"?"selected":""}>주문자</option>
-                                    <option value="orderDate" ${schType=="orderDate"?"selected":""}>주문일자</option>
-                                </select>
-                            </div>
-                            <div class="col-auto p-1">
-                                <input type="text" name="kwd" value="${kwd}" class="form-control">
-                            </div>
-                            <div class="col-auto p-1">
-                                <button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col text-end">
-                        &nbsp;
-                    </div>
-                </div>
 
             </div>
         </div>
     </div>
 
 </main>
+
+<script type="text/javascript">
+    // 검색
+    window.addEventListener('load', () => {
+        const inputEL = document.querySelector('form input[name=kwd]');
+        inputEL.addEventListener('keydown', function (evt) {
+            if(evt.key === 'Enter') {
+                evt.preventDefault();
+
+                searchList();
+            }
+        });
+    });
+
+    function searchList() {
+        const f = document.searchForm;
+        if(! f.kwd.value.trim()) {
+            return;
+        }
+        f.kwd.value = f.kwd.value.trim();
+
+        const formData = new FormData(f);
+        let requestParams = new URLSearchParams(formData).toString();
+
+        let url = '${pageContext.request.contextPath}/admin/order/orderManage/${tebNum}';
+        location.href = url + '?' + requestParams;
+    }
+</script>
+
 </body>
 </html>
