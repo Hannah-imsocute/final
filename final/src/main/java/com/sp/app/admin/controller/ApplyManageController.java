@@ -97,22 +97,35 @@ public class ApplyManageController {
 		return "admin/applyList/list";
 	}
 
-	// 회원 상태 변경 : AJAX-JSON 응답
 	@PostMapping("updateApply")
 	@ResponseBody
-	public Map<String, Object> updateApply(@RequestParam(name = "sellerApplyNum") Long sellerApplyNum) {
+	public Map<String, Object> updateApply(
+	    @RequestParam(name = "sellerApplyNum") Long sellerApplyNum,
+	    @RequestParam(name = "agreed") String agreed, // 승인/거절 여부
+	    @RequestParam(name = "email") String sellerEmail, // 이메일
+	    @RequestParam(name = "name") String sellerName, // 이름
+	    @RequestParam(name = "rejectionReason", required = false) String rejectionReason // 반려 사유
+	) {
 	    Map<String, Object> map = new HashMap<>();
 	    try {
-	    	map.put("sellerApplyNum", sellerApplyNum);
-	        // `agreed` 값을 0으로 업데이트
+	        // sellerApplyNum, agreed, 이메일 및 이름, 반려 사유를 map에 추가
+	        map.put("sellerApplyNum", sellerApplyNum);
+	        map.put("agreed", agreed);
+	        map.put("email", sellerEmail);
+	        map.put("name", sellerName);
+	        map.put("rejectionReason", rejectionReason); // 반려 사유 추가
+
+	        // 승인/거절 상태 업데이트 및 이메일 발송 처리
 	        service.updateApply(map);
+
 	        map.put("success", true);
 	    } catch (Exception e) {
-	    	map.put("success", false);
-	    	map.put("error", e.getMessage());
+	        map.put("success", false);
+	        map.put("error", e.getMessage());
 	    }
 	    return map;
 	}
+
 
 	// 컨트롤러에서 데이터 반환
 	@GetMapping("getSellerDetails")

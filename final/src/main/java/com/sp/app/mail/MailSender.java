@@ -60,9 +60,9 @@ public class MailSender {
 			   : POP3/SMTP, IMAP/SMTP 사용함 설정(나머지는 기본 설정)
 			 */
 
-			String username = "아이디"; // gmail 사용자
+			String username = "sksksukk"; // gmail 사용자
 			// String username = "아이디@naver.com"; // 네이버 사용자;
-			String password = "패스워드"; // 지메일은 앱비밀번호
+			String password = "ylmx pjpo lwpi ftow"; // 지메일은 앱비밀번호
 			return new PasswordAuthentication(username, password);
 		}
 	}
@@ -126,7 +126,7 @@ public class MailSender {
 		Properties p = new Properties();
 
 		// SMTP 서버의 계정 설정
-		p.setProperty("mail.smtp.user", "아이디"); // 지메일 또는 네이버 아이디
+		p.setProperty("mail.smtp.user", "sksksukk"); // 지메일 또는 네이버 아이디
 
 		// SMTP 서버 정보 설정
 		String host = "smtp.gmail.com"; // gmail

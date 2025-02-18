@@ -147,10 +147,16 @@
 				  </tr>
 				  <tr>
 				    <td class="bg-light col-sm-2 align-middle" style="width: 10%;">반려사유</td>
-				    <td>
-				      <!-- 반려사유를 작성할 수 있는 textarea 추가 -->
-				      <textarea class="form-control" style="width: 100%; height: 100px;" placeholder="반려사유를 입력해주세요."></textarea>
-				    </td>
+						<td>
+						  <!-- 반려 사유를 선택할 수 있는 셀렉트 박스 추가 -->
+						  <select class="form-control" style="width: 100%;" id="rejectionReason">
+						    <option value="">반려 사유를 선택하세요</option>
+						    <option value="사유1">사유 1</option>
+						    <option value="사유2">사유 2</option>
+						    <option value="사유3">사유 3</option>
+						    <option value="기타">기타</option>
+						  </select>
+						 </td>
 				  </tr>
 				</table>
 
