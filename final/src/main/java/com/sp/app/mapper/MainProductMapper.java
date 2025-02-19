@@ -10,6 +10,8 @@ import com.sp.app.model.MainProduct;
 public interface MainProductMapper {
 	public int totalDataCount(Map<String, Object> map);
 	public List<MainProduct> listCategoryMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
+	public List<MainProduct> listPopularMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
+	public List<MainProduct> listRecommendMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
 	
 	public int dataCount(Map<String, Object> map); //카테고리별 작품 개수
 	public List<MainProduct> listMainProduct(Map<String, Object> map); // 카테고리별 작품리스트 조회

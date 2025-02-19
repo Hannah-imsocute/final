@@ -172,8 +172,101 @@ public class ProductController {
 		
 	}
 	
-	
-	
+	// 인기작품 순 작품 조회 초화면(메인) 
+		@ResponseBody
+		@GetMapping("popularMain") 
+		public ResponseEntity<Map<String, Object>> popularMain(
+				@RequestParam(name = "page", defaultValue = "1") int current_page, 
+				HttpServletRequest req ) throws Exception{
+
+			 Map<String, Object> response = new HashMap<>();
+			
+			try {
+
+				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int total_page; // 전체 페이지 수
+				int dataCount;  // 전체 데이터 컨텐츠 수
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				
+				dataCount = service.totalDataCount(map);
+				total_page = paginateUtil.pageCount(dataCount, size);
+				
+				current_page = Math.min(current_page, total_page);
+				
+				int offset = (current_page - 1) * size;
+				if(offset < 0) offset = 0;
+				
+				map.put("offset", offset);
+				map.put("size", size);
+				
+				List<MainProduct> list = service.listPopularMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
+				
+				response.put("list", list);			
+	            response.put("page", current_page);
+	            response.put("dataCount", dataCount);
+	            response.put("size", size);
+	            response.put("total_page", total_page);
+				
+			} catch (NullPointerException e) {
+				log.info("main NullPointerException : ", e  );
+				return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			} catch (Exception e) {
+				log.info("main Exception : ", e  );
+			    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			}
+			return ResponseEntity.ok(response);
+			
+		}
+		
+		// 추천작품 순 작품 조회 초화면(메인) 
+		@ResponseBody
+		@GetMapping("recommendMain") 
+		public ResponseEntity<Map<String, Object>> recommendMain(
+				@RequestParam(name = "page", defaultValue = "1") int current_page, 
+				HttpServletRequest req ) throws Exception{
+
+			 Map<String, Object> response = new HashMap<>();
+			
+			try {
+
+				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int total_page; // 전체 페이지 수
+				int dataCount;  // 전체 데이터 컨텐츠 수
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				
+				dataCount = service.totalDataCount(map);
+				total_page = paginateUtil.pageCount(dataCount, size);
+				
+				current_page = Math.min(current_page, total_page);
+				
+				int offset = (current_page - 1) * size;
+				if(offset < 0) offset = 0;
+				
+				map.put("offset", offset);
+				map.put("size", size);
+				
+				List<MainProduct> list = service.listRecommendMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
+				
+				response.put("list", list);			
+	            response.put("page", current_page);
+	            response.put("dataCount", dataCount);
+	            response.put("size", size);
+	            response.put("total_page", total_page);
+				
+			} catch (NullPointerException e) {
+				log.info("main NullPointerException : ", e  );
+				return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			} catch (Exception e) {
+				log.info("main Exception : ", e  );
+			    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+			}
+			return ResponseEntity.ok(response);
+			
+		}
+		
+
 	// 작품 카테고리 별 조회
 	@ResponseBody
 	@GetMapping("byCategoryWorks") 

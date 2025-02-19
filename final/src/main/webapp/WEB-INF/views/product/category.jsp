@@ -69,6 +69,7 @@
 					</ul>
 				</div>
 			</div>
+		
 
 			<!-- 메인 패널 -->
 <!-- 			<div class="main-panel">
@@ -95,7 +96,7 @@
 	    
 	            <button id="loadMore" data-page ="${page}" >작품 더보기</button>
 	        </div>
-	
+	      </div>
 		</div>
 	</main>
 </body>
@@ -108,12 +109,10 @@ var contextPath = "${pageContext.request.contextPath}";
 
 
 $(document).ready(function() {
-	
 	// 페이지 로드 시 자동으로 전체 상품 불러오기
     var page = 1; // 첫 페이지부터 시작
     
-    
-
+	/*전체카테고리 탭 클릭시 초화면*/
     $.ajax({
         url: '/product/categoryMain',  // Spring Boot 서버 엔드포인트
         method: 'GET',
@@ -177,11 +176,7 @@ $(document).ready(function() {
         }
     });
 
-	
-	
-  
-	
-	/* 1. 왼쪽 메뉴바 클릭 이벤트 */
+	/* 2. 왼쪽 메뉴바 클릭 이벤트 */
     $('.left-menu ul li').on('click', function(event) {
         event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         $('#loadMore').prop("disabled", false).text("작품 더보기"); // 작품더보기 버튼 초기화
