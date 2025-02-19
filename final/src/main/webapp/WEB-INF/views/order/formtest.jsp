@@ -17,11 +17,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
   <!-- 다음 우편번호 API -->
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
   <style>
-    /* 기존 스타일 유지 */
+    /* 기본 폰트 */
+    body {
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+    }
     header { position: relative !important; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Noto Sans KR', sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; }
     a { text-decoration: none; color: inherit; }
     a:hover { color: #555; }
     .order-page-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px 40px; min-height: 80vh; }
@@ -36,17 +42,138 @@
     .order-right { width: 380px; flex-shrink: 0; }
     .order-section { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .order-section h3 { margin-bottom: 10px; font-size: 18px; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-    .order-section .sub-info { font-size: 14px; color: #666; margin-bottom: 10px; }
-    .order-section button { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 6px 12px; font-size: 14px; cursor: pointer; transition: background-color 0.3s; }
-    .order-section button:hover { background: #f9f9f9; }
-    .shipping-box .addr-text { background-color: #fff; border: 1px solid #eee; border-radius: 4px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.4; min-height: 60px; }
-    .memo-input { width: 100%; padding: 8px; margin-top: 10px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; background-color: #fff; }
-    .discount-box select { margin-left: 5px; padding: 5px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; }
-    .discount-box input[type="text"] { padding: 5px; font-size: 14px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+
+    /* 배송지 영역(개선) */
+    .shipping-box { position: relative; }
+    /* 상단: 받는 분 + 연락처 왼쪽, 배송지 변경 버튼 오른쪽 */
+    .shipping-box .shipping-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; /* 세로 중앙 정렬 */
+      margin-bottom: 12px;
+    }
+    .shipping-box .recipient-info {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 16px;
+    }
+    .recipient-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .recipient-phone {
+      color: #666;
+      font-size: 14px;
+    }
+    .btn-addr-change {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      white-space: nowrap;
+    }
+    .btn-addr-change:hover {
+      background: #f9f9f9;
+    }
+    /* 주소 영역 */
+    .shipping-box .addr-text {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 60px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .memo-input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+
+    /* 쿠폰/포인트 사용 영역(개선) */
+    .coupon-discount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .coupon-discount-left {
+      font-size: 15px;
+    }
+    .coupon-discount-left .couponDiscount {
+      font-weight: bold;
+      color: #f05;
+    }
+    .coupon-discount-right .coupon-btn {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 14px;
+    }
+    .coupon-discount-right .coupon-btn:hover {
+      background: #f7f7f7;
+    }
+    .point-use-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .point-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .point-input-wrap input[type="text"] {
+      width: 80px;
+      text-align: right;
+      padding: 5px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .point-btn {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .point-btn:hover {
+      background: #f9f9f9;
+    }
+    .point-guide {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* 결제수단 */
     .payment-box .card-list { display: flex; gap: 10px; flex-wrap: wrap; }
-    .payment-box .card-item { width: 120px; height: 60px; background-color: #f2f2f2; border-radius: 4px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #666; cursor: pointer; transition: background-color 0.3s; }
+    .payment-box .card-item {
+      width: 120px; height: 60px; background-color: #f2f2f2; border-radius: 4px; border: 1px solid #eee;
+      display: flex; align-items: center; justify-content: center; font-size: 13px; color: #666;
+      cursor: pointer; transition: background-color 0.3s;
+    }
     .payment-box .card-item:hover { background-color: #ebebeb; }
-    .payment-box .sub-info { margin-bottom: 10px; }
+
+    /* 주문 요약 */
     .order-summary-box { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .order-summary-box h3 { font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
     .product-list { margin-bottom: 20px; }
@@ -58,108 +185,89 @@
     .product-list .column.image img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
     .sum-area { font-size: 14px; line-height: 1.6; text-align: right; }
     .sum-area .highlight { font-size: 16px; font-weight: bold; color: #333; }
-    .btn-submit-order { display: block; width: 100%; padding: 14px 0; background-color: #ff8200; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px; transition: background-color 0.3s; }
+    .btn-submit-order {
+      display: block; width: 100%; padding: 14px 0; background-color: #ff8200; color: #fff;
+      border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px;
+      transition: background-color 0.3s;
+    }
     .btn-submit-order:hover { background-color: #ff8400; }
     @media (max-width: 768px) {
       .order-right { width: 100%; order: -1; }
     }
-    /* 모달창 관련 CSS */
+
+    /* 모달창 */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0,0,0,0.4);
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.4); z-index: 9999;
+      display: none; align-items: center; justify-content: center;
     }
     .modal {
-      display: block !important;
-      background-color: #fff;
-      border-radius: 8px;
-      width: 320px;
-      max-width: 90%;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 10000;
-      border: 1px solid #ccc;
+      display: block !important; background-color: #fff; border-radius: 8px; width: 320px; max-width: 90%;
+      padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: relative; z-index: 10000; border: 1px solid #ccc;
     }
     .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
     }
-    .modal-header h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
+    .modal-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
     .modal-header .modal-close {
-      border: none;
-      background: transparent;
-      font-size: 24px;
-      line-height: 1;
-      cursor: pointer;
+      border: none; background: transparent; font-size: 24px; line-height: 1; cursor: pointer;
     }
     .modal-body label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      font-size: 14px;
+      display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;
     }
     .modal-body input {
-      width: 100%;
-      margin-bottom: 15px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
+      width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;
     }
     .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
+      display: flex; justify-content: flex-end; gap: 8px;
     }
     .modal-footer button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
+      padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;
     }
-    .modal-footer .modal-save {
-      background-color: #ff8200;
-      color: #fff;
-    }
-    .modal-footer .modal-cancel {
-      background-color: #ccc;
-    }
-    /* 배송지 목록 항목 스타일 */
+    .modal-footer .modal-save { background-color: #ff8200; color: #fff; }
+    .modal-footer .modal-cancel { background-color: #ccc; }
+
+    /* 배송지 목록 항목 */
     .address-item {
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      border-bottom: 1px solid #eee; padding: 8px 0; display: flex; align-items: center; justify-content: space-between;
     }
-    .address-info {
-      font-size: 14px;
-      line-height: 1.4;
-    }
+    .address-info { font-size: 14px; line-height: 1.4; }
     .btn-select-address {
-      padding: 4px 8px;
-      border: 1px solid #ddd;
-      background: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 12px;
+      padding: 4px 8px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer;
+      transition: background-color 0.3s; font-size: 12px;
     }
-    .btn-select-address:hover {
-      background-color: #f9f9f9;
+    .btn-select-address:hover { background-color: #f9f9f9; }
+
+    /* ★ 쿠폰 모달 */
+    #couponModalOverlay { display: none; }
+    #couponModalOverlay .modal {
+      width: 400px; max-width: 90%; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+    #couponModalOverlay .modal-header {
+      background: #ff8200; color: #fff; padding: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;
+    }
+    #couponModalOverlay .modal-header h3 {
+      margin: 0; font-size: 20px;
+    }
+    #couponModalOverlay .modal-body {
+      max-height: 300px; overflow-y: auto; padding: 15px;
+    }
+    #couponModalOverlay .coupon-list { list-style: none; padding: 0; margin: 0; }
+    #couponModalOverlay .coupon-item {
+      border: 1px solid #eee; border-radius: 6px; padding: 10px; margin-bottom: 10px; transition: background 0.3s; cursor: pointer;
+    }
+    #couponModalOverlay .coupon-item:hover { background: #f7f7f7; }
+    #couponModalOverlay .modal-footer {
+      padding: 15px; text-align: right; border-top: 1px solid #eee;
+    }
+    #couponModalOverlay .coupon-modal-apply {
+      background: #ff8200; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; transition: background 0.3s;
+    }
+    #couponModalOverlay .coupon-modal-apply:hover { background: #e66a00; }
+    #couponModalOverlay .coupon-modal-cancel {
+      background: #ccc; color: #333; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px; transition: background 0.3s;
+    }
+    #couponModalOverlay .coupon-modal-cancel:hover { background: #b3b3b3; }
   </style>
 </head>
 <body>
@@ -184,20 +292,25 @@
   <div class="order-content">
     <!-- 왼쪽: 배송, 할인, 결제 정보 -->
     <div class="order-left">
-      <!-- 배송지 정보 -->
+      <!-- 배송지 정보 (개선된 구조) -->
       <div class="order-section shipping-box">
         <h3>배송지 정보</h3>
-        <div class="sub-info">
-          받는 분:
-          <strong><c:out value="${receiverName}" /></strong>
-          <button type="button" class="btn-addr-info">배송지 변경</button>
+        <!-- 받는 분 + 연락처, 배송지 변경 버튼 한 줄 -->
+        <div class="shipping-header">
+          <div class="recipient-info">
+            <strong class="recipient-name"><c:out value="${receiverName}" /></strong>
+            <span class="recipient-phone"><c:out value="${phone}" /></span>
+          </div>
+          <button type="button" class="btn-addr-change">배송지 변경</button>
         </div>
+        <!-- 주소 표시 박스 -->
         <div class="addr-text">
           <c:if test="${not empty addTitle}">
             <c:out value="${addTitle}" /> <c:out value="${addDetail}" /><br/>
           </c:if>
-          <c:out value="${phone}" />
         </div>
+
+        <!-- 배송시 요청사항(메모) -->
         <select class="memo-input">
           <option value="">배송시 요청사항을 선택해주세요.</option>
           <option value="contact_before">배송 전 연락바랍니다</option>
@@ -207,34 +320,34 @@
           <option value="other">기타 입력</option>
         </select>
         <div id="otherRequestDiv" style="display:none; margin-top:10px;">
-          <input type="text" maxlength="50" placeholder="최대 50자 입력이 가능합니다." style="width:100%; padding:8px; font-size:14px; border:1px solid #ddd; border-radius:4px;" />
+          <input type="text" maxlength="50" placeholder="최대 50자 입력이 가능합니다."
+                 style="width:100%; padding:8px; font-size:14px; border:1px solid #ddd; border-radius:4px;" />
         </div>
       </div>
 
-      <!-- 할인 및 포인트 -->
+      <!-- 할인 및 포인트 (개선된 구조) -->
       <div class="order-section discount-box">
         <h3>쿠폰 및 포인트 사용</h3>
-        <div class="sub-info">
-          쿠폰할인 <strong>0원</strong>
+        <!-- 쿠폰 할인 / 버튼을 가로로 배치 -->
+        <div class="coupon-discount-row">
+          <div class="coupon-discount-left">
+            <span>쿠폰할인&nbsp;</span>
+            <strong class="couponDiscount">0원</strong>
+          </div>
+          <div class="coupon-discount-right">
+            <button type="button" id="openCouponModal" class="coupon-btn">쿠폰 적용</button>
+          </div>
         </div>
-        <label>
-          쿠폰을 선택해 주세요:
-          <select name="couponCode">
-            <option value="">선택 없음</option>
-            <c:forEach var="coupon" items="${couponList}">
-              <option value="${coupon.couponCode}">
-<%--                  ${coupon.couponName} (${coupon.couponRate}% 할인)--%>
-                      ${coupon.couponCode} (${coupon.couponRate}% 할인)
-              </option>
-            </c:forEach>
-          </select>
-        </label>
-        <div style="margin-top:10px;">
-          나의 포인트 <strong>${memberPoint.balance}원</strong>
-          <input type="text" name="balance" style="width:80px; text-align:right;" />
-          <button type="button" class="point-btn">전액사용</button>
+
+        <!-- 포인트 사용 영역 -->
+        <div class="point-use-row">
+          <span>나의 포인트 <strong>${memberPoint.balance}원</strong></span>
+          <div class="point-input-wrap">
+            <input type="text" name="balance" placeholder="0" />
+            <button type="button" class="point-btn">전액사용</button>
+          </div>
         </div>
-        <div style="margin-top: 15px; font-size:14px; color:#999;">
+        <div class="point-guide">
           제휴포인트도 스마일캐시로 전환하세요!<br/>
           <small>(SSG MONEY / PAYCO / L.POINT 등)</small>
         </div>
@@ -294,7 +407,7 @@
           <span>
             <fmt:formatNumber value="${productTotal}" pattern="#,###" />원
           </span><br/>
-          할인금액: <span style="color:#f05;">-0원</span><br/>
+          할인금액: <span style="color:#f05;" class="couponDiscount">-0원</span><br/>
           배송비:
           <span>
             <fmt:formatNumber value="${shippingFee}" pattern="#,###" />원
@@ -308,13 +421,15 @@
         <form action="${pageContext.request.contextPath}/order/submit" name="orderSubmit" method="post">
           <!-- 필요 시 hidden 필드 추가 -->
           <button class="btn-submit-order" type="submit">결제하기</button>
+          <input type="hidden" name="discountAmount" id="discountAmount" value="" />
+          <input type="hidden" name="finalNetPay" id="finalNetPayInput" value="" />
         </form>
       </div>
     </div> <!-- //order-right -->
   </div> <!-- //order-content -->
 </div> <!-- //order-page-container -->
 
-<!-- 모달창 (배송지 변경) -->
+<!-- 배송지 변경 모달 (기존 유지) -->
 <div id="modalOverlay" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -387,6 +502,36 @@
   </div>
 </div>
 
+<!-- ★ 쿠폰 모달 -->
+<div id="couponModalOverlay" class="modal-overlay">
+  <div class="modal" style="width:400px; max-width:90%; border:none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    <div class="modal-header" style="background: #ff8200; color: #fff; padding: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+      <h3 style="margin:0; font-size:20px;">보유 쿠폰 선택</h3>
+      <button type="button" class="modal-close coupon-modal-close" style="border:none; background:transparent; font-size:24px; cursor:pointer; color:#fff;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:15px; max-height:300px; overflow-y:auto;">
+      <ul class="coupon-list" style="list-style:none; padding:0; margin:0;">
+        <c:forEach var="coupon" items="${couponList}">
+          <li class="coupon-item" data-coupon-code="${coupon.couponCode}" data-coupon-rate="${coupon.couponRate}"
+              style="border: 1px solid #eee; border-radius: 6px; padding: 10px; margin-bottom: 10px; transition: background 0.3s; cursor: pointer;">
+            <div class="coupon-info">
+              <span class="coupon-code" style="font-weight:bold; color:#ff8200; font-size:16px;">${coupon.couponCode}</span>
+              <span class="coupon-name" style="display:block; margin-top:5px;">${coupon.couponName}</span>
+              <span class="coupon-rate" style="color:#555;">(${coupon.couponRate}% 할인)</span><br/>
+              <span class="coupon-expiration" style="font-size:12px; color:#999;">~ ${coupon.expireDate} 까지 사용 가능</span>
+            </div>
+          </li>
+        </c:forEach>
+      </ul>
+    </div>
+    <div class="modal-footer" style="padding:15px; text-align:right; border-top:1px solid #eee;">
+      <button type="button" class="coupon-modal-cancel modal-close" style="background:#ccc; color:#333; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; margin-right:10px; transition: background 0.3s;">취소</button>
+      <button type="button" class="coupon-modal-apply" style="background:#ff8200; color:#fff; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; transition: background 0.3s;">쿠폰 적용</button>
+    </div>
+  </div>
+</div>
+<!-- ★ 쿠폰 모달 끝 -->
+
 <footer>
   <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 </footer>
@@ -407,9 +552,7 @@
     }
     $.ajax(url, settings);
   }
-</script>
 
-<script>
   // 다음 우편번호 API를 모달 input 필드에 적용
   function sample6_execDaumPostcode() {
     new daum.Postcode({
@@ -455,13 +598,14 @@
       }
     });
 
-    // 모달 관련
+    // 모달 관련 (배송지 변경)
     const $modalOverlay = $('#modalOverlay');
-    const $btnAddrChange = $('.btn-addr-info');
+    // 변경: 클래스명을 btn-addr-info -> btn-addr-change 로 바꿨으므로 아래도 맞춤
+    const $btnAddrChange = $('.btn-addr-change');
     const $closeButtons = $('.modal-close');
     const $btnSave = $('.modal-save');
 
-    // 배송지 변경 버튼 클릭시 목록
+    // 배송지 변경 버튼 클릭시 목록 열기
     $btnAddrChange.click(function() {
       $('#modalAddressList').show();
       $('#modalAddressForm').hide();
@@ -488,9 +632,10 @@
       $('#modalAddressList').show();
     });
 
-    // 취소 버튼 -> 모달 닫기
+    // 모달 닫기 버튼
     $closeButtons.click(function() {
       $modalOverlay.hide();
+      $('#couponModalOverlay').hide();
     });
 
     // 우편번호 찾기 -> 다음 우편번호 API 호출
@@ -506,14 +651,15 @@
       const addDetail = $li.data('adddetail');
       const phone = $li.data('phone');
 
-      // 화면에 배송 정보 업데이트
-      $('.shipping-box .sub-info strong').text(receiverName);
+      // 화면의 배송 정보 업데이트
+      $('.recipient-name').text(receiverName);
+      $('.recipient-phone').text(phone);
+
       let newAddrHtml = addTitle;
       if(addDetail) { newAddrHtml += ' ' + addDetail; }
-      newAddrHtml += '<br/>' + phone;
-      $('.shipping-box .addr-text').html(newAddrHtml);
+      $('.addr-text').html(newAddrHtml);
 
-      // 배송지 선택 AJAX 호출
+      // 배송지 선택 AJAX 호출 (실제로 서버에 저장 필요하면 사용)
       $.ajax({
         url: '${pageContext.request.contextPath}/order/selectAddress',
         type: 'post',
@@ -536,7 +682,7 @@
       });
     });
 
-    // 포인트 전액사용 버튼 클릭: input 필드에 전액값을 넣고 결제금액 업데이트
+    // 포인트 전액사용 버튼
     $('.point-btn').click(function (){
       const fullPoint = parseInt("${memberPoint.balance}", 10);
       $("input[name=balance]").val(fullPoint);
@@ -560,7 +706,7 @@
       $("#finalNetPay").html(finalTotal.toLocaleString() + "원");
     }
 
-    // 기타 모달 및 AJAX 코드 유지
+    // 주소 저장 버튼 (새 배송지 등록)
     $btnSave.click(function() {
       if ($('#modalAddressForm').is(':visible')) {
         const receiverName  = $('#modalReceiverName').val();
@@ -594,7 +740,7 @@
           firstAdd: firstAdd
         };
 
-        // 신규 배송지 등록
+        // 신규 배송지 등록 AJAX
         $.ajax({
           url: '${pageContext.request.contextPath}/order/insertAddress',
           type: 'post',
@@ -603,11 +749,15 @@
           success: function(data) {
             if(data.status === 'success') {
               alert('배송지 등록 성공');
-              $('.shipping-box .sub-info strong').text(receiverName);
+
+              // 화면 표시 갱신
+              $('.recipient-name').text(receiverName);
+              $('.recipient-phone').text(phone);
+
               let newAddrHtml = addTitle;
               if(addDetail) { newAddrHtml += ' ' + addDetail; }
-              newAddrHtml += '<br/>' + phone;
-              $('.shipping-box .addr-text').html(newAddrHtml);
+              $('.addr-text').html(newAddrHtml);
+
               $modalOverlay.hide();
             } else {
               alert('등록 실패: ' + (data.message || '알 수 없는 오류'));
@@ -622,8 +772,49 @@
       }
     });
 
+    // 결제하기 버튼
     $('.btn-submit-order').click(function () {
-      alert('구매하기버튼');
+      alert('구매하기 버튼 클릭');
+    });
+
+    // 쿠폰 모달 열기
+    $('#openCouponModal').click(function(){
+      $('#couponModalOverlay').css('display','flex');
+    });
+    // 쿠폰 모달 닫기
+    $('.coupon-modal-close').click(function(){
+      $('#couponModalOverlay').hide();
+    });
+    // 쿠폰 목록에서 선택
+    $(document).on('click', '.coupon-item', function(){
+      $('.coupon-item').removeClass('selected').css('background', '');
+      $(this).addClass('selected').css('background', '#f7f7f7');
+    });
+    // 쿠폰 적용
+    $('.coupon-modal-apply').click(function(){
+      var selected = $('.coupon-item.selected');
+      if(selected.length === 0){
+        alert("쿠폰을 선택해주세요.");
+        return;
+      }
+      var couponCode = selected.data('coupon-code');
+      var couponRate = selected.data('coupon-rate');
+
+      // overallNetPay -> 최종 결제 금액
+      let overallNetPayStr = "${overallNetPay}";
+      let originalTotal = parseInt(overallNetPayStr.replace(/,/g, ''), 10) || 0;
+
+      // 할인 금액 = 최종 결제 금액 * 할인율 / 100
+      let discountAmount = Math.floor(originalTotal * couponRate / 100);
+      let finalTotal = originalTotal - discountAmount;
+
+      $(".couponDiscount").text("-" + discountAmount.toLocaleString() + "원");
+      $("#finalNetPay").text(finalTotal.toLocaleString() + "원");
+
+      $('#discountAmount').val(discountAmount);
+      $('#finalNetPayInput').val(finalTotal);
+      alert("쿠폰 " + couponCode + " (" + couponRate + "% 할인) 이(가) 적용되었습니다.");
+      $('#couponModalOverlay').hide();
     });
   });
 </script>

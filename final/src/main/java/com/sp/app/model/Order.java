@@ -1,6 +1,7 @@
 package com.sp.app.model;
 
 import lombok.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -10,29 +11,34 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Order {
+  private Payment payments;
+  private OrderItem orderItem;
 
+  private ShippingInfo shippingInfo;
   /*Order*/
   private String orderCode;       // 주문번호
   private long memberIdx;       // 회원 번호
   private String email;         // 회원 이메일
   private String orderDate;     // 주문일시
-  private int addrNum;       // 배송지 주소
   private int totalPrice;       // 전체 주문 금액
+  private int salePrice; // 세일 가격
+  private int savedMoney; // 상품 가격 - 세일 가격 = 할인 가겨
+  // 10,000 - 8,000 = 2,000 savedMoney - 2,000
+
 
   private String couponCode; // 쿠폰 코드
   private String couponName;    //  쿠폰 이름
-  private int couponRate;      //  쿠폰 할인 금액
-  private int couponValue;
+  private Integer couponRate;      //  쿠폰 할인 금액
+  private Integer couponValue;
   private int couponValid; // 쿠폰 사용여부
   private String couponStart; // 쿠폰 시작일
   private String expireDate; // 쿠폰 종료일
 
 
-  private int spentPoint;       //  사용 포인트
+  private Integer spentPoint;       //  사용 포인트
   private int netPay;           // 최종 결제 금액
   private String confirmDate;   // 주문 확인일시
   private String payment;       // 결제 수단
-  private List<OrderItem> orderItems; // 개별 주문 항목 리스트
 
   /*OrderItem*/
   private long productCode;
@@ -60,4 +66,22 @@ public class Order {
   private String provider; // 카드사
   private String byMethod; // 결제수단
   private String cardNumber; // 카드번호
+
+  private List<String> optionNames; //  옵션이름
+  private List<String> optionNames2; // 옵션이름
+  private List<Long> productCodes; // 상품코드
+  private List<String> optionValues; // 옵션값
+  private List<String> optionValues2; // 옵션값
+  private List<Integer> productMoneys; // 상품가격
+  private List<Integer> prices; // 가격
+  private List<Integer> salePrices; // 세일
+  private List<Integer> savedMoneys;
+  private List<Integer> quantities; // 수량들
+  private List<OrderItem> orderItems; // 개별 주문 항목 리스트
+
+  private List<Integer> priceForeachs;
+
+  private List<String> optionsList; // 옵션리스트
+
+
 }

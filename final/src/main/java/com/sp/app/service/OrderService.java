@@ -31,9 +31,9 @@ public interface OrderService {
   MemberPoint getLatestUserPoint(long userId);
 
   // 유저 쿠폰 조회
-  List<Order> getCouponList(long memberIdx);  // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
+  List<Coupon> getCouponList(long memberIdx);  // 주문 내역 상세 리스트 조회: 주문의 여러 상세 정보(리스트)를 조회할 경우
 
-  List<Order> getOrderDetailList(Map<String, Object> params);
+  List<Order> getOrderDetailList(String orderCode);
   List<Order> listOrderProduct(List<Map<String, Long>> list);
   // params에는 userId, 기간 등 다양한 검색 조건이 들어갈 수 있음.
 
@@ -42,6 +42,8 @@ public interface OrderService {
 
   // 상품 정보 조회: 주문에 포함된 상품 정보를 조회할 경우
   MainProduct getProduct(long productId);
+
+  OrderItem getProductCode(long productId);
 
   // 옵션 상세 리스트 조회: 상품에 관련된 옵션(예, 색상, 사이즈 등) 리스트 조회
 //  List<OptionDetail> getOptionDetailList(long productId);
@@ -58,4 +60,7 @@ public interface OrderService {
 
   Order processOrder(SessionInfo sessionInfo) throws Exception;
   Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes) throws Exception;
-}
+
+  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Order orderFromView) throws Exception;
+
+  }

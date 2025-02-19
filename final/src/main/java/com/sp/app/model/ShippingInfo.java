@@ -16,4 +16,9 @@ public class ShippingInfo {
   private String addDetail; // 배송지 상세 주소 ex:101
   private String phone;         // 연락처
   private Integer firstAdd; // 기본 배송지 등록 1 - 기본
+  private long itemCode;
+  private long productCode;
+  private String require;
+  private String addrName;
+  private String state;
 }

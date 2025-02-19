@@ -17,4 +17,8 @@ public class OrderItem {
     private int price;          // 상품 금액 (priceForeach * quantity)
     private int shipping;       // 배송비
     private int orderState;     // 주문 상태
+    private Integer spentPoint;       //  사용 포인트
+    private Integer couponValue;
+
+
 }

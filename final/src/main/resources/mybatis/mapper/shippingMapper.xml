@@ -16,5 +16,11 @@
         values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAdd}, #{postCode})
     </insert>
 
+    <insert id="insertPackage" parameterType="com.sp.app.model.ShippingInfo">
+        insert into PACKAGE (ITEM_CODE, MEMBERIDX, PRODUCTCODE, TRACKINGNUMBER, STATE, COMPANY_ID, REQUIRE, ADDRNAME,
+                             ADDRTITLE, ADDRDETAIL, POSTCODE, PHONE)
+        values (#{itemCode}, #{memberIdx}, #{productCode}, null, 0, null, #{require}, #{addName}, #{addTitle}, #{addDetail}, #{postCode}, #{phone} )
+    </insert>
+
 
 </mapper>

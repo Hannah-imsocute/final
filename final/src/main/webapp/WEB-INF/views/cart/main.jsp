@@ -98,11 +98,6 @@
             text-align: center; border: 1px solid #ddd;
             border-radius: 4px; font-size: 15px;
         }
-        .coupon-btn {
-            background: #ff8200; color: #fff; font-size: 12px;
-            border: none; border-radius: 4px; padding: 4px 6px; cursor: pointer;
-        }
-        .coupon-btn:hover { background: #ff8400; }
         /* 가격 및 삭제 버튼 */
         .price-and-delete { display: flex; align-items: center; gap: 8px; }
         .item-price { font-size: 16px; font-weight: bold; }
@@ -148,43 +143,6 @@
             font-size: 16px; cursor: pointer; text-align: center;
         }
         .btn-checkout:hover { background: #ff6600; }
-        /* 쿠폰 모달 */
-        .coupon-modal {
-            display: none; position: fixed; z-index: 1000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        .coupon-modal-content {
-            background: #fff; margin: 10% auto; padding: 20px;
-            border-radius: 8px; max-width: 500px; position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.3s ease;
-        }
-        .coupon-modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #eee; padding-bottom: 10px;
-        }
-        .coupon-modal-header h3 { margin: 0; font-size: 20px; }
-        .coupon-modal-close { font-size: 24px; cursor: pointer; color: #999; }
-        .coupon-modal-close:hover { color: #ff8200; }
-        .coupon-modal-body { margin: 15px 0; max-height: 300px; overflow-y: auto; }
-        .coupon-list { list-style: none; margin: 0; padding: 0; }
-        .coupon-item {
-            padding: 10px; border: 1px solid #f0f0f0;
-            border-radius: 5px; margin-bottom: 10px;
-            transition: background 0.3s; cursor: pointer;
-        }
-        .coupon-item:hover { background: #f9f9f9; }
-        .coupon-info { display: flex; flex-direction: column; gap: 4px; }
-        .coupon-code { font-weight: bold; color: #ff8200; font-size: 16px; }
-        .coupon-description { font-size: 14px; color: #555; }
-        .coupon-expiration { font-size: 12px; color: #999; }
-        .coupon-modal-footer { text-align: right; border-top: 1px solid #eee; padding-top: 10px; }
-        .coupon-modal-apply {
-            background: #ff8200; border: none; color: #fff;
-            padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;
-        }
-        .coupon-modal-apply:hover { background: #ff6600; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
@@ -288,34 +246,6 @@
                                                    data-cartitemcode="${cart.cartItemCode}" data-oldprice="${cart.price}" />
                                             <button type="button" class="btn-qty quantity-plus">+</button>
                                         </div>
-                                        <!-- 쿠폰 버튼 -->
-                                        <button type="button" class="coupon-btn">쿠폰적용</button>
-                                        <!-- 쿠폰 모달 -->
-                                        <div class="coupon-modal" id="couponModal">
-                                            <div class="coupon-modal-content">
-                                                <div class="coupon-modal-header">
-                                                    <h3>보유 쿠폰 목록</h3>
-                                                    <span class="coupon-modal-close">&times;</span>
-                                                </div>
-                                                <div class="coupon-modal-body">
-                                                    <ul class="coupon-list">
-                                                        <c:forEach var="coupon" items="${couponList}">
-                                                            <li class="coupon-item">
-                                                                <div class="coupon-info">
-                                                                    <span class="coupon-code">${coupon.couponCode}</span>
-                                                                    <span class="coupon-rate">(${coupon.couponRate}% 할인)</span>
-                                                                    <span class="coupon-description">${coupon.couponName}</span>
-                                                                    <span class="coupon-expiration">~ ${coupon.expireDate} 까지 사용 가능</span>
-                                                                </div>
-                                                            </li>
-                                                        </c:forEach>
-                                                    </ul>
-                                                </div>
-                                                <div class="coupon-modal-footer">
-                                                    <button type="button" class="coupon-modal-apply">쿠폰 적용</button>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <!-- 가격 및 삭제 -->
                                         <div class="price-and-delete">
                                             <div class="item-price price-text" data-oldprice="${cart.price}">
@@ -338,7 +268,10 @@
                                     <span class="divider">|</span>
                                     <div>
                                         <span class="label">할인금액</span>
-                                        <span class="value price-text" style="color:#f05;">7,000원</span>
+                                        <c:if test="${not empty discount}">
+                                            <span class="value price-text" style="color:#f05;">0원</span>
+                                        </c:if>
+                                        <span class="value price-text" style="color:#f05;">0원</span>
                                     </div>
                                     <span class="divider">|</span>
                                     <div>
@@ -349,7 +282,7 @@
                                     <div>
                                         <span class="label">주문금액</span>
                                         <span class="value footer-order-amount price-text">
-                                            <fmt:formatNumber value="${(cart.quantity * cart.price) - 7000}" pattern="#,###" />원
+                                            <fmt:formatNumber value="${(cart.quantity * cart.price)}" pattern="#,###" />원
                                         </span>
                                     </div>
                                 </div>
@@ -381,7 +314,7 @@
                     </div>
                     <div class="summary-item">
                         <span class="label">할인금액</span>
-                        <span class="value discount-info">-7,000원</span>
+                        <span class="value discount-info">0원</span>
                     </div>
                     <div class="summary-item">
                         <span class="label">배송비</span>
@@ -476,7 +409,7 @@
                 let $price = $cartItemBlock.find('.item-price');
                 $price.text(newPrice.toLocaleString() + '원');
                 $cartItemBlock.find('.footer-product-amount').text(newPrice.toLocaleString() + '원');
-                let orderAmount = newPrice - 7000;
+                let orderAmount = newPrice
                 $cartItemBlock.find('.footer-order-amount').text(orderAmount.toLocaleString() + '원');
                 updateTotalPrice();
             } else {
@@ -505,26 +438,13 @@
 
     $(function () {
         $('.selectAll').click(function () {
-            let isChecked = $(this).prop('checked');
-            $('.cart-item-check input[type="checkbox"]').prop('checked', isChecked);
+            let isChecked = $(this).prop("checked");
+            $('.cart-item-check input[type="checkbox"]').prop("checked", isChecked);
         });
         $('.cart-item-check input[type=checkbox]').click(function (){
-            let length = $('.cart-item-check input[type=checkbox]').length;
-            let total = $('.cart-item-check input[type=checkbox]:checked').length;
-            $('.selectAll').prop('checked', length === total);
-        });
-    });
-
-    $(function () {
-        $('.coupon-btn').click(function () {
-            $("#couponModal").css("display", "block");
-        });
-        $('.coupon-modal-close').click(function (){
-            $('#couponModal').css("display", "none");
-        });
-        $('.coupon-modal-apply').click(function () {
-            let url = '${pageContext.request.contextPath}/coupon/use';
-            // 쿠폰 적용 로직 추가
+            let length = $('.cart-item-check input[type="checkbox"]').length;
+            let total = $('.cart-item-check input[type="checkbox"]:checked').length;
+            $('.selectAll').prop("checked", length === total);
         });
     });
 

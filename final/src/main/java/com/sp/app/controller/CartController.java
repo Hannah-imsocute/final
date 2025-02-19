@@ -1,5 +1,6 @@
 package com.sp.app.controller;
 
+import com.sp.app.model.Coupon;
 import com.sp.app.model.Order;
 import com.sp.app.model.SessionInfo;
 import com.sp.app.model.cart.CartItem;
@@ -38,7 +39,7 @@ public class CartController {
       for (CartItem cartItem : list) {
         model.addAttribute("cartItemCode", cartItem.getCartItemCode());
       }
-      List<Order> couponList = orderService.getCouponList(memberIdx);
+      List<Coupon> couponList = orderService.getCouponList(memberIdx);
       model.addAttribute("cartList", list); //
       model.addAttribute("couponList", couponList); //
 
@@ -114,31 +115,6 @@ public class CartController {
     }
     return result;
   }
-
-  /*
-  ResponseEntity 쓰면 body message 쉽게 가능
-  @PostMapping("updateQuantity1")
-  public ResponseEntity<?> updateQuantityAjax(@RequestParam("cartItemCode") Long cartItemCode,
-                                              @RequestParam("quantity") Integer quantity,
-                                              HttpSession session) {
-    Map<String, Object> response = new HashMap<>();
-    try {
-      Map<String, Object> params = new HashMap<>();
-      params.put("cartItemCode", cartItemCode);
-      params.put("quantity", quantity);
-      cartItemService.updateCartItemQuantity(params);
-      response.put("status", "success");
-      return ResponseEntity.ok(response);
-    } catch (Exception e) {
-      log.info("updateQuantity", e);
-      response.put("status", "error");
-      response.put("message", e.getMessage());
-      return ResponseEntity.status(500).body(response);
-    }
-  }
-   */
-
-
 
   // 장바구니 삭제
 //  @PostMapping("delete")

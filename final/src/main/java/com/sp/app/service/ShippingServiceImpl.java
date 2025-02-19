@@ -5,6 +5,7 @@ import com.sp.app.model.ShippingInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,5 +29,16 @@ public class ShippingServiceImpl implements ShippingService{
             log.info("회원 주소지 목록 가져오기 실패", e);
         }
         return list;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void insertPackage(ShippingInfo shippingInfo) throws Exception {
+        try {
+            mapper.insertPackage(shippingInfo);
+        } catch(Exception e) {
+            log.info("insertPackage");
+            throw e;
+        }
     }
 }

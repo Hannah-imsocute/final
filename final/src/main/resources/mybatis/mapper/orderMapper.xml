@@ -8,23 +8,24 @@
         select ORDER_CODE
         from PRODUCT_ORDER
         order by ORDER_DATE desc
-        fetch first 1 rows only
+        FETCH FIRST 1 ROWS ONLY
     </select>
 
 
     <!-- 주문 번호 등록 -->
     <insert id="insertOrder" parameterType="com.sp.app.model.Order">
         INSERT INTO PRODUCT_ORDER
-        (order_code, memberidx, order_date, addr_num, total_price, coupon_code, couponvalue, spentpoint, netpay)
+        (order_code, memberidx, order_date, total_price, coupon_code, couponvalue, spentpoint, netpay)
         VALUES
-            (#{orderCode}, #{memberIdx}, SYSDATE, #{addrNum}, #{totalPrice}, #{couponCode, jdbcType=VARCHAR}, #{couponValue}, #{spentPoint}, #{netPay})
+            (#{orderCode}, #{memberIdx}, SYSDATE,  #{totalPrice}, #{couponCode, jdbcType=VARCHAR}, #{couponValue}, #{spentPoint}, #{netPay})
     </insert>
 
 
     <!-- 결제 내역 등록 -->
+    <!-- COMFIRMCODE -> 승인번호 -->
     <insert id="insertPayment" parameterType="com.sp.app.model.Payment">
         insert into PAYBYMETHOD (ORDER_CODE, MEMBERIDX, BYMETHOD, COMFIRMCODE, PROVIDER, confirm_date, card)
-        values (SEQ_PRODUCT_ORDER.currentval, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_CHAR(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{card} )
+        values (#{orderCode}, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_CHAR(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{card} )
     </insert>
 
     <!--  주문 상세 정보 등록  -->
@@ -42,13 +43,22 @@
     </insert>
 
     <!-- 포인트 등록 -->
-    <insert id="insertUserPoint" parameterType="com.sp.app.model.MemberPoint">
+  <!--
+   <insert id="insertUserPoint" parameterType="com.sp.app.model.MemberPoint">
         insert into POINT_SAVE (POINT_SAVE_NUM, MEMBERIDX, SAVEAMOUNT, SAVEDATE, EXPIREDATE, REASON, ENABLE, BALANCE)
-        VALUES (SEQ_POINT_SAVE.nextval, #{memberIdx}, #{saveAmount}, #{saveDate}, #{expireDate}, #{reason}, #{enable}, #{balance})
+        VALUES (SEQ_POINT_SAVE.nextval, #{memberIdx}, #{saveAmount}, TO_DATE(#{SAVEDATE},'YYYY-MM-DD HH24:MI:SS'),
+                #{expireDate}, #{reason}, #{enable}, #{balance})
     </insert>
+    -->
 
+    <!--포인트 등록 -->
+    <insert id="insertUserPoint" parameterType="com.sp.app.model.MemberPoint">
+        insert into POINT_EXPIRED (EXPIERD_NUM, MEMBERIDX, ORDER_CODE, POINT_SAVE_NUM, USEDAMOUNT, USEDATE)
+        VALUES (SEQ_POINT_SAVE.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, #{pointSaveNum},
+                TO_DATE(#{usedDate},'YYYY-MM-DD HH24:MI:SS'))
+    </insert>
     <!-- 주문 상세 정보 가져오기 -->
-    <select id="getOrderDetailList" parameterType="map" resultType="com.sp.app.model.Order">
+    <select id="getOrderDetailList" parameterType="String" resultType="com.sp.app.model.Order">
         select
             o.ORDER_CODE as orderCode, OPTIONS as options,
             PRICEFOREACH as priceForeach, quantity as quantity, PRICE as totalPrice,
@@ -57,7 +67,7 @@
             TO_CHAR(CONFIRM_DATE, 'YYYY-MM-DD HH24:MI:SS') as confirmDate
         from ORDER_ITEM o
                  join PAYBYMETHOD p on p.ORDER_CODE = o.ORDER_CODE
-        where o.ORDER_CODE = #{orderCode}
+        where o.ORDER_CODE = #{orderCode} AND
     </select>
 
     <!-- 여러 개의 (orderCode, productCode) 쌍을 파라미터로 받아
@@ -136,7 +146,6 @@
         -->
     </select>
 
-
     <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
     <!-- 상품 정보 -->
     <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
@@ -155,33 +164,15 @@
             fetch first 1 rows only
     </select>
 
-<!--    // 판매 개수만큼 재고 감소: 주문 후 재고 수량을 줄이는 경우-->
-    <update id="decreaseProductStock" parameterType="map">
-
-    </update>
-
-    <!-- 옵션 -->
 
     <!--유저 쿠폰 조회-->
-    <select id="getCouponList" parameterType="Long" resultType="com.sp.app.model.Order">
+    <select id="getCouponList" parameterType="Long" resultType="com.sp.app.model.Coupon">
         select COUPONCODE, c.VALID as couponValid, c.RATE as couponRate,
                c.EXPIREDATE as expireDate
         from USER_HAVE_COUPON uc
         left join COUPON c on c.COUPON_CODE = uc.COUPONCODE
         where memberIdx = #{memberIdx}
     </select>
-
-
-<!--    &lt;!&ndash; 배송지 변경  &ndash;&gt;
-    <update id="updateShippingAddress" parameterType="com.sp.app.model.ShippingInfo">
-&#45;&#45;         insert into MEMBER_ADDRESS (add_num, memberidx, name, phone, addname, ADDRTITLE, ADDRDETAIL, FIRSTADDR)
-&#45;&#45;         values (SEQ_MEMBER_ADDRESS.nextval, #{memberIdx}, #{receiverName}, #{phone}, #{addName}, #{addTitle}, #{addDetail}, #{firstAddr})
-        update from MEMBER_ADDRESS set name = #{receiverName}, phone = #{phone}, addrname = #{addName}, ADDRTITLE = #{addTitle}, ADDRDETAIL = #{addTitle},
-                                       FIRSTADDR = #{firstAddr}
-        where
-
-
-    </update>-->
 
 
 
