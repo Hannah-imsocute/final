@@ -106,7 +106,7 @@
 
 	<!-- 작품 신고 모달 -->
 	<div class="productReport-modal-dialog" style="display: none;">
-	    <p>리뷰 번호 : <span id="modal-reviewNum"></span></p>
+	    <p>작품명 : <span id="modal-item">${dto.item}</span></p>
 	
 	    <!-- 신고 사유 선택 -->
 	    <label for="productReport-reason">신고 사유:</label>
@@ -210,7 +210,7 @@ $(function(){
                     		var $productReviewBox = $(emptyHtml);
                     	
 	                    	$productReviewBox.find('.btn-report').attr("data-review-num", arrayKey.review_num);
-	                    	$productReviewBox.find('.review-num').text("댓글번호 :  " + arrayKey.review_num);
+	                    	$productReviewBox.find('.review-num').text("후기글번호 :  " + arrayKey.review_num);
 	                    	$productReviewBox.find('.review-author').text(" 작성자 :  " + arrayKey.nickName);
 	                    	$productReviewBox.find('.review-content').text(arrayKey.content);
 	                    	reviewContainer.append($productReviewBox);

@@ -593,9 +593,62 @@ public class ProductController {
 		return ResponseEntity.ok("신고가 성공적으로 접수 되었습니다");
 	}
     
+ // 작품 신고하기
+    @PostMapping("productReport")
+	public ResponseEntity productReviewReport(
+			@RequestParam(name = "productCode") Long productCode,
+			@RequestParam(name = "categoryName") String category_name, //사유옵션
+			@RequestParam(name = "content") String content,
+			HttpSession session) throws Exception{
+    	
+    	Long memberIdx = getMemberIdx(session);
+	    if (memberIdx == null) {
+	    	return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 세션입니다."));
+	    }
+	    
+		try {
+			System.out.println("memberIdx : " + memberIdx);
+		    System.out.println("productCode : " + productCode);
+		    System.out.println("category_name : " + category_name);
+		    System.out.println("content : " + content);
+		    
+			// 받아온 카테고리명을 카테고리번호로 변환
+			 Map<String, Integer> categoryMap = Map.of(
+		                "spam"      , 1,  // 스팸 또는 광고
+		                "offensive" , 2,  // 부적절한 콘텐츠
+		                "copyright" , 3,  // 저작권 침해
+		                "other"     , 4   // 기타
+		                );
+
+	        if (!categoryMap.containsKey(category_name)) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "유효하지 않은 카테고리명입니다."));
+	        }
+
+		    int categoryNum = categoryMap.get(category_name); // 카테고리명을 카테고리번호로 변환 - 신고하기/문의하기 테이블 카테고리 정보
+		    System.out.println("categoryNum : " + categoryNum);
+		    
+		    Map<String, Object> params = new HashMap<>();
+		    params.put("memberIdx", memberIdx);
+		    params.put("productCode", productCode);
+		    params.put("categoryNum", categoryNum);
+		    params.put("content", content);
+		    
+		    service.insertProductReport(params); // 후기글 신고등록
+		    
+		} catch (NullPointerException e) {
+			log.info("detailRequest NullPointerException : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		} catch (Exception e) {
+			log.info("detailRequest Exception : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		}
+		return ResponseEntity.ok("신고가 성공적으로 접수 되었습니다");
+	}
+    
     // Session 에서 회원코드 반환
     private static Long getMemberIdx(HttpSession session) {
       SessionInfo member = (SessionInfo) session.getAttribute("member");
       return member.getMemberIdx();
     }
+      
 }

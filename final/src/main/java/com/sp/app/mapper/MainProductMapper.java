@@ -26,5 +26,7 @@ public interface MainProductMapper {
 	public List<MainProduct> listMainProductReview(long productCode); 
 	public void insertReveiwReport(Map<String, Object> params);
 
+	public void insertProductReport(Map<String, Object> params); //작품 신고
+
 
 }

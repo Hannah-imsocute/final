@@ -250,6 +250,7 @@ public class MainProductServiceImpl implements MainProductService{
 		return list;
 	}
 
+	//작품 후기글 신고
 	@Override
 	public void insertReveiwReport(Map<String, Object> params) {
 		try {
@@ -257,6 +258,18 @@ public class MainProductServiceImpl implements MainProductService{
 		}catch(Exception e) {
 			log.info("insertReveiwReport : ", e  );
 		}
+	}
+	
+	//작품 신고
+	@Override
+	public void insertProductReport(Map<String, Object> params) {
+		try {
+			mapper.insertProductReport(params);
+		}catch(Exception e) {
+			log.info("insertProductReport : ", e  );
+		}
+	
+		
 	}
 
 

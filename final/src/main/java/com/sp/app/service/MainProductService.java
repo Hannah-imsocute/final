@@ -22,7 +22,8 @@ public interface MainProductService {
 	public List<MainProduct> listMainProductFile(long productCode);
 	public MainProduct findByCategoryId(int CategoryCode);
 	public List<MainProduct> listMainProductReview(long productCode);
-	public void insertReveiwReport(Map<String, Object> params);
+	public void insertReveiwReport(Map<String, Object> params); //작품 후기글 신고
 	
+	public void insertProductReport(Map<String, Object> params); //작품 신고
 
 }

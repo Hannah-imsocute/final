@@ -137,10 +137,8 @@
 		ON m.memberIdx = r.memberIdx
 		WHERE p.productCode = #{productCode}
 	</select>
-	
-	
-	
 
+	<!-- 작품 후기글 신고 -->
 	<select id="insertReveiwReport" parameterType="map">
 		INSERT INTO productreivewreport (
 		    report_code,
@@ -157,6 +155,25 @@
 		    #{content},
 		    sysdate
 		)
+	</select>
+	
+	<!-- 작품 신고 -->
+	<select id="insertProductReport" parameterType="map">
+			INSERT INTO item_report (
+			    sellerreport_num,
+			    productcode,
+			    memberidx2,
+			    reason,
+			    report_date,
+			    category_num
+			) VALUES (
+			    SEQ_ITEM_REPORT.NEXTVAL,
+			    #{productCode},
+			    #{memberIdx},
+			    #{content},
+			    sysdate,
+			    #{categoryNum}
+			)
 	</select>
 
 </mapper>
