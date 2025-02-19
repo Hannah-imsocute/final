@@ -109,8 +109,75 @@ var total_page_count = 0;
 var contextPath = "${pageContext.request.contextPath}";
 
 $(document).ready(function() {
-	/* 1. 왼쪽 메뉴바 클릭 이벤트 */
+	
+	// 페이지 로드 시 자동으로 전체 상품 불러오기
+    var page = 1; // 첫 페이지부터 시작
+    
+	/*1. 추천작품 탭 클릭시 초화면*/
+    $.ajax({
+        url: '/product/recommendMain',  // Spring Boot 서버 엔드포인트
+        method: 'GET',
+        data: { page:page },  // 요청 데이터
+        dataType: 'json',
+        beforeSend: function() {
+            $('#product-list').empty();  // AJAX 요청 전 기존 리스트 초기화
+        },
+        success: function(response) {
+            var productList = $('#product-list');
+         
+             // 메인 패널의 제목 변경
 
+            $('.dataCount').text(response.dataCount+"개");
+             
+
+            // 응답 데이터가 배열인지 확인 후 처리	
+            if (response && Array.isArray(response.list)) {
+            	$.each(response.list, function(arrayIndex, arrayKey) {
+            	    console.log("Processing arrayKey:", arrayKey);
+
+            	    // 빈 HTML을 먼저 추가
+            	    var emptyHtml = `
+            	        <div class="border rounded product-box">
+            	            <div class="product-info">
+            	                <div class="product-thumbnail">
+            	                	<img class="thumbnail-img">
+            	                <div>
+            	                <div class="product-brandName"></div>
+            	                <div class="product-item"></div>
+            	                <div class="product-price"></div>
+            	                <div class="product-discount"></div>
+            	                <div class="product-salePrice"></div>
+            	                <div class="product-productCode"></div>
+            	            </div>
+            	        </div>`;
+            	    var $productBox = $(emptyHtml);  // jQuery 객체로 변환
+            	    
+            	    // 데이터를 추가
+            	    $productBox.find('.thumbnail-img').attr("src",contextPath + "/uploads/product/" + arrayKey.thumbnail);
+            	    $productBox.find('.product-brandName').text(arrayKey.brandName);
+            	    $productBox.find('.product-item').text(arrayKey.item);
+            	    $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
+            	    $productBox.find('.product-discount').text(arrayKey.discount + "%");
+            	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
+            	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
+
+            	    // 최종적으로 productList에 추가
+            	    productList.append($productBox);
+            	    
+            	    page_total_count = arrayKey.total_page; // 전역변수에 전체페이지갯수 담아두기 
+            	})
+            } else {
+                console.warn('올바른 상품 데이터가 아닙니다.');
+            }
+
+        },
+        error: function(xhr, status, error) {
+            alert('상품 정보를 불러오는 데 실패했습니다.');
+            console.error(error, xhr.responseText);
+        }
+    });
+    
+    /* 1. 왼쪽 메뉴바 클릭 이벤트 */
     $('.left-menu ul li').on('click', function(event) {
         event.stopPropagation(); // 부모 요소로 이벤트 전파 방지
         $('#loadMore').prop("disabled", false).text("작품 더보기"); // 작품더보기 버튼 초기화

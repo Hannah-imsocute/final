@@ -8,6 +8,9 @@ import com.sp.app.model.MainProduct;
 public interface MainProductService {
 	public int totalDataCount(Map<String, Object> map); //전체 작품 개수
 	public List<MainProduct> listCategoryMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
+	public List<MainProduct> listPopularMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
+	public List<MainProduct> listRecommendMainProduct(Map<String, Object> map); //카테고리별 작품 리스트 초화면(메인)
+	
 	
 	public int dataCount(Map<String, Object> map); //카테고리별 작품 개수
 	
@@ -19,7 +22,8 @@ public interface MainProductService {
 	public List<MainProduct> listMainProductFile(long productCode);
 	public MainProduct findByCategoryId(int CategoryCode);
 	public List<MainProduct> listMainProductReview(long productCode);
-	public void insertReveiwReport(Map<String, Object> params);
+	public void insertReveiwReport(Map<String, Object> params); //작품 후기글 신고
 	
+	public void insertProductReport(Map<String, Object> params); //작품 신고
 
 }

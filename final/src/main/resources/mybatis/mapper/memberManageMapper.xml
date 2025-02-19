@@ -48,7 +48,7 @@
     </select>
     
 	<select id="listMember" parameterType="map" resultType="com.sp.app.admin.model.MemberManage">
-    	SELECT m1.memberIdx, m1.email, m1.nickname, m2.name, m1.block, 
+    	SELECT DISTINCT m1.memberIdx, m1.email, m1.nickname, m2.name, m1.block, 
 			m1.reg_date, m1.lastmodified, m1.lastlogin,
 			m2.phone, TO_CHAR(dob, 'YYYY-MM-DD') dob,
 			NVL(authority, 'maybeUser') authority
@@ -69,22 +69,29 @@
 	</select>
 
 	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.MemberManage">
-        SELECT m1.memberIdx, m1.nickname, m1.password, m3.authority, block,
-			m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount,
-			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
-			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
-			m1.email, m2.phone, 
-			m4.addrname, m4.addrtitle, m4.addrdetail, m4.firstaddr,
-			NVL(authority, 'maybeUser') authority
+		SELECT m1.memberIdx, m1.nickname, m1.password, 
+		       MAX(m3.authority) AS authority, block,
+		       m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount,
+		       TO_CHAR(dob, 'YYYY-MM-DD') dob, 
+		       NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 
+		       m1.email, MAX(m2.phone) AS phone, 
+		       MAX(m4.addrname) AS addrname, 
+		       MAX(m4.addrtitle) AS addrtitle, 
+		       MAX(m4.addrdetail) AS addrdetail, 
+		       MAX(m4.firstaddr) AS firstaddr,
+		       NVL(MAX(m3.authority), 'maybeUser') authority
 		FROM member m1
 		LEFT OUTER JOIN member_info m2 ON m1.memberIdx = m2.memberIdx
 		LEFT OUTER JOIN roles m3 ON m1.memberIdx = m3.memberIdx
 		LEFT OUTER JOIN member_address m4 ON m1.memberIdx = m4.memberIdx
 		WHERE m1.memberIdx = #{memberIdx}
+		GROUP BY m1.memberIdx, m1.nickname, m1.password, block, 
+		         m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount, 
+		         m1.email, dob
 	</select>
 	
 	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.MemberManage">
-        SELECT m1.memberIdx, m1.nickname, m1.password, m3.authority, block,
+        SELECT DISTINCT m1.memberIdx, m1.nickname, m1.password, m3.authority, block,
 			m1.reg_date, m1.lastmodified, m1.lastlogin, m1.failcount,
 			TO_CHAR(dob, 'YYYY-MM-DD') dob, 
 			NVL(TRUNC(MONTHS_BETWEEN(SYSDATE, dob)/12), -1) age, 

@@ -66,6 +66,7 @@ public class MainProductServiceImpl implements MainProductService{
 		return list;
 	}
 	
+	//카테고리별 작품 조회
 	@Override
 	public List<MainProduct> listCategoryProduct(Map<String, Object> map) {
        List<MainProduct> list = null;
@@ -87,8 +88,29 @@ public class MainProductServiceImpl implements MainProductService{
 		return list;
 	}
 
+	//인기작품 순 작품 조회 메인 초화면
+	@Override
+	public List<MainProduct> listPopularMainProduct(Map<String, Object> map) {
+		List<MainProduct> list = null;
+		try {
+			list = mapper.listPopularMainProduct(map);
+			
+			int discountPrice; //할인되는 가격
+			for(MainProduct dto : list) {
+				discountPrice = 0;
+				if(dto.getDiscount()>0) {
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+				}
+				dto.setSalePrice(dto.getPrice() - discountPrice);
+			}
+		} catch (Exception e) {
+			log.info("listPopularMainProduct : " , e);
+		}
+		return list;
+	}
 	
-	//인기작품별 작품 리스트
+	
+	//인기작품순 작품 리스트
 	@Override
 	public List<MainProduct> listPopularProduct(Map<String, Object> map) {
 		List<MainProduct> list = null;
@@ -112,6 +134,32 @@ public class MainProductServiceImpl implements MainProductService{
 		return list;
 	}
 	
+	
+	//추천작품 순 작품 조회 메인 초화면
+	@Override
+	public List<MainProduct> listRecommendMainProduct(Map<String, Object> map) {
+		 List<MainProduct> list = null;
+			
+			try {
+				list = mapper.listRecommendMainProduct(map);
+				
+				int discountPrice; //할인되는 가격
+				for(MainProduct dto : list) {
+					discountPrice = 0;
+					if(dto.getDiscount()>0) {
+						discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+					}
+					dto.setSalePrice(dto.getPrice() - discountPrice);
+				}
+				
+			} catch (Exception e) {
+				log.info("listRecommendMainProduct");
+			}
+			
+			return list;
+	}
+	
+	//추천작품 순 작품 조회
 	@Override
 	public List<MainProduct> listRecommendProduct(Map<String, Object> map) {
         List<MainProduct> list = null;
@@ -134,6 +182,8 @@ public class MainProductServiceImpl implements MainProductService{
 		
 		return list;
 	}
+	
+
 	
 
 	@Override
@@ -200,6 +250,7 @@ public class MainProductServiceImpl implements MainProductService{
 		return list;
 	}
 
+	//작품 후기글 신고
 	@Override
 	public void insertReveiwReport(Map<String, Object> params) {
 		try {
@@ -208,7 +259,18 @@ public class MainProductServiceImpl implements MainProductService{
 			log.info("insertReveiwReport : ", e  );
 		}
 	}
-
+	
+	//작품 신고
+	@Override
+	public void insertProductReport(Map<String, Object> params) {
+		try {
+			mapper.insertProductReport(params);
+		}catch(Exception e) {
+			log.info("insertProductReport : ", e  );
+		}
+	
+		
+	}
 
 
 }

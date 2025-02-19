@@ -26,9 +26,9 @@ public class MemberManage {
 	private String phone3;
 	private String dob;
 	private int age;
-	private String addName;
-	private String addTitle;
-	private String addDetail;
+	private String addrName;
+	private String addrTitle;
+	private String addrDetail;
 	private String firstAdd;
 	
 	private String authority;

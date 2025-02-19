@@ -33,54 +33,102 @@
             </sql>
     <select id="orderCount" parameterType="map" resultType="Integer">
         SELECT NVL(COUNT(*),0)
-        FROM product_order po
-        LEFT OUTER JOIN member m on po.memberIdx=m.memberIdx
-        <where>
+        FROM order_item oi LEFT OUTER JOIN PRODUCT pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+        LEFT OUTER JOIN SELLER_BRAND sb ON pd.BRAND_CODE = sb.BRAND_CODE
+        WHERE pd.BRAND_CODE = (SELECT BRAND_CODE FROM SELLER_BRAND WHERE MEMBERIDX= #{memberIdx})
             <include refid="tebNum-list"/>
             <if test="kwd!=null and kwd!=''">
                 AND <include refid="search-list"></include>
             </if>
-        </where>
     </select>
 
 <!--  통합검색    주문리스트 -->
     <select id="listOrder" parameterType="map" resultType="com.sp.app.artist.model.OrderManage">
-        SELECT po.order_Code,po.memberIdx,NVL(nickname,'무닉네임')nickname,TOTAL_PRICE,
-               COUPONVALUE,SPENTPOINT,oi.SHIPPING,NETPAY,TO_CHAR(ORDER_DATE,'YYYY-MM-DD HH24:MI')order_Date,
-               ORDER_STATE,p.COMPANY_NAME,p.TRACKINGNUMBER,
-               NVL(totalOrderCount, 0) totalOrderCount, NVL(totalQty, 0) totalQty,
-               NVL(cancelRequestCount, 0) cancelRequestCount,
-               NVL(exchangeRequestCount, 0) exchangeRequestCount,
-               NVL(detailCancelCount, 0) detailCancelCount
-        FROM PRODUCT_ORDER po JOIN ORDER_ITEM oi ON po.ORDER_CODE = oi.ORDER_CODE
-                              JOIN PACKAGE p  ON p.MEMBERIDX = po.MEMBERIDX
-                              LEFT OUTER JOIN MEMBER m ON PO.MEMBERIDX = m.MEMBERIDX
-                              LEFT OUTER JOIN (
-            SELECT ORDER_CODE,COUNT(*) totalOrderCount,SUM(amount) totalQty,
-                   COUNT(DECODE(ORDER_STATE,4,1,10,1,11,1)) cancelRequestCount,
-                   COUNT(DECODE(ORDER_STATE,6,1,7,1)) exchangeRequestCount,
-                   COUNT(DECODE(ORDER_STATE,3,1,5,1,12,1)) detailCancelCount
+        SELECT po.ORDER_CODE,oi.ITEM_CODE, NICKNAME, (oi.PRICE) AS netPay, oi.SHIPPING,
+        TO_CHAR(po.ORDER_DATE, 'YYYY-MM-DD HH24:MI') AS order_Date,
+        (dc.deliveryName)as company_name, p.TRACKINGNUMBER,oi.ORDER_STATE
+        ,
+        (QUANTITY)AS totalQty,
+        NVL( DECODE(ORDER_STATE, 4, 1, 10, 1, 11, 1) ,0)AS cancelRequestCount,
+        NVL( DECODE(ORDER_STATE, 6, 1, 7, 1),0 )AS exchangeRequestCount,
+        NVL(DECODE(ORDER_STATE, 3, 1, 5, 1, 12, 1),0 )AS detailCancelCount
+        FROM ORDER_ITEM oi
 
-            FROM ORDER_ITEM
-            GROUP BY ORDER_CODE
-        ) od ON po.ORDER_CODE = od.ORDER_CODE
-        <where>
+        LEFT OUTER JOIN PRODUCT_ORDER po ON po.ORDER_CODE = oi.ORDER_CODE
+        LEFT OUTER JOIN PACKAGE p ON oi.ITEM_CODE = p.ITEM_CODE
+        LEFT OUTER JOIN deliveryCompany dc ON dc.company_id = p.company_id
+
+        LEFT OUTER JOIN  PRODUCT pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+        LEFT OUTER JOIN SELLER_BRAND sb ON pd.BRAND_CODE = sb.BRAND_CODE
+        LEFT OUTER JOIN MEMBER m ON po.MEMBERIDX = m.MEMBERIDX
+        WHERE pd.BRAND_CODE = (
+        SELECT BRAND_CODE
+        FROM SELLER_BRAND
+        WHERE MEMBERIDX = #{memberIdx})
             <include refid="tebNum-list"/>
             <if test="kwd!=null and kwd!=''">
                 AND <include refid="search-list"/>
             </if>
-        </where>
-            ORDER BY po.ORDER_CODE DESC
+        ORDER BY ITEM_CODE DESC
         OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 
     </select>
-    
-    
+<!--    주문에 관한 정보-->
+    <select id="findByOrderId" parameterType="String" resultType="com.sp.app.artist.model.OrderManage">
+
+        SELECT (po.ORDER_CODE)AS item_code,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,
+               NVL(re.refund_amount,0) AS refund_amount,po.spentpoint,SHIPPING,(dc.deliveryName)as company_name,trackingnumber
+                ,(BYMETHOD)as payMethod,(PROVIDER)as cardName,(CARDNUMBER)as authNumber,(CONFIRM_DATE)as authDate
+        FROM ORDER_ITEM oi
+                 JOIN PRODUCT_ORDER po ON oi.ORDER_CODE=po.ORDER_CODE
+                 LEFT OUTER JOIN  PACKAGE p ON oi.ITEM_CODE = p.ITEM_CODE
+                 LEFT OUTER JOIN deliveryCompany dc ON dc.company_id = p.company_id
+
+                 LEFT OUTER JOIN REFUNDS re ON oi.ITEM_CODE =re.ITEM_CODE
+                 LEFT OUTER JOIN member m ON m.MEMBERIDX = po.MEMBERIDX
+                 LEFT OUTER JOIN PAYBYMETHOD pm ON po.ORDER_CODE = pm.ORDER_CODE
+                 LEFT OUTER JOIN product pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+            AND oi.ORDER_STATE IN (6,7,8,9)
+        where oi.ITEM_CODE =#{item_code}
+    </select>
+
+<!--주문한 상품에 관한 정보-->
+    <select id="OrderDetails" parameterType="String" resultType="com.sp.app.artist.model.OrderProduct">
+
+
+        SELECT (oi.item_code)AS item_code ,(pd.item)AS item, (oi.PRICEFOREACH)AS salePrice ,(options)as optionValue,(oi.PRICE)as totalMoney,(QUANTITY)as qty,(pd.price)as price,(ORDER_STATE)as orderState
+        FROM ORDER_ITEM oi JOIN PRODUCT pd ON pd.PRODUCTCODE = oi.PRODUCTCODE
+        where oi.ITEM_CODE = #{item_code}
+    </select>
 
 
 
 
 
+
+
+
+
+
+
+    <select id="listDeliveryCompany" resultType="map">
+        SELECT company_id,deliveryName,tel
+        FROM deliveryCompany
+    </select>
 
 
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

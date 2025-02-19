@@ -24,4 +24,5 @@ public interface ApplyManageService {
 
     // 회원 탈퇴 처리
     public void deleteSeller(Map<String, Object> map) throws Exception;
+
 }

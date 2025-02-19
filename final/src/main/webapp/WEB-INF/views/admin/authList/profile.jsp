@@ -53,7 +53,7 @@
 	<tr>
 		<td class="bg-light col-sm-2 fw-bold">주 소</td>
 		<td colspan="3">
-			${dto.addTitle}&nbsp;${dto.addDetail}
+			${dto.addrTitle}&nbsp;${dto.addrDetail}
 		</td>
 	</tr>	
 </table>
@@ -163,7 +163,7 @@
 					</table>
 					<div class="text-end">
 						<input type="hidden" name="memberIdx" value="${dto.memberIdx}">
-						<input type="hidden" name="registerId" value="${sessionScope.member.nickname}">
+						<input type="hidden" name="registerId" value="${sessionScope.member.nickName}">
 						
 						<button type="button" class="btn btn-light" onclick="updateStatusOk('${page}');">상태변경</button>
 					</div>
@@ -181,13 +181,25 @@
 					
 					<tbody>
 						<c:forEach var="vo" items="${listStatus}">
-							<tr>
-								<td class="left">${vo.reason}</td>
-								<td>${vo.registerId}</td>
-								<td>${vo.reg_date}</td>
-							</tr>
-						</c:forEach>
-				  
+						        <tr>
+						            <td class="left">
+						                <c:choose>
+						                    <c:when test="${vo.reason == 0}">잠금 해제</c:when>
+						                    <c:when test="${vo.reason == 2}">불법적인 방법으로 로그인</c:when>
+						                    <c:when test="${vo.reason == 3}">불건전 게시물 등록</c:when>
+						                    <c:when test="${vo.reason == 4}">다른 유저 비방</c:when>
+						                    <c:when test="${vo.reason == 5}">타계정 도용</c:when>
+						                    <c:when test="${vo.reason == 6}">약관 위반</c:when>
+						                    <c:when test="${vo.reason == 7}">1년이상 로그인하지 않음</c:when>
+						                    <c:when test="${vo.reason == 8}">기타</c:when>
+						                    <c:otherwise>알 수 없음</c:otherwise>
+						                </c:choose>
+						            </td>
+						            <td>${vo.registerId}</td>
+						            <td>${vo.block_date}</td>
+						        </tr>
+						    </c:forEach>
+										  
 						<c:if test="${listStatus.size()==0}">
 							<tr>
 								<td colspan="3" style="border: none;">등록된 정보가 없습니다.</td>

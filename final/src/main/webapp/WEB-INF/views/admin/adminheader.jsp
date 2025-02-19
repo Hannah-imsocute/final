@@ -6,7 +6,9 @@
 	<div class="container d-flex justify-content-end">
 		<ul class="nav user-menu">
 			<li class="nav-item">
-				<a href="#" class="nav-link">관리자 님</a>
+				<a href="#" class="nav-link">
+					<span>${sessionScope.member.nickName} 관리자님</span>
+				</a>
 			</li>
 			<li class="nav-item">
 				<a href="#" class="nav-link">알림</a>
@@ -33,7 +35,9 @@
 <div class="navbar-container d-flex justify-content-between align-items-center">
 	<!-- 로고 -->
 	<div class="navbar-brand">
-		<img src="/dist/images/layout/top_logo.png" alt="로고">
+		<a href='${pageContext.request.contextPath}/'>
+			<img src="/dist/images/layout/top_logo.png" alt="로고">
+		</a>
 	</div>
 	<div class="icon-text-group-container d-flex align-items-center">
 		<div class="icon-group">

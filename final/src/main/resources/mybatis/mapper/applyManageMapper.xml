@@ -72,7 +72,7 @@
 	</select>
 
     <update id="updateApply" parameterType="map" >
-	UPDATE seller_apply SET agreed = 0 WHERE seller_apply_num = #{sellerApplyNum, jdbcType=BIGINT}
+	UPDATE seller_apply SET agreed = #{agreed} WHERE seller_apply_num = #{sellerApplyNum, jdbcType=BIGINT}
     </update>
     
     <update id="updateMember2" parameterType="map">

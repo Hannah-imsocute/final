@@ -41,34 +41,34 @@
                         <table class="table table-bordered mb-1">
                             <tr>
                                 <td class="table-light" width="100">주문번호</td>
-                                <td width="160">${order.orderNum}</td>
+                                <td width="160">${order.item_code}</td>
                                 <td class="table-light" width="105">주문자</td>
-                                <td width="160">${order.userName}</td>
+                                <td width="160">${order.nickname}</td>
                                 <td class="table-light" width="105">주문일자</td>
-                                <td width="150">${order.orderDate}</td>
+                                <td width="150">${order.order_date}</td>
                                 <td class="table-light" width="100">주문상태</td>
                                 <td width="150">${order.orderStateInfo}</td>
                             </tr>
                             <tr>
-                                <td class="table-light">총금액</td>
+                                <td class="table-light">결제 금액</td>
                                 <td class="text-primary"><fmt:formatNumber value="${order.totalMoney}"/></td>
-                                <td class="table-light">적림금사용액</td>
-                                <td class="text-primary"><fmt:formatNumber value="${order.usedSaved}"/></td>
-                                <td class="table-light">결제금액</td>
-                                <td class="text-primary"><fmt:formatNumber value="${order.payment}"/></td>
+                                <td class="table-light">결제 금액</td>
+                                <td class="text-primary"><fmt:formatNumber value="${order.netPay}"/></td>
                                 <td class="table-light">취소금액</td>
-                                <td class="text-warning order-cancelAmount" data-cancelAmount="${order.cancelAmount}">
-                                    <fmt:formatNumber value="${order.cancelAmount}"/>
+                                <td class="text-primary"><fmt:formatNumber value="${order.refund_amount}"/></td>
+                                <td class="table-light"></td>
+                                <td class="text-warning order-cancelAmount" data-cancelAmount="${order.refund_amount}">
+
                                 </td>
                             </tr>
                             <tr>
                                 <td class="table-light">배송비</td>
-                                <td class="text-primary"><fmt:formatNumber value="${order.deliveryCharge}"/></td>
+                                <td class="text-primary"><fmt:formatNumber value="${order.shipping}"/></td>
                                 <td class="table-light">배송업체</td>
-                                <td>${order.deliveryName}</td>
+                                <td>${order.company_name}</td>
                                 <td class="table-light">송장번호</td>
-                                <td>${order.invoiceNumber}</td>
-                                <td class="table-light">상태변경일</td>
+                                <td>${order.trackingNumber}</td>
+                                <td class="table-light"></td>
                                 <td>${order.orderStateDate}</td>
                             </tr>
                             <tr>
@@ -145,47 +145,42 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach var="dto" items="${listDetail}" varStatus="status">
-                                <tr valign="middle" id="orderDetail-list${dto.orderDetailNum}">
-                                    <td>${dto.orderDetailNum}</td>
-                                    <td class="text-start ${dto.detailState==3||dto.detailState==5?'text-line':''}">
-                                            ${dto.productName}
+                                <tr valign="middle" id="orderDetail-list${Product.item_code}">
+                                    <td>${Product.item_code}</td>
+                                    <td class="text-start ${Product.orderState==3||Product.orderState==5?'text-line':''}">
+                                            ${Product.item}
                                     </td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}"><fmt:formatNumber value="${dto.price}"/></td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}"><fmt:formatNumber value="${dto.salePrice}"/></td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}">
-                                        <c:choose>
-                                            <c:when test="${dto.optionCount==0}">&nbsp;</c:when>
-                                            <c:when test="${dto.optionCount==1}">${dto.optionValue}</c:when>
-                                            <c:when test="${dto.optionCount==2}">${dto.optionValue} / ${dto.optionValue2}</c:when>
-                                        </c:choose>
+                                    <td class="${Product.orderState==3||Product.orderState==5?'text-line':''}"><fmt:formatNumber value="${Product.price}"/></td>
+                                    <td class="${Product.orderState==3||Product.orderState==5?'text-line':''}"><fmt:formatNumber value="${Product.salePrice}"/></td>
+                                    <td class="${Product.orderState==3||Product.orderState==5?'text-line':''}">
+                                      ${Product.optionValue}
+
                                     </td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}">${dto.qty}</td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}"><fmt:formatNumber value="${dto.productMoney}"/></td>
-                                    <td class="${dto.detailState==3||dto.detailState==5?'text-line':''}"><fmt:formatNumber value="${dto.savedMoney}"/></td>
+                                    <td class="${Product.detailState==3||Product.detailState==5?'text-line':''}">${Product.qty}</td>
+                                    <td class="${Product.detailState==3||Product.detailState==5?'text-line':''}"><fmt:formatNumber value="${Product.productMoney}"/></td>
+                                    <td class="${Product.detailState==3||Product.detailState==5?'text-line':''}"><fmt:formatNumber value="${Product.savedMoney}"/></td>
                                     <td>
-                                            ${(order.orderState==1||order.orderState==7||order.orderState==9) && dto.detailState==0?"상품준비중":dto.detailStateInfo}
+                                            ${(Product.orderState==1||Product.orderState==7||Product.orderState==9) && Product.detailState==0?"상품준비중":Product.detailStateInfo}
                                     </td>
                                     <td>
-										<span class="orderDetailStatus-update"
-                                              data-orderNum="${order.orderNum}"
-                                              data-orderState="${order.orderState}"
-                                              data-usedSaved="${order.usedSaved}"
-                                              data-userId="${order.userId}"
-                                              data-payment="${order.payment}"
-                                              data-orderDate="${order.orderDate}"
-                                              data-productMoney="${dto.productMoney}"
-                                              data-orderDetailNum="${dto.orderDetailNum}"
-                                              data-productNum="${dto.productNum}"
-                                              data-optionCount="${dto.optionCount}"
-                                              data-detailNum="${dto.detailNum}"
-                                              data-detailNum2="${dto.detailNum2}"
-                                              data-savedMoney="${dto.savedMoney}"
-                                              data-qty="${dto.qty}"
-                                              data-detailState="${dto.detailState}">수정</span>
+<%--										<span class="orderDetailStatus-update"--%>
+<%--                                              data-item_code="${order.item_code}"--%>
+<%--                                              data-orderState="${order.orderState}"--%>
+<%--                                              data-usedSaved="${order.usedSaved}"--%>
+<%--                                              data-userId="${order.userId}"--%>
+<%--                                              data-payment="${order.payment}"--%>
+<%--                                              data-orderDate="${order.orderDate}"--%>
+<%--                                              data-productMoney="${dto.productMoney}"--%>
+<%--                                              data-orderDetailNum="${dto.orderDetailNum}"--%>
+<%--                                              data-productNum="${dto.productNum}"--%>
+<%--                                              data-optionCount="${dto.optionCount}"--%>
+<%--                                              data-detailNum="${dto.detailNum}"--%>
+<%--                                              data-detailNum2="${dto.detailNum2}"--%>
+<%--                                              data-savedMoney="${dto.savedMoney}"--%>
+<%--                                              data-qty="${dto.qty}"--%>
+<%--                                              data-detailState="${dto.detailState}">수정</span>--%>
                                     </td>
                                 </tr>
-                            </c:forEach>
                             </tbody>
                         </table>
                     </div>
@@ -198,7 +193,7 @@
                             <button type="button" class="btn btn-light">다음주문</button>
                         </td>
                         <td class="text-end">
-                            <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/admin/order/orderManage/${itemId}?${query}';">리스트</button>
+                            <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/artist/orderManage/orderManagement/${tebNum}';">리스트</button>
                         </td>
                     </tr>
                 </table>
