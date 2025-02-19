@@ -2,6 +2,7 @@ package com.sp.app.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -54,12 +55,34 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public List<Notice> getListOfNotice(Map<String, Object> map) {
-		return null;
+		List<Notice> list = null;
+		try {
+			list = mapper.getListOfNotice(map);
+		} catch (Exception e) {
+			log.info("=================getListOfNotice", e);
+		}
+		return list;
 	}
 
 	@Override
 	public int DataCountNotice(Map<String, Object> map) {
-		return 0;
+		int result = 0;
+		try {
+			result = mapper.DataCountNotice(map);
+		} catch (Exception e) {
+			log.info("====================DataCountNotice", e);
+		}
+		return result;
 	}
-	
+
+	@Override
+	public Notice findByIdOfNotice(long num) {
+		Notice dto = null;
+		try {
+			dto = Objects.requireNonNull(mapper.findByIdOfNotice(num));
+		} catch (Exception e) {
+			log.info("===================findById : ", e);
+		}
+		return dto;
+	}
 }

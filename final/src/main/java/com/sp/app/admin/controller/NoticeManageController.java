@@ -99,4 +99,6 @@ public class NoticeManageController {
 		}
 		return "admin/noticeList/article";
 	}
+	
+	
 }

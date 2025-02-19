@@ -17,4 +17,6 @@ public interface NoticeService {
 		public int DataCountNotice(Map<String, Object> map);
 		
 		public List<String> getCategory();
+		
+		public Notice findByIdOfNotice(long num);
 }

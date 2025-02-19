@@ -109,43 +109,52 @@ body {
 }
 
 .notice-table-wrapper {
-  margin: 20px auto;
-  max-width: 1000px;
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	margin: 20px auto;
+	max-width: 1000px;
+	background-color: #fff;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .notice-table {
-  width: 100%;
-  border-collapse: collapse;
+	width: 100%;
+	border-collapse: collapse;
 }
 
 .notice-table thead {
-  background-color: #333;
-  color: #fff;
+	background-color: #333;
+	color: #fff;
 }
 
-.notice-table th,
-.notice-table td {
-  padding: 15px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-  font-size: 16px;
+.notice-table th, .notice-table td {
+	padding: 15px;
+	text-align: center;
+	border-bottom: 1px solid #ddd;
+	font-size: 16px;
 }
 
 .notice-table tr:hover {
-  background-color: #f8f8f8;
+	background-color: #f8f8f8;
 }
 
 .status-label {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: #fff;
-  background-color: #ff6600; /* 원하는 색상으로 변경 가능 */
-  font-size: 14px;
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: #fff;
+	background-color: #ff6600; /* 원하는 색상으로 변경 가능 */
+	font-size: 14px;
+}
+.go-inquiry {
+  font-size: 14px;      /* 더 작게 보이도록 */
+  color: #999;          /* 회색 톤 */
+  margin-left: 10px;    /* 왼쪽 여백 */
+  text-decoration: underline; /* 밑줄(선택사항) */
+}
+
+.go-inquiry:hover {
+  color: #666;          /* 마우스 오버 시 약간 어둡게 */
 }
 
 </style>
@@ -158,7 +167,12 @@ body {
 
 	<main class="customer-center">
 		<h2 class="title">고객센터</h2>
-		<p class="subtitle">무엇을 도와드릴까요?</p>
+		<p class="subtitle">
+			무엇을 도와드릴까요? 
+			<a onclick="openInquiryform()"
+				class="go-inquiry">1:1문의 남기러가기</a>
+		</p>
+
 
 		<div class="divider"></div>
 
@@ -188,8 +202,6 @@ body {
 				<button class="btn">검색</button>
 			</div>
 		</div>
-
-
 
 		<!-- 키워드 태그 -->
 		<div class="keyword-box">
@@ -221,11 +233,25 @@ body {
 			</div>
 
 			<!-- 1:1문의 섹션 -->
-			<div class="tab-pane fade" id="inquiry" role="tabpanel">
-				<p>1:1 문의 작성 페이지로 이동합니다.</p>
+			<div class="tab-pane fade" id="inquiry" role="tabpanel" data-page="0"
+				data-total="1">
+
+				<div class="notice-table-wrapper">
+					<table class="notice-table">
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>상태</th>
+								<th>제목</th>
+								<th>등록일</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
 			</div>
 
-			<!-- 공지사항 섹션 -->
 
 			<!-- 공지사항 섹션 -->
 			<div class="tab-pane fade" id="notice" role="tabpanel" data-page="0"
@@ -241,36 +267,6 @@ body {
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>34</td>
-								<td><span class="status-label">알림</span></td>
-								<td>올리브영 정산이 아닌 쿠팡 클래스 이슈로 인한 운영 중단 안내</td>
-								<td>2025.02.13</td>
-							</tr>
-							<tr>
-								<td>33</td>
-								<td><span class="status-label">알림</span></td>
-								<td>[공지] 부산 생산 시설 점검으로 인한 임시 이용 불가</td>
-								<td>2025.02.13</td>
-							</tr>
-							<tr>
-								<td>32</td>
-								<td><span class="status-label">알림</span></td>
-								<td>[공지] 개인정보 처리방침 개정 안내 (1/20)</td>
-								<td>2025.02.13</td>
-							</tr>
-							<tr>
-								<td>31</td>
-								<td><span class="status-label">알림</span></td>
-								<td>올리브영 택배 파업 장기화로 인한 운영 중단 안내</td>
-								<td>2025.02.13</td>
-							</tr>
-							<tr>
-								<td>30</td>
-								<td><span class="status-label">알림</span></td>
-								<td>올리브영 생태지향 물품 공급으로 인한 운영 중단 안내</td>
-								<td>2025.02.13</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -292,21 +288,57 @@ body {
 				let total = $('#notice').attr('data-total');
 
 				const callback = function(data) {
-					console.log(data.state);
-					if (data.page == data.total) {
-						return;
-					}
 					$('#notice').attr('data-page', data.page);
 					$('#notice').attr('data-total', data.total);
-
+					
+					addMoreContent(data);
 				}
-
 				ajaxRequest(url, 'get', null, 'json', callback);
 			});
+			
+			$('#inquiry-tab').click(function(){
+				let url = '${pageContext.request.contextPath}/notice/inquire';
+				
+				let page = $('#inquiry').attr('data-page');
+				let total = $('#inquiry').attr('data-total');
+				
+				const callback = function (data){
+					$('#inquiry').attr('data-page', data-page);
+					$('#inquiry').attr('data-total', data-total);
+					
+					addInquireContent(data);		
+				}
+				ajaxRequest(url,'get',null,'json',callback);
+			});
+			
 		});
 
 		function addMoreContent(data) {
-
+			console.log(data);
+			let tbody = $('.notice-table').find('tbody');
+			
+			let result = '';
+			for(let el of data.list){
+				let num	 = el.evt_not_num;
+				let subject = el.subject;
+				let create_date = el.create_date;
+				
+				result += '<tr>';
+				result += '	<td></td>';
+				result += '	<td><span class="status-label">공지</span></td>';
+				result += '	<td><a href="${pageContext.request.contextPath}/notice/article/'+num+'">'+ subject + '</a></td>';
+				result += '	<td>'+create_date+'</td>';
+			}
+			tbody.html(result);
+		}
+		
+		function addInquireContent(data){
+			console.log(data);
+		}
+		
+		
+		function openInquiryform(){
+			window.open();
 		}
 	</script>
 

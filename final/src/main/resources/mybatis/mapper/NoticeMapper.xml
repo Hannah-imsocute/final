@@ -16,9 +16,29 @@
 		SELECT evt_not_num , adminidx, subject, create_date,
 		NVL(category_num,0)category_num, textcontent
 		FROM event_notice WHERE fixed = 1
+		<if test="kwd != null and kwd != ''">
+			AND INSTR(subject, #{kwd}) &gt; 0
+		</if>
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
 	</select>
 	<select id="getCategory" resultType="String">
 		SELECT catename FROM
 		all_category
+	</select>
+	<select id="getListOfNotice" parameterType="map" resultType="com.sp.app.admin.model.Notice">
+		SELECT evt_not_num , adminidx, subject, create_date,
+		NVL(category_num,0)category_num, textcontent
+		FROM event_notice WHERE fixed = 0
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
+	</select>
+	<select id="DataCountNotice" resultType="Integer" parameterType="map">
+		SELECT COUNT(*) 
+		FROM event_notice 
+		WHERE fixed = 0 
+	</select>
+	<select id="findByIdOfNotice" resultType="com.sp.app.admin.model.Notice" parameterType="Long">
+		SELECT evt_not_num , adminidx, subject, create_date,
+		NVL(category_num,0)category_num, textcontent
+		FROM event_notice WHERE evt_not_num = #{num}
 	</select>
 </mapper>
