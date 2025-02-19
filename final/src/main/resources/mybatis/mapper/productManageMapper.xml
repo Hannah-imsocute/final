@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.sp.app.artist.mapper.ProductManageMapper">
+	<!-- 일반 상품 목록 -->
+
+	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT categoryCode, name, parentCategoryCode
+		FROM productCategory
+		WHERE categoryCode = #{categoryCode}
+	</select>
+	
+	<!-- 상품 상위 카테고리 목록 -->
+	<select id="listCategory" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+	    SELECT categoryCode, name, parentCategoryCode
+		FROM productCategory 
+	</select>
+
+
+</mapper>
+	
