@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+
+
 <div class="sidebar">
 	<!-- 프로필 및 포인트 영역 -->
 	<div class="profile-container">
@@ -23,13 +25,14 @@
 	</div>
 	<!--  사이드바 메뉴-->
 	<ul class="sidebar-menu">
-		<li><a href="javascript:void(0)" class="accordion-button"> 상품등록관리
+		<li><a href="javascript:void(0)"  class="accordion-button"> 상품등록관리
 				<img src="/dist/images/layout/down_∨.png" class="toggle-icon" alt="Toggle Icon">
-		</a>
+		    </a>
 			<ul class="sub-menu">
-				<li><a href="#">상품등록</a></li>
-				<li><a href="#">상품 리스트</a></li>
-			</ul></li>
+				<li><a href="<c:url value='/artist/productManage/list' />" >상품리스트</a></li>
+				<li><a href="<c:url value='/artist/productManage/write' />" >상품 등록</a></li>
+			</ul>
+		</li>
 		<li><a href="javascript:void(0)" class="accordion-button"> 주문 내역 관리
 				<img src="/dist/images/layout/down_∨.png" class="toggle-icon" alt="Toggle Icon">
 		</a>
