@@ -101,21 +101,19 @@ public class ApplyManageController {
 	@ResponseBody
 	public Map<String, Object> updateApply(
 	    @RequestParam(name = "sellerApplyNum") Long sellerApplyNum,
-	    @RequestParam(name = "agreed") String agreed, // 승인/거절 여부
-	    @RequestParam(name = "email") String sellerEmail, // 이메일
-	    @RequestParam(name = "name") String sellerName, // 이름
-	    @RequestParam(name = "rejectionReason", required = false) String rejectionReason // 반려 사유
+	    @RequestParam(name = "agreed") String agreed, // 승인(0) / 반려(1)
+	    @RequestParam(name = "email") String sellerEmail,
+	    @RequestParam(name = "name") String sellerName,
+	    @RequestParam(name = "rejectionReason", required = false) String rejectionReason
 	) {
 	    Map<String, Object> map = new HashMap<>();
 	    try {
-	        // sellerApplyNum, agreed, 이메일 및 이름, 반려 사유를 map에 추가
 	        map.put("sellerApplyNum", sellerApplyNum);
 	        map.put("agreed", agreed);
 	        map.put("email", sellerEmail);
 	        map.put("name", sellerName);
-	        map.put("rejectionReason", rejectionReason); // 반려 사유 추가
+	        map.put("rejectionReason", rejectionReason);
 
-	        // 승인/거절 상태 업데이트 및 이메일 발송 처리
 	        service.updateApply(map);
 
 	        map.put("success", true);
@@ -125,7 +123,6 @@ public class ApplyManageController {
 	    }
 	    return map;
 	}
-
 
 	// 컨트롤러에서 데이터 반환
 	@GetMapping("getSellerDetails")

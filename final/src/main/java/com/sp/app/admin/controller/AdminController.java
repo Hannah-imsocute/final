@@ -35,7 +35,7 @@ public class AdminController {
     @GetMapping("/admin/membershipList")
     public String membershipList(Model model) {
         model.addAttribute("contentPage", "admin/membershipList/membershipList.jsp");
-        model.addAttribute("pageTitle", "멤버십관리");
+        model.addAttribute("pageTitle", "광고 상품 관리");
         return "admin/home";
     }
 

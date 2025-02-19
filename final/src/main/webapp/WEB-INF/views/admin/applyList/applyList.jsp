@@ -169,7 +169,7 @@ function apply(sellerApplyNum, page) {
                 $('#sellerBrandIntro').text(response.brandIntro);
                 $('#sellerIntropeice').text(response.introPeice);
                 $('#sellerForextra').text(response.forExtra);
-                $('#sellerAgreed').text(response.agreed === 0 ? "승인" : "미승인");
+                $('#sellerAgreed').text(Number(response.agreed) == 0 ? "승인" : "미승인");
                 
                 // agreed 값을 hidden input에 저장
                 $('#hiddenAgreed').val(response.agreed);
@@ -230,6 +230,57 @@ function updateStatusOk() {
 
     $('#sellerStatusDetailesDialogModal').modal('hide');
 }
+
+
+function updateStatusReject() {
+    const sellerApplyNum = $('#sellerApplyNum').val(); 
+    const agreed = 1; // 반려 상태 (1)
+    const sellerEmail = $('#sellerEmail').text(); 
+    const sellerName = $('#sellerName').text(); 
+    const rejectionReason = $('#rejectionReason').val(); 
+
+    console.log("🔴 반려 처리 - 전송할 sellerApplyNum:", sellerApplyNum);
+    console.log("🔴 반려 처리 - agreed 값:", agreed);
+    console.log("🔴 반려 처리 - sellerEmail:", sellerEmail);
+    console.log("🔴 반려 처리 - sellerName:", sellerName);
+    console.log("🔴 반려 처리 - rejectionReason:", rejectionReason);
+
+    if (!confirm('정말 반려하시겠습니까?')) {
+        return;
+    }
+
+    let url = '${pageContext.request.contextPath}/admin/applyList/updateApply';
+    let formData = {
+        sellerApplyNum: sellerApplyNum,
+        agreed: agreed,  // 반려 상태 (1)
+        email: sellerEmail,
+        name: sellerName,
+        rejectionReason: rejectionReason // 반려 사유 추가
+    };
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+            alert('반려 처리가 완료되었습니다.');
+            location.reload(); 
+        },
+        error: function (xhr, status, error) {
+            console.error("🚨 AJAX 요청 실패 🚨");
+            console.error("Status:", status);
+            console.error("Error:", error);
+            console.error("Response Text:", xhr.responseText);
+            alert("서버에서 오류가 발생했습니다: " + xhr.responseText);
+        }
+    });
+
+    $('#sellerStatusDetailesDialogModal').modal('hide');
+}
+
+
+
 
 $(function(){
 	// 모달창이 닫힐때 aria-hidden="true"와 포커스 충돌로 발생하는 에러 해결

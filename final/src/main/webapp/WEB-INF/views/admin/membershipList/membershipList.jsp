@@ -3,5 +3,5 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
 	<div >
-		<p>여기는 멤버십 관리</p>
+		<p>광고 상품 관리</p>
 	</div>
