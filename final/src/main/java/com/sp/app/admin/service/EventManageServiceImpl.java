@@ -1,6 +1,8 @@
 package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,5 +56,22 @@ public class EventManageServiceImpl implements EventManageService {
 		}
 	}
 
+	@Override
+	public int dataCountValidEvent() {
+		return mapper.dataCountValidEvent();
+	}
+
+	@Override
+	public List<Event> getListOFValidEvent(Map<String, Object> map) {
+		List<Event> list = null;
+		try {
+			list = mapper.getListOFValidEvent(map);
+		} catch (Exception e) {
+			log.info("================getListOFValidEvent", e);
+		}
+		return list;
+	}
+
+	
 	
 }

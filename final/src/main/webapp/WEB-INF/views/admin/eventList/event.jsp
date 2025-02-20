@@ -97,14 +97,15 @@ tbody td {
 	<main>
 		<div class="content-around">
 			<ul class="nav nav-tabs">
-				<li class="nav-item"><a class="nav-link active"
-					aria-current="page" href="#">진행중인 이벤트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">종료된 이벤트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">당첨자 발표</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">쿠폰 관리</a></li>
+				<li class="nav-item"><a class="nav-link active ongoingEvent"
+					aria-current="page" href="#" data-mode="ongoingEvent" data-page="1">진행중인 이벤트</a></li>
+				<li class="nav-item"><a class="nav-link closedEvent" data-mode="closedEvent" data-page="1">종료된 이벤트</a></li>
+				<li class="nav-item"><a class="nav-link winners" data-mode="winners" data-page="1">당첨자 발표</a></li>
+				<li class="nav-item"><a class="nav-link couponsetting" data-mode="couponsetting" data-page="1">쿠폰 관리</a></li>
 			</ul>
 			<div class="btn-cover">
-				<button type="button" class="btn btn-primary btn-upload-event">이벤트	등록</button>
+				<button type="button" class="btn btn-primary btn-upload-event">이벤트
+					등록</button>
 			</div>
 			<div class="eventList">
 				<table>
@@ -119,22 +120,23 @@ tbody td {
 						</tr>
 					</thead>
 					<tbody>
-
-						<tr>
-							<td></td>
-							<td><a href="#" data-eventnum=""></a></td>
-							<td></td>
-							<td></td>
-							<td class="status"></td>
-							<td>
-								<button type="button" class="edit-btn btn">수정</button>
-							</td>
-						</tr>
-
+						<c:forEach var="dto" items="${list}">
+							<tr>
+								<td></td>
+								<td><a href="#" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
+								<td>${dto.startdate}</td>
+								<td>${dto.enddate }</td>
+								<td class="status">
+								</td>
+								<td>
+									<button type="button" class="edit-btn btn">수정</button>
+								</td>
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</div>ㄴ
 	</main>
 	<script type="text/javascript">
 	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
@@ -173,6 +175,74 @@ tbody td {
 			location.href = url;
 		});
 	});
+	
+	$(function(){
+		$('.nav-link').each(function(){
+			$(this).click(function(){
+				let mode = $(this).attr('data-mode');
+				let page = $(this).attr('data-page');
+				let url = '${pageContext.request.contextPath}/admin/event/rendering';
+				let params = {mode : mode, page : page};
+				
+				$('.active').removeClass('active');
+				$(this).addClass('active');
+				
+				const fn = function(data){
+					console.log(data);
+					
+					if(data.mode == 'ongoingEvent'){
+						ongoingEvent(data);
+					}
+				}
+				$('tbody').html('');
+				ajaxRequest(url, 'get', params, 'json' , fn);
+			});
+		});
+	});
+	
+	function closedEvent(data){
+		console.log(data.list);
+		
+		let out = '';
+		for(el of data.list){
+			let num = el.event_article_num;
+			let subject = el.subject;
+			let startdate = el.startdate;
+			let enddate = el.enddate;
+			
+			out += '<tr>';
+			out += '	<td></td>';
+			out += '	<td><a href="#" data-eventnum="'+num+'">'+subject+'</a></td>';
+			out += '	<td>'+startdate+'</td>';
+			out += '	<td>'+enddate+'</td>';
+			out += '	<td class="staus">종료</td>';
+			out += '	<td></td>';
+		}
+		
+		$('tbody').html(out);
+	};
+	
+	function ongoingEvent(data){
+		console.log(data);
+		
+		let out = '';
+		for(el of data.list){
+			let num = el.event_article_num;
+			let subject = el.subject;
+			let startdate = el.startdate;
+			let enddate = el.enddate;
+			
+			out += '<tr>';
+			out += '	<td></td>';
+			out += '	<td><a href="#" data-eventnum="'+num+'">'+subject+'</a></td>';
+			out += '	<td>'+startdate+'</td>';
+			out += '	<td>'+enddate+'</td>';
+			out += '	<td class="staus">진행중</td>';
+			out += '	<td><button type="button" class="edit-btn btn">수정</button></td>';
+		}
+		
+		$('tbody').html(out);
+	};
 	</script>
 </body>
 </html>
