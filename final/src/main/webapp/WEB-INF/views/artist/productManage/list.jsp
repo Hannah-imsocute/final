@@ -182,9 +182,11 @@
             <button>4</button>
             <button>5</button>
         </div>
+        
+        
         <div class="register-box">
-        	<button class="register">등록하기</button>
-		</div>
+       	 <button class="register" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/listMainCategory'">등록하기</button>
+	    </div>
 </main>
 
 </body>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.SettlementMapper">
+    <!-- 회원 리스트 -->
+	<sql id="search-conditions">
+		<choose>
+			<when test="schType == 'email'">
+				INSTR(m1.email, #{kwd}) &gt;= 1
+			</when>
+			<otherwise>
+				INSTR(${schType}, #{kwd}) &gt;= 1
+			</otherwise>
+		</choose>
+	</sql>
+
+	<sql id="role-conditions">
+			<choose>
+				<when test="role == 1">
+					AND ( authority = 'USER' )
+				</when>
+				<when test="role == 2">
+					AND ( authority = 'AUTHOR' )
+				</when>
+				<when test="role == 3">
+					AND ( authority = 'ADMIN' )
+				</when>
+				<otherwise>
+					AND ( authority = 'USER' OR authority = 'maybeUser' )
+				</otherwise>
+			</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT * 
+		FROM 
+    </select>
+    
+	<select id="listSettlement" parameterType="map" resultType="com.sp.app.admin.model.SettlementManage">
+
+	</select>
+
+	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
+
+	</select>
+	
+	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.SettlementManage">
+
+	</select>
+	
+	<update id="updateFailureCountReset" parameterType="Long">
+
+	</update>
+
+    <update id="updateMember1" parameterType="map">
+
+    </update>
+    
+    <update id="updateMember2" parameterType="map">
+
+    </update>
+    
+    <update id="updateMemberEnabled" parameterType="map">
+
+    </update>
+    
+    <delete id="deleteMember1" parameterType="map">
+
+    </delete>
+    
+    <delete id="deleteMember2" parameterType="map">
+
+    </delete>
+      
+	<insert id="insertMemberStatus" parameterType="com.sp.app.admin.model.SettlementManage">
+	
+	</insert>
+	
+	
+	<select id="listMemberStatus" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
+	
+	</select>
+
+	
+	<select id="findByStatus" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
+
+	</select>
+	
+	<!-- 어쏘러티(권한) 테이블 --> 
+	<update id="updateAuthority" parameterType="map">
+
+	</update>
+
+	<delete id="deleteAuthority" parameterType="map">
+
+	</delete>
+</mapper>

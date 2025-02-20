@@ -49,7 +49,7 @@
 							</ul>
 						</li>
 						
-						<li data-categoryName="stationery">문구/기타용품 ▾
+						<li data-categoryName="stationeryMisc">문구/기타용품 ▾
 							<ul class="sub-menu">
 								<li data-categoryName="case"><a href="#">케이스</a></li>
 								<li data-categoryName="stationery"><a href="#">문구용품</a></li>

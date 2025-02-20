@@ -41,26 +41,32 @@ public class ProductController {
 
 	// 카테고리명 카테고리코드로 변환
     public static final Map<String, Integer> categoryMap = Map.ofEntries(
-            new AbstractMap.SimpleEntry<>("bakery"             ,  1),  // 베이커리/전통간식
-            new AbstractMap.SimpleEntry<>("beverage"           ,  2),  // 음료/주류
-            new AbstractMap.SimpleEntry<>("dish"               ,  3),  // 요리/간편식
-            new AbstractMap.SimpleEntry<>("nongsusan"          ,  4),  // 농수산품
-            new AbstractMap.SimpleEntry<>("clothing"           ,  5),  // 의류
-            new AbstractMap.SimpleEntry<>("jewelry"            ,  6),  // 주얼리
-            new AbstractMap.SimpleEntry<>("fashion-accessory"  ,  7),  // 패션잡화
-            new AbstractMap.SimpleEntry<>("camping"            ,  8),  // 캠핑
-            new AbstractMap.SimpleEntry<>("furniture"          ,  9),  // 가구
-            new AbstractMap.SimpleEntry<>("home-decor"         , 10),  // 홈데코
-            new AbstractMap.SimpleEntry<>("kitchenware"        , 11),  // 주방용품
-            new AbstractMap.SimpleEntry<>("bathroom"           , 12),  // 욕실용품
-            new AbstractMap.SimpleEntry<>("case"               , 13),  // 케이스
-            new AbstractMap.SimpleEntry<>("stationery"         , 14),  // 문구용품
-            new AbstractMap.SimpleEntry<>("party-supplies"     , 15),  // 파티용품
-            new AbstractMap.SimpleEntry<>("car-accessory"      , 16),  // 차량용품
-            new AbstractMap.SimpleEntry<>("skincare"           , 17),  	// 스킨케어
-            new AbstractMap.SimpleEntry<>("hair-body-cleansing", 18),  // 헤어/바디/클렌징
-            new AbstractMap.SimpleEntry<>("perfume"            , 19),  // 향수
-            new AbstractMap.SimpleEntry<>("makeup"             , 20)   // 메이크업
+    		new AbstractMap.SimpleEntry<>("food"               ,  1),  // 식품
+    		new AbstractMap.SimpleEntry<>("fashion"            ,  2),  // 패션
+    		new AbstractMap.SimpleEntry<>("living"             ,  3),  // 리빙
+    		new AbstractMap.SimpleEntry<>("stationeryMisc"     ,  4),  // 문구/기타용품
+    		new AbstractMap.SimpleEntry<>("beauty"             ,  5),  // 뷰티
+    		
+            new AbstractMap.SimpleEntry<>("bakery"             ,  6),  // 베이커리/전통간식
+    		new AbstractMap.SimpleEntry<>("beverage"           ,  7),  // 음료/주류
+    		new AbstractMap.SimpleEntry<>("dish"               ,  8),  // 요리/간편식
+    		new AbstractMap.SimpleEntry<>("nongsusan"          ,  9),  // 농수산품
+    		new AbstractMap.SimpleEntry<>("clothing"           , 10),  // 의류
+    		new AbstractMap.SimpleEntry<>("jewelry"            , 11),  // 주얼리
+    		new AbstractMap.SimpleEntry<>("fashion-accessory"  , 12),  // 패션잡화
+    		new AbstractMap.SimpleEntry<>("camping"            , 13),  // 캠핑
+    		new AbstractMap.SimpleEntry<>("furniture"          , 14),  // 가구
+    		new AbstractMap.SimpleEntry<>("home-decor"         , 15),  // 홈데코
+    		new AbstractMap.SimpleEntry<>("kitchenware"        , 16),  // 주방용품
+    		new AbstractMap.SimpleEntry<>("bathroom"           , 17),  // 욕실용품
+    		new AbstractMap.SimpleEntry<>("case"               , 18),  // 케이스
+    		new AbstractMap.SimpleEntry<>("stationery"         , 19),  // 문구용품
+    		new AbstractMap.SimpleEntry<>("party-supplies"     , 20),  // 파티용품
+    		new AbstractMap.SimpleEntry<>("car-accessory"      , 21),  // 차량용품
+    		new AbstractMap.SimpleEntry<>("skincare"           , 22),  // 스킨케어
+    		new AbstractMap.SimpleEntry<>("hair-body-cleansing", 23),  // 헤어/바디/클렌징
+    		new AbstractMap.SimpleEntry<>("perfume"            , 24),  // 향수
+    		new AbstractMap.SimpleEntry<>("makeup"             , 25)   // 메이크업
         );
 	
     @GetMapping("main")
@@ -276,7 +282,7 @@ public class ProductController {
 			HttpServletRequest req ) throws Exception{
 		
 		System.out.println("categoryName : " + categoryName);
-		
+
 		 Map<String, Object> response = new HashMap<>();
 		
 		try {
@@ -286,16 +292,16 @@ public class ProductController {
 	        }
 
 		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
-			int size = 10;  // 페이지 당 포함 컨텐츠 수
+		    
+		    int size = 10;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("categoryCode", categoryCode);
 			
-			//카테고리 정보
-			MainProduct categoryDto = Objects.requireNonNull(service.findByCategoryId(categoryCode));
-			System.out.println("categoryDto: " + categoryDto);
+		
+			System.out.println("카테고리코드"+categoryCode);
 			
 			dataCount = service.dataCount(map);
 			total_page = paginateUtil.pageCount(dataCount, size);
@@ -309,7 +315,6 @@ public class ProductController {
 			map.put("size", size);
 			
 			List<MainProduct> list = service.listCategoryProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
-			
 			response.put("list", list);			
 			response.put("categoryName", categoryName);		
             response.put("categoryCode", categoryCode);

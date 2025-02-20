@@ -1,11 +1,16 @@
 package com.sp.app.admin.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
 import com.sp.app.admin.service.EventManageService;
+import com.sp.app.common.PaginateUtil;
 import com.sp.app.common.StorageService;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,13 +35,24 @@ public class AdminEventController {
 	
 	private final EventManageService service;
 	private final StorageService storage;
+	private final PaginateUtil util;
 	private final String uploadPath = "/uploads/event";
 	
 	
 	@GetMapping("main")
-	public String handleMain() {
+	public String handleMain(@RequestParam(name = "page", defaultValue = "1")int page, Model model) {
+		try {
+			List<Event> list = handleRendering(page, "ongoingEvent");
+			
+			model.addAttribute("list", list);
+			
+		} catch (Exception e) {
+			log.info("==========================handleMain : ", e);
+		}
 		return "admin/eventList/event";
 	}
+	
+	
 	
 	@GetMapping("write")
 	public String handleWriteForm() {
@@ -43,11 +60,10 @@ public class AdminEventController {
 	}
 	
 	@PostMapping("write")
-	public String handleSubmitWriteForm(@ModelAttribute Event dto,@RequestParam("thumbnail") MultipartFile file, HttpSession session) {
+	public String handleSubmitWriteForm(@ModelAttribute Event dto, @RequestParam("file") MultipartFile file, HttpSession session) {
 		
 		// session 에 value 로 coupon 또는 스케줄러 정보 저장 있을지는 모름 
 		// insert 두번에 걸쳐서 하나의 트랜잭션으로 묶어야함 
-		
 		try {
 			
 			EventType event = (EventType)session.getAttribute("value");
@@ -99,5 +115,71 @@ public class AdminEventController {
 		}
 		
 		return map;
+	}
+	
+	
+	public List<Event> handleRendering(int page, String mode ){
+		List<Event> list = null;
+		
+		int size = 10;
+		int total = 0;
+		int datacount = 0;
+		
+		try {
+			
+			if(mode.equals("ongoingEvent")) {
+				datacount = service.dataCountValidEvent();
+			}else if (mode.equals("closedEvent")) {
+				// datacount = service.메소드명()
+			}else if (mode.equals("winners")) {
+				// datacount = service.메소드명()
+			}
+			
+			total = util.pageCount(datacount, size);
+			page = Math.min(page, total);
+			
+			int offset = (page -1) * size;
+			if (offset < 0) offset = 0;
+			
+			Map<String, Object> map = new HashMap<>();
+		
+			map.put("offset", offset);
+			map.put("size", size);
+			
+			if(mode.equals("ongoingEvent")) {
+				list = service.getListOFValidEvent(map);
+			}else if (mode.equals("closedEvent")) {
+				// list = service.메소드명(map);
+			}else if (mode.equals("winners")) {
+				// list = service.메소드명(map);
+			}
+		} catch (Exception e) {
+			log.info("===========handleRendering : ", e);
+		}
+		
+		return list;
+	}
+	
+	
+	@GetMapping("rendering")
+	@ResponseBody
+	public Map<String, Object> rendering(@RequestParam(name = "mode")String mode, @RequestParam(name = "page") int page){
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			List<Event> list =  handleRendering(page, mode);
+			
+			map.put("list", list);
+			map.put("mode", mode);
+			
+		} catch (Exception e) {
+			log.info("=====================rendering", e);
+		}
+		return map;
+	}
+
+	@GetMapping("article/{num}")
+	public String getIntoArticle(@PathVariable(name = "num")long num) {
+		return "admin/eventList/article";
 	}
 }

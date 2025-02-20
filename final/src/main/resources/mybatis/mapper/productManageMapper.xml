@@ -11,9 +11,17 @@
 	</select>
 	
 	<!-- 상품 상위 카테고리 목록 -->
-	<select id="listCategory" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+	<select id="listMainCategory"  resultType="com.sp.app.artist.model.ProductManage">
 	    SELECT categoryCode, name, parentCategoryCode
-		FROM productCategory 
+		FROM productCategory
+		WHERE parentCategoryCode is null
+	</select>
+	
+	<!-- 상품 하위 카테고리 목록 -->
+	<select id="listSubCategory" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT categoryCode, name, parentCategoryCode
+		FROM productCategory
+		WHERE parentCategoryCode = #{parentCategoryCode}
 	</select>
 
 

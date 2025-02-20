@@ -34,7 +34,7 @@
 
 				<div class="mb-3">
 					<label for="thumbnail" class="form-label">썸네일 이미지</label> <input
-						type="file" class="form-control" id="thumbnail" name="thumbnail">
+						type="file" class="form-control" id="thumbnail" name="file">
 				</div>
 
 				<div class="row g-3 mb-3">

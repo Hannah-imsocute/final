@@ -168,7 +168,7 @@ body {
 .menu-item {
   display: block;
   width: 100%;
-  padding: 8px;
+  padding: 7px;
   background-color: #f8f9fa;
   color: #333;
   text-align: left;
@@ -193,21 +193,6 @@ body {
 }
 
 
-/* 서브 메뉴 */
-.sub-menu {
-  display: none; /* 기본적으로 서브 메뉴 숨기기 */
-  padding-left: 20px;
-  list-style-type: none;
-}
-
-.sub-menu li a {
-  font-size: 14px;
-  color: #666;
-}
-
-.sub-menu li a:hover {
-  color: #ff6600;
-}
 /* 메인 콘텐츠 영역 */
 main {
   margin-left: 250px; /* 사이드바 너비 만큼 여백 */
@@ -263,10 +248,10 @@ main {
 h3 {
 	color: #747474;
 	font-weight: bold;
-    border-bottom: 2px solid #4C4C4C;  /* 검정색, 두께 3px */
+    border-bottom: 3px solid #ff6600;  
     padding-bottom: 10px;  /* 타이틀과 선 사이의 여백 */
     margin-bottom: 10px;  /* 타이틀과 다음 요소와의 간격 */
-    width: 80%;
+    width: 70%;
 }
 
 h3 div {
