@@ -53,6 +53,14 @@ public class ProductManageServiceImpl implements ProductManageService{
 		return list;
 	}
 
-	
+    @Override
+    public void insertProduct(ProductManage product) {
+        try {
+            mapper.insertProduct(product);
+        } catch(Exception e) {
+            log.error("insertProduct error: ", e);
+            throw e; // 필요 시 예외처리(롤백 등) 수행
+        }
+    }
 
 }

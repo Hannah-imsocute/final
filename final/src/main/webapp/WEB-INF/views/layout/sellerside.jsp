@@ -30,7 +30,7 @@
 		    </a>
 			<ul class="sub-menu">
 				<li><a href="<c:url value='/artist/productManage/list' />" >작품 리스트</a></li>
-				<li><a href="<c:url value='/artist/productManage/write' />" >작품 등록</a></li>
+				<li><a href="<c:url value='/artist/productManage/listMainCategory' />" >작품 등록</a></li>
 			</ul>
 		</li>
 		<li><a href="javascript:void(0)" class="accordion-button"> 주문 내역 관리
