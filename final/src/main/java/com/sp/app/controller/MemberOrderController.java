@@ -146,8 +146,9 @@ public class MemberOrderController {
             if (info == null) {
                 return "redirect:/member/login";
             }
-//            shippingInfo.setMemberIdx(info.getMemberIdx());
             shippingInfo.setRequire(require);
+
+            order.setShippingInfo(shippingInfo);
 
             if (selectedItems != null && !selectedItems.isEmpty()) {
                 order = orderService.processOrder(info, selectedItems, order);

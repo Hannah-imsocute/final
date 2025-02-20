@@ -8,7 +8,7 @@
     <!-- 장바구니 추가 -->
     <insert id="insertCartItem" parameterType="com.sp.app.model.cart.CartItem">
         INSERT INTO CART_ITEM (CART_ITEM_CODE, MEMBERIDX, PRODUCTCODE, QUANTITY, PRICE, CREATED, CART_OPTION)
-        VALUES (seq_CART_ITEM.NEXTVAL, #{memberIdx}, #{productCode}, #{quantity}, #{price}, SYSDATE, #{cartOption})
+        VALUES (seq_CART_ITEM.NEXTVAL, #{memberIdx}, #{productCode}, #{quantity}, #{price}, SYSDATE, #{cartOption, jdbcType=VARCHAR})
     </insert>
 
     <!-- 장바구니 조회 -->

@@ -13,6 +13,7 @@ import java.util.List;
 public class Order {
   private Payment payments;
   private OrderItem orderItem;
+  private Coupon coupon;
 
   private ShippingInfo shippingInfo;
   /*Order*/

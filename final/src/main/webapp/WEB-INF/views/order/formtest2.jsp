@@ -293,9 +293,15 @@
         <input type="hidden" name="selectedItems" value="${cart.cartItemCode}" />
       </c:forEach>
     </c:if>
+      <c:forEach var="dto" items="${orderItems}">
+        <input type="hidden" name="productCode" value="${dto.productCode}">
+        <input type="hidden" name="itemCode" value="${dto.itemCode}">
+
+      </c:forEach>
 
     <input type="hidden" id="hiddenMemberIdx" name="memberIdx" value="${sessionScope.member.memberIdx}" />
     <input type="hidden" id="hiddenAddrName" name="addName" value="${addName}" />
+    <input type="hidden" id="hiddenReceiverName" name="receiverName" value="${receiverName}" />
     <input type="hidden" id="hiddenPostCode" name="postCode" value="${postCode}" />
     <input type="hidden" id="hiddenAddTitle" name="addTitle" value="${addTitle}" />
     <input type="hidden" id="hiddenAddDetail" name="addDetail" value="${addDetail}" />
@@ -311,6 +317,7 @@
           <div class="shipping-header">
             <div class="recipient-info">
               <strong class="recipient-name"><c:out value="${receiverName}" /></strong>
+<%--              <strong class="recipient-name"><c:out value="${addName}" /></strong>--%>
               <span class="recipient-phone"><c:out value="${phone}" /></span>
             </div>
             <button type="button" class="btn-addr-change">배송지 변경</button>
@@ -321,7 +328,7 @@
             </c:if>
           </div>
           <select class="memo-input" name="require">
-            <option value="" >배송시 요청사항을 선택해주세요.</option>
+            <option value="요청사함 없음" >배송시 요청사항을 선택해주세요.</option>
             <option value="배송 전 연락바랍니다" >배송 전 연락바랍니다</option>
             <option value="부재 시 경비실에 맡겨주세요" >부재 시 경비실에 맡겨주세요</option>
             <option value="부재 시 문앞에 놓아주세요">부재 시 문앞에 놓아주세요</option>
@@ -329,7 +336,7 @@
             <option value="other" >기타 입력</option>
           </select>
           <div id="otherRequestDiv" style="display:none; margin-top:10px;">
-            <input type="text" name="require" maxlength="50" placeholder="최대 50자 입력이 가능합니다."
+            <input type="text" id="otherRequestInput" maxlength="50" placeholder="최대 50자 입력이 가능합니다."
                    style="width:100%; padding:8px; font-size:14px; border:1px solid #ddd; border-radius:4px;" />
           </div>
         </div>
@@ -426,7 +433,7 @@
             </span>
           </div>
 
-          <input type="hidden" name="couponCode" id="couponCode" value="" />
+          <input type="hidden" name="coupon.couponCode" id="couponCode" value="" />
           <input type="hidden" name="couponValue" id="couponValue" value="0" />
           <input type="hidden" name="discountAmount" id="discountAmount" value="" />
           <input type="hidden" name="finalNetPay" id="finalNetPayInput" value="${overallNetPay}" />
@@ -434,6 +441,7 @@
 
           <!-- 폼 제출 버튼 -->
           <button class="btn-submit-order" type="submit">결제하기</button>
+<%--          <button class="btn-submit-order" onclick="sendOk();">결제하기</button>--%>
         </div>
       </div> <!-- //order-right -->
     </div> <!-- //order-content -->
@@ -485,6 +493,7 @@
               <c:forEach var="addr" items="${shippingAddresses}">
                 <li class="address-item"
                     data-receiverName="${addr.receiverName}"
+                    data-addName="${addr.addName}"
                     data-addTitle="${addr.addTitle}"
                     data-addDetail="${addr.addDetail}"
                     data-phone="${addr.phone}"
@@ -506,7 +515,7 @@
       </div>
       <div id="modalAddressForm" style="display: none;">
         <label for="modalReceiverName">받는 분</label>
-        <input type="text" name="addrName" id="modalReceiverName" placeholder="수령인 예) 홍길동" />
+        <input type="text" name="receiverName" id="modalReceiverName" placeholder="수령인 예) 홍길동" />
         <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
         <label for="modalAddName">배송지명</label>
         <input type="text" name="addName" id="modalAddName" placeholder="배송지명 예) 집" />
@@ -540,7 +549,6 @@
 </footer>
 
 <script>
-  // 기존 ajaxFun, sample6_execDaumPostcode 등 함수는 동일
   function sample6_execDaumPostcode() {
     new daum.Postcode({
       oncomplete: function(data) {
@@ -552,15 +560,68 @@
     }).open();
   }
 
+  /*
+  function sendOK() {
+    $('.btn-submit-order').click(function () {
+      let f = document.orderSubmit;
+
+      let payMethod = '카드결제'; // 결제유형
+      let cardName = 'BC 카드';  // 카드 이름
+      let authNumber = '1234567890'; // 승인번호
+      let authDate = ''; // 승인 날짜
+      // toISOString() : 'YYYY-MM-DDTHH:mm:ss.sssZ' 형식
+      authDate = new Date().toISOString().replace('T', ' ').slice(0, -5); // YYYY-MM-DD HH:mm:ss
+
+      // 결제 API에 요청할 파라미터
+      let payment = f.payment.value; // 결제할 금액
+      <%--let merchant_uid = '${order.orderCode}';  // 고유 주문번호--%>
+      <%--let productName = '${order.productCode}';  // 주문상품명--%>
+      <%--let buyer_email = '${sessionScope.member.email}';  // 구매자 이메일--%>
+      <%--let buyer_name = '${sessionScope.member.nickName}';  // 구매자 이름--%>
+      <%--let buyer_tel = '${}';   // 구매자 전화번호(필수)--%>
+      <%--let buyer_addr = '${orderUser.addr1}' + ' ' + '${orderUser.addr2}';  // 구매자 주소--%>
+      buyer_addr = buyer_addr.trim();
+      <%--let buyer_postcode = '${orderUser.zip}'; // 구매자 우편번호--%>
+
+      // 결제 API로 결제 진행
+
+
+      // 결제가 성공한 경우 ------------------------
+
+      // 결제 방식, 카드번호, 승인번호, 결제 날짜
+      f.payMethod.value = payMethod;
+      f.cardName.value = cardName;
+      f.authNumber.value = authNumber;
+      f.authDate.value = authDate;
+
+      f.action = '${pageContext.request.contextPath}/order/submit';
+      f.submit();
+    })
+  }
+  */
+
   $(document).ready(function() {
     // 배송시 요청사항 처리
-    const $shippingSelect = $('.shipping-box .memo-input');
+    const $deliverySelect = $('.shipping-box .memo-input');
     const $otherRequestDiv = $('#otherRequestDiv');
-    $shippingSelect.change(function() {
+    const $otherInput = $('#otherRequestInput');
+
+    $deliverySelect.change(function() { // change -> 특정 요소의 값이 변경될 때
+      // select 에서는 change..
       if ($(this).val() === 'other') {
         $otherRequestDiv.show();
       } else {
         $otherRequestDiv.hide();
+      }
+    });
+
+    $('form[name=orderSubmit]').submit(function () {
+      if($deliverySelect.val() === 'other') {
+        const otherVal = $otherInput.val().trim();
+        if(otherVal) {
+          $deliverySelect.removeAttr('name'); // select의 name 속성 제거
+          $(this).append('<input type="hidden" name="require" value="'+otherVal+'">');
+        }
       }
     });
 
@@ -663,6 +724,7 @@
               $("#hiddenAddTitle").val(addTitle);
               $("#hiddenAddDetail").val(addDetail);
               $("#hiddenPhone").val(phone);
+              $("#hiddenReceiverName").val(receiverName);
             } else {
               alert('등록 실패: ' + (data.message || '알 수 없는 오류'));
             }
@@ -710,6 +772,7 @@
       $('.coupon-item').removeClass('selected').css('background', '');
       $(this).addClass('selected').css('background', '#f7f7f7');
     });
+
     $('.coupon-modal-apply').click(function(){
       const selected = $('.coupon-item.selected');
       if(selected.length === 0){
@@ -737,7 +800,23 @@
       $("#finalNetPay").text(finalTotal.toLocaleString() + "원");
       $("#finalNetPayInput").val(finalTotal);
       alert("쿠폰 " + couponCode + " (" + couponRate + "% 할인)이 적용되었습니다.");
+
       $('#couponModalOverlay').hide();
+
+      <%--let url = '${pageContext.request.contextPath}/coupon/history';--%>
+
+      <%--$.ajax({--%>
+      <%--  url : url,--%>
+      <%--  type : 'POST',--%>
+      <%--  date : {couponCode : couponCode},--%>
+      <%--  dataType: 'json',--%>
+      <%--  success : function (data) {--%>
+      <%--    alert('쿠폰 사용 이력 등록 성공');--%>
+      <%--  },--%>
+      <%--  error: function(jqXHR) {--%>
+      <%--    console.log("쿠폰 사용 이력 등록 실패:", jqXHR.responseText);--%>
+      <%--  }--%>
+      <%--});--%>
     });
   });
 </script>

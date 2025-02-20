@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.CouponMapper">
+
+    <!--쿠폰 사용 이력 등록하는곳-->
+    <insert id="insertCouponUsed" parameterType="map">
+        insert into COUPON_USED_HISTORY (COUPON_HISTORY_NUM, COUPON_CODE, USEDDATE, MEMBERIDX)
+        VALUES (SEQ_COUPON_USED_HISTORY.nextval, #{couponCode}, SYSDATE, #{memberIdx} )
+    </insert>
+
+    <delete id="deleteCouponUsed" parameterType="map">
+        delete from USER_HAVE_COUPON
+        where COUPONCODE = #{couponCode} AND MEMBERIDX = #{memberIdx}
+    </delete>
+</mapper>

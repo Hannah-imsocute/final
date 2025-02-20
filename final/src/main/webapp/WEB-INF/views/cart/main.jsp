@@ -383,7 +383,7 @@
                     let $price = $cartItemBlock.find('.item-price');
                     $price.text(newPrice.toLocaleString() + '원');
                     $cartItemBlock.find('.footer-product-amount').text(newPrice.toLocaleString() + '원');
-                    let orderAmount = newPrice - 7000;
+                    let orderAmount = newPrice;
                     $cartItemBlock.find('.footer-order-amount').text(orderAmount.toLocaleString() + '원');
                     updateTotalPrice();
                 } else {

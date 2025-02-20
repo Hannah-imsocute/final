@@ -17,9 +17,10 @@
     </insert>
 
     <insert id="insertPackage" parameterType="com.sp.app.model.ShippingInfo">
-        insert into PACKAGE (ITEM_CODE, MEMBERIDX, PRODUCTCODE, TRACKINGNUMBER, STATE, COMPANY_ID, REQUIRE, ADDRNAME,
-                             ADDRTITLE, ADDRDETAIL, POSTCODE, PHONE)
-        values (#{itemCode}, #{memberIdx}, #{productCode}, null, 0, null, #{require}, #{addName}, #{addTitle}, #{addDetail}, #{postCode}, #{phone} )
+        insert into PACKAGE (ITEM_CODE, MEMBERIDX, PRODUCTCODE, TRACKINGNUMBER, STATE, COMPANY_ID, REQUIRE, receiverName,
+                             ADDRTITLE, ADDRDETAIL, POSTCODE, PHONE, PACKAGECODE)
+        values (#{itemCode}, #{memberIdx}, #{productCode}, null, #{state}, null, #{require, jdbcType=VARCHAR}, #{receiverName}, #{addTitle}, #{addDetail}, #{postCode}, #{phone},
+                SEQ_PACKAGECODE.nextval)
     </insert>
 
 

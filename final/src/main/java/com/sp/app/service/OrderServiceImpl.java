@@ -22,11 +22,14 @@ public class OrderServiceImpl implements OrderService {
 
   private final OrderMapper orderMapper;
   private final ShippingMapper shippingMapper;
-  // 날짜 기반 주문 코드 생성 시 사용
+
   private static AtomicLong count = new AtomicLong(0);
 
   private final CartItemService cartItemService;
+  private final CouponService couponService;
 
+
+  // 주문번호 생성
   @Override
   public String getLatestOrderCode() {
     String result = "";
@@ -35,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
       String preNumber = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
       String savedPreNumber = "";
       long savedLastNumber = 0;
+
       String maxOrderNumber = orderMapper.getLatestOrderCode();
 
       if (maxOrderNumber != null && maxOrderNumber.length() > 8) {
@@ -64,11 +68,13 @@ public class OrderServiceImpl implements OrderService {
     return result;
   }
 
+
+  // 주문 테이블 저장
   @Transactional(rollbackFor = Exception.class)
   @Override
   public void insertOrder(Order dto) throws Exception {
     try {
-      // 주문 테이블 저장
+      // 주문 정보 저장
       orderMapper.insertOrder(dto);
 
       // 결제 정보가 있다면 저장
@@ -76,11 +82,12 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.insertPayment(dto.getPayments());
       }
 
-      // 상세 주문 정보 저장
+      //  상세 주문 정보 저장
       if (dto.getProductCodes() != null && !dto.getProductCodes().isEmpty()) {
         for (int i = 0; i < dto.getProductCodes().size(); i++) {
           dto.setProductCode(dto.getProductCodes().get(i));
           dto.setQuantity(dto.getQuantities().get(i));
+
           // 옵션 문자열을 List로 변환
           if (dto.getOptions1() != null) {
             String[] options = dto.getOptions1().split(",");
@@ -90,43 +97,61 @@ public class OrderServiceImpl implements OrderService {
             }
             dto.setOptionsList(optionsList);
           }
+
           dto.setPriceForeach(dto.getPriceForeachs().get(i));
           dto.setPrice(dto.getPrices().get(i));
           dto.setOrderState(0);
 
+          // 주문 상세 등록
           orderMapper.insertOrderDetail(dto.getOrderItem());
         }
       }
 
-      // 포인트 사용하면 
+      //  포인트 사용 시 포인트 내역 등록
       if (dto.getSpentPoint() > 0) {
-        LocalDate now = LocalDate.now();
-        String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         MemberPoint memberPoint = new MemberPoint();
         memberPoint.setMemberIdx(dto.getMemberIdx());
         memberPoint.setOrderCode(dto.getOrderCode());
         memberPoint.setUsedAmount(dto.getSpentPoint());
         memberPoint.setBalance(-dto.getSpentPoint());
-//        memberPoint.setPointSaveNum(1); // 적립코드?
-        memberPoint.setUsedDate(dateTime);
+        // 날짜/시간 포맷 예시는 필요에 맞게 조정
+        memberPoint.setUsedDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         memberPoint.setExpireDate(dto.getExpireDate());
 
         orderMapper.insertUserPoint(memberPoint);
       }
 
+      // 쿠폰 사용 처리
+      Coupon coupon = dto.getCoupon();
+      if (coupon != null && coupon.getCouponCode() != null) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberIdx", dto.getMemberIdx());
+        map.put("couponCode", coupon.getCouponCode());
 
+        // 쿠폰 삭제
+        couponService.deleteCouponUsed(map);
+        // 사용 이력 등록
+        couponService.insertCouponUsed(map);
+
+        log.debug("쿠폰 사용 처리 완료. memberIdx={}, couponCode={}", dto.getMemberIdx(), coupon.getCouponCode());
+      }
+
+      // 배송 정보 등록
       dto.getShippingInfo().setState("상품준비중");
+      if (dto.getShippingInfo().getRequire() == null) {
+        dto.getShippingInfo().setRequire("");
+      }
       shippingMapper.insertPackage(dto.getShippingInfo());
-
-//      log.debug(shippingInfo.getPostCode());
-//      log.info("new ShippingInfo{}", shippingInfo);
 
     } catch (Exception e) {
       log.info("insertOrder() ", e);
-      throw e; 
+      throw e; // rollback
     }
   }
 
+  /**
+   * 결제 정보
+   */
   @Transactional(rollbackFor = Exception.class)
   @Override
   public void insertPayment(Payment payment) throws Exception {
@@ -138,6 +163,9 @@ public class OrderServiceImpl implements OrderService {
     }
   }
 
+  /**
+   * 주문 상세 정보
+   */
   @Transactional(rollbackFor = Exception.class)
   @Override
   public void insertOrderDetail(OrderItem item) throws SQLException {
@@ -149,6 +177,9 @@ public class OrderServiceImpl implements OrderService {
     }
   }
 
+  /**
+   * 배송 주소
+   */
   @Transactional(rollbackFor = Exception.class)
   @Override
   public void insertShippingAddress(ShippingInfo info) throws Exception {
@@ -160,6 +191,9 @@ public class OrderServiceImpl implements OrderService {
     }
   }
 
+  /**
+   * 포인트 사용/적립
+   */
   @Transactional(rollbackFor = Exception.class)
   @Override
   public void insertUserPoint(MemberPoint userPoint) throws Exception {
@@ -171,6 +205,9 @@ public class OrderServiceImpl implements OrderService {
     }
   }
 
+  /**
+   * 가장 최근 포인트 내역
+   */
   @Override
   public MemberPoint getLatestUserPoint(long memberIdx) {
     MemberPoint memberPoint = null;
@@ -182,6 +219,9 @@ public class OrderServiceImpl implements OrderService {
     return memberPoint;
   }
 
+  /**
+   * 쿠폰 리스트
+   */
   @Override
   public List<Coupon> getCouponList(long memberIdx) {
     List<Coupon> list = null;
@@ -194,6 +234,9 @@ public class OrderServiceImpl implements OrderService {
     return list;
   }
 
+  /**
+   * 특정 주문코드의 상세 내역
+   */
   @Override
   public List<Order> getOrderDetailList(String orderCode) {
     List<Order> list = null;
@@ -205,6 +248,9 @@ public class OrderServiceImpl implements OrderService {
     return list;
   }
 
+  /**
+   * 주문 상품 목록
+   */
   @Override
   public List<Order> listOrderProduct(List<Map<String, Long>> list) {
     List<Order> listProduct = null;
@@ -224,71 +270,74 @@ public class OrderServiceImpl implements OrderService {
     return listProduct;
   }
 
+  /**
+   * 특정 주문 상세
+   */
   @Override
   public Order getOrderDetail(long orderDetailId) {
-    // 필요 시 구현
     return null;
   }
 
+  /**
+   * 특정 상품 정보
+   */
   @Override
   public MainProduct getProduct(long productId) {
     return null;
   }
 
+  /**
+   * 상품 코드로 상품(주문) 정보 가져오기
+   */
   @Override
   public OrderItem getProductCode(long productId) {
     OrderItem dto = null;
     try {
       dto = orderMapper.getProduct(productId);
-    } catch(Exception e) {
-      log.info("getProduct", e);
+    } catch (Exception e) {
+      log.info("getProductCode() ", e);
     }
     return dto;
   }
 
+//  중복되는 주문 처리 메서드
+
   /**
-   * [공통 로직] 장바구니 아이템 목록 + 추가 정보(orderFromView)로 주문 처리
+   * 실제 주문 처리를 수행하는 공통 메서드
+   * - 장바구니 아이템 리스트와 뷰에서 전달받은 Order 객체(쿠폰/포인트/배송정보 등)를 합쳐서
+   *   결제/주문/배송 처리를 수행한다.
    */
-  private Order processOrderCommon(SessionInfo sessionInfo, List<CartItem> cartItems, Order orderFromView) throws Exception {
+  @Transactional(rollbackFor = Exception.class)
+  protected Order processOrderInternal(SessionInfo sessionInfo, List<CartItem> cartItems, Order orderFromView) throws Exception {
     if (cartItems == null || cartItems.isEmpty()) {
-      throw new Exception("장바구니가 비어 있습니다.(또는 상품이 선택되지 않았습니다.)");
+      throw new Exception("장바구니가 비어 있습니다. (혹은 상품이 선택되지 않았습니다.)");
     }
 
-    List<OrderItem> orderItems = new ArrayList<>();
+    //  총 결제 금액 계산
     int overallNetPay = 0;
-
     for (CartItem cartItem : cartItems) {
       int totalPrice = cartItem.getQuantity() * cartItem.getPrice();
       int shipping = (totalPrice >= 20000) ? 0 : 3000;
       int couponValueForItem = (cartItem.getCouponValue() != null) ? cartItem.getCouponValue() : 0;
       int spentPointForItem = (cartItem.getSpentPoint() != null) ? cartItem.getSpentPoint() : 0;
+
+      // 총합 = 상품금액 + 배송비 - 쿠폰할인 - 포인트사용
       int netPay = totalPrice + shipping - couponValueForItem - spentPointForItem;
       overallNetPay += netPay;
-
-      OrderItem orderItem = OrderItem.builder()
-              .productCode(cartItem.getProductCode())
-              .options(cartItem.getCartOption())
-              .priceForeach(cartItem.getPrice())
-              .quantity(cartItem.getQuantity())
-              .price(totalPrice)
-              .shipping(shipping)
-              .orderState(0)
-              .build();
-      orderItems.add(orderItem);
     }
 
-    // 1) 주문코드 생성
+    // 주문코드 생성
     String orderCode = getLatestOrderCode();
 
-    // 2) 뷰에서 넘어온 쿠폰, 포인트, 결제수단 등을 반영 (null 체크 추가)
+    //  추가 정보(뷰에서 넘어온 쿠폰, 포인트, 결제수단 등) 반영
     String payment = (orderFromView != null && orderFromView.getPayment() != null)
             ? orderFromView.getPayment() : "카드";
 
     int usedPoint = (orderFromView != null && orderFromView.getSpentPoint() != null)
             ? orderFromView.getSpentPoint() : 0;
+
     int couponVal = (orderFromView != null && orderFromView.getCouponValue() != null)
             ? orderFromView.getCouponValue() : 0;
-
 
     int finalNetPay = overallNetPay - couponVal - usedPoint;
     if (finalNetPay < 0) finalNetPay = 0;
@@ -296,7 +345,7 @@ public class OrderServiceImpl implements OrderService {
     Order order = Order.builder()
             .memberIdx(sessionInfo.getMemberIdx())
             .email(sessionInfo.getEmail())
-            .orderDate(java.time.LocalDateTime.now().toString())
+            .orderDate(java.time.LocalDateTime.now().toString())  // 예시
             .orderCode(orderCode)
             .totalPrice(overallNetPay)
             .couponCode((orderFromView != null) ? orderFromView.getCouponCode() : null)
@@ -304,42 +353,73 @@ public class OrderServiceImpl implements OrderService {
             .spentPoint(usedPoint)
             .netPay(finalNetPay)
             .payment(payment)
-            .orderItems(orderItems)
+            .shippingInfo((orderFromView != null) ? orderFromView.getShippingInfo() : null)
             .build();
 
-    // 3) DB Insert
     orderMapper.insertOrder(order);
-    for (OrderItem orderItem : orderItems) {
-      orderItem.setOrderCode(orderCode);
+
+    for (CartItem cartItem : cartItems) {
+      OrderItem orderItem = OrderItem.builder()
+              .orderCode(orderCode)
+              .productCode(cartItem.getProductCode())
+              .options(cartItem.getCartOption())  // 옵션 정보
+              .priceForeach(cartItem.getPrice())
+              .quantity(cartItem.getQuantity())
+              .price(cartItem.getQuantity() * cartItem.getPrice())
+              .shipping((cartItem.getQuantity() * cartItem.getPrice() >= 20000) ? 0 : 3000)
+              .orderState(0)
+              .build();
+
       orderMapper.insertOrderDetail(orderItem);
+
+      // 배송 정보 등록 (아이템 단위)
+      if (order.getShippingInfo() != null) {
+        ShippingInfo shipping = order.getShippingInfo();
+        shipping.setItemCode(orderItem.getItemCode());
+        shipping.setMemberIdx(order.getMemberIdx());
+        shipping.setState("상품준비중");
+        shippingMapper.insertPackage(shipping);
+      }
     }
 
-    // 4) 장바구니 아이템 삭제
     List<Long> cartItemIds = new ArrayList<>();
     for (CartItem c : cartItems) {
       cartItemIds.add(c.getCartItemCode());
     }
     cartItemService.deleteCartItems(sessionInfo.getMemberIdx(), cartItemIds);
 
+    if (orderFromView != null) {
+      Coupon coupon = orderFromView.getCoupon();
+      if (coupon != null && coupon.getCouponCode() != null) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberIdx", orderFromView.getMemberIdx());
+        map.put("couponCode", coupon.getCouponCode());
+
+        couponService.deleteCouponUsed(map);
+        couponService.insertCouponUsed(map);
+
+        log.debug("쿠폰 사용 처리. memberIdx={}, couponCode={}", orderFromView.getMemberIdx(), coupon.getCouponCode());
+      }
+    }
+
+
     return order;
   }
+
   /**
    * [기존] 전체 장바구니 아이템 구매 로직
-   * orderFromView 없이 사용하면 쿠폰, 포인트 등 반영 안 됨
-   * -> deprecated 느낌으로 두거나, 아래 메서드처럼 변경 가능
    */
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Order processOrder(SessionInfo sessionInfo) throws Exception {
-    // 전체 장바구니 가져오기
+    // 1) 전체 장바구니 가져오기
     List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
-    // orderFromView = null 로 처리
-    return processOrderCommon(sessionInfo, cartItems, null);
+    // 2) 공통 메서드 호출 (orderFromView = null)
+    return processOrderInternal(sessionInfo, cartItems, null);
   }
 
   /**
-   * [기존] 선택된 장바구니 아이템 구매
-   * orderFromView 없이 사용하면 쿠폰, 포인트 등 반영 안 됨
+   *  선택된 장바구니 아이템 구매
    */
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -348,12 +428,14 @@ public class OrderServiceImpl implements OrderService {
     params.put("memberIdx", sessionInfo.getMemberIdx());
     params.put("selectedCodes", selectedCartItemCodes);
 
+    // 선택된 장바구니 아이템 조회
     List<CartItem> cartItems = cartItemService.getCartItemsByCodes(params);
-    return processOrderCommon(sessionInfo, cartItems, null);
+    //  공통 메서드 호출 (orderFromView = null)
+    return processOrderInternal(sessionInfo, cartItems, null);
   }
 
   /**
-   * [개선된] 선택된 장바구니 아이템 구매 + 사용자 입력(OrderFromView) 반영
+   * [개선] 선택된 장바구니 아이템 구매 + 사용자 입력(OrderFromView) 반영
    */
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -362,35 +444,46 @@ public class OrderServiceImpl implements OrderService {
     params.put("memberIdx", sessionInfo.getMemberIdx());
     params.put("selectedCodes", selectedCartItemCodes);
 
+    // 1) 선택된 장바구니 아이템 조회
     List<CartItem> cartItems = cartItemService.getCartItemsByCodes(params);
-    return processOrderCommon(sessionInfo, cartItems, orderFromView);
+    // 2) 공통 메서드 호출 (orderFromView 적용)
+    return processOrderInternal(sessionInfo, cartItems, orderFromView);
   }
 
-//  @Override
+  /**
+   * [직접 구매] 장바구니 없이 바로 구매
+   * - orderFromView에서 상품/옵션 정보를 받아와 CartItem 형태로 임시 구성하여 구매 처리
+   */
   @Transactional(rollbackFor = Exception.class)
   public Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView) throws Exception {
-    // orderFromView에서 상품정보를 받아서 임시 CartItem 목록 생성
-    List<OrderItem> orderItems = new ArrayList<>();
-    if (orderFromView.getProductCodes() != null && orderFromView.getQuantities() != null) {
-      for (int i = 0; i < orderFromView.getProductCodes().size(); i++) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setProductCode(orderFromView.getProductCodes().get(i));
-        orderItem.setQuantity(orderFromView.getQuantities().get(i));
-        // 단가 정보는 OrderItem 정보를 통해 가져오기
-        OrderItem productInfo = getProductCode(orderFromView.getProductCodes().get(i));
-        if (productInfo == null) {
-          throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + orderFromView.getProductCodes().get(i));
-        }
-        orderItem.setPrice(productInfo.getPrice());
-        // 직접 구매이므로 쿠폰/포인트는 뷰에서 받은 값을 사용 (여기서는 기본값 0)
-        orderItem.setCouponValue(0);
-        orderItem.setSpentPoint(0);
-        orderItems.add(orderItem);
-      }
+    if (orderFromView == null || orderFromView.getProductCodes() == null || orderFromView.getQuantities() == null) {
+      throw new Exception("주문 정보가 부족합니다. (직접 구매)");
     }
-//    return processOrderCommon(sessionInfo, orderItems, orderFromView);
-    return null;
-  }
 
+    // OrderFromView의 상품 정보를 CartItem 형태로 변환
+    List<CartItem> cartItems = new ArrayList<>();
+    for (int i = 0; i < orderFromView.getProductCodes().size(); i++) {
+      Long productCode = orderFromView.getProductCodes().get(i);
+      Integer quantity = orderFromView.getQuantities().get(i);
+
+      OrderItem productInfo = getProductCode(productCode);
+      if (productInfo == null) {
+        throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + productCode);
+      }
+
+      CartItem cartItem = CartItem.builder()
+              .cartItemCode(0L) // 임시 (DB에 저장되는 장바구니 아니므로)
+              .memberIdx(sessionInfo.getMemberIdx())
+              .productCode(productCode)
+              .quantity(quantity)
+              .price(productInfo.getPrice()) // 단가
+              .cartOption(productInfo.getOptions())
+              .build();
+
+      cartItems.add(cartItem);
+    }
+
+    return processOrderInternal(sessionInfo, cartItems, orderFromView);
+  }
 
 }
