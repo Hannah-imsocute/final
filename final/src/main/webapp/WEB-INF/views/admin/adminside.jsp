@@ -19,7 +19,7 @@
 	    <ul>
 	        <li><a class="menu-item" href="<c:url value='/admin/authList' />">권한관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/applyList' />">입점 신청 관리</a></li>
-	        <li><a class="menu-item" href="<c:url value='/admin/paymentList' />">결제 및 정산 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/settlementManage' />">결제 및 정산 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/productList' />">상품 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/eventList' />">이벤트 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/membershipList' />">광고 상품 관리</a></li>

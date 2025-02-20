@@ -40,9 +40,9 @@ public class AdminController {
     }
 
     // 결제 및 정산 관리 페이지
-    @GetMapping("/admin/paymentList")
+    @GetMapping("/admin/settlementManage")
     public String paymentList(Model model) {
-        model.addAttribute("contentPage", "admin/paymentList/paymentList.jsp");
+        model.addAttribute("contentPage", "admin/settlementManage/settlementManage.jsp");
         model.addAttribute("pageTitle", "결제 및 정산관리");
         return "admin/home";
     }

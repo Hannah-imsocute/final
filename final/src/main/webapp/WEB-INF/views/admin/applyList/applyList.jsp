@@ -195,12 +195,6 @@ function updateStatusOk() {
     const sellerName = $('#sellerName').text(); // 이름을 가져옴
     const rejectionReason = $('#rejectionReason').val(); // 반려 사유 가져오기 (반려 시에만 사용)
 
-    console.log("전송할 sellerApplyNum:", sellerApplyNum);
-    console.log("전송할 agreed 값:", agreed);
-    console.log("전송할 sellerEmail:", sellerEmail);
-    console.log("전송할 sellerName:", sellerName);
-    console.log("전송할 rejectionReason:", rejectionReason);
-
     if (!confirm('상태 정보를 수정하시겠습니까?')) {
         return;
     }
@@ -238,12 +232,6 @@ function updateStatusReject() {
     const sellerEmail = $('#sellerEmail').text(); 
     const sellerName = $('#sellerName').text(); 
     const rejectionReason = $('#rejectionReason').val(); 
-
-    console.log("🔴 반려 처리 - 전송할 sellerApplyNum:", sellerApplyNum);
-    console.log("🔴 반려 처리 - agreed 값:", agreed);
-    console.log("🔴 반려 처리 - sellerEmail:", sellerEmail);
-    console.log("🔴 반려 처리 - sellerName:", sellerName);
-    console.log("🔴 반려 처리 - rejectionReason:", rejectionReason);
 
     if (!confirm('정말 반려하시겠습니까?')) {
         return;
