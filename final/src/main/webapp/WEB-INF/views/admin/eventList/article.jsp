@@ -8,110 +8,69 @@
 <title>ttshop</title>
 <link rel="icon" href="data;base64,iVBORw0kGgo=">
 <jsp:include page="/WEB-INF/views/admin/adminimported.jsp" />
+
 <style type="text/css">
-<style type="text/css">
-/* 기본 스타일 */
 body {
-    background-color: #f5f6fa;
-    font-family: 'Noto Sans KR', sans-serif;
+	font-family: sans-serif;
+	margin: 20px;
+	background-color: #f5f5f5;
 }
 
-/* main의 margin-top을 크게 조정 */
-main {
-    margin-top: 250px; /* 기존보다 더 여유 있는 여백 */
-    padding-top: 20px; /* 추가적인 위쪽 여백 */
+.event-view-container {
+	max-width: 800px;
+	margin: 0 auto;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	padding: 20px;
 }
 
-/* 카드 스타일 */
-.event-card {
-    max-width: 800px;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+.event-view-container h2 {
+	font-size: 1.4rem;
+	margin-bottom: 10px;
+	border-bottom: 2px solid #333;
+	padding-bottom: 10px;
 }
 
-/* 제목 */
-.event-title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* 테이블 스타일 */
 .event-table {
-    width: 100%;
-    background: #ffffff;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
 }
 
 .event-table th, .event-table td {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
+	border: 1px solid #ccc;
+	padding: 12px;
+	vertical-align: middle;
 }
 
 .event-table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-    text-align: left;
-    width: 30%;
+	background-color: #f2f2f2;
+	text-align: left;
+	font-weight: 600;
 }
 
 .event-table td {
-    text-align: left;
-    color: #555;
+	background-color: #fff;
+	text-align: left;
 }
 
-/* 이벤트 타입 (라디오 버튼) */
-.event-type {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+.btn-area {
+	text-align: right;
 }
 
-.event-type label {
-    font-size: 16px;
-    color: #444;
+.btn-area button {
+	padding: 8px 16px;
+	background-color: #4285f4;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	border-radius: 4px;
+	margin-left: 5px;
 }
 
-.event-type input {
-    margin-right: 5px;
+.btn-area button:hover {
+	background-color: #3367d6;
 }
-
-/* 버튼 스타일 */
-.btn-outline-primary {
-    border: 2px solid #007bff;
-    color: #007bff;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 6px;
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-outline-primary:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .event-card {
-        padding: 20px;
-    }
-    .event-title {
-        font-size: 24px;
-    }
-    .event-table th, .event-table td {
-        padding: 12px;
-        font-size: 14px;
-    }
-}
-</style>
-
 </style>
 </head>
 <body>
@@ -119,67 +78,86 @@ main {
 		<jsp:include page="/WEB-INF/views/admin/adminheader.jsp" />
 		<jsp:include page="/WEB-INF/views/admin/adminside.jsp" />
 	</header>
-	<main class="container mt-9">
-		<div class="event-card shadow-lg p-4 mx-auto">
-			<h2 class="event-title text-center">${event.subject}</h2>
 
-			<!-- 이벤트 정보 테이블 -->
-			<table class="table event-table">
+	<main class="container mt-9">
+		<div class="event-view-container">
+			<h2>이벤트 상세 보기</h2>
+			<table class="event-table">
+				<!-- 4개의 열을 사용하므로 colgroup을 4개로 지정 (너비는 취향에 맞게 조정) -->
+				<colgroup>
+					<col style="width: 15%;">
+					<col style="width: 35%;">
+					<col style="width: 15%;">
+					<col style="width: 35%;">
+				</colgroup>
 				<tbody>
+					<!-- 이벤트명과 이벤트 작성일을 같은 행에 배치 -->
 					<tr>
 						<th>이벤트명</th>
-						<td>${event.subject}</td>
-					</tr>
-					<tr>
+						<td>${dto.subject}</td>
 						<th>이벤트 작성일</th>
-						<td><fmt:formatDate value="${event.createdDate}"
-								pattern="yyyy-MM-dd HH:mm" /></td>
+						<td>${dto.created}</td>
 					</tr>
+
 					<tr>
 						<th>이벤트 시작일</th>
-						<td><fmt:formatDate value="${event.startdate}"
-								pattern="yyyy-MM-dd" /></td>
-					</tr>
-					<tr>
+						<td>${dto.startdate}</td>
 						<th>이벤트 종료일</th>
-						<td><fmt:formatDate value="${event.enddate}"
-								pattern="yyyy-MM-dd" /></td>
-					</tr>
-					<tr>
-						<th>이벤트 컨텐츠</th>
-						<td>${event.textcontent}</td>
+						<td>${dto.enddate}</td>
 					</tr>
 					<tr>
 						<th>이벤트 타입</th>
-						<td>
-							<div class="event-type">
-								<label class="form-check-label"> <input type="radio"
-									class="form-check-input" name="eventType" value="coupon"
-									disabled
-									<c:if test="${event.eventType == 'coupon'}">checked</c:if>>
-									쿠폰
-								</label> <label class="form-check-label"> <input type="radio"
-									class="form-check-input" name="eventType" value="comment"
-									disabled
-									<c:if test="${event.eventType == 'comment'}">checked</c:if>>
-									댓글
-								</label> <label class="form-check-label"> <input type="radio"
-									class="form-check-input" name="eventType" value="checkin"
-									disabled
-									<c:if test="${event.eventType == 'checkin'}">checked</c:if>>
-									출석체크
-								</label>
-							</div>
-						</td>
+						<td colspan="3"><label> <input type="radio"
+								name="eventType" value="coupon"
+								${dto.eventType=='coupon' ? 'checked disabled':'disabled'}>
+								쿠폰
+						</label> <label> <input type="radio" name="eventType"
+								value="comment"
+								${dto.eventType=='comment' ? 'checked disabled':'disabled'}>
+								댓글
+						</label> <label> <input type="radio" name="eventType"
+								value="attendance"
+								${dto.eventType=='clockin' ? 'checked disabled':'disabled'}>
+								출석체크
+						</label></td>
+					</tr>
+					<tr>
+						<th>이벤트 타입 설명</th>
+						<td colspan="3"><c:choose>
+								<c:when test="${dto.eventType=='coupon'}">
+            		쿠폰명 : ${dto.event.couponname} 쿠폰 코드 : ${dto.event.coupon_code} 
+            		</c:when>
+								<c:when test="${dto.eventType=='clockin'}">
+            		일일포인트 : ${dto.event.daybyday} 주간 포인트 : ${dto.event.weekly} 월간 포인트 : ${dto.event.monthly}
+            		</c:when>
+								<c:otherwise>
+            		댓글 개수 : ${dto.event.commcount}
+            		</c:otherwise>
+							</c:choose></td>
+					</tr>
+					<tr>
+						<th>이벤트 내용</th>
+						<td colspan="3">${dto.textcontent}</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<div class="text-center mt-4">
-				<a href="${pageContext.request.contextPath}/admin/event/list"
-					class="btn btn-outline-primary">목록으로</a>
+			<div class="btn-area">
+				<!-- 편집/삭제/목록 버튼 -->
+				<c:if test="${dto.eventType == 'comment' }">
+					<button type="button" onclick="pickWinners()">당첨자발표</button>
+				</c:if>
+				<button type="button" onclick="alert('편집 기능을 연결하세요.')">편집</button>
+				<button type="button" onclick="alert('삭제 기능을 연결하세요.')">삭제</button>
+				<button type="button" onclick="history.back()">목록으로 가기</button>
 			</div>
 		</div>
 	</main>
+
+	<script type="text/javascript">
+		function pickWinners(){
+			window.open('${pageContext.request.contextPath}/admin/event/winners?num=${dto.event_article_num}','_blank', 'width=500, height=700, scrollbars=yes, resizable=no');
+		}
+	</script>
 </body>
 </html>

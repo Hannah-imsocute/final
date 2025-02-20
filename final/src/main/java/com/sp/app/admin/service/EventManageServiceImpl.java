@@ -1,6 +1,7 @@
 package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +71,20 @@ public class EventManageServiceImpl implements EventManageService {
 			log.info("================getListOFValidEvent", e);
 		}
 		return list;
+	}
+
+	@Override
+	public Event findByIdOfEvent(long num, String Type) {
+		Event dto = null;
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("num", num);
+			map.put("type", Type);
+			dto = mapper.findByIdOfEvent(map);
+		} catch (Exception e) {
+			log.info("===============findByIdOfEvent: ", e);
+		}
+		return dto;
 	}
 
 	

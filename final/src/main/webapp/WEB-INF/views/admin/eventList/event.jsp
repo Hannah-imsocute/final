@@ -123,7 +123,7 @@ tbody td {
 						<c:forEach var="dto" items="${list}">
 							<tr>
 								<td></td>
-								<td><a href="#" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
+								<td><a href="${pageContext.request.contextPath}/admin/event/article/${dto.event_article_num}?type=${dto.eventType}" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
 								<td>${dto.startdate}</td>
 								<td>${dto.enddate }</td>
 								<td class="status">
@@ -209,10 +209,11 @@ tbody td {
 			let subject = el.subject;
 			let startdate = el.startdate;
 			let enddate = el.enddate;
+			let type = el.eventType;
 			
 			out += '<tr>';
 			out += '	<td></td>';
-			out += '	<td><a href="#" data-eventnum="'+num+'">'+subject+'</a></td>';
+			out += '	<td><a href="${pageContext.request.contextPath}/admin/event/article/'+num+'?type='+type+'" data-eventnum="'+num+'">'+subject+'</a></td>';
 			out += '	<td>'+startdate+'</td>';
 			out += '	<td>'+enddate+'</td>';
 			out += '	<td class="staus">종료</td>';
@@ -231,10 +232,11 @@ tbody td {
 			let subject = el.subject;
 			let startdate = el.startdate;
 			let enddate = el.enddate;
+			let type = el.eventType;
 			
 			out += '<tr>';
 			out += '	<td></td>';
-			out += '	<td><a href="#" data-eventnum="'+num+'">'+subject+'</a></td>';
+			out += '	<td><a href="${pageContext.request.contextPath}/admin/event/article/'+num+'?type='+type+'" data-eventnum="'+num+'">'+subject+'</a></td>';
 			out += '	<td>'+startdate+'</td>';
 			out += '	<td>'+enddate+'</td>';
 			out += '	<td class="staus">진행중</td>';

@@ -1,7 +1,5 @@
 package com.sp.app.admin.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +177,20 @@ public class AdminEventController {
 	}
 
 	@GetMapping("article/{num}")
-	public String getIntoArticle(@PathVariable(name = "num")long num) {
+	public String getIntoArticle(@PathVariable(name = "num")long num, @RequestParam(name = "type")String type, Model model) {
+		try {
+			Event dto = service.findByIdOfEvent(num, type);
+			
+			model.addAttribute("dto", dto);
+			model.addAttribute("type", type);
+		} catch (Exception e) {
+			log.info("===========getIntoArticle");
+		}
 		return "admin/eventList/article";
+	}
+	
+	@GetMapping("winners")
+	public String handlePopup(@RequestParam(name = "num")long num) {
+		return "admin/eventList/winnerForm";
 	}
 }

@@ -20,8 +20,10 @@ public class EventType {
 	private String couponstart;
 	private String expiredate;
 	
-	private long clickin_num;
+	private long clockin_num;
 	private int daybyday;
 	private int weekly;
 	private int monthly;
+	
+	private int commcount;
 }

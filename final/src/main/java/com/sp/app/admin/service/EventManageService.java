@@ -12,4 +12,6 @@ public interface EventManageService {
 	
 	public int dataCountValidEvent();
 	public List<Event> getListOFValidEvent(Map<String, Object> map);
+	
+	public Event findByIdOfEvent(long num, String Type);
 }
