@@ -109,7 +109,7 @@
 	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.model.MainProduct">
 		SELECT categoryCode, name, parentCategoryCode
 		FROM productCategory
-		WHERE categoryCode = #{categoryCode}
+		WHERE categoryCode = #{cateoryCode}
 	</select>
 	
 	<select id="findById" parameterType="Long" resultType="com.sp.app.model.MainProduct">

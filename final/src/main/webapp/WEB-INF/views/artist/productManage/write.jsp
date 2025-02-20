@@ -73,19 +73,19 @@
     <br>
    <div class="content">
     <section class="product-management">
-        <form action="#" method="post" class="product-form" enctype="multipart/form-data">
+        <form name="productForm" class="product-form" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>카테고리</label>
                 <select name="main-category">
-                    <option>:: 메인 카테고리 선택 ::</option>
-                    <c:forEach var="vo" items="${listCategory}">
-                    	<option value="${vo.categoryNum}" ${parentNum==vo.categoryNum?"selected":""}>${vo.categoryName}</option>
+                    <option value="">:: 메인 카테고리 선택 ::</option>
+                    <c:forEach var="vo" items="${listMainCategory}">
+                    	<option value="${vo.categoryCode}" ${parentCategoryCode==vo.categoryCode?"selected":""}>${vo.name}</option>
                     </c:forEach>
                 </select>
                 <select name="sub-category">
-                    <option>:: 카테고리 선택 ::</option>
+                    <option value="">:: 카테고리 선택 ::</option>
                     <c:forEach var="vo" items="${listSubCategory}">
-						<option value="${vo.categoryNum}" ${dto.categoryNum==vo.categoryNum?"selected":""}>${vo.categoryName}</option>
+						<option value="${vo.categoryCode}" ${categoryCode==vo.categoryCode?"selected":""}>${vo.name}</option>
 					</c:forEach>
                 </select>
             </div>
@@ -151,6 +151,70 @@
     </section>
    </div> 
 </main>
+
+<script type="text/javascript">
+
+var contextPath = "${pageContext.request.contextPath}";
+
+//카테고리 선택
+$(function(){
+	$('form select[name=main-category]').change(function(){
+	    console.log('메인 카테고리 선택 변경됨:', $(this).val());
+	});
+		$('form select[name=sub-category]').find('option').remove().end()
+		.append('<option value="">:: 카테고리 선택 :: </option>');
+		
+		if(! parentCategoryCode){
+			return false;
+		}
+
+	    $.ajax({
+	        url: contextPath + '/artist/productManage/listSubCategory',   // Spring Boot 서버 엔드포인트
+	        method: 'get',
+	        data: { parentCategoryCode:parentCategoryCode },  // 요청 데이터
+	        dataType: 'json',
+	        beforeSend: function() {
+	            $('').empty();  // AJAX 요청 전 기존 리스트 초기화
+	        },
+	        success: function(response) {
+	        	console.log('응답받음 :', response)
+	            if (response && Array.isArray(response.listSubCategory)) {
+	            	$.each(response.listSubCategory, function(arrayIndex, arrayKey) {
+	            		let categoryCode = arrayKey.categoryCode;
+	    				let categoryName = arrayKey.name
+	    				let s = '<option value="' + categoryCode +'">' + categoryName + '</option>';
+	    				$('form select[name=sub-category]').append(s);
+
+	            	})
+	            } else {
+	                console.warn('카테고리 선택에 실패했습니다..');
+	            }
+
+	        },
+	        error: function(xhr, status, error) {
+	            alert('카테고리 선택에 실패했습니다...');
+	            console.error(error, xhr.responseText);
+	        }
+	    });
+});
+
+		
+		
+		
+		
+		
+		
+/* 		const fn = function(data){
+			$.each(data.listSubCategory, function(arrayIndex, arrayKey){
+				let categoryCode = arrayKey.categoryCode;
+				let categoryName = arrayKey.name
+				let s = '<option value="' + categoryCode +'">' + categoryName + '</option>';
+				$('form select[name=sub-category]').append(s);
+			});
+		};
+		ajaxRequest(url, 'get', formData, 'json', fn); */
+
+</script>
 
 </body>
 </html>

@@ -8,7 +8,7 @@ import com.sp.app.artist.model.ProductManage;
 @Mapper
 public interface ProductManageMapper {
 	public ProductManage findByCategoryId(int CategoryCode);
-	public List<ProductManage> listCategory();
+	public List<ProductManage> listMainCategory();
 	public List<ProductManage> listSubCategory(long parentNum);
 
 }
