@@ -118,7 +118,8 @@ textarea {
 		<form action="#" method="post" id="winnerForm">
 			<div class="form-group">
 				<label for="eventName">이벤트명</label> <input type="text"
-					id="eventName" name="eventName" placeholder="이벤트명을 입력하세요" />
+					id="eventName" name="eventName" value="${dto.subject}" readonly
+					placeholder="이벤트명을 입력하세요" />
 			</div>
 			<div class="form-group">
 				<label for="winnerCount">당첨자 수</label> <input type="number"
@@ -135,9 +136,8 @@ textarea {
 			</div>
 			<div class="btn-wrap">
 				<input type="button" class="btn" value="당첨자 뽑기"
-					onclick="pickWinners()" />
-				<input type="button" class="btn" value="게시글 등록"
-					onclick="pickWinners()" />
+					onclick="getWinners()" /> <input type="button" class="btn"
+					value="게시글 등록" onclick="" />
 			</div>
 		</form>
 
@@ -148,5 +148,42 @@ textarea {
 	</div>
 
 	<div class="footer-text">&copy; 2025 Event Winner Popup</div>
+
+	<script type="text/javascript">
+	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
+		
+		const settings = {
+				type: method, 
+				data: requestParams,
+				dataType: responseType,
+				success:function(data) {
+					callback(data);
+				},
+				beforeSend: function(jqXHR) {
+				},
+				complete: function () {
+				},
+				error: function(jqXHR) {
+					console.log(jqXHR.responseText);
+				}
+		};
+		
+		if(file) {
+			settings.processData = false;  
+			settings.contentType = false; 
+		}
+		
+		if(contentType.toLowerCase() === 'json') {
+			settings.contentType = 'application/json; charset=utf-8';
+		}
+		
+		$.ajax(url, settings);
+	};
+	
+	function getWinners (){
+		let url = "${pageContext.request.contextPath}/admin/event/getwinners";
+		let params = {num : ${dto.event_article_num} };
+	};
+	</script>
 </body>
 </html>

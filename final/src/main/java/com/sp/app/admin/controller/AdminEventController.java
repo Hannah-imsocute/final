@@ -190,7 +190,15 @@ public class AdminEventController {
 	}
 	
 	@GetMapping("winners")
-	public String handlePopup(@RequestParam(name = "num")long num) {
+	public String handlePopup(@RequestParam(name = "num")long num, Model model) {
+		try {
+			Event dto = service.findByIdOfEvent(num, "comment");
+			
+			model.addAttribute("dto", dto);
+			
+		} catch (Exception e) {
+			log.info("====================handlePopup : ",e);
+		}
 		return "admin/eventList/winnerForm";
 	}
 }
