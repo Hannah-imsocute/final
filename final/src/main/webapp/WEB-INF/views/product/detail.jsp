@@ -373,6 +373,44 @@ $(document).ready(function () {
         dlg.dialog("close");
     });
 });
+
+function ajaxFun(url, method, formData, dataType, fn, file = false) {
+    const settings = {
+        type: method,
+        data: formData,
+        dataType: dataType,
+        success: function(data) {
+            fn(data);
+        },
+        error: function(jqXHR) {
+            console.log(jqXHR.responseText);
+        }
+    };
+    if(file){
+        settings.processData = false;
+        settings.contentType = false;
+    }
+    $.ajax(url, settings);
+}
+
+$(function(){
+	$(".cart-btn").click(function(event){
+		event.preventDefault();
+
+		var productCode = "${dto.productCode}";
+		var quantity = 1;
+		var price = "${dto.price}";
+
+		let params = { productCode: productCode, quantity: quantity, price: price };
+		let url = "${pageContext.request.contextPath}/cart/add";
+
+		const fn = function(data){
+			alert('상품을 장바구니에 담았습니다.');
+		};
+
+		ajaxFun(url, "POST", params, "text", fn);
+	});
+});
 	
 	
 </script>
