@@ -246,23 +246,20 @@ main {
 
 /* 타이틀 달고 밑에 줄 */
 h3 {
-	color: #747474;
-	font-weight: bold;
+    color: #747474;
+    font-weight: bold !important;  
+    font-family: 'Arial', sans-serif;  
     border-bottom: 3px solid #ff6600;  
-    padding-bottom: 10px;  /* 타이틀과 선 사이의 여백 */
-    margin-bottom: 10px;  /* 타이틀과 다음 요소와의 간격 */
+    padding-bottom: 10px;  
+    margin-bottom: 10px;  
     width: 70%;
 }
 
 h3 div {
-	position: fi
+    position: fixed;
 }
 
-html, body {
-    height: 100%; /* html과 body에 100% 높이 설정 */
-    margin: 0; /* 기본 여백 제거 */
-    padding: 0; /* 기본 패딩 제거 */
-}
+
 
 /* #main-content 영역에서만 스크롤이 발생하도록 설정 */
 #main-content {
