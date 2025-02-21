@@ -9,8 +9,16 @@
         VALUES (SEQ_COUPON_USED_HISTORY.nextval, #{couponCode}, SYSDATE, #{memberIdx} )
     </insert>
 
+
     <delete id="deleteCouponUsed" parameterType="map">
         delete from USER_HAVE_COUPON
         where COUPONCODE = #{couponCode} AND MEMBERIDX = #{memberIdx}
     </delete>
+
+    <select id="getCouponCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM USER_HAVE_COUPON WHERE MEMBERIDX = #{memberIdx}
+    </select>
+
+
+
 </mapper>

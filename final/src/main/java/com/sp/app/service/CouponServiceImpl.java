@@ -38,4 +38,17 @@ public class CouponServiceImpl implements CouponService {
         }
     }
 
+    @Override
+    public int getCouponCount(long memberIdx) {
+        int result = 0;
+
+        try {
+            result = mapper.getCouponCount(memberIdx);
+        } catch(Exception e) {
+            log.info("getCouponCount", e);
+            throw new RuntimeException("쿠폰 오류..");
+        }
+        return result;
+    }
+
 }

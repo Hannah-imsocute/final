@@ -6,4 +6,6 @@ public interface CouponService {
 
     void insertCouponUsed(Map<String, Object> map) throws Exception;
     void deleteCouponUsed(Map<String, Object> map) throws Exception;
+    int getCouponCount(long memberIdx);
+
 }

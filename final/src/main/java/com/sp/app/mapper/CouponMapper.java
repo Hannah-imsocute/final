@@ -9,4 +9,5 @@ public interface CouponMapper {
 
     void insertCouponUsed(Map<String, Object> map) throws Exception;
     void deleteCouponUsed(Map<String, Object> map) throws Exception;
+    int getCouponCount(long memberIdx);
 }

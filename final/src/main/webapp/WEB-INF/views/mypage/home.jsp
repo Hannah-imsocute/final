@@ -2,23 +2,31 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>내 정보</title>
-    <!-- 공통 CSS/JS 로드 -->
     <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 
-    <style>
-        /* ========== 기본 리셋 및 전역 스타일 ========== */
-        * { box-sizing: border-box; }
+    <!-- 예시로 구글 폰트 사용 (선택 사항) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
+    <style>
+        /* ==================== Global Reset & Base Style ==================== */
+        * {
+            box-sizing: border-box;
+        }
+        header { position: relative !important; }
+        body, html {
             margin: 0;
             padding: 0;
-            font-family: "Arial", sans-serif;
-            background-color: #f5f5f5;
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #fff; /* 흰색 배경 */
+            color: #333;
         }
         a {
             text-decoration: none;
@@ -26,23 +34,26 @@
         }
         a:hover {
             text-decoration: none;
+            color: #fa7c00; /* 브랜드 컬러(주황)로 hover 시 변경 */
         }
 
-        /* ========== 고정 헤더 (header.jsp로 include) ========== */
+        /* ==================== Header (고정) ==================== */
         header {
-            position: fixed;
+            position: fixed; /* 고정 헤더 */
             top: 0;
             left: 0;
             width: 100%;
             z-index: 1000;
             background-color: #fff;
             border-bottom: 1px solid #e5e5e5;
-            padding-bottom: 10px; /* 헤더 하단 여백 */
+        }
+        header .header-inner {
+            /* 필요 시 여백 조정 */
         }
 
-        /* 헤더와 본문 간격 확보 */
+        /* 헤더와 본문 사이 간격 확보 (.main-container의 margin-top 조정) */
         .main-container {
-            margin-top: 140px; /* 헤더 높이에 맞춰 여백 조정 */
+            margin-top: 10px; /* 헤더 높이에 맞게 조정 */
             display: flex;
             max-width: 1200px;
             margin-left: auto;
@@ -50,22 +61,20 @@
             min-height: 80vh;
         }
 
-        /* ========== 사이드바 ========== */
+        /* ==================== Sidebar ==================== */
         .sidebar {
             width: 220px;
-            margin-top: 20px; /* 상단 헤더와 추가 간격 */
+            margin-top: 20px; /* 사이드바 상단 여백 */
         }
-
-        /* 프로필 박스 */
         .profile-box {
             background-color: #fff;
-            border: 1px solid #fa7c00; /* 주황색 테두리 */
-            border-radius: 4px;
+            border: 1px solid #fa7c00;
+            border-radius: 8px;
             text-align: center;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 20px 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
-        /* 프로필 이미지 버튼 스타일 */
         .profile-box button {
             background: none;
             border: none;
@@ -77,79 +86,67 @@
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #fff;
             display: block;
             margin: 0 auto;
         }
-        .nickname {
-            margin-top: 10px;
+        .realname {
+            margin-top: 12px;
             font-size: 1rem;
             color: #333;
-            font-weight: bold;
+            font-weight: 700;
         }
-        .realname {
-            margin-top: 5px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        /* MY MENU 타이틀 바 */
         .menu-title {
-            background-color: #fa7c00; /* 주황색 배경 */
-            padding: 10px;
-            border-radius: 4px;
-            margin: 15px 0; /* 프로필 박스와 메뉴 사이 간격 */
-            color: #fff;
-            font-weight: bold;
             text-align: center;
+            background-color: #fa7c00;
+            color: #fff;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
-
-        /* 메뉴 목록 (각 항목별 구분) */
         .menu-list {
-            background-color: #fff; /* 항목 부분 흰색 배경 */
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
         .menu-item {
-            padding: 15px 10px;
+            padding: 15px 20px;
             border-bottom: 1px solid #eee;
         }
         .menu-item:last-child {
             border-bottom: none;
         }
         .menu-item .main-text {
-            font-weight: bold;
+            font-weight: 700;
             font-size: 0.95rem;
-            color: #333;
             margin-bottom: 5px;
         }
         .menu-item .sub-text {
             font-size: 0.85rem;
             color: #888;
         }
-        /* 하위 메뉴 링크 스타일 */
         .menu-item .sub-text a {
-            display: block;      /* 각 링크를 새 줄로 구분 */
-            margin-bottom: 3px;  /* 하위 링크 간 간격 */
-        }
-        .menu-item .sub-text a:hover {
-            color: #fa7c00; /* 호버 시 주황색 */
+            display: block;
+            margin-bottom: 3px;
         }
 
-        /* ========== 메인 콘텐츠 ========== */
+        /* ==================== Content ==================== */
         .content {
             flex: 1;
             background-color: #fff;
-            margin-left: 20px; /* 사이드바와 간격 */
+            margin-left: 20px;
             padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .content h2 {
             margin-top: 0;
             font-size: 1.4rem;
             margin-bottom: 30px;
+            font-weight: 700;
         }
-
-        /* 포인트, 쿠폰, 기프트카드 등 요약 박스 */
         .point-section {
             display: flex;
             border: 1px solid #eee;
@@ -172,47 +169,40 @@
             font-size: 1.2rem;
             color: #fa7c00;
         }
-
-        /* 안내 / 쿠폰 박스 */
+        .notice-box, .coupon-box {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
         .notice-box {
             background-color: #fff9f5;
             border: 1px solid #ffd6c9;
-            padding: 15px;
-            border-radius: 8px;
             color: #555;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
         }
         .coupon-box {
             background-color: #f2e9ff;
             border: 1px solid #e2d0ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
             color: #333;
-            font-size: 0.95rem;
-        }
-        .coupon-box p {
-            margin: 0;
         }
         .coupon-box .highlight {
-            font-weight: bold;
+            font-weight: 700;
             color: #a050e3;
         }
-
-        /* 공통 섹션 타이틀 */
         .section-title {
             font-size: 1rem;
-            font-weight: bold;
-            margin: 25px 0 10px 0;
+            font-weight: 700;
+            margin: 25px 0 15px 0;
+            position: relative;
         }
         .section-more {
-            float: right;
-            font-size: 0.9rem;
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 0.88rem;
             color: #fa7c00;
         }
-
-        /* 리스트 박스 */
         .list-box {
             border: 1px solid #eee;
             border-radius: 8px;
@@ -220,29 +210,22 @@
             min-height: 60px;
             margin-bottom: 20px;
             position: relative;
-            font-size: 0.95rem;
+            background-color: #fff;
         }
         .list-box .empty-msg {
             color: #999;
+            margin-bottom: 0;
         }
-        .list-box .section-more {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-        }
-
-        /* 샘플 배너 박스 */
         .banner-box {
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
-            margin: 15px 0;
+            margin: 20px 0;
             font-size: 0.95rem;
             color: #666;
             background-color: #fdf9f4;
+            text-align: center;
         }
-
-        /* 버튼 */
         .explore-btn {
             margin-top: 10px;
             background-color: #fa7c00;
@@ -257,19 +240,21 @@
             background-color: #e26d00;
         }
 
-        /* 푸터 */
+        /* ==================== Footer ==================== */
         footer {
-            background-color: #f5f5f5;
-            padding: 20px;
+            background-color: #f9f9f9;
+            padding: 20px 0;
             margin-top: 20px;
+            border-top: 1px solid #e5e5e5;
         }
         footer p {
             color: #666;
             font-size: 0.9rem;
             margin: 0;
+            text-align: center;
         }
 
-        /* 반응형 설정 */
+        /* ==================== Responsive ==================== */
         @media (max-width: 992px) {
             .sidebar {
                 width: 180px;
@@ -278,6 +263,7 @@
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
+                margin-top: 80px; /* 모바일에서도 헤더 높이에 맞게 여백 동일 적용 */
             }
             .sidebar {
                 width: 100%;
@@ -296,6 +282,68 @@
                 border-bottom: 1px solid #eee;
             }
         }
+
+        /* ==================== Modal (쿠폰 모달) ==================== */
+        .modal {
+            display: none; /* 기본 숨김 */
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .modal-content li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-content li:last-child {
+            margin-bottom: 0;
+        }
+        .modal-content p {
+            text-align: center;
+            font-weight: bold;
+            color: #888;
+            margin: 20px 0;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -308,80 +356,42 @@
 <div class="main-container">
     <!-- 사이드바 -->
     <div class="sidebar">
-        <!-- 프로필 박스 -->
         <div class="profile-box">
-            <!-- 숨겨진 파일 업로드 input -->
-            <input
-                    type="file"
-                    id="profileFile"
-                    name="profileFile"
-                    accept="image/*"
-                    style="display: none;"
-                    onchange="previewProfileImage(event)"
-            />
-            <!-- 프로필 이미지 버튼: 클릭 시 숨겨진 input 호출 -->
+            <input type="file" id="profileFile" name="profileFile" accept="image/*" style="display: none;" onchange="previewProfileImage(event)">
             <button type="button" onclick="document.getElementById('profileFile').click()">
-                <img
-                        src="http://placehold.it/80x80"
-                        alt="프로필"
-                        class="profile-pic"
-                        id="profilePreview"
-                />
+                <img src="http://placehold.it/80x80" alt="프로필" class="profile-pic" id="profilePreview">
             </button>
-
-            <!-- 닉네임 / 이름 -->
             <div class="realname">엄기은</div>
         </div>
-
-        <!-- MY MENU 타이틀 -->
         <div class="menu-title">MY MENU</div>
-
-        <!-- 메뉴 리스트 -->
         <div class="menu-list">
-            <!-- 주문 배송 -->
             <div class="menu-item">
-                <div class="main-text">
-                    <a href="#">주문 배송</a>
-                </div>
-                <div class="sub-text">
-                    <a href="#">주문/배송 내역</a>
-                </div>
+                <div class="main-text"><a href="#">주문 배송</a></div>
+                <div class="sub-text"><a href="#">주문/배송 내역</a></div>
             </div>
-            <!-- 알림 및 메시지 -->
             <div class="menu-item">
-                <div class="main-text">
-                    <a href="#">알림 및 메시지</a>
-                </div>
+                <div class="main-text"><a href="#">알림 및 메시지</a></div>
                 <div class="sub-text">
                     <a href="#">알림</a>
                     <a href="#">메시지</a>
                 </div>
             </div>
-            <!-- 선물함 -->
             <div class="menu-item">
-                <div class="main-text">
-                    <a href="#">선물함</a>
-                </div>
+                <div class="main-text"><a href="#">선물함</a></div>
                 <div class="sub-text">
                     <a href="#">받은 선물함</a>
                     <a href="#">보낸 선물함</a>
                 </div>
             </div>
-            <!-- 기프트카드함 -->
             <div class="menu-item">
-                <div class="main-text">
-                    <a href="#">기프트카드함</a>
-                </div>
+                <div class="main-text"><a href="#">기프트카드함</a></div>
                 <div class="sub-text">
                     <a href="#">받은 카드함</a>
                     <a href="#">보낸 카드함</a>
                 </div>
             </div>
-            <!-- 나의 구매후기 -->
             <div class="menu-item">
-                <div class="main-text">
-                    <a href="#">나의 구매후기</a>
-                </div>
+                <div class="main-text"><a href="#">나의 구매후기</a></div>
                 <div class="sub-text">
                     <a href="#">작성 가능한 후기</a>
                     <a href="#">작성한 후기</a>
@@ -393,16 +403,15 @@
     <!-- 메인 콘텐츠 -->
     <div class="content">
         <h2>내 정보</h2>
-
-        <!-- 상단 포인트 섹션 -->
         <div class="point-section">
             <div class="point-box">
-                적립금
-                <strong>0P</strong>
+                포인트
+                <strong><fmt:formatNumber value="${userPoint.balance}" pattern="#,###" />원</strong>
             </div>
-            <div class="point-box">
+            <!-- 쿠폰 영역: 클릭 시 모달 오픈 -->
+            <div class="point-box" id="couponBox" style="cursor:pointer;">
                 쿠폰
-                <strong>0</strong>
+                <strong><c:out value="${couponCount}"/></strong>
             </div>
             <div class="point-box">
                 기프트카드 포인트
@@ -410,7 +419,6 @@
             </div>
         </div>
 
-        <!-- 안내 박스 -->
         <div class="notice-box">
             <p>한번만 구매하면 다음을 통한 혜택을 받을 수 있어요!</p>
         </div>
@@ -421,21 +429,21 @@
             </p>
         </div>
 
-        <!-- 최근 주문 내역 -->
         <div class="section-title">
             최근 주문 내역
+            <c:forEach var="dto" items="${orderList}">
+<%--                ${orderList.}--%>
+            </c:forEach>
             <a href="#" class="section-more">더보기 &gt;</a>
         </div>
         <div class="list-box">
             <p class="empty-msg">구매 이력이 없습니다.</p>
         </div>
 
-        <!-- 샘플 배너 -->
         <div class="banner-box">
             졸업의 주인공을 찬란하고 빛나게 (배너 예시)
         </div>
 
-        <!-- 찜한 작품 -->
         <div class="section-title">
             찜한 작품
             <a href="#" class="section-more">더보기 &gt;</a>
@@ -444,7 +452,6 @@
             <p class="empty-msg">찜한 작품이 없습니다.</p>
         </div>
 
-        <!-- 팔로우하는 작가 -->
         <div class="section-title">
             팔로우하는 작가
             <a href="#" class="section-more">더보기 &gt;</a>
@@ -453,7 +460,6 @@
             <p class="empty-msg">팔로우하는 작가가 없습니다.</p>
         </div>
 
-        <!-- 최근 본 작품 -->
         <div class="section-title">
             최근 본 작품
             <a href="#" class="section-more">더보기 &gt;</a>
@@ -470,28 +476,68 @@
     <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>
 
+<!-- 쿠폰 모달 (모달 오버레이 및 콘텐츠) -->
+<div id="couponModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>쿠폰 리스트</h3>
+        <c:choose>
+            <c:when test="${not empty couponList}">
+                <ul>
+                    <c:forEach var="coupon" items="${couponList}">
+                        <li>
+                            <span class="coupon-code">${coupon.couponCode}</span>
+                            <span class="coupon-expire">만료일: ${coupon.expireDate}</span>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:when>
+            <c:otherwise>
+                <p>쿠폰이 없습니다.</p>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</div>
+
 <!-- 이미지 미리보기 스크립트 -->
 <script>
-    // 파일을 선택하면 미리보기 가능
     function previewProfileImage(event) {
         const file = event.target.files[0];
-        if (!file) return; // 파일 선택 안 했으면 반환
-
-        // 이미지만 허용 (예시)
+        if (!file) return; // 파일 없으면 중단
         if (!file.type.startsWith("image/")) {
             alert("이미지 파일만 업로드 가능합니다.");
             return;
         }
-
-        // FileReader로 로컬 파일을 읽어 미리보기
         const reader = new FileReader();
         reader.onload = function(e) {
-            const previewImg = document.getElementById("profilePreview");
-            previewImg.src = e.target.result;
+            document.getElementById("profilePreview").src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
-</script>
 
+    // 쿠폰 모달 스크립트
+    document.addEventListener('DOMContentLoaded', function() {
+        var couponBox = document.getElementById('couponBox');
+        var modal = document.getElementById('couponModal');
+        var closeBtn = modal.querySelector('.close');
+
+        // 쿠폰 박스 클릭 시 모달 열기
+        couponBox.addEventListener('click', function() {
+            modal.style.display = 'block';
+        });
+
+        // 닫기 버튼 클릭 시 모달 닫기
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        // 모달 외부 클릭 시 모달 닫기
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>
