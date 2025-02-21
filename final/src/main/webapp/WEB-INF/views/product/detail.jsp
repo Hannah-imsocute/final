@@ -374,6 +374,7 @@ $(document).ready(function () {
     });
 });
 
+//장바구니 담기
 function ajaxFun(url, method, formData, dataType, fn, file = false) {
     const settings = {
         type: method,
@@ -393,6 +394,7 @@ function ajaxFun(url, method, formData, dataType, fn, file = false) {
     $.ajax(url, settings);
 }
 
+//장바구니 담기
 $(function(){
 	$(".cart-btn").click(function(event){
 		event.preventDefault();
