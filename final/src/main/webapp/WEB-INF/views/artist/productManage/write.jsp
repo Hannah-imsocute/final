@@ -240,13 +240,13 @@
     
         // 추가 이미지 다중 미리보기 처리
         $(function(){
-            $('input[name="additional-images"]').on('change', function(event){
+            $('input[name="imagefilename"]').on('change', function(event){
                 const files = event.target.files;
                 const previewContainer = $('#additional-images-preview');
                 previewContainer.empty();
     
                 Array.from(files).forEach(file => {
-                    if (file && file.type.match('image.*')) {
+                    if (file && file.type.match('imag.*')) {
                         const objectUrl = URL.createObjectURL(file);
                         const previewItem = $('<div class="preview-item"></div>');
                         const img = $('<img>').attr('src', objectUrl);
