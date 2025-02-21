@@ -110,7 +110,7 @@ display: grid;
     justify-content: center; /* 버튼 가운데 정렬 */
 }
 
-.btn,  {
+.btn  {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -365,5 +365,80 @@ display: grid;
 }
 #close-productReport:hover {
     background: #5a6268;
+}
+
+/* 구매옵션*/
+/* 옵션 정보 관련 스타일 */
+
+/* 옵션 안내 문구 (예: "* 필수 옵션") */
+.product-info .mt-2 {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 옵션 선택 상자 스타일 */
+.product-info select.form-select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-top: 8px;
+    transition: border-color 0.3s;
+}
+
+/* 포커스 시 테두리 강조 */
+.product-info select.form-select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* 옵션 선택 상자 내부 옵션 스타일 (선택사항) */
+.product-info select.form-select option {
+    padding: 6px;
+}
+
+/* 주문 영역 (선택된 옵션 및 수량 조절 영역) */
+.order-area {
+    margin-top: 16px;
+}
+
+/* 총상품금액 영역 스타일 */
+.row.mt-2.pb-2 {
+    margin-top: 16px;
+    padding-bottom: 16px;
+    border-top: 1px solid #eee;
+}
+
+/* 주문 수량 영역 (buyQuantity 함수로 생성되는 영역) */
+.order-qty {
+    margin-top: 16px;
+    padding: 10px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* 수량 조절 아이콘 (예: plus, minus 버튼) */
+.input-group-text {
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+/* 주문 수량 입력 필드 */
+.order-qty input.form-control {
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #ccc;
+}
+
+/* 주문 수량 영역 내 상품 금액 표시 */
+.product-salePrice label.item-totalPrice {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
 }
 

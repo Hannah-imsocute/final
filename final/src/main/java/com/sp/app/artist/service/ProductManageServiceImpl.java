@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.sp.app.artist.mapper.ProductManageMapper;
 import com.sp.app.artist.model.ProductManage;
+import com.sp.app.model.MainProduct;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,5 +63,27 @@ public class ProductManageServiceImpl implements ProductManageService{
             throw e; // 필요 시 예외처리(롤백 등) 수행
         }
     }
+
+	@Override
+	public List<ProductManage> listProductOption(long productCode) {
+		List<ProductManage> list = null;
+		try {
+			list = mapper.listProductOption(productCode);
+		} catch (Exception e) {
+			log.info("listProductOption : " , e);
+		}
+		return list;
+	}
+
+	@Override
+	public List<ProductManage> listOptionDetail(long option_code) {
+		List<ProductManage> list = null;
+		try {
+			list = mapper.listOptionDetail(option_code);
+		} catch (Exception e) {
+			log.info("listOptionDetail : " , e);
+		}
+		return list;
+	}
 
 }

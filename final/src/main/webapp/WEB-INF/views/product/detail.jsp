@@ -50,6 +50,53 @@
                     <br>똑딱똑딱 전상품 무료배송!
                 </div>
 
+
+ 				<!-- 옵션 정보 추가 시작 -->
+                <c:if test="${dto.optionCount > 0}">
+					<div class="mt-2">
+						* 필수 옵션
+					</div>
+				</c:if>
+							
+				<c:if test="${dto.optionCount > 0}">
+					<div class="mt-2">
+						<select class="form-select requiredOption" data-optionNum="${listOption[0].optionNum}" ${dto.totalStock < 1 ? 'disabled':''}>
+							<option value="">${listOption[0].optionName}</option>
+							<c:forEach var="vo" items="${listOptionDetail}">
+								<c:if test="${dto.optionCount == 1}">
+									<option value="${vo.detailNum}" data-stockNum="${vo.stockNum}" data-totalStock="${vo.totalStock}" data-optionValue="${vo.optionValue}">
+										${vo.optionValue}${vo.totalStock < 5 ? ' 재고 - ' + vo.totalStock : ''}
+									</option>
+								</c:if>
+								<c:if test="${dto.optionCount != 1}">
+									<option value="${vo.detailNum}">${vo.optionValue}</option>
+								</c:if>
+							</c:forEach>
+						</select>
+					</div>
+				</c:if>
+		
+				<c:if test="${dto.optionCount > 1}">
+					<div class="mt-2 border-bottom pb-2">
+						<select class="form-select requiredOption2" data-optionNum2="${listOption[1].optionNum}" ${dto.totalStock < 1 ? 'disabled':''}>
+							<option value="">${listOption[1].optionName}</option>
+						</select>
+					</div>
+				</c:if>
+							
+				<div class="order-area">
+				</div>
+							
+				<div class="row mt-2 pb-2">
+					<div class="col-auto fw-semibold pt-1">총상품금액</div>
+					<div class="col text-end">
+						<label>총수량 <span class="product-totalQty">0</span>개 | </label>
+						<label><span class="product-totalAmount fs-5 fw-semibold text-primary">0</span>원</label>
+					</div>
+				</div>
+                <!-- 옵션 정보 추가 끝 -->					
+				
+
                 <div class="buttons">
                     <button class="btn cart-btn">장바구니</button>
                     <button class="btn buy-btn">바로구매</button>
@@ -260,7 +307,7 @@ $(document).ready(function () {
         }
     });
 
-    // ✅ 신고 버튼 클릭 시 모달 열기
+    // 신고 버튼 클릭 시 모달 열기
     $(".product-review").on('click', '.btn-report', function(event){
         event.stopPropagation();  // 이벤트 전파 방지
 
@@ -270,12 +317,12 @@ $(document).ready(function () {
         dlg.dialog("open");  // 모달 열기
     });
 
-    // ✅ 닫기 버튼 기능
+    // 닫기 버튼 기능
     $("#close-report").on("click", function () {
         dlg.dialog("close");
     });
 
-    // ✅ 신고 버튼 기능 (데이터 처리 예시)
+    // 신고 버튼 기능 (데이터 처리 예시)
     $("#submit-report").on("click", function () {
         const reviewNum = $("#modal-reviewNum").text();
         const reason = $("#report-reason").val();
@@ -327,19 +374,19 @@ $(document).ready(function () {
         }
     });
 
-    // ✅ 신고 버튼 클릭 시 모달 열기
+    // 신고 버튼 클릭 시 모달 열기
     $(".product-report").on('click', '.btn-product-report', function(event){
         event.stopPropagation();  // 이벤트 전파 방지
 
         dlg.dialog("open");  // 모달 열기
     });
 
-    // ✅ 닫기 버튼 기능
+    // 닫기 버튼 기능
     $("#close-productReport").on("click", function () {
         dlg.dialog("close");
     });
 
-    // ✅ 신고 버튼 기능 (데이터 처리 예시)
+    // 신고 버튼 기능 (데이터 처리 예시)
     $("#submit-productReport").on("click", function () {
     	const productCode = "${dto.productCode}";
         const reason = $("#productReport-reason").val();
@@ -413,7 +460,8 @@ $(function(){
 		ajaxFun(url, "POST", params, "text", fn);
 	});
 });
-	
-	
+
+
 </script>
+	
 </html>

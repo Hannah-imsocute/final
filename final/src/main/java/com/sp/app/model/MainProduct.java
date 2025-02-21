@@ -36,6 +36,16 @@ public class MainProduct {
 	//상품 상세 수량 옵션
 	private int quantity;
 	
+	//상품 상세 구매옵션
+	private long option_code;
+	private long option_name;
+	private int option_price;
+	private long parent_option;
+
+	private int optionCount;
+
+	private long optiondetail_code;
+	
 	//상품 별 후기
 	private long review_num;
 	private String nickName;

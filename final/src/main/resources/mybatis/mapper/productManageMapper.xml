@@ -23,6 +23,23 @@
 		FROM productCategory
 		WHERE parentCategoryCode = #{parentCategoryCode}
 	</select>
+	
+	
+  	<!-- 옵션1, 옵션2 -->
+	<select id="listProductOption" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT option_code, productCode, option_name, option_price, parent_option, soldOut
+		FROM productOption
+		WHERE productCode = #{productCode}
+		ORDER BY parent_option NULLS FIRST, parent_option
+	</select>
+
+	<!-- 옵션 상세 정보 -->	
+	<select id="listOptionDetail" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT optionDetail_code, option_code, option_value
+		FROM productOptionDetail
+		WHERE option_code = #{option_code}
+		ORDER BY optionDetail_code
+	</select>
 
 
 </mapper>

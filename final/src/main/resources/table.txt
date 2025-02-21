@@ -1,20 +1,34 @@
 -------------------------------------------------------------------------------							
 -- PRODUCTOPTION							
 -------------------------------------------------------------------------------							
-CREATE TABLE PRODUCTOPTION (							
-OPTION_CODE      NUMBER        NOT NULL,							
-PRODUCTCODE      NUMBER        NOT NULL,							
-OPTION_NAME      VARCHAR2(255) NOT NULL,							
-OPTION_VALUE     VARCHAR2(255) NOT NULL,							
-OPTION_PRICE            NUMBER        NOT NULL,							
-PARENT_OPTION    NUMBER        NULL,							
-SOLDOUT          NUMBER        NOT NULL,							
-CONSTRAINT PK_PRODUCTOPTION PRIMARY KEY (OPTION_CODE)							
-);							
-							
-							
+CREATE TABLE PRODUCTOPTION (
+OPTION_CODE      NUMBER        NOT NULL,
+PRODUCTCODE      NUMBER        NOT NULL,
+OPTION_NAME      VARCHAR2(255) NOT NULL,
+OPTION_PRICE     NUMBER        NOT NULL,
+PARENT_OPTION    NUMBER        NULL,
+SOLDOUT          NUMBER        NOT NULL,
+CONSTRAINT PK_PRODUCTOPTION PRIMARY KEY (OPTION_CODE),
+CONSTRAINT FK_PRODUCTOPTION FOREIGN KEY (PARENT_OPTION) REFERENCES PRODUCTOPTION(OPTION_CODE)
+);			
+													
+					
 CREATE SEQUENCE seq_ProductOption INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
-							
+
+-------------------------------------------------------------------------------							
+-- PRODUCTOPTIONDETAIL							
+-------------------------------------------------------------------------------	
+CREATE TABLE PRODUCTOPTIONDETAIL (
+    OPTIONDETAIL_CODE  NUMBER        NOT NULL,
+    OPTION_CODE        NUMBER        NOT NULL,
+    OPTION_VALUE       VARCHAR2(255) NOT NULL,
+    CONSTRAINT PK_PRODUCTOPTIONDETAIL PRIMARY KEY (OPTIONDETAIL_CODE),
+    CONSTRAINT FK_PRODUCTOPTIONDETAIL FOREIGN KEY (OPTION_CODE) REFERENCES PRODUCTOPTION(OPTION_CODE)
+);
+
+
+CREATE SEQUENCE seq_PRODUCTOPTIONDETAIL INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE;							
+	
 							
 -------------------------------------------------------------------------------							
 -- ALL_CATEGORY							
