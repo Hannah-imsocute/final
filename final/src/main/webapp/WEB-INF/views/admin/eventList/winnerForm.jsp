@@ -135,20 +135,20 @@ textarea {
 					placeholder="게시글 내용을 입력하세요"></textarea>
 			</div>
 			<div class="btn-wrap">
-				<input type="button" class="btn" value="당첨자 뽑기"
-					onclick="getWinners()" /> <input type="button" class="btn"
-					value="게시글 등록" onclick="" />
+				<input type="button" class="btn" value="게시글 등록" onclick="getWinners()" />
 			</div>
 		</form>
 
 		<!-- 당첨자 표시 영역 -->
 		<div id="winnerList">
-			<!-- 버튼 클릭 후 결과 표시 -->
+			
 		</div>
 	</div>
 
 	<div class="footer-text">&copy; 2025 Event Winner Popup</div>
 
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/dist/vendor/jquery/js/jquery.min.js"></script>
 	<script type="text/javascript">
 	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
 		
@@ -180,9 +180,21 @@ textarea {
 		$.ajax(url, settings);
 	};
 	
-	function getWinners (){
+	function getWinners(){
 		let url = "${pageContext.request.contextPath}/admin/event/getwinners";
-		let params = {num : ${dto.event_article_num} };
+		
+		if(! $('#winnerCount').val()){
+			alert('당첨자 수를 지정해주세요');
+			return 
+		}
+		let size = $('#winnerCount').val();
+		let params = {num : ${dto.event_article_num} , size : size};
+		
+		const fn = function (data){
+			console.log(data);
+		}
+		
+		ajaxRequest(url, 'get', params, 'json', fn);
 	};
 	</script>
 </body>

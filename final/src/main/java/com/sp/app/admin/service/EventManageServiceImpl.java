@@ -1,6 +1,7 @@
 package com.sp.app.admin.service;
 
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.EventManageMapper;
 import com.sp.app.admin.model.Event;
+import com.sp.app.admin.model.Winners;
+import com.sp.app.common.MyUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EventManageServiceImpl implements EventManageService {
 	
 	private final EventManageMapper mapper;
+	private final MyUtil util;
 	
 	@Override
 	public String saveCouponName() {
@@ -87,6 +91,30 @@ public class EventManageServiceImpl implements EventManageService {
 		return dto;
 	}
 
-	
-	
+	@Override
+	public List<Winners> getWinners(long num) {
+		List<Winners> list = null;
+		try { 
+			list = mapper.getWinners(num);
+			
+			for(Winners dto : list) {
+				dto.setNickname(util.nameMasking(dto.getNickname()));
+				dto.setEmail(util.emailMasking(dto.getEmail()));
+			}
+			
+		} catch (Exception e) {
+			log.info("==============getwinners : ", e);
+		}
+		return list;
+	}
+
+	@Override
+	public void insertWinners(Map<String, Object> map) throws SQLException {
+		try {
+			mapper.insertWinners(map);
+		} catch (Exception e) {
+			log.info("=====================insertWinners : ", e);
+		}
+	}
+
 }

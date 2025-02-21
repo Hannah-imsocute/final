@@ -4,29 +4,31 @@
 <mapper namespace="com.sp.app.admin.mapper.EventManageMapper">
 
 	<resultMap type="com.sp.app.admin.model.Event" id="event">
-		<id property="event_article_num" column="event_article_num"/>
+		<id property="event_article_num" column="event_article_num" />
 		<result property="subject" column="subject" />
 		<result property="textcontent" column="textcontent" />
 		<result property="eventType" column="eventType" />
 		<result property="startdate" column="startdate" />
 		<result property="enddate" column="enddate" />
 		<result property="created" column="created" />
-		
-		<association property="event" resultMap="eventdetail" javaType="com.sp.app.admin.model.EventType"></association>
+
+		<association property="event" resultMap="eventdetail"
+			javaType="com.sp.app.admin.model.EventType"></association>
 	</resultMap>
-	
-	<resultMap type="com.sp.app.admin.model.EventType" id="eventdetail">
-		<result property="coupon_code" column="coupon_code"/>
-		<result property="couponname" column="couponname"/>
-		<result property="valid" column="valid"/>
-		<result property="rate" column="rate"/>
-		<result property="couponstart" column="couponstart"/>
-		<result property="expiredate" column="expiredate"/>
-		<result property="clockin_num" column="clockin_num"/>
-		<result property="daybyday" column="daybyday"/>
-		<result property="weekly" column="weekly"/>
-		<result property="monthly" column="monthly"/>
-		<result property="commcount" column="commcount"/>
+
+	<resultMap type="com.sp.app.admin.model.EventType"
+		id="eventdetail">
+		<result property="coupon_code" column="coupon_code" />
+		<result property="couponname" column="couponname" />
+		<result property="valid" column="valid" />
+		<result property="rate" column="rate" />
+		<result property="couponstart" column="couponstart" />
+		<result property="expiredate" column="expiredate" />
+		<result property="clockin_num" column="clockin_num" />
+		<result property="daybyday" column="daybyday" />
+		<result property="weekly" column="weekly" />
+		<result property="monthly" column="monthly" />
+		<result property="commcount" column="commcount" />
 	</resultMap>
 
 	<insert id="insertEvent"
@@ -74,7 +76,10 @@
 	<select id="findByIdOfEvent" parameterType="map"
 		resultMap="event">
 		SELECT ea.event_article_num, subject, textcontent,
-		eventtype, thumbnail, TO_CHAR(startdate, 'YYYY-MM-DD') startdate ,TO_CHAR(enddate, 'YYYY-MM-DD') enddate, TO_CHAR(created, 'YYYY-MM-DD') created,
+		eventtype,
+		thumbnail, TO_CHAR(startdate, 'YYYY-MM-DD') startdate
+		,TO_CHAR(enddate, 'YYYY-MM-DD') enddate, TO_CHAR(created,
+		'YYYY-MM-DD') created,
 		<choose>
 			<when test="type == 'coupon'">
 				coupon_code, couponname, valid, rate
@@ -89,17 +94,43 @@
 		FROM event_article ea
 		<choose>
 			<when test="type == 'coupon'">
-				JOIN coupon c ON c.event_article_num = ea.event_article_num
+				JOIN coupon c ON c.event_article_num =
+				ea.event_article_num
 			</when>
 			<when test="type == 'clockin'">
-				JOIN clockin_event ce ON ce.event_article_num =	ea.event_article_num
+				JOIN clockin_event ce ON ce.event_article_num =
+				ea.event_article_num
 			</when>
 			<when test="type == 'comment'">
 				LEFT OUTER JOIN (
-					SELECT NVL(COUNT(*),0) commcount, evt_num FROM event_comm WHERE evt_num = #{num} GROUP BY evt_num
-				) ecom	ON ecom.evt_num = ea.event_article_num
+				SELECT NVL(COUNT(*),0) commcount,
+				evt_num FROM event_comm WHERE evt_num =
+				#{num} GROUP BY evt_num
+				) ecom
+				ON ecom.evt_num = ea.event_article_num
 			</when>
 		</choose>
 		WHERE ea.event_article_num = #{num}
 	</select>
+
+	<insert id="insertWinners">
+		INSERT INTO event_gacha ( gacha_num, evt_num,
+		memberidx )
+		SELECT SEQ_EVENT_GACHA.NEXTVAL, evt_num, memberidx
+		FROM (
+		SELECT evt_num, memberidx
+		FROM event_comm
+		WHERE evt_num = #{num}
+		ORDER BY DBMS_RANDOM.VALUE
+		) tb WHERE ROWNUM &lt;= ${size}
+	</insert>
+	
+	<select id="getWinners" parameterType="map" resultType="com.sp.app.admin.model.Winners">
+		SELECT  ga.memberidx, nickname, email 
+		FROM event_gacha ga
+		JOIN member m ON m.memberidx = ga.memberidx 
+		WHERE evt_num = #{num}
+	</select>
+	
+	
 </mapper>

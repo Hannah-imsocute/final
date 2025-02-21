@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
+import com.sp.app.admin.model.Winners;
 
 @Mapper
 public interface EventManageMapper {
@@ -25,5 +26,13 @@ public interface EventManageMapper {
 	
 	// findbyid 이벤트 게시글
 	public Event findByIdOfEvent(Map<String, Object> map);
+	
+	
+	// 댓글이벤트에대한 당첨자 발표 
+	public List<Winners> getWinners(long num);
+	
+	// 당첨자 insert 
+	public void insertWinners(Map<String, Object> map) throws SQLException;
+	
 	
 }

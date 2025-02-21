@@ -55,6 +55,7 @@ public class AdminController {
         return "admin/home";
     }
 
+    /*
     // 이벤트 관리 페이지
     @GetMapping("/admin/eventList")
     public String eventList(Model model) {
@@ -78,7 +79,7 @@ public class AdminController {
         model.addAttribute("pageTitle", "문의사항관리");
         return "admin/home";
     }
-
+    
     // 신고 관리 페이지
     @GetMapping("/admin/reportList")
     public String reportList(Model model) {
@@ -86,6 +87,7 @@ public class AdminController {
         model.addAttribute("pageTitle", "신고관리");
         return "admin/home";
     }
+    */
 
     // 통계 및 보고 페이지
     @GetMapping("/admin/statsList")

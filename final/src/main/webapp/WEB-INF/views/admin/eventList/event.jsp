@@ -136,7 +136,7 @@ tbody td {
 					</tbody>
 				</table>
 			</div>
-		</div>ㄴ
+		</div>
 	</main>
 	<script type="text/javascript">
 	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {

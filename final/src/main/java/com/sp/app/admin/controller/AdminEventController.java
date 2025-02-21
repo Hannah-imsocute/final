@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
+import com.sp.app.admin.model.Winners;
 import com.sp.app.admin.service.EventManageService;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.common.StorageService;
@@ -200,5 +201,26 @@ public class AdminEventController {
 			log.info("====================handlePopup : ",e);
 		}
 		return "admin/eventList/winnerForm";
+	}
+	
+	@GetMapping("getwinners")
+	@ResponseBody
+	public Map<String, Object> getWinners(@RequestParam(name = "num")long num, @RequestParam(name = "size") int size){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			map.put("num", num);
+			map.put("size", size);
+			
+			service.insertWinners(map);
+			
+			List<Winners> list = service.getWinners(num);
+			
+			map.put("list", list);
+			map.put("state", "true");
+		} catch (Exception e) {
+			log.info("===============getWinners:", e);
+		}
+		
+		return map;
 	}
 }

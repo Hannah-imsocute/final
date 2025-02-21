@@ -124,4 +124,26 @@ public class MyUtil {
 						email.trim());
 		return b;
 	}
+	
+	/**
+	 * 이메일 마스킹하기 
+	 * 앞에 3자리만 두고 나머지 뒷자리는 * 로 채움 
+	 * @param email
+	 * @return
+	 */
+	public String emailMasking(String email) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			String pre = email.substring(0, email.indexOf("@"));
+			
+			sb.append(pre.substring(0, 3));
+			
+			for(int i = 0; i < pre.length(); i++) {
+				sb.append("*");
+			}
+			
+		} catch (Exception e) {
+		}
+		return sb.toString(); 
+	}
 }
