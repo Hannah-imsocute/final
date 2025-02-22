@@ -12,7 +12,8 @@ public interface ProductManageService {
 	public List<ProductManage> listSubCategory(long parentNum);
 
 	//작품 등록할때 작품 정보 인서트
-    public void insertProduct(ProductManage product);
+    public void insertProduct(ProductManage dto, String uploadPath);
+    public void insertProductFile(ProductManage dto,  String uploadPath);
     
     //옵션정보
     public List<ProductManage> listProductOption(long productCode);

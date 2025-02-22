@@ -1,11 +1,16 @@
 package com.sp.app.artist.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sp.app.artist.mapper.ProductManageMapper;
 import com.sp.app.artist.model.ProductManage;
+import com.sp.app.common.StorageService;
+import com.sp.app.exception.StorageException;
 import com.sp.app.model.MainProduct;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ProductManageServiceImpl implements ProductManageService{
 	public final ProductManageMapper mapper;
-	
+	private final StorageService storageService;
+
 	@Override
 	public ProductManage findByCategoryId(int CategoryCode) {
 		ProductManage dto = null;
@@ -54,15 +60,6 @@ public class ProductManageServiceImpl implements ProductManageService{
 		return list;
 	}
 
-    @Override
-    public void insertProduct(ProductManage product) {
-        try {
-            mapper.insertProduct(product);
-        } catch(Exception e) {
-            log.error("insertProduct error: ", e);
-            throw e; // 필요 시 예외처리(롤백 등) 수행
-        }
-    }
 
 	@Override
 	public List<ProductManage> listProductOption(long productCode) {
@@ -85,5 +82,59 @@ public class ProductManageServiceImpl implements ProductManageService{
 		}
 		return list;
 	}
+
+
+
+	@Transactional(rollbackFor = {Exception.class})
+	@Override
+	public void insertProduct(ProductManage dto, String uploadPath) {
+		try {
+			// 썸네일 이미지
+	//		String filename = StorageService.uploadFileToServer(dto.getThumbnailFile(), uploadPath);
+	//		dto.setThumbnail(filename);
+			
+			// 상품 저장
+			long productCode = mapper.seq_product();
+			
+			dto.setProductCode(productCode);
+			mapper.insertProduct(dto);
+			
+			// 추가 이미지 저장
+			if(! dto.getAddFiles().isEmpty()) {
+				insertProductFile(dto, uploadPath);
+			}
+			
+			// 옵션추가
+			if(dto.getOptionCount() > 0) {
+		//		insertProductOption(dto);
+			}
+			
+		} catch (Exception e) {
+			log.info("insertProduct : ", e);
+			
+			throw e;
+		}
+	}
+
+
+	public void insertProductFile(ProductManage dto, String uploadPath) {
+		for (MultipartFile mf : dto.getAddFiles()) {
+			try {
+				String saveFilename = Objects.requireNonNull(storageService.uploadFileToServer(mf, uploadPath));
+				dto.setImageFileName(saveFilename);
+				
+				mapper.insertProductFile(dto);
+			} catch (NullPointerException e) {
+				throw e;
+			} catch (StorageException e) {
+				throw e;
+			} catch (Exception e) {
+				throw e;
+			}
+		}
+	}
+
+
+
 
 }

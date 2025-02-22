@@ -118,7 +118,7 @@
                                 </option>
                             </c:forEach>
                         </select>
-                        <select name="sub-category">
+                        <select name="categoryCode">
                             <option value="">:: 카테고리 선택 ::</option>
                             <c:forEach var="vo" items="${listSubCategory}">
                                 <option value="${vo.categoryCode}" ${categoryCode==vo.categoryCode?"selected":""}>
@@ -228,29 +228,30 @@
                     <!-- 작품 설명 -->
                     <div class="form-group">
                         <label>작품 설명</label>
-                        <textarea name="describe" rows="5"></textarea>
+                        <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;"></textarea>
                     </div>
                     
                     <!-- 메인 이미지 업로드 -->
                     <div class="form-group">
                         <label>메인 이미지</label>
-                        <input type="file" name="thumbnail" accept="image/*">
+                        <input type="file" name="thumbnailFile" accept="image/*">
                     </div>
                     
                     <!-- 추가 이미지 업로드 + 다중 미리보기 -->
                     <div class="form-group">
                         <label>추가 이미지</label>
-                        <input type="file" name="imagefilename" multiple accept="image/*">
+                        <input type="file" name="addFiles" multiple accept="image/*">
                         <!-- 미리보기 영역 -->
                         <div id="additional-images-preview" class="preview-grid"></div>
                     </div>
                     
-                    <button type="submit" class="submit-btn">등록하기</button>
+                    <button type="submit" class="submit-btn" onclick="smartEditInDescribe()">등록하기</button>
                 </form>
             </section>
         </div>
     </main>
     
+    <script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
     <script type="text/javascript">
         var contextPath = "${pageContext.request.contextPath}";
     
@@ -273,7 +274,7 @@
         $(function(){
             $('form select[name=main-category]').change(function(){
                 let parentCategoryCode = $(this).val();
-                $('form select[name=sub-category]').empty()
+                $('form select[name=categoryCode]').empty()
                    .append('<option value="">:: 카테고리 선택 ::</option>');
     
                 if (!parentCategoryCode) return false;
@@ -287,7 +288,7 @@
                         if (response && Array.isArray(response.listSubCategory)) {
                             $.each(response.listSubCategory, function(_, item) {
                                 let option = '<option value="' + item.categoryCode + '">' + item.name + '</option>';
-                                $('form select[name=sub-category]').append(option);
+                                $('form select[name=categoryCode]').append(option);
                             });
                         } else {
                             console.warn("서브 카테고리 로딩 실패");
@@ -303,7 +304,7 @@
     
         // 추가 이미지 다중 미리보기 처리
         $(function(){
-            $('input[name="imagefilename"]').on('change', function(event){
+            $('input[name="addFiles"]').on('change', function(event){
                 const files = event.target.files;
                 const previewContainer = $('#additional-images-preview');
                 previewContainer.empty();
@@ -411,7 +412,23 @@
         	});
         });
         
-        
+        var oEditors = [];
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: 'ir1',
+            sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+            fCreator: 'createSEditor2',
+            fOnAppLoad: function(){
+                // 로딩 완료 후 기본 폰트 설정
+                oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+            },
+        });
+
+        // 스마트에디터의 내용을 Describe 에 넣는다. 
+        // 이후 form 의 button에 설정한 submit() 이 동작한다.
+        function smartEditInDescribe(elClickedObj) {
+            oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
+        }
         
     </script>
 </body>

@@ -1,6 +1,10 @@
 
 package com.sp.app.artist.model;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ProductManage {
+		private long memberIdx; // user session id
+	
 		private long productCode;
 		private long brandCode;
 		private String brandName;
@@ -32,14 +38,15 @@ public class ProductManage {
 		//상품 이미지
 		private long imageCode;
 		private String imageFileName;
-
+		private List<MultipartFile> addFiles;
+		
 		//상품 상세 수량 옵션
 		private int quantity;
 		
 		//상품 상세 구매옵션
 		private int optionCount;
 		private long option_code;
-		private long option_name;
+		private String option_name;
 		private int option_price;
 		private long parent_option;
 		

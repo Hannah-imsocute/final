@@ -19,9 +19,11 @@ import com.sp.app.artist.model.ProductManage;
 import com.sp.app.artist.service.ProductManageService;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.common.StorageService;
+import com.sp.app.model.SessionInfo;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -95,40 +97,57 @@ public class ProductManangeController{
 	}
 
     @PostMapping("create")
-    public String createProduct(ProductManage product,
-                                @RequestParam("thumbnail") MultipartFile thumbNail,
-                                @RequestParam(value = "imagefilename", required = false) MultipartFile[] imagefileName,
-                                HttpServletRequest request) throws Exception {
+    public String createProduct(ProductManage dto,
+                                @RequestParam(value = "thumbnailFile", required = true) MultipartFile thumbnailFile,
+//                                @RequestParam(value = "addFiles", required = false) MultipartFile[] addFiles,
+                                HttpServletRequest request, HttpSession session) throws Exception {
+    	
+    	Long memberIdx = getMemberIdx(session);
+	    if (memberIdx == null) {
+	    	return "유효하지 않은 세션입니다.";
+	    }
+		dto.setMemberIdx(memberIdx);
+		
         // 메인 이미지 업로드 처리
-        if (thumbNail != null && !thumbNail.isEmpty()) {
-            String mainFilename = storageService.uploadFileToServer(thumbNail, uploadPath);
-            product.setThumbnail(mainFilename);
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            String mainFilename = storageService.uploadFileToServer(thumbnailFile, uploadPath);
+            dto.setThumbnail(mainFilename);
         }
         
         // 추가 이미지 다중 업로드 처리
-        if (imagefileName != null && imagefileName.length > 0) {
-            List<String> additionalFilenames = new ArrayList<>();
-            for (MultipartFile file : imagefileName) {
-                if (!file.isEmpty()) {
-                    String filename = storageService.uploadFileToServer(file, uploadPath);
-                    additionalFilenames.add(filename);
-                }
-            }
+//        if (addFiles != null && addFiles.length > 0) {
+//            List<String> additionalFilenames = new ArrayList<>();
+//            for (MultipartFile file : addFiles) {
+//                if (!file.isEmpty()) {
+//                    String filename = storageService.uploadFileToServer(file, uploadPath);
+//                    additionalFilenames.add(filename);
+//                }
+//            }
+//            dto.setAdditionalFilenames(additionalFilenames);
             /* TODO: 아래로직대로 하면 PRODUCTIMAGE 테이블에 1 ROW에 한방에 여러개 파일 저장되니 
              *       for 사용해서 추가로 서비스도 호출해서 여러개 row 로 테이블에 등록되도록 수정해야함
              *       그리고 mapper .xml 에 쿼리도 수정해야하고 
              *       productOption 테이블에 등록하는 옵션등록 서비스도 만들어야해요 파이팅!!!
              */
             // 여러 파일명을 콤마(,)로 구분하여 저장
-            product.setImageFileName(String.join(",", additionalFilenames));
-        }
+//            dto.setImageFileName(String.join(",", additionalFilenames));
+//        }
+        
         
         // 제품(작품) 정보를 DB에 저장하는 신규 메서드
-        service.insertProduct(product);
+        service.insertProduct(dto, uploadPath);
+//        service.insertProductFile(dto, uploadPath);
+        
         
         // 등록 후 목록 페이지로 리다이렉트 (contextPath 포함)
         String contextPath = request.getContextPath();
         return "redirect:" + contextPath + "/artist/productManage/list";
+    }
+
+    // Session 에서 회원코드 반환
+    private static Long getMemberIdx(HttpSession session) {
+      SessionInfo member = (SessionInfo) session.getAttribute("member");
+      return member.getMemberIdx();
     }
 	
 }

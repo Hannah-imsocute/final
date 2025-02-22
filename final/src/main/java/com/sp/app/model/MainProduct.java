@@ -1,6 +1,10 @@
 
 package com.sp.app.model;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +27,7 @@ public class MainProduct {
 	private String modified; //수정한 날짜 
 	private int categoryCode;
 	private String thumbnail;
+	private MultipartFile thumbnailFile;
 	private int soldOut; //품절여부
 	
 	//상품 카테고리
@@ -32,19 +37,17 @@ public class MainProduct {
 	//상품 이미지
 	private long imageCode;
 	private String imageFileName;
-
+	private List<MultipartFile> addFiles;
+	
 	//상품 상세 수량 옵션
 	private int quantity;
 	
 	//상품 상세 구매옵션
+	private int optionCount;
 	private long option_code;
 	private long option_name;
 	private int option_price;
 	private long parent_option;
-
-	private int optionCount;
-
-	private long optiondetail_code;
 	
 	//상품 별 후기
 	private long review_num;
