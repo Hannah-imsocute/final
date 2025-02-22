@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("/order/*")
 @RequiredArgsConstructor
 @Slf4j
-public class MemberOrderController1 {
+public class MemberOrderController {
 
     private final MemberService memberService;
     private final OrderService orderService;
