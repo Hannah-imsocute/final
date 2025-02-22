@@ -51,7 +51,6 @@ public class MyPageController {
 			MemberPoint userPoint = orderService.getLatestUserPoint(member.getMemberIdx());
 			int couponCount = couponService.getCouponCount(member.getMemberIdx());
 			Member userProfile = memberService.findByUserEmail(member.getEmail());
-			String profileImageFile = memberService.getProfileImageFile(member.getMemberIdx());
 			List<Map<String, Long>> productParams = new ArrayList<>();
 			Map<String, Long> paramMap = new HashMap<>();
 			paramMap.put("memberIdx", member.getMemberIdx());
@@ -63,7 +62,6 @@ public class MyPageController {
 			model.addAttribute("couponCount", couponCount);
 			model.addAttribute("userPoint", userPoint);
 			model.addAttribute("userProfile", userProfile);
-			model.addAttribute("profileImageFile", profileImageFile);
 
 //			model.addAttribute("orderList", orderList);
 		} catch(Exception e) {
