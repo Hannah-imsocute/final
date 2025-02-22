@@ -1,19 +1,19 @@
 package com.sp.app.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MemberPoint {
 
     private long memberIdx; // 회원코드
     private String orderCode;
 
-    private int pointSaveNum; // 적립코드
+//    private int pointSaveNum; // 적립코드
+    private Long pointSaveNum; // 기존에 int였다면 Long으로 변경
+
     private int saveAmount; // 포인트금액
     private String saveDate; // 포인트적립일
     private String expireDate; // 포인트사용일

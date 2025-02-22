@@ -151,7 +151,7 @@
     <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
         select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
         from ORDER_ITEM
-        where PRODUCTCODE = #{productCode}
+        where PRODUCTCODE = #{productCode} AND ROWNUM = 1
     </select>
 
     <!--유저의 가장 최근 포인트 조회-->

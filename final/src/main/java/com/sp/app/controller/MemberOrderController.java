@@ -153,8 +153,8 @@ public class MemberOrderController {
             if (selectedItems != null && !selectedItems.isEmpty()) {
                 order = orderService.processOrder(info, selectedItems, order);
             } else {
-//                order = orderService.processOrder(info, order);
-                order = orderService.processOrder(info);
+                order = orderService.processOrder(info, order);
+//                order = orderService.processOrder(info);
             }
 
             redirectAttributes.addFlashAttribute("order", order);
@@ -176,6 +176,11 @@ public class MemberOrderController {
             return "redirect:/";
         }
     }
+
+
+
+
+
 
     @GetMapping("addr")
     public String addressForm(ShippingInfo info) {

@@ -27,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
 
   private final CartItemService cartItemService;
   private final CouponService couponService;
+  private final PointService pointService;
 
 
   // 주문번호 생성
@@ -388,9 +389,33 @@ public class OrderServiceImpl implements OrderService {
     }
     cartItemService.deleteCartItems(sessionInfo.getMemberIdx(), cartItemIds);
 
+    // 만약 사용된 포인트가 있다면 포인트 이력 등록
+    if (order.getSpentPoint() != null && order.getSpentPoint() > 0) {
+      Long pNum = pointService.getPointSaveNum(order.getMemberIdx());
+
+      MemberPoint memberPoint = MemberPoint.builder()
+              .memberIdx(order.getMemberIdx())
+              .pointSaveNum(pNum)
+              .orderCode(order.getOrderCode())
+              .usedAmount(order.getSpentPoint())
+              .balance(-order.getSpentPoint()) // 차감된 포인트
+              .usedDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+              // expireDate는 필요에 따라 설정 (예: 적립 정책에 따른 만료일)
+              .build();
+
+      Map<String, Object> map = new HashMap<>();
+      map.put("pointSaveNum", memberPoint.getPointSaveNum()); // 어느 적립 레코드에서 차감?
+      map.put("memberIdx", order.getMemberIdx());
+      map.put("usedAmount", memberPoint.getUsedAmount());
+      pointService.updatePointValid1(map);
+      pointService.updatePointValid2(map);
+      pointService.insertPointHistory(memberPoint);
+
+    }
+
     if (orderFromView != null) {
       Coupon coupon = orderFromView.getCoupon();
-      if (coupon != null && coupon.getCouponCode() != null) {
+      if (coupon != null && coupon.getCouponCode() != null && !coupon.getCouponCode().trim().isEmpty()) {
         Map<String, Object> map = new HashMap<>();
         map.put("memberIdx", orderFromView.getMemberIdx());
         map.put("couponCode", coupon.getCouponCode());
@@ -416,6 +441,12 @@ public class OrderServiceImpl implements OrderService {
     List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
     // 2) 공통 메서드 호출 (orderFromView = null)
     return processOrderInternal(sessionInfo, cartItems, null);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public Order processOrder(SessionInfo sessionInfo, Order order) throws Exception {
+    return processDirectOrder(sessionInfo, order);
   }
 
   /**

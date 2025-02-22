@@ -295,8 +295,8 @@
     </c:if>
       <c:forEach var="dto" items="${orderItems}">
         <input type="hidden" name="productCode" value="${dto.productCode}">
+        <input type="hidden" name="quantity" value="${dto.quantity}">
         <input type="hidden" name="itemCode" value="${dto.itemCode}">
-
       </c:forEach>
 
     <input type="hidden" id="hiddenMemberIdx" name="memberIdx" value="${sessionScope.member.memberIdx}" />

@@ -10,36 +10,24 @@
     <meta charset="UTF-8">
     <title>내 정보</title>
     <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
-
-    <!-- 예시로 구글 폰트 사용 (선택 사항) -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
         /* ==================== Global Reset & Base Style ==================== */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         header { position: relative !important; }
         body, html {
             margin: 0;
             padding: 0;
             font-family: "Noto Sans KR", sans-serif;
-            background-color: #fff; /* 흰색 배경 */
+            background-color: #fff;
             color: #333;
         }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        a:hover {
-            text-decoration: none;
-            color: #fa7c00; /* 브랜드 컬러(주황)로 hover 시 변경 */
-        }
-
+        a { text-decoration: none; color: inherit; }
+        a:hover { text-decoration: none; color: #fa7c00; }
         /* ==================== Header (고정) ==================== */
         header {
-            position: fixed; /* 고정 헤더 */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -47,25 +35,17 @@
             background-color: #fff;
             border-bottom: 1px solid #e5e5e5;
         }
-        header .header-inner {
-            /* 필요 시 여백 조정 */
-        }
-
-        /* 헤더와 본문 사이 간격 확보 (.main-container의 margin-top 조정) */
+        /* ==================== Main Container ==================== */
         .main-container {
-            margin-top: 10px; /* 헤더 높이에 맞게 조정 */
+            margin-top: 10px;
             display: flex;
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
             min-height: 80vh;
         }
-
         /* ==================== Sidebar ==================== */
-        .sidebar {
-            width: 220px;
-            margin-top: 20px; /* 사이드바 상단 여백 */
-        }
+        .sidebar { width: 220px; margin-top: 20px; }
         .profile-box {
             background-color: #fff;
             border: 1px solid #fa7c00;
@@ -73,7 +53,7 @@
             text-align: center;
             padding: 20px 15px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .profile-box button {
             background: none;
@@ -89,12 +69,7 @@
             display: block;
             margin: 0 auto;
         }
-        .realname {
-            margin-top: 12px;
-            font-size: 1rem;
-            color: #333;
-            font-weight: 700;
-        }
+        .realname { margin-top: 12px; font-size: 1rem; color: #333; font-weight: 700; }
         .menu-title {
             text-align: center;
             background-color: #fa7c00;
@@ -104,34 +79,18 @@
             font-size: 1rem;
             font-weight: 700;
             margin-bottom: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .menu-list {
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .menu-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-        .menu-item .main-text {
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-        .menu-item .sub-text {
-            font-size: 0.85rem;
-            color: #888;
-        }
-        .menu-item .sub-text a {
-            display: block;
-            margin-bottom: 3px;
-        }
-
+        .menu-item { padding: 15px 20px; border-bottom: 1px solid #eee; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item .main-text { font-weight: 700; font-size: 0.95rem; margin-bottom: 5px; }
+        .menu-item .sub-text { font-size: 0.85rem; color: #888; }
+        .menu-item .sub-text a { display: block; margin-bottom: 3px; }
         /* ==================== Content ==================== */
         .content {
             flex: 1;
@@ -160,9 +119,7 @@
             background-color: #fafafa;
             text-align: center;
         }
-        .point-box:not(:last-child) {
-            border-right: 1px solid #eee;
-        }
+        .point-box:not(:last-child) { border-right: 1px solid #eee; }
         .point-box strong {
             display: block;
             margin-top: 8px;
@@ -176,20 +133,9 @@
             font-size: 0.95rem;
             line-height: 1.4;
         }
-        .notice-box {
-            background-color: #fff9f5;
-            border: 1px solid #ffd6c9;
-            color: #555;
-        }
-        .coupon-box {
-            background-color: #f2e9ff;
-            border: 1px solid #e2d0ff;
-            color: #333;
-        }
-        .coupon-box .highlight {
-            font-weight: 700;
-            color: #a050e3;
-        }
+        .notice-box { background-color: #fff9f5; border: 1px solid #ffd6c9; color: #555; }
+        .coupon-box { background-color: #f2e9ff; border: 1px solid #e2d0ff; color: #333; }
+        .coupon-box .highlight { font-weight: 700; color: #a050e3; }
         .section-title {
             font-size: 1rem;
             font-weight: 700;
@@ -209,13 +155,9 @@
             padding: 15px;
             min-height: 60px;
             margin-bottom: 20px;
-            position: relative;
             background-color: #fff;
         }
-        .list-box .empty-msg {
-            color: #999;
-            margin-bottom: 0;
-        }
+        .list-box .empty-msg { color: #999; margin-bottom: 0; }
         .banner-box {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -236,10 +178,7 @@
             cursor: pointer;
             font-size: 0.9rem;
         }
-        .explore-btn:hover {
-            background-color: #e26d00;
-        }
-
+        .explore-btn:hover { background-color: #e26d00; }
         /* ==================== Footer ==================== */
         footer {
             background-color: #f9f9f9;
@@ -247,45 +186,19 @@
             margin-top: 20px;
             border-top: 1px solid #e5e5e5;
         }
-        footer p {
-            color: #666;
-            font-size: 0.9rem;
-            margin: 0;
-            text-align: center;
-        }
-
+        footer p { color: #666; font-size: 0.9rem; margin: 0; text-align: center; }
         /* ==================== Responsive ==================== */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 180px;
-            }
-        }
+        @media (max-width: 992px) { .sidebar { width: 180px; } }
         @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                margin-top: 80px; /* 모바일에서도 헤더 높이에 맞게 여백 동일 적용 */
-            }
-            .sidebar {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-            .content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-            .point-section {
-                flex-direction: column;
-            }
-            .point-box:not(:last-child) {
-                border-right: none;
-                border-bottom: 1px solid #eee;
-            }
+            .main-container { flex-direction: column; margin-top: 80px; }
+            .sidebar { width: 100%; margin-bottom: 20px; }
+            .content { margin-left: 0; width: 100%; padding: 20px; }
+            .point-section { flex-direction: column; }
+            .point-box:not(:last-child) { border-right: none; border-bottom: 1px solid #eee; }
         }
-
         /* ==================== Modal (쿠폰 모달) ==================== */
         .modal {
-            display: none; /* 기본 숨김 */
+            display: none;
             position: fixed;
             z-index: 2000;
             left: 0;
@@ -293,7 +206,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
+            background-color: rgba(0,0,0,0.5);
         }
         .modal-content {
             background-color: #fff;
@@ -305,15 +218,8 @@
             max-width: 500px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        .modal-content h3 {
-            margin-top: 0;
-            font-size: 1.4rem;
-        }
-        .modal-content ul {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
+        .modal-content h3 { margin-top: 0; font-size: 1.4rem; }
+        .modal-content ul { list-style: none; padding: 0; margin: 20px 0; }
         .modal-content li {
             padding: 12px;
             margin-bottom: 10px;
@@ -324,9 +230,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .modal-content li:last-child {
-            margin-bottom: 0;
-        }
+        .modal-content li:last-child { margin-bottom: 0; }
         .modal-content p {
             text-align: center;
             font-weight: bold;
@@ -340,10 +244,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .close:hover,
-        .close:focus {
-            color: #000;
-        }
+        .close:hover, .close:focus { color: #000; }
     </style>
 </head>
 <body>
@@ -357,11 +258,20 @@
     <!-- 사이드바 -->
     <div class="sidebar">
         <div class="profile-box">
-            <input type="file" id="profileFile" name="profileFile" accept="image/*" style="display: none;" onchange="previewProfileImage(event)">
+            <!-- 프로필 이미지 업로드 폼 (Ajax 전송) -->
+            <input type="file" id="profileFile" name="profileFile" accept="image/*" style="display: none;" >
             <button type="button" onclick="document.getElementById('profileFile').click()">
-                <img src="http://placehold.it/80x80" alt="프로필" class="profile-pic" id="profilePreview">
+                <img src="<c:choose>
+                            <c:when test='${not empty profileImageFile}'>
+                                ${pageContext.request.contextPath}/uploads/mypage/${profileImageFile}
+                            </c:when>
+                            <c:otherwise>
+                                http://placehold.it/80x80
+                            </c:otherwise>
+                        </c:choose>"
+                     alt="프로필" class="profile-pic" id="profilePreview">
             </button>
-            <div class="realname">엄기은</div>
+            <div class="realname">${userProfile.nickName}</div>
         </div>
         <div class="menu-title">MY MENU</div>
         <div class="menu-list">
@@ -406,12 +316,26 @@
         <div class="point-section">
             <div class="point-box">
                 포인트
-                <strong><fmt:formatNumber value="${userPoint.balance}" pattern="#,###" />원</strong>
+                <strong>
+                    <c:choose>
+                        <c:when test="${not empty userPoint.balance}">
+                            <fmt:formatNumber value="${userPoint.balance}" pattern="#,###" />원
+                        </c:when>
+                        <c:otherwise>0원</c:otherwise>
+                    </c:choose>
+                </strong>
             </div>
             <!-- 쿠폰 영역: 클릭 시 모달 오픈 -->
             <div class="point-box" id="couponBox" style="cursor:pointer;">
                 쿠폰
-                <strong><c:out value="${couponCount}"/></strong>
+                <strong>
+                    <c:choose>
+                        <c:when test="${not empty couponCount}">
+                            <fmt:formatNumber value="${couponCount}" pattern="#,###" />
+                        </c:when>
+                        <c:otherwise>0</c:otherwise>
+                    </c:choose>
+                </strong>
             </div>
             <div class="point-box">
                 기프트카드 포인트
@@ -431,9 +355,6 @@
 
         <div class="section-title">
             최근 주문 내역
-            <c:forEach var="dto" items="${orderList}">
-<%--                ${orderList.}--%>
-            </c:forEach>
             <a href="#" class="section-more">더보기 &gt;</a>
         </div>
         <div class="list-box">
@@ -499,39 +420,72 @@
     </div>
 </div>
 
-<!-- 이미지 미리보기 스크립트 -->
+<!-- 이미지 미리보기 및 Ajax 업로드 스크립트 (jQuery 사용) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // 이미지 미리보기 처리
     function previewProfileImage(event) {
         const file = event.target.files[0];
-        if (!file) return; // 파일 없으면 중단
+        if (!file) return;
         if (!file.type.startsWith("image/")) {
             alert("이미지 파일만 업로드 가능합니다.");
             return;
         }
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById("profilePreview").src = e.target.result;
+            $("#profilePreview").attr("src", e.target.result);
         };
         reader.readAsDataURL(file);
     }
 
-    // 쿠폰 모달 스크립트
-    document.addEventListener('DOMContentLoaded', function() {
+    $('#profileFile').click(function (){
+        alert('누름')
+    });
+
+    // 프로필 이미지 업로드 Ajax 처리 (jQuery 사용)
+    $("#profileFile").on("change", function() {
+        var file = this.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+            alert("이미지 파일만 업로드 가능합니다.");
+            return;
+        }
+        // 미리보기 호출
+        previewProfileImage({ target: { files: [file] } });
+        var formData = new FormData();
+        formData.append("profileFile", file);
+        $.ajax({
+            url: "${pageContext.request.contextPath}/mypage/image",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if(response.success) {
+                    alert("프로필 이미지가 성공적으로 업로드되었습니다.");
+                    $("#profilePreview").attr("src", "${pageContext.request.contextPath}/uploads/mypage/" + response.image);
+                } else {
+                    alert("프로필 이미지 업로드에 실패하였습니다.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error during file upload:", error);
+                alert("에러가 발생하였습니다.");
+            }
+        });
+    });
+
+    // 쿠폰 모달 처리
+    $(document).ready(function(){
         var couponBox = document.getElementById('couponBox');
         var modal = document.getElementById('couponModal');
         var closeBtn = modal.querySelector('.close');
-
-        // 쿠폰 박스 클릭 시 모달 열기
         couponBox.addEventListener('click', function() {
             modal.style.display = 'block';
         });
-
-        // 닫기 버튼 클릭 시 모달 닫기
         closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
         });
-
-        // 모달 외부 클릭 시 모달 닫기
         window.addEventListener('click', function(event) {
             if (event.target === modal) {
                 modal.style.display = 'none';
