@@ -4,25 +4,25 @@
 <mapper namespace="com.sp.app.mapper.PointMapper">
 
     <!--포인트 이력 등록-->
-<!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
-<!--        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">-->
-<!--            SELECT SEQ_POINT_EXPIRED.nextval FROM dual-->
-<!--        </selectKey>-->
-<!--        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE)-->
-<!--        VALUES (#{pointSaveNum}, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate)-->
-<!--    </insert>-->
+    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
+    <!--        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">-->
+    <!--            SELECT SEQ_POINT_EXPIRED.nextval FROM dual-->
+    <!--        </selectKey>-->
+    <!--        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE)-->
+    <!--        VALUES (#{pointSaveNum}, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate)-->
+    <!--    </insert>-->
 
-<!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
-<!--&lt;!&ndash;        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">&ndash;&gt;-->
-<!--&lt;!&ndash;            SELECT SEQ_POINT_EXPIRED.nextval FROM dual&ndash;&gt;-->
-<!--&lt;!&ndash;        </selectKey>&ndash;&gt;-->
-<!--        insert into POINT_EXPIRED (POINT_SAVE_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)-->
-<!--        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})-->
-<!--    </insert>-->
+    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
+    <!--&lt;!&ndash;        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">&ndash;&gt;-->
+    <!--&lt;!&ndash;            SELECT SEQ_POINT_EXPIRED.nextval FROM dual&ndash;&gt;-->
+    <!--&lt;!&ndash;        </selectKey>&ndash;&gt;-->
+    <!--        insert into POINT_EXPIRED (POINT_SAVE_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)-->
+    <!--        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})-->
+    <!--    </insert>-->
 
     <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">
-    insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)
-    VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})
+        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)
+        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})
     </insert>
 
     <select id="getPointSaveNUm" resultType="long">
@@ -41,15 +41,15 @@
     <update id="updatePointValid2" parameterType="map">
         update POINT_SAVE set ENABLE = 1
         where POINT_SAVE_NUM = #{pointSaveNum} and MEMBERIDX = #{memberIdx}
-        and BALANCE = 0
+          and BALANCE = 0
     </update>
 
     <!-- 유저 사용가능한 포인트 금액-->
     <select id="getPointEnabled" parameterType="Long" resultType="int">
-          SELECT NVL(SUM(BALANCE), 0)
-          FROM POINT_SAVE
-          WHERE MEMBERIDX = #{memberIdx}
-            AND enable = 0
+        SELECT NVL(SUM(BALANCE), 0)
+        FROM POINT_SAVE
+        WHERE MEMBERIDX = #{memberIdx}
+          AND enable = 0
     </select>
 
 
