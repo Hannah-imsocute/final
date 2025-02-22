@@ -12,13 +12,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/order/*")
 @RequiredArgsConstructor
 @Slf4j
-public class MemberOrderController {
+public class MemberOrderController1 {
 
     private final MemberService memberService;
     private final OrderService orderService;
@@ -31,6 +34,7 @@ public class MemberOrderController {
             @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
             @RequestParam(name = "productCode", required = false) List<Long> productCodes,
             @RequestParam(name = "quantity", required = false) List<Integer> quantities,
+            @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
             HttpSession session, Model model) throws Exception {
 
         // 회원 정보 확인
@@ -46,7 +50,6 @@ public class MemberOrderController {
         if (addressInfo == null) {
             addressInfo = memberService.getShippingInfo(memberIdx);
         }
-
         if (addressInfo != null) {
             model.addAttribute("receiverName", addressInfo.getReceiverName());
             model.addAttribute("addName", addressInfo.getAddName());
@@ -62,23 +65,18 @@ public class MemberOrderController {
         model.addAttribute("shippingAddresses", shippingInfolist);
         model.addAttribute("couponList", couponList);
 
-        // 구매 방식에 따라 데이터 구성
         List<CartItem> cartItems = new ArrayList<>();
         List<OrderItem> orderItems = new ArrayList<>();
 
-        if (cartItemCodes != null && !cartItemCodes.isEmpty()) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("memberIdx", member.getMemberIdx());
-            params.put("selectedCodes", cartItemCodes); // 뷰단에 선택된 장바구니 코드 넘겨주기
-            cartItems = cartItemService.getCartItemsByCodes(params);
-        } else if (productCodes != null && quantities != null
-                && !productCodes.isEmpty() && !quantities.isEmpty()) {
-            // 바로 구매: productCodes와 quantities를 이용해 OrderItem 생성
+        if ("direct".equals(mode)) {
+            if (productCodes == null || quantities == null ||
+                    productCodes.isEmpty() || quantities.isEmpty()) {
+                throw new Exception("주문 정보가 부족합니다. (직접 구매)");
+            }
             for (int i = 0; i < productCodes.size(); i++) {
                 OrderItem item = new OrderItem();
                 item.setProductCode(productCodes.get(i));
                 item.setQuantity(quantities.get(i));
-                // 상품 정보를 가져오기 위해 getProductCode() 메서드(또는 getProduct()) 호출
                 OrderItem productInfo = orderService.getProductCode(productCodes.get(i));
                 if (productInfo == null) {
                     throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + productCodes.get(i));
@@ -86,6 +84,14 @@ public class MemberOrderController {
                 item.setPriceForeach(productInfo.getPrice());
                 item.setPrice(quantities.get(i) * item.getPriceForeach());
                 orderItems.add(item);
+            }
+        } else {
+            // 장바구니 구매
+            if (cartItemCodes != null && !cartItemCodes.isEmpty()) {
+                Map<String, Object> params = new HashMap<>();
+                params.put("memberIdx", member.getMemberIdx());
+                params.put("selectedCodes", cartItemCodes);
+                cartItems = cartItemService.getCartItemsByCodes(params);
             }
         }
 
@@ -119,7 +125,6 @@ public class MemberOrderController {
 
         // 주문번호 생성
         String productOrderCode = orderService.getLatestOrderCode();
-
         Order order = new Order();
         order.setOrderCode(productOrderCode);
         order.setTotalPrice(overallNetPay);
@@ -130,8 +135,9 @@ public class MemberOrderController {
         model.addAttribute("shippingFee", shippingFee);
         model.addAttribute("overallNetPay", overallNetPay);
         model.addAttribute("order", order);
+        model.addAttribute("mode", mode);
 
-        return "order/formtest2";
+        return "order/formtest3";
     }
 
     @PostMapping("submit")
@@ -176,10 +182,6 @@ public class MemberOrderController {
             return "redirect:/";
         }
     }
-
-
-
-
 
 
     @GetMapping("addr")
