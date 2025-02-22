@@ -2,10 +2,7 @@ package com.sp.app.controller;
 
 import com.sp.app.model.*;
 import com.sp.app.model.cart.CartItem;
-import com.sp.app.service.CartItemService;
-import com.sp.app.service.MemberService;
-import com.sp.app.service.OrderService;
-import com.sp.app.service.ShippingService;
+import com.sp.app.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,7 @@ public class MemberOrderController {
     private final OrderService orderService;
     private final CartItemService cartItemService;
     private final ShippingService shippingService;
+    private final PointService pointService;
 
     @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
     public String orderForm(
@@ -115,6 +113,8 @@ public class MemberOrderController {
 
         // 회원 포인트
         MemberPoint memberPoint = orderService.getLatestUserPoint(memberIdx);
+        int balance = pointService.getPointEnabled(memberIdx);
+        model.addAttribute("balance", balance);
         model.addAttribute("memberPoint", memberPoint);
 
         // 주문번호 생성

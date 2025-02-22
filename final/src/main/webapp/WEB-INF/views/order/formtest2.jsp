@@ -293,11 +293,11 @@
         <input type="hidden" name="selectedItems" value="${cart.cartItemCode}" />
       </c:forEach>
     </c:if>
-      <c:forEach var="dto" items="${orderItems}">
-        <input type="hidden" name="productCode" value="${dto.productCode}">
-        <input type="hidden" name="quantity" value="${dto.quantity}">
-        <input type="hidden" name="itemCode" value="${dto.itemCode}">
-      </c:forEach>
+    <c:forEach var="dto" items="${orderItems}">
+      <input type="hidden" name="productCode" value="${dto.productCode}">
+      <input type="hidden" name="quantity" value="${dto.quantity}">
+      <input type="hidden" name="itemCode" value="${dto.itemCode}">
+    </c:forEach>
 
     <input type="hidden" id="hiddenMemberIdx" name="memberIdx" value="${sessionScope.member.memberIdx}" />
     <input type="hidden" id="hiddenAddrName" name="addName" value="${addName}" />
@@ -317,7 +317,7 @@
           <div class="shipping-header">
             <div class="recipient-info">
               <strong class="recipient-name"><c:out value="${receiverName}" /></strong>
-<%--              <strong class="recipient-name"><c:out value="${addName}" /></strong>--%>
+              <%--              <strong class="recipient-name"><c:out value="${addName}" /></strong>--%>
               <span class="recipient-phone"><c:out value="${phone}" /></span>
             </div>
             <button type="button" class="btn-addr-change">배송지 변경</button>
@@ -354,7 +354,8 @@
             </div>
           </div>
           <div class="point-use-row">
-            <span>나의 포인트 <strong>${memberPoint.balance}원</strong></span>
+            <%--            <span>나의 포인트 <strong>${memberPoint.balance}원</strong></span>--%>
+            <span>나의 포인트 <strong>${balance}원</strong></span>
             <div class="point-input-wrap">
               <input type="text" name="spentPoint" placeholder="0"/>
               <button type="button" class="point-btn">전액사용</button>
@@ -441,7 +442,7 @@
 
           <!-- 폼 제출 버튼 -->
           <button class="btn-submit-order" type="submit">결제하기</button>
-<%--          <button class="btn-submit-order" onclick="sendOk();">결제하기</button>--%>
+          <%--          <button class="btn-submit-order" onclick="sendOk();">결제하기</button>--%>
         </div>
       </div> <!-- //order-right -->
     </div> <!-- //order-content -->
@@ -740,7 +741,8 @@
 
     // 포인트, 쿠폰 관련 기존 JS 처리 (생략: 기존 코드와 동일)
     $('.point-btn').click(function() {
-      const fullPoint = parseInt("${memberPoint.balance}", 10) || 0;
+      <%--const fullPoint = parseInt("${memberPoint.balance}", 10) || 0;--%>
+      const fullPoint = parseInt("${balance}", 10) || 0;
       $("input[name=spentPoint]").val(fullPoint);
       updateFinalPriceByPoint();
     });
