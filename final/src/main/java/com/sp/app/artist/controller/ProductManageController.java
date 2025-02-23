@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/artist/productManage/*")
-public class ProductManangeController{
+public class ProductManageController{
 	private final PaginateUtil paginateUtil;
 	private final ProductManageService service;
 	private final StorageService storageService;
@@ -55,7 +55,6 @@ public class ProductManangeController{
 	
 	@PostMapping("write")
 	public String writeSubmit() throws Exception{ 
-		System.out.println("혹시 여기도 탔나?");
 		return "artist/productManage/list";
 	}
 	
@@ -100,42 +99,12 @@ public class ProductManangeController{
 //                                @RequestParam(value = "addFiles", required = false) MultipartFile[] addFiles,
                                 HttpServletRequest request, HttpSession session) throws Exception {
     	
-    	Long memberIdx = getMemberIdx(session);
-	    if (memberIdx == null) {
-	    	return "유효하지 않은 세션입니다.";
-	    }
-		dto.setMemberIdx(memberIdx);
+//    	Long memberIdx = getMemberIdx(session);
+//    	dto.setMemberIdx(memberIdx);
+    	dto.setMemberIdx(2); // 테스트소스
 		
-        // 메인 이미지 업로드 처리
-        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-            String mainFilename = storageService.uploadFileToServer(thumbnailFile, uploadPath);
-            dto.setThumbnail(mainFilename);
-        }
-        
-        // 추가 이미지 다중 업로드 처리
-//        if (addFiles != null && addFiles.length > 0) {
-//            List<String> additionalFilenames = new ArrayList<>();
-//            for (MultipartFile file : addFiles) {
-//                if (!file.isEmpty()) {
-//                    String filename = storageService.uploadFileToServer(file, uploadPath);
-//                    additionalFilenames.add(filename);
-//                }
-//            }
-//            dto.setAdditionalFilenames(additionalFilenames);
-            /* TODO: 아래로직대로 하면 PRODUCTIMAGE 테이블에 1 ROW에 한방에 여러개 파일 저장되니 
-             *       for 사용해서 추가로 서비스도 호출해서 여러개 row 로 테이블에 등록되도록 수정해야함
-             *       그리고 mapper .xml 에 쿼리도 수정해야하고 
-             *       productOption 테이블에 등록하는 옵션등록 서비스도 만들어야해요 파이팅!!!
-             */
-            // 여러 파일명을 콤마(,)로 구분하여 저장
-//            dto.setImageFileName(String.join(",", additionalFilenames));
-//        }
-        
-        
         // 제품(작품) 정보를 DB에 저장하는 신규 메서드
-        service.insertProduct(dto, uploadPath);
-//        service.insertProductFile(dto, uploadPath);
-        
+        service.insertProduct(dto, thumbnailFile, uploadPath);
         
         // 등록 후 목록 페이지로 리다이렉트 (contextPath 포함)
         String contextPath = request.getContextPath();

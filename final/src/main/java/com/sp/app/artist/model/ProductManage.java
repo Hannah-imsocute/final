@@ -45,10 +45,27 @@ public class ProductManage {
 		
 		//상품 상세 구매옵션
 		private int optionCount;
+		
 		private long option_code;
 		private String option_name;
-		private int option_price;
+		private long option_code2;
+		private String option_name2;
 		private long parent_option;
+		
+		private int option_price;
+		
+		private Long optionDetail_code;;
+		private String option_value;
+		private List<Long> optionDetail_codes;
+		private List<String> option_values;
+		
+		private Long optionDetail_code2;;
+		private String option_value2;
+		private List<Long> optionDetail_codes2;
+		private List<String> option_values2;
+		
+		
+		
 		
 		//상품 별 후기
 		private long review_num;

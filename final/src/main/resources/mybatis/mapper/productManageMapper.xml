@@ -62,12 +62,12 @@
 	</insert>
 	
 		<!-- 추가 이미지 등록 -->
-	<insert id="insertProductFile" parameterType="com.sp.app.artist.model.ProductManage">
+	<insert id="insertProductImage" parameterType="com.sp.app.artist.model.ProductManage">
 		INSERT INTO PRODUCTIMAGE(IMAGE_CODE, PRODUCTCODE, IMAGEFILENAME)
 		VALUES(SEQ_PRODUCTIMAGE.NEXTVAL, #{productCode}, #{imageFileName})
 	</insert>
 	
-	  	<!-- 옵션1, 옵션2 -->
+	  	<!-- 옵션1, 옵션2 리스트-->
 	<select id="listProductOption" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
 		SELECT option_code, productCode, option_name, option_price, parent_option, soldOut
 		FROM productOption
@@ -75,13 +75,46 @@
 		ORDER BY parent_option NULLS FIRST, parent_option
 	</select>
 
-	<!-- 옵션 상세 정보 -->	
+	<!-- 옵션 상세 정보 리스트-->	
 	<select id="listOptionDetail" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
 		SELECT optionDetail_code, option_code, option_value
 		FROM productOptionDetail
 		WHERE option_code = #{option_code}
 		ORDER BY optionDetail_code
 	</select>
+
+	
+	<!-- 옵션1, 옵션2 등록 -->
+	<select id="seq_productOption" resultType="Long">
+		SELECT seq_productoption.NEXTVAL FROM dual
+	</select>
+	
+	<insert id="insertProductOption" parameterType="com.sp.app.artist.model.ProductManage">
+		INSERT INTO productOption(option_code, productCode, option_name, option_price, parent_option, soldout)
+		    VALUES(
+		        #{option_code},
+		        #{productCode},
+		        #{option_name},
+		        #{option_price},
+		        <choose>
+		            <when test="parent_option == 0">
+		                null
+		            </when>
+		            <otherwise>
+		                #{parent_option}
+		            </otherwise>
+		        </choose>,
+		        0
+        )
+	</insert>
+
+
+	<insert id="insertProductOptionDetail" parameterType="com.sp.app.artist.model.ProductManage">
+		INSERT INTO productoptiondetail(optionDetail_code, option_code, option_value)
+		VALUES  (seq_productOptionDetail.NEXTVAL, #{option_code}, #{option_value})
+	</insert>
+	
+	
 	
 </mapper>
 	

@@ -159,51 +159,51 @@
                     <div class="form-group">
                         <div class = "product-option1">
                         <label>옵션 1</label>
-                        <input type="text" name="option_name" placeholder="옵션명" value="${dto.option_code}">
+                        <input type="text" name="option_name" placeholder="옵션명" value="${dto.option_name}">
                       		<c:if test="${mode=='update'}">
 								<input type="hidden" name="option_code" value="${empty dto.option_code ? 0 : dto.option_code}">
 							</c:if>
-							<div >
+							<div class = option-area>
 								<div class="col-auto pe-0 d-flex flex-row optionValue-area">  <!-- 부트스트랩 -->
 									<c:forEach var="vo" items="${listOptionDetail}">
 										<div class="input-group pe-1">
 											<input type="text" name="option_value" placeholder="옵션값" value="${vo.option_value}">
-											<input type="hidden" name="optiondetail_code" value="${vo.optiondetail_code}">
+											<input type="hidden" name="optionDetail_code" value="${vo.optionDetail_code}">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
 										</div>
 									</c:forEach>
 									<c:if test="${empty listOptionDetail || listOptionDetail.size() < 1}">
 										<div class="input-group pe-1">
-											<input type="text" name="option_value" style="flex:none; width: 90px;" placeholder="옵션값">
+											<input type="text" name="option_values" style="flex:none; width: 90px;" placeholder="옵션값">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
 										</div>
 									</c:if>
 								</div>
-									<div class="col-auto">
-										<button type="button" class="btn btn-light btnOptionAdd">추가</button>
-									</div>
+								<div class="col-auto">
+									<button type="button" class="btn btn-light btnOptionAdd">추가</button>
 								</div>
+							</div>
 							                       
         				</div>
         			
                         <div class = "product-option2">
         				<label>옵션 2</label>
-                        <input type="text" name="option-name" placeholder="옵션명" value="${dto.option_code2}">
+                        <input type="text" name="option_name2" placeholder="옵션명" value="${dto.option_name2}">
                       		<c:if test="${mode=='update'}">
 								<input type="hidden" name="option_code2" value="${empty dto.option_code2 ? 0 : dto.option_code2}">
 							</c:if>
-							<div>
-								<div class="col-auto pe-0 d-flex flex-row optionValue-area">   <!-- 부트스트랩 -->
+							<div class = option-area2>
+								<div class="col-auto pe-0 d-flex flex-row optionValue-area2">   <!-- 부트스트랩 -->
 									<c:forEach var="vo" items="${listOptionDetail2}">
 										<div class="input-group pe-1">
 											<input type="text" name="option_value2" placeholder="옵션값" value="${vo.option_value2}">
-											<input type="hidden" name="optiondetail_code2" value="${vo.optiondetail_code2}">
+											<input type="hidden" name="optionDetail_code2" value="${vo.optionDetail_code2}">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
 										</div>
 									</c:forEach>
 									<c:if test="${empty listOptionDetail || listOptionDetail.size() < 1}">
 										<div class="input-group pe-1">
-											<input type="text" name="option_value2" style="flex:none; width: 90px;" placeholder="옵션값">
+											<input type="text" name="option_values2" style="flex:none; width: 90px;" placeholder="옵션값">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
 										</div>
 									</c:if>
@@ -354,6 +354,7 @@
         
 		//옵션 추가 버튼클릭
         $(function(){
+        	// 옵션1 추가버튼 클릭
         	$('.btnOptionAdd').click(function(){
         		let $el = $(this).closest('.option-area').find('.optionValue-area');
         		if($el.find('.input-group').length >= 5) {
@@ -364,14 +365,74 @@
         		let $option = $('.option-area .optionValue-area .input-group:first-child').clone();
         		
         		$option.find('input[type=hidden]').remove();
-        		$option.find('input[name=optionValues]').removeAttr('value');
-        		$option.find('input[name=optionValues]').val('');
+        		$option.find('input[name=option_values]').removeAttr('value');
+        		$option.find('input[name=option_values]').val('');
         		$el.append($option);
         	});
         	
+        	// 옵션2 추가버튼 클릭
+        	$('.btnOptionAdd2').click(function(){
+        		let $el = $(this).closest('.option-area2').find('.optionValue-area2');
+        		if($el.find('.input-group').length >= 5) {
+        			alert('옵션은 최대 5개까지 가능합니다.');
+        			return false;
+        		}
+        		
+        		let $option = $('.option-area2 .optionValue-area2 .input-group:first-child').clone();
+        		
+        		$option.find('input[type=hidden]').remove();
+        		$option.find('input[name=option_values2]').removeAttr('value');
+        		$option.find('input[name=option_values2]').val('');
+        		$el.append($option);
+        	});
+        	
+        	// 옵션 1 영역의 마이너스 버튼 클릭
         	$('.option-area').on('click', '.option-minus', function(){
         		let $minus = $(this);
         		let $el = $minus.closest('.option-area').find('.optionValue-area');
+        		
+        		// 수정에서 등록된 자료 삭제
+        		let mode = '${mode}';
+        		if(mode === 'update' && $minus.parent('.input-group').find('input[name=optionDetail_code]').length === 1) {
+        			// 저장된 옵션값중 최소 하나는 삭제되지 않도록 설정
+        			if($el.find('.input-group input[name=detailNums]').length <= 1) {
+        				alert('옵션값은 최소 하나이상 필요합니다.');	
+        				return false;
+        			}
+        			
+        			if(! confirm('옵션값을 삭제 하시겠습니까 ? ')) {
+        				return false;
+        			}
+        			
+        			let optionDetail_code = $minus.parent('.input-group').find('input[name=optionDetail_code]').val();
+        			let url = '${pageContext.request.contextPath}/artist/product/deleteOptionDetail';
+        			
+        			$.ajaxSetup({ beforeSend: function(e) { e.setRequestHeader('AJAX', true); } });
+        			$.post(url, {optionDetail_code:optionDetail_code}, function(data){
+        				if(data.state === 'true') {
+        					$minus.closest('.input-group').remove();
+        				} else {
+        					alert('옵션값을 삭제할 수 없습니다.');
+        				}
+        			}, 'json').fail(function(jqXHR){
+        				console.log(jqXHR.responseText);
+        			});
+        			
+        			return false;			
+        		}
+        		
+        		if($el.find('.input-group').length <= 1) {
+        			$el.find('input[name=option_value]').val('');
+        			return false;
+        		}
+        		
+        		$minus.closest('.input-group').remove();
+        	});
+
+        	// 옵션 2 영역의 마이너스 버튼 클릭
+        	$('.option-area2').on('click', '.option-minus', function(){
+        		let $minus = $(this);
+        		let $el = $minus.closest('.option-area2').find('.optionValue-area2');
         		
         		// 수정에서 등록된 자료 삭제
         		let mode = '${mode}';
@@ -386,11 +447,11 @@
         				return false;
         			}
         			
-        			let detailNum = $minus.parent('.input-group').find('input[name=detailNums]').val();
-        			let url = '${pageContext.request.contextPath}/admin/products/deleteOptionDetail';
+        			let optionDetail_code = $minus.parent('.input-group').find('input[name=optionDetail_code]').val();
+        			let url = '${pageContext.request.contextPath}/artist/product/deleteOptionDetail';
         			
         			$.ajaxSetup({ beforeSend: function(e) { e.setRequestHeader('AJAX', true); } });
-        			$.post(url, {detailNum:detailNum}, function(data){
+        			$.post(url, {optionDetail_code:optionDetail_code}, function(data){
         				if(data.state === 'true') {
         					$minus.closest('.input-group').remove();
         				} else {
@@ -404,7 +465,7 @@
         		}
         		
         		if($el.find('.input-group').length <= 1) {
-        			$el.find('input[name=optionValues]').val('');
+        			$el.find('input[name=option_value]').val('');
         			return false;
         		}
         		

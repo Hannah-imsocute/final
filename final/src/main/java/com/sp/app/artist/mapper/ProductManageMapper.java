@@ -17,11 +17,20 @@ public interface ProductManageMapper {
 	//작품 등록할때 작품 정보 인서트
 	public long seq_product();
     public void insertProduct(ProductManage product) ;
-    public void insertProductFile(ProductManage dto) ;
+    public void insertProductImage(ProductManage dto) ;
+    
+    //옵션 등록
+	public long seq_productOption();
+	public void insertProductOption(ProductManage dto);
+	
+	//옵션상세 등록
+	public long seq_productOptionDetail();
+	public void insertProductOptionDetail(ProductManage dto);
     
     //옵션정보
     public List<ProductManage> listProductOption(long productCode) ;
 	public List<ProductManage> listOptionDetail(long option_code) ;
+	
     
     
 }

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sp.app.artist.model.ProductManage;
+import com.sp.app.artist.service.ProductManageService;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.model.MainProduct;
 import com.sp.app.model.SessionInfo;
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/product/*")
 public class ProductController {
 	private final MainProductService service;
+	private final ProductManageService productManageServcie; 
 	private final PaginateUtil paginateUtil;
 
 	// 카테고리명 카테고리코드로 변환
@@ -468,6 +471,7 @@ public class ProductController {
 		try {
 			//상품
 			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
+	
 			
 			//상품가격 1000단위 쉼표
 		    NumberFormat formatter = NumberFormat.getInstance(Locale.KOREA);
@@ -487,10 +491,33 @@ public class ProductController {
 		        }
 		    }
 		    
+			// 옵션1/옵션2 옵션명
+			List<ProductManage> listOption = productManageServcie.listProductOption(productCode);
+
+			// 옵션 count 설정
+			dto.setOptionCount(listOption.size());
+			
+			// 옵션1/옵션2 상세 옵션
+			List<ProductManage> listOptionDetail = null;
+			List<ProductManage> listOptionDetail2 = null;
+			if(listOption.size() > 0) {
+				dto.setOption_code(listOption.get(0).getOption_code());
+				dto.setOption_name(listOption.get(0).getOption_name());
+				listOptionDetail = productManageServcie.listOptionDetail(listOption.get(0).getOption_code());
+			}
+			if(listOption.size() > 1) {
+				dto.setOption_code2(listOption.get(1).getOption_code());
+				dto.setOption_name2(listOption.get(1).getOption_name());
+				listOptionDetail2 = productManageServcie.listOptionDetail(listOption.get(1).getOption_code());
+			}
+		    
 		    model.addAttribute("dto", dto);
 		    model.addAttribute("fmdPrice", fmdPrice);
 		    model.addAttribute("fmdSalePrice", fmdSalePrice);
 		    model.addAttribute("listFile", listFile);
+		    model.addAttribute("listOption", listOption);
+			model.addAttribute("listOptionDetail", listOptionDetail);
+			model.addAttribute("listOptionDetail2", listOptionDetail2);
 		    
 		    return "product/detail";
 		    

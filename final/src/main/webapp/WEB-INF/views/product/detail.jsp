@@ -52,46 +52,53 @@
 
 
  				<!-- 옵션 정보 추가 시작 -->
-                <c:if test="${dto.optionCount > 0}">
-					<div class="mt-2">
-						* 필수 옵션
+ 				<div class="option-group" >
+	                <c:if test="${dto.optionCount > 0}">
+						<div class="mt-2">
+							* 필수 옵션
+						</div>
+					</c:if>
+								
+					<c:if test="${dto.optionCount > 0}">
+						<div class="mt-2">
+							<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.soldOut == 1 ? 'disabled':''}>
+								<option value="">${listOption[0].option_name}</option>
+								<c:forEach var="vo" items="${listOptionDetail}">
+									<c:if test="${dto.optionCount == 1}">
+										<option value="${vo.optionDetail_code}" data-optionValue="${vo.option_value}">
+											${vo.option_value}${vo.totalStock < 5 ? ' 재고 - ' + vo.totalStock : ''}
+										</option>
+									</c:if>
+									<c:if test="${dto.optionCount != 1}">
+										<option value="${vo.optionDetail_code}">${vo.option_value}</option>
+									</c:if>
+								</c:forEach>
+							</select>
+						</div>
+					</c:if>
+			
+					<c:if test="${dto.optionCount > 1}">
+						<div class="mt-2 border-bottom pb-2">
+							<select class="form-select requiredOption2" data-optionNum2="${listOption[1].option_code2}" ${dto.soldOut == 1 ? 'disabled':''}>
+								<option value="">${listOption[1].option_name}</option>
+								<c:forEach var="vo" items="${listOptionDetail2}">
+									<c:if test="${dto.optionCount != 1}">
+										<option value="${vo.optionDetail_code}">${vo.option_value}</option>
+									</c:if>
+								</c:forEach>
+							</select>
+						</div>
+					</c:if>
+								
+					<div class="order-area">
 					</div>
-				</c:if>
-							
-				<c:if test="${dto.optionCount > 0}">
-					<div class="mt-2">
-						<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.soldout = 0 ? 'disabled':''}>
-							<option value="">${listOption[0].option_code}</option>
-							<c:forEach var="vo" items="${listOptionDetail}">
-								<c:if test="${dto.optionCount == 1}">
-									<option value="${vo.optiondetail_code}" data-stockNum="${vo.stockNum}" data-totalStock="${vo.totalStock}" data-optionValue="${vo.optionValue}">
-										${vo.optionValue}${vo.totalStock < 5 ? ' 재고 - ' + vo.totalStock : ''}
-									</option>
-								</c:if>
-								<c:if test="${dto.optionCount != 1}">
-									<option value="${vo.detailNum}">${vo.optionValue}</option>
-								</c:if>
-							</c:forEach>
-						</select>
-					</div>
-				</c:if>
-		
-				<c:if test="${dto.optionCount > 1}">
-					<div class="mt-2 border-bottom pb-2">
-						<select class="form-select requiredOption2" data-optionNum2="${listOption[1].optionNum}" ${dto.totalStock < 1 ? 'disabled':''}>
-							<option value="">${listOption[1].optionName}</option>
-						</select>
-					</div>
-				</c:if>
-							
-				<div class="order-area">
-				</div>
-							
-				<div class="row mt-2 pb-2">
-					<div class="col-auto fw-semibold pt-1">총상품금액</div>
-					<div class="col text-end">
-						<label>총수량 <span class="product-totalQty">0</span>개 | </label>
-						<label><span class="product-totalAmount fs-5 fw-semibold text-primary">0</span>원</label>
+								
+					<div class="row mt-2 pb-2">
+						<div class="col-auto fw-semibold pt-1">총상품금액</div>
+						<div class="col text-end">
+							<label>총수량 <span class="product-totalQty">0</span>개 | </label>
+							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">0</span>원</label>
+						</div>
 					</div>
 				</div>
                 <!-- 옵션 정보 추가 끝 -->					

@@ -116,6 +116,13 @@ display: grid;
     border-radius: 5px;
     cursor: pointer;
 }
+.option-group requiredOption{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ffcc00;
+}
 
 .cart-btn {
     background-color: #ffcc00;
