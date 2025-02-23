@@ -19,5 +19,4 @@
         SELECT COUNT(*) FROM USER_HAVE_COUPON WHERE MEMBERIDX = #{memberIdx}
     </select>
 
-
 </mapper>

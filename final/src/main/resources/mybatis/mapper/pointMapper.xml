@@ -3,11 +3,80 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.PointMapper">
 
-    <!-- 유저 사용 금액-->
-    <select id="getLatestUserPoint" parameterType="long" resultType="com.sp.app.model.MemberPoint">
-        select balance
-        from POINT_SAVE
-        where MEMBERIDX = #{memberIdx}
+    <!--포인트 이력 등록-->
+    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
+    <!--        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">-->
+    <!--            SELECT SEQ_POINT_EXPIRED.nextval FROM dual-->
+    <!--        </selectKey>-->
+    <!--        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE)-->
+    <!--        VALUES (#{pointSaveNum}, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate)-->
+    <!--    </insert>-->
+
+    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
+    <!--&lt;!&ndash;        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">&ndash;&gt;-->
+    <!--&lt;!&ndash;            SELECT SEQ_POINT_EXPIRED.nextval FROM dual&ndash;&gt;-->
+    <!--&lt;!&ndash;        </selectKey>&ndash;&gt;-->
+    <!--        insert into POINT_EXPIRED (POINT_SAVE_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)-->
+    <!--        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})-->
+    <!--    </insert>-->
+
+    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">
+        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)
+        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})
+    </insert>
+
+    <select id="getPointSaveNUm" resultType="long">
+        select SEQ_POINT_SAVE.currval from dual
     </select>
+
+    <!--사용한 포인트 만큼 차감-->
+    <update id="updatePointValid1" parameterType="map">
+        update POINT_SAVE
+        set BALANCE = BALANCE - #{usedAmount}
+        where point_save_num = #{pointSaveNum} and
+            MEMBERIDX = #{memberIdx} and enable = 0
+    </update>
+
+    <!--balcne가 0이 되면 enable 1로 업데이트 -->
+    <update id="updatePointValid2" parameterType="map">
+        update POINT_SAVE set ENABLE = 1
+        where POINT_SAVE_NUM = #{pointSaveNum} and MEMBERIDX = #{memberIdx}
+          and BALANCE = 0
+    </update>
+
+    <!-- 유저 사용가능한 포인트 금액-->
+    <select id="getPointEnabled" parameterType="Long" resultType="int">
+    SELECT GREATEST(NVL(SUM(BALANCE), 0), 0)
+    FROM POINT_SAVE
+    WHERE MEMBERIDX = #{memberIdx}
+      AND enable = 0
+    </select>
+
+
+    <!-- 유저 포인트 적립금액(적립일, 만료일, 적립경로)  -->
+    <select id="getUserSaveAmount" parameterType="long" resultType="com.sp.app.model.MemberPoint">
+        select SAVEAMOUNT as saveAmount, SAVEDATE as saveDate, EXPIREDATE as expireDate, REASON
+        from POINT_SAVE where MEMBERIDX = #{memberIdx}
+    </select>
+
+    <!-- 회원이 사용한 포인트 총합 조회 -->
+    <select id="getUsedPoint" parameterType="Long" resultType="int">
+        SELECT NVL(SUM(USEDAMOUNT), 0) AS usedPoint
+        FROM POINT_EXPIRED
+        WHERE MEMBERIDX = #{memberIdx}
+    </select>
+
+    <select id="getPointSaveNum" parameterType="long" resultType="long">
+        SELECT point_save_num
+        FROM point_save
+        WHERE memberIdx = #{memberIdx}
+          AND balance > 0
+          AND enable = 0
+        ORDER BY saveDate
+            FETCH FIRST 1 ROWS ONLY
+    </select>
+
+
+
 
 </mapper>

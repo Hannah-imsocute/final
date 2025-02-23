@@ -2,6 +2,8 @@ package com.sp.app.model;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,5 +29,10 @@ public class OrderItem {
     private Integer spentPoint;       //  사용 포인트
     private Integer couponValue;
 
+
+    private List<Long> productCodes;
+    private List<Integer> quantities;
+    private List<Long> itemCodes;
+//    private List<String> options;
 
 }

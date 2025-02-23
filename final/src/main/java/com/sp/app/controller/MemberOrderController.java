@@ -2,10 +2,7 @@ package com.sp.app.controller;
 
 import com.sp.app.model.*;
 import com.sp.app.model.cart.CartItem;
-import com.sp.app.service.CartItemService;
-import com.sp.app.service.MemberService;
-import com.sp.app.service.OrderService;
-import com.sp.app.service.ShippingService;
+import com.sp.app.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/order/*")
@@ -27,13 +27,15 @@ public class MemberOrderController {
     private final OrderService orderService;
     private final CartItemService cartItemService;
     private final ShippingService shippingService;
+    private final PointService pointService;
 
     @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
     public String orderForm(
-            @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
-            @RequestParam(name = "productCode", required = false) List<Long> productCodes,
-            @RequestParam(name = "quantity", required = false) List<Integer> quantities,
-            HttpSession session, Model model) throws Exception {
+        @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
+        @RequestParam(name = "productCode", required = false) List<Long> productCodes,
+        @RequestParam(name = "quantity", required = false) List<Integer> quantities,
+        @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
+        HttpSession session, Model model) throws Exception {
 
         // 회원 정보 확인
         SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -48,7 +50,6 @@ public class MemberOrderController {
         if (addressInfo == null) {
             addressInfo = memberService.getShippingInfo(memberIdx);
         }
-
         if (addressInfo != null) {
             model.addAttribute("receiverName", addressInfo.getReceiverName());
             model.addAttribute("addName", addressInfo.getAddName());
@@ -64,23 +65,21 @@ public class MemberOrderController {
         model.addAttribute("shippingAddresses", shippingInfolist);
         model.addAttribute("couponList", couponList);
 
-        // 구매 방식에 따라 데이터 구성
+        // mode에 따라 구매 방식 분기 ("direct"면 바로구매, 아니면 장바구니 구매)
         List<CartItem> cartItems = new ArrayList<>();
         List<OrderItem> orderItems = new ArrayList<>();
 
-        if (cartItemCodes != null && !cartItemCodes.isEmpty()) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("memberIdx", member.getMemberIdx());
-            params.put("selectedCodes", cartItemCodes); // 뷰단에 선택된 장바구니 코드 넘겨주기
-            cartItems = cartItemService.getCartItemsByCodes(params);
-        } else if (productCodes != null && quantities != null
-                && !productCodes.isEmpty() && !quantities.isEmpty()) {
-            // 바로 구매: productCodes와 quantities를 이용해 OrderItem 생성
+        if ("direct".equals(mode)) {
+            // 바로 구매: productCodes와 quantities가 반드시 넘어와야 함.
+            if (productCodes == null || quantities == null ||
+                productCodes.isEmpty() || quantities.isEmpty()) {
+                throw new Exception("주문 정보가 부족합니다. (직접 구매)");
+            }
             for (int i = 0; i < productCodes.size(); i++) {
                 OrderItem item = new OrderItem();
                 item.setProductCode(productCodes.get(i));
                 item.setQuantity(quantities.get(i));
-                // 상품 정보를 가져오기 위해 getProductCode() 메서드(또는 getProduct()) 호출
+                // DB에서 상품 정보를 가져와서 DB 가격 사용
                 OrderItem productInfo = orderService.getProductCode(productCodes.get(i));
                 if (productInfo == null) {
                     throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + productCodes.get(i));
@@ -88,6 +87,14 @@ public class MemberOrderController {
                 item.setPriceForeach(productInfo.getPrice());
                 item.setPrice(quantities.get(i) * item.getPriceForeach());
                 orderItems.add(item);
+            }
+        } else {
+            // 장바구니 구매
+            if (cartItemCodes != null && !cartItemCodes.isEmpty()) {
+                Map<String, Object> params = new HashMap<>();
+                params.put("memberIdx", member.getMemberIdx());
+                params.put("selectedCodes", cartItemCodes);
+                cartItems = cartItemService.getCartItemsByCodes(params);
             }
         }
 
@@ -115,11 +122,12 @@ public class MemberOrderController {
 
         // 회원 포인트
         MemberPoint memberPoint = orderService.getLatestUserPoint(memberIdx);
+        int balance = pointService.getPointEnabled(memberIdx);
+        model.addAttribute("balance", balance);
         model.addAttribute("memberPoint", memberPoint);
 
         // 주문번호 생성
         String productOrderCode = orderService.getLatestOrderCode();
-
         Order order = new Order();
         order.setOrderCode(productOrderCode);
         order.setTotalPrice(overallNetPay);
@@ -130,17 +138,18 @@ public class MemberOrderController {
         model.addAttribute("shippingFee", shippingFee);
         model.addAttribute("overallNetPay", overallNetPay);
         model.addAttribute("order", order);
+        model.addAttribute("mode", mode);
 
         return "order/formtest2";
     }
 
     @PostMapping("submit")
     public String submitOrder(
-            @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
-            @RequestParam(value = "require", required = false) String require,
-            Order order, ShippingInfo shippingInfo,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
+        @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
+        @RequestParam(value = "require", required = false) String require,
+        Order order, ShippingInfo shippingInfo,
+        HttpSession session,
+        RedirectAttributes redirectAttributes) {
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
             if (info == null) {
@@ -153,8 +162,8 @@ public class MemberOrderController {
             if (selectedItems != null && !selectedItems.isEmpty()) {
                 order = orderService.processOrder(info, selectedItems, order);
             } else {
-//                order = orderService.processOrder(info, order);
-                order = orderService.processOrder(info);
+                order = orderService.processOrder(info, order);
+//                order = orderService.processOrder(info);
             }
 
             redirectAttributes.addFlashAttribute("order", order);
@@ -167,7 +176,7 @@ public class MemberOrderController {
                 redirectAttributes.addFlashAttribute("receiverName", addressInfo.getReceiverName());
                 redirectAttributes.addFlashAttribute("phone", addressInfo.getPhone());
                 redirectAttributes.addFlashAttribute("addrTitle",
-                        addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
+                    addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
             }
             return "redirect:/order/complete";
         } catch (Exception e) {
@@ -177,6 +186,11 @@ public class MemberOrderController {
         }
     }
 
+
+
+
+
+
     @GetMapping("addr")
     public String addressForm(ShippingInfo info) {
         return "redirect:/order/formtest";
@@ -185,8 +199,8 @@ public class MemberOrderController {
     @PostMapping("insertAddress")
     @ResponseBody
     public Map<String, Object> addressSubmit(
-            @ModelAttribute("infolist") ShippingInfo shippingInfo,
-            HttpSession session) {
+        @ModelAttribute("infolist") ShippingInfo shippingInfo,
+        HttpSession session) {
         Map<String, Object> map = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -213,8 +227,8 @@ public class MemberOrderController {
     @PostMapping("selectAddress")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> selectShippingAddress(
-            @ModelAttribute ShippingInfo shippingInfo,
-            HttpSession session) {
+        @ModelAttribute ShippingInfo shippingInfo,
+        HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");

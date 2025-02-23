@@ -28,11 +28,21 @@
         values (#{orderCode}, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_CHAR(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{card} )
     </insert>
 
-    <!--  주문 상세 정보 등록  -->
-    <insert id="insertOrderDetail" parameterType="com.sp.app.model.Order">
+<!--   &lt;!&ndash;  주문 상세 정보 등록  &ndash;&gt;-->
+<!--    <insert id="insertOrderDetail" parameterType="com.sp.app.model.Order">-->
+<!--        insert into ORDER_ITEM(ITEM_CODE, ORDER_CODE, PRODUCTCODE, OPTIONS, PRICEFOREACH, QUANTITY, PRICE, SHIPPING, ORDER_STATE)-->
+<!--        values (SEQ_ORDER_ITEM.nextval, #{orderCode}, #{productCode}, #{options, jdbcType = VARCHAR}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 0)-->
+<!--    </insert>-->
+<!--    -->
+
+    <insert id="insertOrderDetail" parameterType="com.sp.app.model.OrderItem">
+        <selectKey keyProperty="itemCode" resultType="long" order="BEFORE">
+            SELECT SEQ_ORDER_ITEM.nextval FROM dual
+        </selectKey>
         insert into ORDER_ITEM(ITEM_CODE, ORDER_CODE, PRODUCTCODE, OPTIONS, PRICEFOREACH, QUANTITY, PRICE, SHIPPING, ORDER_STATE)
-        values (SEQ_ORDER_ITEM.nextval, #{orderCode}, #{productCode}, #{options, jdbcType = VARCHAR}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 0)
+        VALUES (#{itemCode}, #{orderCode}, #{productCode}, #{options, jdbcType=VARCHAR}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 0)
     </insert>
+
 
     <!--     0: 주문접수, 1: 결제완료, 2: 배송준비중 -->
 
@@ -67,83 +77,31 @@
             TO_CHAR(CONFIRM_DATE, 'YYYY-MM-DD HH24:MI:SS') as confirmDate
         from ORDER_ITEM o
                  join PAYBYMETHOD p on p.ORDER_CODE = o.ORDER_CODE
-        where o.ORDER_CODE = #{orderCode} AND
+        where o.ORDER_CODE = #{orderCode}
     </select>
 
     <!-- 여러 개의 (orderCode, productCode) 쌍을 파라미터로 받아
        해당 주문 상세 내역(주문+주문상품+배송+결제)을 한번에 조회하는 예시 -->
     <select id="listOrderProduct" parameterType="java.util.List"
             resultType="com.sp.app.model.Order">
-        SELECT o.order_code         AS orderCode
-        , o.order_date         AS orderDate
-        , o.total_price        AS totalPrice
-        , o.coupon_code        AS couponCode
-        , o.coupon_value       AS couponValue
-        , o.spent_point        AS spentPoint
-        , o.net_pay            AS netPay
-        , o.confirm_date       AS confirmDate
-        , o.payment            AS payment
-
-        , i.product_code       AS productCode
-        , i.price              AS price
---         , i.options1           AS options1
-        , i.options            AS options
---         , i.options2           AS options2
-        , i.price_foreach      AS priceForeach
-        , i.quantity           AS quantity
-        , i.shipping           AS shipping
-        , i.order_state        AS orderState
-        , i.discount           AS discount
-
-        , s.receiver_name      AS receiverName
-        , s.post_code          AS postCode
-        , s.add_name           AS addName
-        , s.add_title          AS addTitle
-        , s.add_detail         AS addDetail
-        , s.phone              AS phone
-        , s.first_add          AS firstAdd
-
-        , p.confirm_code       AS confirmCode
-        , p.provider           AS provider
-        , p.by_method          AS byMethod
-        , p.card_number        AS cardNumber
-
-        FROM (
-        <!-- 먼저 필요한 (orderCode, productCode) 쌍에 해당하는
-             주문 항목만 가져오기 위한 서브쿼리 예시 -->
-        SELECT order_code, product_code
-        FROM order_item
-        WHERE (order_code, product_code) IN
-        <foreach collection="list" item="item" index="index"
-                 open="(" separator="," close=")">
-            (#{item.orderCode}, #{item.productCode})
-        </foreach>
-        ) sub
-        /* 실제 order_item 레코드와 조인 */
-        JOIN order_item i
-        ON sub.order_code   = i.order_code
-        AND sub.product_code = i.product_code
-
-        /* 주문 테이블과 조인 */
-        JOIN orders o
-        ON i.order_code = o.order_code
-
-        /* 배송 정보 테이블 (예: shipping_info)와 조인 */
-        LEFT OUTER JOIN shipping_info s
-        ON o.order_code = s.order_code
-
-        /* 결제 정보 테이블 (예: payment)와 조인 */
-        LEFT OUTER JOIN payment p
-        ON o.order_code = p.order_code
-
-        <!-- 필요하다면 추가로 product, productStock, productOption 등도 조인 가능 -->
-        <!--
-            LEFT OUTER JOIN product pr
-              ON i.product_code = pr.product_code
-            LEFT OUTER JOIN product_stock ps
-              ON i.product_code = ps.product_num
-            ...
-        -->
+        SELECT p.order_code           AS 주문번호,
+               i.order_state          AS 배송상태,
+               pk.STATE               AS 배송상태1,
+               pr.ITEM       AS 상품명,
+               p.order_date          AS 주문일자,
+               i.quantity            AS 수량,
+               i.price               AS 상품금액
+        FROM   product_order p
+                   JOIN order_item i
+                        ON p.order_code = i.order_code
+                   JOIN product pr
+                        ON i.productcode = pr.productcode
+                   JOIN SELLER_BRAND s
+                        ON pr.BRAND_CODE = s.BRAND_CODE
+                   JOIN PACKAGE pk
+                        ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE  p.memberidx = #{memberIdx}
+        ORDER  BY p.order_date DESC
     </select>
 
     <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
@@ -151,7 +109,7 @@
     <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
         select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
         from ORDER_ITEM
-        where PRODUCTCODE = #{productCode}
+        where PRODUCTCODE = #{productCode} AND ROWNUM = 1
     </select>
 
     <!--유저의 가장 최근 포인트 조회-->

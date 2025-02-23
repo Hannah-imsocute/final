@@ -93,9 +93,8 @@
 	            <br>
 	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0" >
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
-	    
+	           </div>
 	            <button id="loadMore" data-page ="${page}" >작품 더보기</button>
-	        </div>
 	      </div>
 		</div>
 	</main>

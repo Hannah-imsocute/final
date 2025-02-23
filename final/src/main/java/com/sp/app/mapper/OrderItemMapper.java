@@ -14,5 +14,6 @@ public interface OrderItemMapper {
 
     void insertPaymentRefund(OrderItem orderItem) throws Exception;
 
+    Long getItemCode(); // 상품 아이템 코드 가지고오기
 
 }
