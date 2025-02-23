@@ -155,8 +155,12 @@ body {
 	</main>
 
 	<script type="text/javascript">
+		
 		function pickWinners(){
-			window.open('${pageContext.request.contextPath}/admin/event/winners?num=${dto.event_article_num}','_blank', 'width=500, height=700, scrollbars=yes, resizable=no');
+			//window.open('${pageContext.request.contextPath}/admin/event/winners?num=${dto.event_article_num}','_blank', 'width=500, height=700, scrollbars=yes, resizable=no');
+			
+			let url = "${pageContext.request.contextPath}/admin/notice/write?category=event"+${dto.event_article_num};
+			location.href = url;
 		}
 	</script>
 </body>

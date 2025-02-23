@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.Notice;
+import com.sp.app.admin.service.EventManageService;
 import com.sp.app.admin.service.NoticeManageService;
 import com.sp.app.common.MyUtil;
 import com.sp.app.common.PaginateUtil;
@@ -29,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class NoticeManageController {
 	
+	private final EventManageService eventservice;
 	private final NoticeManageService service;
 	private final PaginateUtil util;
 	
@@ -61,7 +64,26 @@ public class NoticeManageController {
 	}
 	
 	@GetMapping("write")
-	public String handleWrite() {
+	public String handleWrite(@RequestParam(name = "category", defaultValue = "choose") String category, Model model) {
+		
+		try {
+			if(category.indexOf("event") > -1) {
+				model.addAttribute("category", "event");
+				String sub = category.substring(category.lastIndexOf("event") + "event".length());
+				long num = Long.parseLong(sub);
+				
+				// event 객체를 num 을 기준으로 반환
+				Event dto = eventservice.findByIdOfEvent(num, "comment");
+				
+				// 해당 event 의 당첨자를 결정 파라미터 size 랑 해당 게시글 num 넘겨야됨
+				// 근데 그럴려면 size 를 어디서 결정하냐가 문제 
+				// eventservice.insertWinners(null);
+				model.addAttribute("dto", dto);
+			}
+			
+		} catch (Exception e) {
+			log.info("handleWrite : ", e);
+		}
 		return "admin/noticeList/write";
 	}
 	
@@ -71,9 +93,6 @@ public class NoticeManageController {
 		try {
 			SessionInfo info = (SessionInfo) session.getAttribute("member");
 			dto.setAdminidx(info.getMemberIdx());
-			
-			System.out.println(dto.getFixed());
-			System.out.println();
 			
 			map.put("dto", dto);
 			map.put("yesOrno", dto.getFixed());

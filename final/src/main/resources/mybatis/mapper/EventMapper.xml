@@ -2,12 +2,39 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.EventMapper">
+	<resultMap type="com.sp.app.admin.model.Event" id="event">
+		<id property="event_article_num" column="event_article_num" />
+		<result property="subject" column="subject" />
+		<result property="textcontent" column="textcontent" />
+		<result property="eventType" column="eventType" />
+		<result property="startdate" column="startdate" />
+		<result property="enddate" column="enddate" />
+		<result property="created" column="created" />
+
+		<association property="event" resultMap="eventdetail"
+			javaType="com.sp.app.admin.model.EventType"></association>
+	</resultMap>
+
+	<resultMap type="com.sp.app.admin.model.EventType"
+		id="eventdetail">
+		<result property="coupon_code" column="coupon_code" />
+		<result property="couponname" column="couponname" />
+		<result property="valid" column="valid" />
+		<result property="rate" column="rate" />
+		<result property="couponstart" column="couponstart" />
+		<result property="expiredate" column="expiredate" />
+		<result property="clockin_num" column="clockin_num" />
+		<result property="daybyday" column="daybyday" />
+		<result property="weekly" column="weekly" />
+		<result property="monthly" column="monthly" />
+		<result property="commcount" column="commcount" />
+	</resultMap>
 
 	<sql id="type-list">
 		<if test="type == 'coupon'">
 			, coupon_code
 		</if>
-		<if test="type == 'clockin'">
+		<if test="type == 'clockin' or type == 'checkin' ">
 			, clockin_num
 		</if>
 	</sql>
@@ -19,17 +46,63 @@
 		'YYYY-MM-DD') startdate , TO_CHAR(enddate,'YYYY-MM-DD') enddate FROM
 		event_article
 	</select>
-	<select id="findById" parameterType="map"
-		resultType="com.sp.app.admin.model.Event">
+	<select id="findById" parameterType="map" resultMap="event">
 		SELECT er.event_article_num,
 		subject, textcontent, eventType,
 		thumbnail,
-		TO_CHAR(startdate, 'YYYY-MM-DD') startdate ,
-		TO_CHAR(enddate,'YYYY-MM-DD') enddate 
-		<include refid="type-list"/>
+		TO_CHAR(startdate, 'YYYY-MM-DD') startdate,
+		TO_CHAR(enddate,'YYYY-MM-DD') enddate
+		<include refid="type-list" />
 		FROM event_article er
-		LEFT OUTER JOIN coupon c ON er.event_article_num = c.event_article_num
-		LEFT OUTER JOIN clockin_event ce ON ce.event_article_num =	er.event_article_num
-		WHERE er.event_article_num = #{eventNum}
+		LEFT OUTER JOIN coupon c ON er.event_article_num
+		= c.event_article_num
+		LEFT OUTER JOIN clockin_event ce ON
+		ce.event_article_num = er.event_article_num
+		WHERE er.event_article_num
+		= #{eventNum}
 	</select>
+
+	<select id="hasCoupon" parameterType="map" resultType="String">
+		SELECT
+			CASE
+				WHEN cnt = 1 THEN 'true'
+				ELSE 'false'
+			END AS is_valid
+		FROM (
+			SELECT COUNT(*) AS cnt
+			FROM USER_HAVE_COUPON
+			WHERE memberidx = #{memberidx} and couponcode = #{coupon_code}
+		)
+	</select>
+
+	<select id="couponInfo" parameterType="String" resultType="com.sp.app.admin.model.EventType">
+		SELECT coupon_code, couponname, valid, rate, TO_CHAR(couponstart,'YYYY-MM-DD') couponstart, TO_CHAR(expiredate, 'YYYY-MM-DD') expiredate
+		FROM coupon WHERE coupon_code = #{coupon_code}
+	</select>
+
+	<select id="checkedDate" parameterType="map" resultType="String">
+		SELECT
+		TO_CHAR(clockindate, 'YYYY-MM-DD') clockindate FROM clockin_log WHERE
+		clockin_num = #{num} and memberidx = #{memberIdx};
+	</select>
+
+
+	<insert id="insertCheckin" parameterType="map">
+		INSERT INTO clockin_log
+		(log_num, clockin_num, memberidx, clockindate) VALUES (
+		SEQ_CLOCKIN_LOG.NEXTVAL , #{num}, #{memberidx}, SYSDATE)
+	</insert>
+
+	<insert id="insertPoints"
+		parameterType="com.sp.app.model.MemberPoint">
+		INSERT INTO point_save (POINT_SAVE_NUM, memberidx,
+		saveamount, savedate, expiredate, reason, enable, balance )
+		VALUES ( SEQ_POINT_SAVE.NEXTVAL, #{memberIdx}, #{saveAmount}, SYSDATE,
+		SYSDATE+365, #{reason}, '0', #{balance})
+	</insert>
+
+	<insert id="insertGetCoupon" parameterType="map">
+		INSERT INTO user_have_coupon (usercoupon_num, memberidx, couponcode, getdate, expiredate, valid )
+		 VALUES (SEQ_USER_HAVE_COUPON.NEXTVAL, #{memberidx}, #{couponcode}, SYSDATE, #{expiredate}, 0)
+	</insert>
 </mapper>

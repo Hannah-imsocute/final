@@ -221,7 +221,7 @@
 				if(dto.eventType == 'coupon'){
 					string += '쿠폰코드 : ' + dto.coupon_code + ', 쿠폰명 : ' + dto.couponname ;
 				}else if( dto.eventType == 'checkin'){
-					string += '일일포인트 :' + dto.daybyday + ', 주간포인트 : ' + dto.weekly + ', 월간포인트 :' + monthly;
+					string += '일일포인트 :' + dto.daybyday + ', 주간포인트 : ' + dto.weekly + ', 월간포인트 :' + dto.monthly;
 				}
 				
 				$('input[name=eventdetail]').val(string);

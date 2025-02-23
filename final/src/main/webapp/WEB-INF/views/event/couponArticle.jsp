@@ -82,12 +82,34 @@
 	</header>
 	<main>
         <div class="post-container">
-            <h2 class="post-title">${dto.subject }</h2>
-            <p class="post-date">${dto.startdate } ~ ${dto.enddate }</p>
+            <h2 class="post-title">${dto.subject}</h2>
+            <p class="post-date">${dto.startdate} ~ ${dto.enddate}</p>
             <div class="post-image"> <img alt="썸네일" src="/uploads/event/${dto.thumbnail}"> </div> 
             <p class="post-content">${dto.textcontent}</p>
             <button class="download-btn"><i class="bi bi-download"></i> 쿠폰 다운로드</button>
         </div>
     </main>
+    
+    <script type="text/javascript">
+    	$(function(){
+    		$('.download-btn').click(function(){
+    			let valid = ${valid};
+    			if(valid == 'true'){
+    				alert('이미 발급된 쿠폰입니다.');
+    				return false;
+    			}
+    			let num = ${dto.event_article_num};
+    			let code = '${dto.event.coupon_code}';
+    			let url = '${pageContext.request.contextPath}/event/getCoupon';
+    			let params = {couponcode : code, eventNum : num};
+    			
+    			const fn = function(data){
+    				console.log(data);
+    			};
+    			
+    			ajaxRequest(url,'post', JSON.stringify(params),'json', fn, false, 'json');
+    		});
+    	});
+    </script>
 </body>
 </html>
