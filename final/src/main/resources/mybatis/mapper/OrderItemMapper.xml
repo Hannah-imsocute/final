@@ -26,5 +26,12 @@
             (SEQ_PAYMENT_REFUND.NEXTVAL, #{orderCode}, #{itemCode}, #{refundAmount}, SYSDATE)
     </insert>
 
+    <select id="getItemCode" resultType="com.sp.app.model.OrderItem">
+        select ITEM_CODE
+        from ORDER_ITEM
+        order by item_code desc
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
 
 </mapper>
