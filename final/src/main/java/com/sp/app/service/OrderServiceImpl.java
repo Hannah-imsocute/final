@@ -1,5 +1,6 @@
 package com.sp.app.service;
 
+import com.sp.app.mapper.OrderItemMapper;
 import com.sp.app.mapper.OrderMapper;
 import com.sp.app.mapper.ShippingMapper;
 import com.sp.app.model.*;
@@ -22,6 +23,7 @@ public class OrderServiceImpl implements OrderService {
 
   private final OrderMapper orderMapper;
   private final ShippingMapper shippingMapper;
+  private final OrderItemMapper orderItemMapper;
 
   private static AtomicLong count = new AtomicLong(0);
 
@@ -332,44 +334,44 @@ public class OrderServiceImpl implements OrderService {
 
     //  추가 정보(뷰에서 넘어온 쿠폰, 포인트, 결제수단 등) 반영
     String payment = (orderFromView != null && orderFromView.getPayment() != null)
-            ? orderFromView.getPayment() : "카드";
+        ? orderFromView.getPayment() : "카드";
 
     int usedPoint = (orderFromView != null && orderFromView.getSpentPoint() != null)
-            ? orderFromView.getSpentPoint() : 0;
+        ? orderFromView.getSpentPoint() : 0;
 
     int couponVal = (orderFromView != null && orderFromView.getCouponValue() != null)
-            ? orderFromView.getCouponValue() : 0;
+        ? orderFromView.getCouponValue() : 0;
 
     int finalNetPay = overallNetPay - couponVal - usedPoint;
     if (finalNetPay < 0) finalNetPay = 0;
 
     Order order = Order.builder()
-            .memberIdx(sessionInfo.getMemberIdx())
-            .email(sessionInfo.getEmail())
-            .orderDate(java.time.LocalDateTime.now().toString())  // 예시
-            .orderCode(orderCode)
-            .totalPrice(overallNetPay)
-            .couponCode((orderFromView != null) ? orderFromView.getCouponCode() : null)
-            .couponValue(couponVal)
-            .spentPoint(usedPoint)
-            .netPay(finalNetPay)
-            .payment(payment)
-            .shippingInfo((orderFromView != null) ? orderFromView.getShippingInfo() : null)
-            .build();
+        .memberIdx(sessionInfo.getMemberIdx())
+        .email(sessionInfo.getEmail())
+        .orderDate(java.time.LocalDateTime.now().toString())  // 예시
+        .orderCode(orderCode)
+        .totalPrice(overallNetPay)
+        .couponCode((orderFromView != null) ? orderFromView.getCouponCode() : null)
+        .couponValue(couponVal)
+        .spentPoint(usedPoint)
+        .netPay(finalNetPay)
+        .payment(payment)
+        .shippingInfo((orderFromView != null) ? orderFromView.getShippingInfo() : null)
+        .build();
 
     orderMapper.insertOrder(order);
 
     for (CartItem cartItem : cartItems) {
       OrderItem orderItem = OrderItem.builder()
-              .orderCode(orderCode)
-              .productCode(cartItem.getProductCode())
-              .options(cartItem.getCartOption())  // 옵션 정보
-              .priceForeach(cartItem.getPrice())
-              .quantity(cartItem.getQuantity())
-              .price(cartItem.getQuantity() * cartItem.getPrice())
-              .shipping((cartItem.getQuantity() * cartItem.getPrice() >= 20000) ? 0 : 3000)
-              .orderState(0)
-              .build();
+          .orderCode(orderCode)
+          .productCode(cartItem.getProductCode())
+          .options(cartItem.getCartOption())  // 옵션 정보
+          .priceForeach(cartItem.getPrice())
+          .quantity(cartItem.getQuantity())
+          .price(cartItem.getQuantity() * cartItem.getPrice())
+          .shipping((cartItem.getQuantity() * cartItem.getPrice() >= 20000) ? 0 : 3000)
+          .orderState(0)
+          .build();
 
       orderMapper.insertOrderDetail(orderItem);
 
@@ -379,6 +381,7 @@ public class OrderServiceImpl implements OrderService {
         shipping.setItemCode(orderItem.getItemCode());
         shipping.setMemberIdx(order.getMemberIdx());
         shipping.setState("상품준비중");
+        shipping.setProductCode(orderItem.getProductCode());
         shippingMapper.insertPackage(shipping);
       }
     }
@@ -394,14 +397,14 @@ public class OrderServiceImpl implements OrderService {
       Long pNum = pointService.getPointSaveNum(order.getMemberIdx());
 
       MemberPoint memberPoint = MemberPoint.builder()
-              .memberIdx(order.getMemberIdx())
-              .pointSaveNum(pNum)
-              .orderCode(order.getOrderCode())
-              .usedAmount(order.getSpentPoint())
-              .balance(-order.getSpentPoint()) // 차감된 포인트
-              .usedDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-              // expireDate는 필요에 따라 설정 (예: 적립 정책에 따른 만료일)
-              .build();
+          .memberIdx(order.getMemberIdx())
+          .pointSaveNum(pNum)
+          .orderCode(order.getOrderCode())
+          .usedAmount(order.getSpentPoint())
+          .balance(-order.getSpentPoint()) // 차감된 포인트
+          .usedDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+          // expireDate는 필요에 따라 설정 (예: 적립 정책에 따른 만료일)
+          .build();
 
       Map<String, Object> map = new HashMap<>();
       map.put("pointSaveNum", memberPoint.getPointSaveNum()); // 어느 적립 레코드에서 차감?
@@ -503,13 +506,13 @@ public class OrderServiceImpl implements OrderService {
       }
 
       CartItem cartItem = CartItem.builder()
-              .cartItemCode(0L) // 임시 (DB에 저장되는 장바구니 아니므로)
-              .memberIdx(sessionInfo.getMemberIdx())
-              .productCode(productCode)
-              .quantity(quantity)
-              .price(productInfo.getPrice()) // 단가
-              .cartOption(productInfo.getOptions())
-              .build();
+          .cartItemCode(0L) // 임시 (DB에 저장되는 장바구니 아니므로)
+          .memberIdx(sessionInfo.getMemberIdx())
+          .productCode(productCode)
+          .quantity(quantity)
+          .price(productInfo.getPrice()) // 단가
+          .cartOption(productInfo.getOptions())
+          .build();
 
       cartItems.add(cartItem);
     }

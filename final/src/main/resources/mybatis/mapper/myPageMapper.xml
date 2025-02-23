@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.MyPageMapper">
+
+    <select id="getOrdersHistory" parameterType="long"
+            resultType="com.sp.app.model.myPage">
+        SELECT p.order_code     AS orderCode,
+               i.order_state    AS orderState,
+               i.QUANTITY       AS quantity,
+               pk.STATE         AS packageState,
+               pr.ITEM          AS productName,
+               s.BRANDNAME      AS brandName,
+               pr.THUMBNAIL as thumbnail,
+              TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
+               i.quantity       AS quantity,
+               i.price          AS netPay
+        FROM   product_order p
+                   JOIN order_item i ON p.order_code = i.order_code
+                   JOIN product pr   ON i.productcode = pr.productcode
+                   JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+                   JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE  p.memberidx = #{memberIdx}
+        ORDER  BY p.order_date DESC
+    </select>
+
+    <!--리뷰작성-->
+    <insert id="insertReview" parameterType="com.sp.app.model.myPage">
+        insert into PRODUCTREVIEW (REVIEW_NUM, MEMBERIDX, PRODUCTCODE, CONTENT, BLOCK, STARRATE) VALUES
+            (SEQ_PRODUCTREVIEW.nextval, #{memberIdx}, #{productCode}, #{content}, #{block}, #{starRate})
+    </insert>
+
+
+
+</mapper>

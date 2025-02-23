@@ -46,10 +46,10 @@
 
     <!-- 유저 사용가능한 포인트 금액-->
     <select id="getPointEnabled" parameterType="Long" resultType="int">
-        SELECT NVL(SUM(BALANCE), 0)
-        FROM POINT_SAVE
-        WHERE MEMBERIDX = #{memberIdx}
-          AND enable = 0
+    SELECT GREATEST(NVL(SUM(BALANCE), 0), 0)
+    FROM POINT_SAVE
+    WHERE MEMBERIDX = #{memberIdx}
+      AND enable = 0
     </select>
 
 

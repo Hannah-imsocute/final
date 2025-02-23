@@ -329,6 +329,7 @@
             <div class="recipient-info">
               <strong class="recipient-name"><c:out value="${receiverName}" /></strong>
               <span class="recipient-phone"><c:out value="${phone}" /></span>
+              <input type="hidden" name="postCode" value="${postCode}">
             </div>
             <button type="button" class="btn-addr-change">배송지 변경</button>
           </div>
@@ -642,7 +643,7 @@
         success: function(response) {
           if(response.status === "success") {
             $modalOverlay.hide();
-            $("#hiddenAddrName").val(receiverName);
+            $("#hiddenAddrName").val(addName);
             $("#hiddenPostCode").val(postCode);
             $("#hiddenAddTitle").val(addTitle);
             $("#hiddenAddDetail").val(addDetail);

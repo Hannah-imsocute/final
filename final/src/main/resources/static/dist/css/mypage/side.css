@@ -1,0 +1,81 @@
+/* side.css */
+.sidebar {
+    width: 220px;
+    margin-top: 20px;
+}
+
+.sidebar .profile-box {
+    background-color: #fff;
+    border: 1px solid #fa7c00;
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .profile-box button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.sidebar .profile-box .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.sidebar .profile-box .realname {
+    margin-top: 12px;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.sidebar .menu-title {
+    text-align: center;
+    background-color: #fa7c00;
+    color: #fff;
+    padding: 12px 0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .menu-list {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .menu-list .menu-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.sidebar .menu-list .menu-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar .menu-list .menu-item .main-text {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+}
+
+.sidebar .menu-list .menu-item .sub-text {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.sidebar .menu-list .menu-item .sub-text a {
+    display: block;
+    margin-bottom: 3px;
+}

@@ -31,11 +31,11 @@ public class MemberOrderController {
 
     @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
     public String orderForm(
-            @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
-            @RequestParam(name = "productCode", required = false) List<Long> productCodes,
-            @RequestParam(name = "quantity", required = false) List<Integer> quantities,
-            @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
-            HttpSession session, Model model) throws Exception {
+        @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
+        @RequestParam(name = "productCode", required = false) List<Long> productCodes,
+        @RequestParam(name = "quantity", required = false) List<Integer> quantities,
+        @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
+        HttpSession session, Model model) throws Exception {
 
         // 회원 정보 확인
         SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -65,18 +65,21 @@ public class MemberOrderController {
         model.addAttribute("shippingAddresses", shippingInfolist);
         model.addAttribute("couponList", couponList);
 
+        // mode에 따라 구매 방식 분기 ("direct"면 바로구매, 아니면 장바구니 구매)
         List<CartItem> cartItems = new ArrayList<>();
         List<OrderItem> orderItems = new ArrayList<>();
 
         if ("direct".equals(mode)) {
+            // 바로 구매: productCodes와 quantities가 반드시 넘어와야 함.
             if (productCodes == null || quantities == null ||
-                    productCodes.isEmpty() || quantities.isEmpty()) {
+                productCodes.isEmpty() || quantities.isEmpty()) {
                 throw new Exception("주문 정보가 부족합니다. (직접 구매)");
             }
             for (int i = 0; i < productCodes.size(); i++) {
                 OrderItem item = new OrderItem();
                 item.setProductCode(productCodes.get(i));
                 item.setQuantity(quantities.get(i));
+                // DB에서 상품 정보를 가져와서 DB 가격 사용
                 OrderItem productInfo = orderService.getProductCode(productCodes.get(i));
                 if (productInfo == null) {
                     throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + productCodes.get(i));
@@ -137,16 +140,16 @@ public class MemberOrderController {
         model.addAttribute("order", order);
         model.addAttribute("mode", mode);
 
-        return "order/formtest3";
+        return "order/formtest2";
     }
 
     @PostMapping("submit")
     public String submitOrder(
-            @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
-            @RequestParam(value = "require", required = false) String require,
-            Order order, ShippingInfo shippingInfo,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
+        @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
+        @RequestParam(value = "require", required = false) String require,
+        Order order, ShippingInfo shippingInfo,
+        HttpSession session,
+        RedirectAttributes redirectAttributes) {
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
             if (info == null) {
@@ -173,7 +176,7 @@ public class MemberOrderController {
                 redirectAttributes.addFlashAttribute("receiverName", addressInfo.getReceiverName());
                 redirectAttributes.addFlashAttribute("phone", addressInfo.getPhone());
                 redirectAttributes.addFlashAttribute("addrTitle",
-                        addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
+                    addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
             }
             return "redirect:/order/complete";
         } catch (Exception e) {
@@ -184,6 +187,10 @@ public class MemberOrderController {
     }
 
 
+
+
+
+
     @GetMapping("addr")
     public String addressForm(ShippingInfo info) {
         return "redirect:/order/formtest";
@@ -192,8 +199,8 @@ public class MemberOrderController {
     @PostMapping("insertAddress")
     @ResponseBody
     public Map<String, Object> addressSubmit(
-            @ModelAttribute("infolist") ShippingInfo shippingInfo,
-            HttpSession session) {
+        @ModelAttribute("infolist") ShippingInfo shippingInfo,
+        HttpSession session) {
         Map<String, Object> map = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -220,8 +227,8 @@ public class MemberOrderController {
     @PostMapping("selectAddress")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> selectShippingAddress(
-            @ModelAttribute ShippingInfo shippingInfo,
-            HttpSession session) {
+        @ModelAttribute ShippingInfo shippingInfo,
+        HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
