@@ -60,11 +60,11 @@
 							
 				<c:if test="${dto.optionCount > 0}">
 					<div class="mt-2">
-						<select class="form-select requiredOption" data-optionNum="${listOption[0].optionNum}" ${dto.totalStock < 1 ? 'disabled':''}>
-							<option value="">${listOption[0].optionName}</option>
+						<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.soldout = 0 ? 'disabled':''}>
+							<option value="">${listOption[0].option_code}</option>
 							<c:forEach var="vo" items="${listOptionDetail}">
 								<c:if test="${dto.optionCount == 1}">
-									<option value="${vo.detailNum}" data-stockNum="${vo.stockNum}" data-totalStock="${vo.totalStock}" data-optionValue="${vo.optionValue}">
+									<option value="${vo.optiondetail_code}" data-stockNum="${vo.stockNum}" data-totalStock="${vo.totalStock}" data-optionValue="${vo.optionValue}">
 										${vo.optionValue}${vo.totalStock < 5 ? ' 재고 - ' + vo.totalStock : ''}
 									</option>
 								</c:if>
@@ -460,6 +460,16 @@ $(function(){
 		ajaxFun(url, "POST", params, "text", fn);
 	});
 });
+
+$('.buy-btn').click(function (event) {
+    event.preventDefault();
+    var productCode = "${dto.productCode}";
+    var quantity = 1;
+    window.location.href = "${pageContext.request.contextPath}/order/form"
+          + "?productCode=" + productCode
+          + "&quantity=" + quantity
+          + "&mode=direct";
+ });
 
 
 </script>
