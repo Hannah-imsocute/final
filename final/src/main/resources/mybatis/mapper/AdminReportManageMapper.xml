@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.AdminReportMapper">
+
+	<select id="dataCountOfProduct" parameterType="map"
+		resultType="Integer">
+		SELECT COUNT(*) FROM item_report
+		<where>
+			<if test="category != 0 ">
+				category_num = #{category}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				and INSTR(content,#{kwd}) &gt; 0
+			</if>
+		</where>
+	</select>
+	<select id="getListOfProduct" parameterType="map"
+		resultType="com.sp.app.admin.model.Report">
+		SELECT sellerReport_num, productcode, memberidx, reason, TO_CHAR(report_date,'YYYY-MM-DD') report_date,
+		category_num, TO_CHAR(processdate,'YYYY-MM-DD') processdate , TO_CHAR(releasedate, 'YYYY-MM-DD')releasedate
+		FROM item_report
+		<where>
+			<if test="category != 0 ">
+				category_num = #{category}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				and INSTR(content,#{kwd}) &gt; 0
+			</if>
+		</where>
+	</select>
+	<select id="getCategoryOfReport" resultType="com.sp.app.admin.model.Report">
+		SELECT category_num, category_name FROM report_category 
+	</select>
+	
+</mapper>

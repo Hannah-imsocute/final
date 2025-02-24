@@ -27,15 +27,10 @@
 			</ul>
 			<div class="options-cover">
 				<select class="form-select category-select" aria-label="카테고리 선택">
-					<option selected>카테고리</option>
-					<option value="1">One</option>
-					<option value="2">Two</option>
-					<option value="3">Three</option>
-				</select> <select class="form-select category-select" aria-label="검색 조건 선택">
-					<option selected>검색</option>
-					<option value="1">One</option>
-					<option value="2">Two</option>
-					<option value="3">Three</option>
+					<option selected value="0">카테고리</option>
+					<c:forEach var="dto" items="${categorylist}">
+						<option value="${dto.category_num }">${dto.category_name}</option>
+					</c:forEach>
 				</select> <input type="text" class="form-control search-input"
 					placeholder="검색어 입력">
 
@@ -44,8 +39,36 @@
 				</button>
 			</div>
 			<div class="report-list">
-				<jsp:include page="/WEB-INF/views/admin/report_items.jsp" />
+				<table>
+					<thead>
+						<tr>
+							<th>신고번호</th>
+							<th>상품코드</th>
+							<!--  신고종류에 따라 이름만 바꾸기 상품 | 댓글 | 후기  -->
+							<th>신고자</th>
+							<th>신고사유</th>
+							<th>신고일자</th>
+							<th>카테고리</th>
+							<th>처리상태</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="dto" items="${list}">
+							<tr>
+								<td>1</td>
+								<td>${dto.productcode }</td>
+								<td>ujin</td>
+								<td>just</td>
+								<td>${dto.report_date }</td>
+								<td>${dto.category_num}</td>
+								<td>not yet</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+
+				</table>
 			</div>
+			<div>${paging}</div>
 		</div>
 	</main>
 
