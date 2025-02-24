@@ -114,11 +114,16 @@
 		VALUES  (seq_productOptionDetail.NEXTVAL, #{option_code}, #{option_value})
 	</insert>
 	
-	<select id="listProduct" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
-		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind
+	<select id="listProduct" parameterType="map" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind, b.brand_code, m.memberIdx
 		FROM product p 
 		JOIN productCategory c 
 	    ON p.categoryCode = c.categoryCode
+        JOIN seller_brand b 
+        ON b.brand_code = p.brand_code
+        JOIN member m
+        on m.memberIdx = b.memberIdx
+        where m.memberIdx = #{memberIdx}
 	    ORDER BY upload DESC
 	</select>
 	

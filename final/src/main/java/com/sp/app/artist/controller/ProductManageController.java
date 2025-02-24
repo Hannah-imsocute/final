@@ -95,13 +95,14 @@ public class ProductManageController{
 
 	@GetMapping("list")
 	public String productList(HttpSession session, Model model) throws Exception{
-		Map<String, Object> map = new HashMap<>();
-		
+		Long memberIdx = getMemberIdx(session);
+
 		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("memberIdx", memberIdx); 
 			
 			List<ProductManage> productList = service.listProduct(map);
 			model.addAttribute("productList",productList);
-			
 
 		} catch (Exception e) {
 			log.info("productList : ", e);
@@ -120,10 +121,10 @@ public class ProductManageController{
                                 HttpSession session,
                                 Model model) throws Exception {
     	
-//    	Long memberIdx = getMemberIdx(session);
-//    	dto.setMemberIdx(memberIdx);
-    	
-    	dto.setMemberIdx(2); // 테스트소스
+    	Long memberIdx = getMemberIdx(session);
+    	dto.setMemberIdx(memberIdx);
+    
+ //   	dto.setMemberIdx(2); // 테스트소스
 		
         // 제품(작품) 정보를 DB에 저장하는 신규 메서드
         service.insertProduct(dto, thumbnailFile, uploadPath);
@@ -131,7 +132,7 @@ public class ProductManageController{
         // 등록한 작품 리스트 조회
         Map<String, Object> map = new HashMap<>();
         List<ProductManage> productList = service.listProduct(map);
-        
+       
         model.addAttribute("productList",productList);
         // 등록 후 목록 페이지로 리다이렉트 (contextPath 포함)
         

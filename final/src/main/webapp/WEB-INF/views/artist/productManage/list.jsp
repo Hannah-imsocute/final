@@ -155,7 +155,7 @@
 				<c:forEach var="vo" items="${productList}" varStatus="status">
 					<tr valign="middle">
 						<td>${vo.productCode}</td>
-						<td>대분류</td>
+						<td>${vo.parentCategoryCode}</td>
 						<td>${vo.categoryCode }</td>
 						<td class="product-subject left">
 							<div class="img-container">
