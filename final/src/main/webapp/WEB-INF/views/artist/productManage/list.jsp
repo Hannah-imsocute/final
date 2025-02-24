@@ -101,8 +101,20 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
-
         }
+		  .img-custom {
+		    height: 120px;
+		    width: auto;
+		  }
+		  
+		  /* 컨테이너 스타일: 수평, 수직 중앙 정렬 */
+		  .img-container {
+		    display: flex;
+		    justify-content: center; /* 수평 중앙 */
+		    align-items: center;     /* 수직 중앙 */
+		    height: 150px;           /* 컨테이너 높이 (필요에 따라 조정) */
+		  }
+
 </style>
 </head> 
 <body>
@@ -124,9 +136,9 @@
         <table>
             <thead> 
                 <tr>
+                    <th>작품 코드</th>
                     <th>대분류</th>
                     <th>소분류</th>
-                    <th>작품 코드</th>
                     <th>작품명</th>
                     <th>작품가격</th>
                     <th>판매가격</th>
@@ -142,11 +154,13 @@
   			<tbody>
 				<c:forEach var="vo" items="${productList}" varStatus="status">
 					<tr valign="middle">
+						<td>${vo.productCode}</td>
 						<td>대분류</td>
 						<td>${vo.categoryCode }</td>
-						<td>${vo.productCode}</td>
 						<td class="product-subject left">
-							<img src="${pageContext.request.contextPath}/uploads/products/${vo.thumbnail}">
+							<div class="img-container">
+							  <img src="${pageContext.request.contextPath}/uploads/product/${vo.thumbnail}" class="img-custom">
+							</div>							
 							<a href="#"><label>${dto.item}</label></a>
 						</td>
 						<td><fmt:formatNumber value="${vo.price}" type="number" groupingUsed="true"/>원</td>  
@@ -155,8 +169,10 @@
 						<td>${vo.addOptions}</td>
 						<td>${vo.modified}</td>
 						<td>
-							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/update'">수정</button>
-							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/delete'">삭제</button>
+							<!-- 수정 버튼도 필요한 경우 productCode를 파라미터로 전달할 수 있습니다. -->
+							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/update?productCode=${vo.productCode}'">수정</button>
+							<!-- 삭제 버튼은 자바스크립트 함수를 호출 -->
+							<button type="button" class="btn border" onclick="deleteProduct('${vo.productCode}')">삭제</button>
 						</td>
 					</tr>					
 				</c:forEach>
@@ -185,5 +201,27 @@
 	    </div>
 </main>
 
+<script>
+function deleteProduct(productCode) {
+    if (!confirm("정말 삭제하시겠습니까?")) {
+      return;
+    }
+    
+    // POST 방식으로 삭제 요청 전송
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '${pageContext.request.contextPath}/artist/productManage/delete';
+    
+    // productCode 값을 전달할 hidden input 생성
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'productCode';
+    input.value = productCode;
+    form.appendChild(input);
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>
 </body>
 </html>

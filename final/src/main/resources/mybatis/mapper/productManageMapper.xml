@@ -122,7 +122,24 @@
 	    ORDER BY upload DESC
 	</select>
 	
-	
-	
+	<delete id="deleteProduct" parameterType="Long" >
+		delete product where productCode = #{productCode}
+	</delete>
+	<delete id="deleteOrderitem" parameterType="Long" >
+		delete ORDER_ITEM where productCode = #{productCode}
+	</delete>
+	<delete id="deletePackage" parameterType="Long" >
+		delete PACKAGE where productCode = #{productCode}
+	</delete>
+	<delete id="deleteProductimage" parameterType="Long" >
+		delete PRODUCTIMAGE where productCode = #{productCode}
+	</delete>
+	<delete id="deleteCartitem" parameterType="Long" >
+		delete CART_ITEM where productCode = #{productCode}
+	</delete>
+	<delete id="deleteProductoption" parameterType="Long" >
+		delete PRODUCTOPTION where productCode = #{productCode}
+	</delete>
+
 </mapper>
 	

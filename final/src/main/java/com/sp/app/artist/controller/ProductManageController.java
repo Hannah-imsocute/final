@@ -139,6 +139,19 @@ public class ProductManageController{
         return "redirect:" + contextPath + "/artist/productManage/list";
    
     }
+    
+    
+    @PostMapping("delete")
+	public String deleteProduct(
+			@RequestParam("productCode") Long productCode,
+			HttpServletRequest request) throws Exception { 
+    	try {
+			service.deleteProduct(productCode);
+		
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return "redirect:" + request.getContextPath() + "/artist/productManage/list";
 
 
     // Session 에서 회원코드 반환

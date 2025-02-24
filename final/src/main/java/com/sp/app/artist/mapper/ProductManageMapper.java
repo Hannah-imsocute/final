@@ -33,6 +33,11 @@ public interface ProductManageMapper {
 	
     public List<ProductManage> listProduct(Map<String, Object> map) ;
 	
-    
-    
+    //작품 삭제(연관테이블 productCode 기준으로 전부 삭제)
+  	public void deleteProduct(long productCode);
+  	public void deleteOrderitem(long productCode);
+  	public void deletePackage(long productCode);
+  	public void deleteProductimage(long productCode);
+  	public void deleteCartitem(long productCode);
+  	public void deleteProductoption(long productCode);
 }

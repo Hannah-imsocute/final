@@ -26,5 +26,7 @@ public interface ProductManageService {
     public List<ProductManage> listProductOption(long productCode);
 	public List<ProductManage> listOptionDetail(long option_code);
 	
+	//작품 삭제
+	public void deleteProduct(long productCode);
 
 }

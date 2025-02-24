@@ -156,7 +156,7 @@ public class ProductManageServiceImpl implements ProductManageService{
 				// 아예 꺼내서 파일사이즈 까지 체크해보고 비어있는지 확인해야함 
 	            if( mf.getSize() > 0 
 	            && mf.getOriginalFilename() != null 
-	            && mf.getOriginalFilename().trim().isEmpty()) {
+	            && !mf.getOriginalFilename().trim().isEmpty()) {
 	            	String saveFilename = Objects.requireNonNull(storageService.uploadFileToServer(mf, uploadPath));
 	            	if(saveFilename != null) {
 	            		dto.setImageFileName(saveFilename);
@@ -195,6 +195,21 @@ public class ProductManageServiceImpl implements ProductManageService{
 		} 
 		
 		return list;
+	}
+
+	@Override
+	public void deleteProduct(long productCode) {
+		try {
+			mapper.deleteProduct(productCode);
+			mapper.deleteOrderitem(productCode);
+			mapper.deletePackage(productCode);
+			mapper.deleteProductimage(productCode);
+			mapper.deleteCartitem(productCode);
+			mapper.deleteProductoption(productCode);
+		} catch (Exception e) {
+			log.info("deleteProduct");
+		}
+		
 	}
 
 }
