@@ -238,6 +238,7 @@
     #couponModalOverlay { display: none; }
     #couponModalOverlay .modal {
       width: 400px; max-width: 90%; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      height: 1000px;
     }
     #couponModalOverlay .modal-header {
       background: #ff8200; color: #fff; padding: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;

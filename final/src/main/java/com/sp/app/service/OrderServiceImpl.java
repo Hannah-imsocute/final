@@ -80,11 +80,6 @@ public class OrderServiceImpl implements OrderService {
       // 주문 정보 저장
       orderMapper.insertOrder(dto);
 
-      // 결제 정보가 있다면 저장
-      if (dto.getPayments() != null) {
-        orderMapper.insertPayment(dto.getPayments());
-      }
-
       //  상세 주문 정보 저장
       if (dto.getProductCodes() != null && !dto.getProductCodes().isEmpty()) {
         for (int i = 0; i < dto.getProductCodes().size(); i++) {
@@ -103,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
 
           dto.setPriceForeach(dto.getPriceForeachs().get(i));
           dto.setPrice(dto.getPrices().get(i));
-          dto.setOrderState(0);
+          dto.setOrderState(1);
 
           // 주문 상세 등록
           orderMapper.insertOrderDetail(dto.getOrderItem());
@@ -311,7 +306,7 @@ public class OrderServiceImpl implements OrderService {
    *   결제/주문/배송 처리를 수행한다.
    */
   @Transactional(rollbackFor = Exception.class)
-  protected Order processOrderInternal(SessionInfo sessionInfo, List<CartItem> cartItems, Order orderFromView) throws Exception {
+  protected Order processOrderInternal(SessionInfo sessionInfo, List<CartItem> cartItems, Order orderFromView, Payment payment) throws Exception {
     if (cartItems == null || cartItems.isEmpty()) {
       throw new Exception("장바구니가 비어 있습니다. (혹은 상품이 선택되지 않았습니다.)");
     }
@@ -333,8 +328,8 @@ public class OrderServiceImpl implements OrderService {
     String orderCode = getLatestOrderCode();
 
     //  추가 정보(뷰에서 넘어온 쿠폰, 포인트, 결제수단 등) 반영
-    String payment = (orderFromView != null && orderFromView.getPayment() != null)
-        ? orderFromView.getPayment() : "카드";
+//    String payment = (orderFromView != null && orderFromView.getPayment() != null)
+//        ? orderFromView.getPayment() : "카드";
 
     int usedPoint = (orderFromView != null && orderFromView.getSpentPoint() != null)
         ? orderFromView.getSpentPoint() : 0;
@@ -355,7 +350,7 @@ public class OrderServiceImpl implements OrderService {
         .couponValue(couponVal)
         .spentPoint(usedPoint)
         .netPay(finalNetPay)
-        .payment(payment)
+//        .payment(payment)
         .shippingInfo((orderFromView != null) ? orderFromView.getShippingInfo() : null)
         .build();
 
@@ -386,6 +381,17 @@ public class OrderServiceImpl implements OrderService {
       }
     }
 
+
+    payment.setOrderCode(orderCode);
+    payment.setMemberIdx(order.getMemberIdx());
+    payment.setByMethod(payment.getByMethod()); // 결제수단
+    payment.setCardNumber(payment.getCardNumber());
+    payment.setProvider(payment.getProvider()); // 카드사
+    payment.setConfirmCode(payment.getConfirmCode());
+    payment.setConfirmDate(payment.getConfirmDate());
+
+    orderMapper.insertPayment(payment);
+
     List<Long> cartItemIds = new ArrayList<>();
     for (CartItem c : cartItems) {
       cartItemIds.add(c.getCartItemCode());
@@ -403,7 +409,6 @@ public class OrderServiceImpl implements OrderService {
           .usedAmount(order.getSpentPoint())
           .balance(-order.getSpentPoint()) // 차감된 포인트
           .usedDate(java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-          // expireDate는 필요에 따라 설정 (예: 적립 정책에 따른 만료일)
           .build();
 
       Map<String, Object> map = new HashMap<>();
@@ -413,7 +418,6 @@ public class OrderServiceImpl implements OrderService {
       pointService.updatePointValid1(map);
       pointService.updatePointValid2(map);
       pointService.insertPointHistory(memberPoint);
-
     }
 
     if (orderFromView != null) {
@@ -429,27 +433,25 @@ public class OrderServiceImpl implements OrderService {
         log.debug("쿠폰 사용 처리. memberIdx={}, couponCode={}", orderFromView.getMemberIdx(), coupon.getCouponCode());
       }
     }
-
-
     return order;
   }
 
-  /**
-   * [기존] 전체 장바구니 아이템 구매 로직
-   */
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public Order processOrder(SessionInfo sessionInfo) throws Exception {
-    // 1) 전체 장바구니 가져오기
-    List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
-    // 2) 공통 메서드 호출 (orderFromView = null)
-    return processOrderInternal(sessionInfo, cartItems, null);
-  }
+//  /**
+//   * [기존] 전체 장바구니 아이템 구매 로직
+//   */
+//  @Override
+//  @Transactional(rollbackFor = Exception.class)
+//  public Order processOrder(SessionInfo sessionInfo) throws Exception {
+//    // 1) 전체 장바구니 가져오기
+//    List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
+//    // 2) 공통 메서드 호출 (orderFromView = null)
+//    return processOrderInternal(sessionInfo, cartItems, null);
+//  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Order processOrder(SessionInfo sessionInfo, Order order) throws Exception {
-    return processDirectOrder(sessionInfo, order);
+  public Order processOrder(SessionInfo sessionInfo, Order order, Payment payment) throws Exception {
+    return processDirectOrder(sessionInfo, order, payment);
   }
 
   /**
@@ -457,7 +459,7 @@ public class OrderServiceImpl implements OrderService {
    */
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes) throws Exception {
+  public Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Payment payment) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("memberIdx", sessionInfo.getMemberIdx());
     params.put("selectedCodes", selectedCartItemCodes);
@@ -465,7 +467,7 @@ public class OrderServiceImpl implements OrderService {
     // 선택된 장바구니 아이템 조회
     List<CartItem> cartItems = cartItemService.getCartItemsByCodes(params);
     //  공통 메서드 호출 (orderFromView = null)
-    return processOrderInternal(sessionInfo, cartItems, null);
+    return processOrderInternal(sessionInfo, cartItems, null, payment);
   }
 
   /**
@@ -473,7 +475,7 @@ public class OrderServiceImpl implements OrderService {
    */
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Order orderFromView) throws Exception {
+  public Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Order orderFromView, Payment payment) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("memberIdx", sessionInfo.getMemberIdx());
     params.put("selectedCodes", selectedCartItemCodes);
@@ -481,7 +483,7 @@ public class OrderServiceImpl implements OrderService {
     // 1) 선택된 장바구니 아이템 조회
     List<CartItem> cartItems = cartItemService.getCartItemsByCodes(params);
     // 2) 공통 메서드 호출 (orderFromView 적용)
-    return processOrderInternal(sessionInfo, cartItems, orderFromView);
+    return processOrderInternal(sessionInfo, cartItems, orderFromView, payment);
   }
 
   /**
@@ -489,7 +491,7 @@ public class OrderServiceImpl implements OrderService {
    * - orderFromView에서 상품/옵션 정보를 받아와 CartItem 형태로 임시 구성하여 구매 처리
    */
   @Transactional(rollbackFor = Exception.class)
-  public Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView) throws Exception {
+  public Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView, Payment payment) throws Exception {
     if (orderFromView == null || orderFromView.getProductCodes() == null || orderFromView.getQuantities() == null) {
       throw new Exception("주문 정보가 부족합니다. (직접 구매)");
     }
@@ -515,9 +517,11 @@ public class OrderServiceImpl implements OrderService {
           .build();
 
       cartItems.add(cartItem);
+
+
     }
 
-    return processOrderInternal(sessionInfo, cartItems, orderFromView);
+    return processOrderInternal(sessionInfo, cartItems, orderFromView, payment);
   }
 
 }

@@ -3,6 +3,7 @@ package com.sp.app.service;
 
 import com.sp.app.model.MemberPoint;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public interface PointService {
@@ -18,6 +19,7 @@ public interface PointService {
 
     void usePoint(MemberPoint param) throws Exception;
     long getPointSaveNum(long memberIdx);
+    void insertReviewPoint() throws Exception; // 포인트 적립
 
 
 }

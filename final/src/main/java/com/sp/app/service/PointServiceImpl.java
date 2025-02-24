@@ -104,6 +104,17 @@ public class PointServiceImpl implements PointService {
         return result;
     }
 
+    @Transactional
+    @Override
+    public void insertReviewPoint() throws Exception {
+        try {
+            mapper.insertReviewPoint();
+        } catch(Exception e) {
+            log.info("insertReviewPoint", e);
+            throw e;
+        }
+    }
+
     @Override
     public MemberPoint getUserSaveAmount(long memberIdx) {
         MemberPoint memberPoint = null;
@@ -136,6 +147,8 @@ public class PointServiceImpl implements PointService {
             throw new RuntimeException("포인트 enable 설정 중 오류..");
         }
     }
+
+
 
 
 }

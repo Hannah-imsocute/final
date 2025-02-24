@@ -11,16 +11,11 @@
     <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
     <!-- Font Awesome (장바구니 아이콘 등) -->
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 
     <style>
         /* ========== Global Reset & Base Style ========== */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body, html {
             margin: 0;
             padding: 0;
@@ -28,14 +23,8 @@
             background-color: #fff;
             color: #333;
         }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        a:hover {
-            text-decoration: none;
-            color: #fa7c00;
-        }
+        a { text-decoration: none; color: inherit; }
+        a:hover { text-decoration: none; color: #fa7c00; }
 
         /* ========== Header (고정) ========== */
         header {
@@ -47,10 +36,7 @@
             background-color: #fff;
             border-bottom: 1px solid #e5e5e5;
         }
-        /* JSP include된 header.jsp가 내부적으로 스타일을 가질 수 있으므로 position 수정 */
-        header {
-            position: relative !important;
-        }
+        header { position: relative !important; }
 
         /* ========== Main Container ========== */
         .main-container {
@@ -97,7 +83,7 @@
             margin-bottom: 20px;
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            list-style: none; /* li 기본 점 제거 */
+            list-style: none;
         }
 
         /* 주문 헤더 (날짜, 주문번호) */
@@ -109,12 +95,14 @@
         }
         .order-date {
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 900;
             color: #666;
+
         }
         .order-code {
             font-size: 0.88rem;
             color: #888;
+            font-weight: 900;
         }
 
         /* 주문 바디 (이미지 + 상품정보 + 장바구니) */
@@ -130,7 +118,7 @@
             margin-right: 16px;
         }
         .product-info {
-            flex: 1; /* 이미지 제외 나머지 공간 채우기 */
+            flex: 1;
         }
         .product-title {
             font-size: 1rem;
@@ -167,7 +155,7 @@
             background-color: #f0f0f0;
         }
 
-        /* 장바구니 아이콘 */
+        /* 장바구니 아이콘에 data 속성 활용 */
         .cart-icon {
             margin-left: 16px;
             font-size: 24px;
@@ -232,35 +220,22 @@
                         <c:forEach var="order" items="${ordersHistory}">
                             <li class="order-item-container">
                                 <div class="order-header">
-                                    <!-- 예) 20250223 -->
                                     <span class="order-date">${order.orderDate}</span>
-                                    <!-- 예) 주문번호: 2025022300000054 -->
                                     <span class="order-code">주문번호: ${order.orderCode}</span>
                                 </div>
 
                                 <div class="order-body">
                                     <!-- 상품 이미지 -->
-                                    <img
-                                            src="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}"
-                                            class="product-image"
-                                    />
+                                    <img src="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}"
+                                         class="product-image" />
 
                                     <!-- 상품 정보 -->
                                     <div class="product-info">
-                                        <!-- 상품명 -->
-                                        <div class="product-title">
-                                                ${order.productName}
-                                        </div>
-                                        <!-- 가격 -->
+                                        <div class="product-title">${order.productName}</div>
                                         <div class="product-price">
                                             <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
                                         </div>
-                                        <!-- 배송비 (예시: 무료) -->
-                                        <div class="shipping-fee">
-                                            배송비: 무료
-                                        </div>
-
-                                        <!-- 버튼들 (예: 반품신청, 교환신청, 일반 상품평) -->
+                                        <div class="shipping-fee">배송비: 무료</div>
                                         <div class="product-actions">
                                             <button>반품신청</button>
                                             <button>교환신청</button>
@@ -268,11 +243,13 @@
                                         </div>
                                     </div>
 
-                                    <!-- 장바구니 아이콘 -->
-                                    <div class="cart-icon">
+                                    <!-- 장바구니 아이콘: data-product-code와 data-price 속성 추가 -->
+                                    <div class="cart-icon"
+                                         data-product-code="${order.productCode}"
+                                         data-price="${order.price}">
                                         <i class="fas fa-shopping-cart"></i>
                                     </div>
-                                </div> <!-- //order-body -->
+                                </div>
                             </li>
                         </c:forEach>
                     </ul>
@@ -281,15 +258,52 @@
                     <p class="empty-msg">주문 내역이 없습니다.</p>
                 </c:otherwise>
             </c:choose>
-        </div> <!-- //detail-orders -->
-    </div> <!-- //content -->
-</div> <!-- //main-container -->
+        </div>
+    </div>
+</div>
 
-<!-- 푸터 -->
 <footer>
     <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>
 
-<!-- 필요시 쿠폰 모달 등 추가 가능 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function ajaxFun(url, method, formData, dataType, fn, file = false) {
+        const settings = {
+            type: method,
+            data: formData,
+            dataType: dataType,
+            success: function(data) {
+                fn(data);
+            },
+            error: function(jqXHR) {
+                console.log(jqXHR.responseText);
+            }
+        };
+        if(file){
+            settings.processData = false;
+            settings.contentType = false;
+        }
+        $.ajax(url, settings);
+    }
+
+    $(function (){
+        $('.cart-icon').click(function (e) {
+            e.preventDefault();
+            var productCode = $(this).data('product-code');
+            var price = $(this).data('price');
+            var quantity = 1;
+
+            let params = { productCode: productCode, quantity: quantity, price: price };
+            let url = "${pageContext.request.contextPath}/cart/add";
+
+            const fn = function(data){
+                alert('상품을 장바구니에 담았습니다.');
+            };
+
+            ajaxFun(url, "POST", params, "text", fn);
+        });
+    });
+</script>
 </body>
 </html>

@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Order {
-  private Payment payments;
+//  private Payment payments;
   private OrderItem orderItem;
   private Coupon coupon;
 
@@ -63,10 +63,10 @@ public class Order {
 
 
   /*Payment*/
-  private String confirmCode; // 승인번호
-  private String provider; // 카드사
-  private String byMethod; // 결제수단
-  private String cardNumber; // 카드번호
+//  private String confirmCode; // 승인번호
+//  private String provider; // 카드사
+//  private String byMethod; // 결제수단
+//  private String cardNumber; // 카드번호
 
   private List<String> optionNames; //  옵션이름
   private List<String> optionNames2; // 옵션이름

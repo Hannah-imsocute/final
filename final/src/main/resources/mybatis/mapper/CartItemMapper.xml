@@ -44,7 +44,7 @@
                QUANTITY, p.PRICE, CREATED, CART_OPTION AS cartOption
         FROM CART_ITEM c
                  LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
-        WHERE MEMBERIDX = #{memberIdx}
+        WHERE MEMBERIDX = #{memberIdx}  AND C.PRODUCTCODE  = #{productCode}
     </select>
 
 

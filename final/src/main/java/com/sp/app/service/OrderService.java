@@ -55,12 +55,12 @@ public interface OrderService {
 //  void decreaseProductStock(long productId, int quantity) throws SQLException;
 //  void decreaseProductStock(Map<String, Object> map) throws SQLException;
 
-  Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView) throws Exception;
+  Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView, Payment payment) throws Exception;
 
-  Order processOrder(SessionInfo sessionInfo) throws Exception;
-  Order processOrder(SessionInfo sessionInfo, Order order) throws Exception;
-  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes) throws Exception;
+//  Order processOrder(SessionInfo sessionInfo) throws Exception;
+  Order processOrder(SessionInfo sessionInfo, Order order, Payment payment) throws Exception;
+  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Payment payment) throws Exception;
 
-  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Order orderFromView) throws Exception;
+  Order processOrder(SessionInfo sessionInfo, List<Long> selectedCartItemCodes, Order orderFromView, Payment payment) throws Exception;
 
   }

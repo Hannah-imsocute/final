@@ -76,6 +76,14 @@
             FETCH FIRST 1 ROWS ONLY
     </select>
 
+    <!--포인트 적립-->
+    <insert id="insertReviewPoint" parameterType="com.sp.app.model.Review">
+        insert into POINT_SAVE(POINT_SAVE_NUM, MEMBERIDX, SAVEAMOUNT, SAVEDATE, EXPIREDATE, REASON, ENABLE, BALANCE)
+        values (SEQ_POINT_SAVE.nextval, #{memberIdx}, #{saveAmount}, sysdate, sysdate + 30, #{reason}, #{enable}, #{balance} )
+    </insert>
+
+
+
 
 
 

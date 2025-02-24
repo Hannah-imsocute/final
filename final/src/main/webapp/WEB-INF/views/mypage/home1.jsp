@@ -11,7 +11,7 @@
   <!-- 헤더 리소스 include -->
   <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-  <!-- Font Awesome 아이콘 (장바구니 등) 사용 위해 CDN 추가 -->
+  <!-- Font Awesome 아이콘 (별, 장바구니 등) 사용 위해 CDN 추가 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
   <style>
@@ -101,7 +101,7 @@
       color: #fa7c00;
     }
 
-    /* ==================== 최근 주문 내역 리스트(새 디자인) ==================== */
+    /* ==================== 최근 주문 내역 리스트 ==================== */
     .list-box.recent-orders {
       border: none;
       box-shadow: none;
@@ -111,8 +111,6 @@
       margin: 0;
       padding: 0;
     }
-
-    /* 주문정보 전체 컨테이너 */
     .order-item-container {
       border: 1px solid #e5e5e5;
       border-radius: 8px;
@@ -122,8 +120,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
       list-style: none;
     }
-
-    /* 주문 헤더 (날짜, 주문번호) */
     .order-header {
       display: flex;
       justify-content: space-between;
@@ -132,15 +128,14 @@
     }
     .order-date {
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 900;
       color: #666;
     }
     .order-code {
       font-size: 0.88rem;
       color: #888;
+      font-weight: 900;
     }
-
-    /* 주문 바디 (이미지 + 상품정보 + 장바구니) */
     .order-body {
       display: flex;
       align-items: center;
@@ -153,7 +148,7 @@
       margin-right: 16px;
     }
     .product-info {
-      flex: 1; /* 이미지 제외 나머지 공간 채우기 */
+      flex: 1;
     }
     .product-title {
       font-size: 1rem;
@@ -172,8 +167,6 @@
       color: #666;
       margin-bottom: 8px;
     }
-
-    /* 버튼들 */
     .product-actions button {
       display: inline-block;
       margin-right: 6px;
@@ -189,8 +182,6 @@
     .product-actions button:hover {
       background-color: #f0f0f0;
     }
-
-    /* 장바구니 아이콘 */
     .cart-icon {
       margin-left: 16px;
       font-size: 24px;
@@ -200,8 +191,6 @@
     .cart-icon:hover {
       color: #e26d00;
     }
-
-    /* ==================== 빈 메시지, 상세보기 버튼 ==================== */
     .empty-msg { text-align: center; color: #999; }
     .detail-button-wrap {
       text-align: center;
@@ -219,8 +208,6 @@
     .detail-button:hover {
       background-color: #e26d00;
     }
-
-    /* ==================== 기타 콘텐츠 스타일 ==================== */
     .notice-box, .coupon-box {
       border-radius: 8px;
       padding: 15px;
@@ -263,8 +250,6 @@
       font-size: 0.9rem;
     }
     .explore-btn:hover { background-color: #e26d00; }
-
-    /* ==================== Footer ==================== */
     footer {
       background-color: #f9f9f9;
       padding: 20px 0;
@@ -272,8 +257,6 @@
       border-top: 1px solid #e5e5e5;
     }
     footer p { color: #666; font-size: 0.9rem; margin: 0; text-align: center; }
-
-    /* ==================== Responsive ==================== */
     @media (max-width: 992px) {
       .sidebar { width: 180px; }
     }
@@ -286,8 +269,8 @@
       .point-box:last-child { border-bottom: none; }
     }
 
-    /* ==================== Modal (쿠폰 모달) ==================== */
-    .modal {
+    /* ==================== 리뷰 작성 모달 (세련된 디자인) ==================== */
+    #writeReviewModal {
       display: none;
       position: fixed;
       z-index: 2000;
@@ -295,85 +278,130 @@
       top: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0,0,0,0.6);
+      padding-top: 5%;
     }
-    .modal-content {
+    #writeReviewModal .modal-content {
       background-color: #fff;
-      margin: 10% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      border-radius: 8px;
-      width: 80%;
-      max-width: 500px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      margin: auto;
+      padding: 40px 30px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 650px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      position: relative;
     }
-    .modal-content h3 { margin-top: 0; font-size: 1.4rem; }
-    .modal-content ul { list-style: none; padding: 0; margin: 20px 0; }
-    .modal-content li {
-      padding: 12px;
-      margin-bottom: 10px;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-content li:last-child { margin-bottom: 0; }
-    .modal-content p {
-      text-align: center;
-      font-weight: bold;
-      color: #888;
-      margin: 20px 0;
-    }
-    .close {
+    #writeReviewModal .close {
       color: #aaa;
-      float: right;
+      position: absolute;
+      right: 20px;
+      top: 15px;
       font-size: 28px;
       font-weight: bold;
       cursor: pointer;
     }
-    .close:hover, .close:focus { color: #000; }
-
-    /* ==================== 리뷰 작성 모달 전용 스타일 ==================== */
-    .btn-review {
-      margin: 20px;
-      padding: 10px 20px;
-      background-color: #fa7c00;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
+    #writeReviewModal .close:hover,
+    #writeReviewModal .close:focus {
+      color: #000;
+    }
+    /* ==================== 상품 정보 영역 (모달 상단) ==================== */
+    #reviewProductInfo {
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      gap: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+    }
+    #reviewProductInfo img {
+      margin-top: 10px;
+      max-width: 120px;
+      border-radius: 8px;
+    }
+    #reviewProductInfo span {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    /* ==================== 별점 디자인 ==================== */
+    .star-rating {
+      direction: rtl;
+      font-size: 1.8rem;
+      display: inline-block;
+      padding: 10px 0;
+    }
+    .star-rating input[type="radio"] {
+      display: none;
+    }
+    .star-rating label {
+      color: #ccc;
       cursor: pointer;
-      font-size: 0.9rem;
+      transition: color 0.2s;
     }
-    .btn-review:hover { background-color: #e26d00; }
-    .review-form label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input[type="radio"]:checked ~ label {
+      color: #fa7c00;
     }
-    .review-form textarea {
+    /* ==================== textarea 디자인 ==================== */
+    textarea {
       width: 100%;
-      min-height: 120px;
-      padding: 8px;
-      font-size: 0.95rem;
+      height: 150px;
+      padding: 12px;
+      font-size: 1rem;
       border: 1px solid #ddd;
       border-radius: 4px;
-      resize: vertical;
-      margin-bottom: 12px;
+      resize: none;
+      outline: none;
     }
-    .btn-submit {
+    textarea:focus {
+      border-color: #fa7c00;
+    }
+    /* ==================== 파일 미리보기 ==================== */
+    .file-preview {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .file-preview img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    /* ==================== 파일 선택 & 작성완료 버튼 ==================== */
+    /* 실제 file input 숨김 */
+    #selectFile {
+      display: none;
+    }
+    /* 커스텀 파일 선택 버튼 */
+    .file-input-label {
+      display: inline-block;
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    #submitWriteReview {
       background-color: #fa7c00;
       color: #fff;
       border: none;
       border-radius: 4px;
-      padding: 8px 16px;
-      font-size: 0.9rem;
+      padding: 10px 20px;
+      font-size: 1rem;
       cursor: pointer;
-      width: 100%;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+      display: block;
     }
-    .btn-submit:hover { background-color: #e26d00; }
+    #submitWriteReview:hover {
+      background-color: #e26d00;
+    }
   </style>
 </head>
 <body>
@@ -384,10 +412,7 @@
 
 <!-- 본문 컨테이너 -->
 <div class="main-container">
-  <!-- 사이드바 include -->
   <jsp:include page="/WEB-INF/views/mypage/sidebar.jsp" />
-
-  <!-- 메인 콘텐츠 -->
   <div class="content">
     <h2>내 정보</h2>
     <!-- 포인트 & 쿠폰 영역 -->
@@ -435,48 +460,43 @@
       <c:choose>
         <c:when test="${not empty ordersHistory}">
           <ul>
-            <!-- 2건만 보여주기 위해 begin="0" end="1" 지정 -->
             <c:forEach var="order" items="${ordersHistory}" varStatus="loopStatus" begin="0" end="1">
               <li class="order-item-container">
-                <!-- 주문 헤더 -->
                 <div class="order-header">
                   <span class="order-date">${order.orderDate}</span>
                   <span class="order-code">주문번호: ${order.orderCode}</span>
                 </div>
-                <!-- 주문 바디 -->
                 <div class="order-body">
-                  <!-- 상품 이미지 -->
-                  <img src="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}"
-                       class="product-image" />
-                  <!-- 상품 정보 -->
+                  <img src="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}" class="product-image" />
                   <div class="product-info">
                     <div class="product-title">${order.productName}</div>
                     <div class="product-price">
                       <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
                     </div>
                     <div class="shipping-fee">배송비: 무료</div>
-                    <!-- 버튼들 -->
                     <div class="product-actions">
                       <button>반품신청</button>
                       <button>교환신청</button>
-                      <!-- 새 창을 중앙에 작게 띄우는 함수 사용 -->
-                      <button onclick="openCenteredReviewForm();">
-                        일반 상품평
+                      <!-- 모달을 띄우는 버튼 -->
+                      <button id="openWriteReviewBtn" class="btn-review"
+                              data-product-code="${order.productCode}"
+                              data-product-name="${order.productName}"
+                              data-product-image="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}">
+                        상품평 작성
                       </button>
                     </div>
                   </div>
-                  <!-- 장바구니 아이콘 -->
-                  <div class="cart-icon">
+                  <div class="cart-icon"
+                       data-product-code="${order.productCode}"
+                       data-product-name="${order.productName}"
+                       data-price="${order.price}">
                     <i class="fas fa-shopping-cart"></i>
                   </div>
                 </div>
               </li>
               <c:if test="${loopStatus.index == 1}">
                 <div class="detail-button-wrap">
-                  <button class="detail-button"
-                          onclick="location.href='${pageContext.request.contextPath}/mypage/detail'">
-                    주문내역 전체보기
-                  </button>
+                  <button class="detail-button" onclick="location.href='${pageContext.request.contextPath}/mypage/detail'">주문내역 전체보기</button>
                 </div>
               </c:if>
             </c:forEach>
@@ -516,18 +536,12 @@
       <p class="empty-msg">최근 본 작품이 없습니다.</p>
       <button class="explore-btn">지금 구경하기</button>
     </div>
+  </div>
+</div>
 
-    <!-- 일반 상품평 모달 열기 버튼 -->
-    <button id="openReviewModal" class="btn-review">일반 상품평</button>
-  </div> <!-- .content -->
-</div> <!-- .main-container -->
+<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 
-<!-- 푸터 -->
-<footer>
-  <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
-</footer>
-
-<!-- 쿠폰 모달 (모달 오버레이 및 콘텐츠) -->
+<!-- 쿠폰 모달 -->
 <div id="couponModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
@@ -550,34 +564,141 @@
   </div>
 </div>
 
-<!-- 리뷰 작성 모달 (폼 포함) -->
-<div id="reviewModal" class="modal">
+<!-- 리뷰 작성 모달 (세련된 디자인 적용) -->
+<div id="writeReviewModal">
   <div class="modal-content">
-    <span class="close" id="closeReviewModal">&times;</span>
-    <h3>일반 상품평 작성</h3>
-    <!-- 리뷰 작성 폼 (POST 전송: /mypag/review/write) -->
-    <form action="${pageContext.request.contextPath}/mypag/review/write" method="post" class="review-form">
-      <label for="reviewContent">리뷰 내용</label>
-      <textarea id="reviewContent" name="reviewContent" placeholder="내용을 입력하세요"></textarea>
-      <button type="submit" class="btn-submit">작성완료</button>
+    <span class="close" id="closeWriteReviewBtn">&times;</span>
+    <h3>상품평 작성</h3>
+    <form id="writeReviewForm" action="${pageContext.request.contextPath}/review/write" method="post" class="review-form" enctype="multipart/form-data">
+      <!-- 모달 상단 상품 정보 영역 -->
+      <div id="reviewProductInfo">
+        <img id="reviewProductImage" src="" alt="상품 이미지">
+        <span id="reviewProductName"></span>
+      </div>
+      <!-- 별점 입력 -->
+      <label>별점</label>
+      <div class="star-rating">
+        <input type="radio" id="star5" name="starRate" value="5" /><label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+        <input type="radio" id="star4" name="starRate" value="4" /><label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+        <input type="radio" id="star3" name="starRate" value="3" /><label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+        <input type="radio" id="star2" name="starRate" value="2" /><label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+        <input type="radio" id="star1" name="starRate" value="1" /><label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+      </div>
+      <!-- 내용 입력 영역 -->
+      <label for="reviewContent"></label>
+      <textarea id="reviewContent" name="content" placeholder="최소 10자를 입력하세요."></textarea>
+      <!-- 파일 업로드 & 미리보기 영역 -->
+      <label for="selectFile" class="file-input-label">📁 파일 선택</label>
+      <input type="file" id="selectFile" name="selectFile" multiple accept="image/*" />
+      <div id="filePreview" class="file-preview"></div>
+      <!-- hidden 필드 -->
+      <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
+      <input type="hidden" id="productCode" name="productCode" value="">
+      <input type="hidden" id="productName" name="productName" value="">
+      <!-- 작성완료 버튼 -->
+      <button type="button" id="submitWriteReview" class="btn-submit">작성완료</button>
     </form>
   </div>
 </div>
 
-<!-- 이미지 미리보기 및 Ajax 업로드 스크립트 (jQuery 사용) -->
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  // 새 창을 중앙에 작게 열기 위한 함수
-  function openCenteredReviewForm() {
-    var width = 500;
-    var height = 500;
-    var left = (screen.width - width) / 2;
-    var top = (screen.height - height) / 2;
-    window.open('${pageContext.request.contextPath}/mypage/review/form', 'reviewWindow', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=yes');
-  }
-
-  // 쿠폰 모달 처리
   $(document).ready(function(){
+    // 상품평 작성 버튼 클릭 시 (모달에 상품 정보 세팅)
+    $('.btn-review').click(function(){
+      var productCode = $(this).data('product-code');
+      var productName = $(this).data('product-name');
+      var productImage = $(this).data('product-image');
+
+      $('#productCode').val(productCode);
+      $('#productName').val(productName);
+
+      $('#reviewProductImage').attr('src', productImage);
+      $('#reviewProductName').text(productName);
+      // 모달 열기
+      $('#writeReviewModal').show();
+    });
+
+    $('#closeWriteReviewBtn').click(function(){
+      $('#writeReviewModal').hide();
+    });
+    $(window).click(function(event) {
+      if ($(event.target).is('#writeReviewModal')) {
+        $('#writeReviewModal').hide();
+      }
+    });
+
+    // 리뷰 작성 Ajax 처리
+    $('#submitWriteReview').click(function(){
+      var content = $('#reviewContent').val().trim();
+      if(content.length < 10) {
+        alert("리뷰 내용은 최소 10자 이상 입력해야 합니다.");
+        $('#reviewContent').focus();
+        return;
+      }
+      var formData = new FormData($('#writeReviewForm')[0]);
+      $.ajax({
+        url: $('#writeReviewForm').attr('action'),
+        type: $('#writeReviewForm').attr('method'),
+        data: formData,
+        dataType: 'json',
+        contentType: false,
+        processData: false,
+        success: function(response) {
+          if(response.success) {
+            alert(response.message);
+            $('#writeReviewModal').hide();
+            $('#writeReviewForm')[0].reset();
+            $('#filePreview').empty();
+          } else {
+            alert("리뷰 등록 실패: " + response.message);
+          }
+        },
+        error: function(xhr, status, error) {
+          alert("리뷰 등록 실패: " + error);
+        }
+      });
+    });
+
+    // 파일 선택 시 미리보기 구현
+    $('#selectFile').on('change', function(){
+      $('#filePreview').empty();
+      var files = this.files;
+      if(files){
+        $.each(files, function(index, file){
+          var reader = new FileReader();
+          reader.onload = function(e){
+            var img = $('<img>').attr('src', e.target.result);
+            $('#filePreview').append(img);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    });
+
+    $(".cart-icon").click(function(event){
+      event.preventDefault();
+      var productCode = $(this).data('product-code');
+      var price = $(this).data('price');
+      var quantity = 1;
+      let params = { productCode: productCode, quantity: quantity, price: price };
+      let url = "${pageContext.request.contextPath}/cart/add";
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: params,
+        dataType: "text",
+        success: function(data){
+          alert('상품을 장바구니에 담았습니다.');
+        },
+        error: function(jqXHR) {
+          console.log(jqXHR.responseText);
+        }
+      });
+    });
+
+    // 쿠폰 모달 처리
     var couponBox = document.getElementById('couponBox');
     var couponModal = document.getElementById('couponModal');
     var couponClose = couponModal.querySelector('.close');
@@ -592,19 +713,6 @@
         couponModal.style.display = 'none';
       }
     });
-  });
-
-  // 리뷰 작성 모달 처리
-  document.getElementById('openReviewModal').addEventListener('click', function() {
-    document.getElementById('reviewModal').style.display = 'block';
-  });
-  document.getElementById('closeReviewModal').addEventListener('click', function() {
-    document.getElementById('reviewModal').style.display = 'none';
-  });
-  window.addEventListener('click', function(event) {
-    if (event.target === document.getElementById('reviewModal')) {
-      document.getElementById('reviewModal').style.display = 'none';
-    }
   });
 </script>
 </body>

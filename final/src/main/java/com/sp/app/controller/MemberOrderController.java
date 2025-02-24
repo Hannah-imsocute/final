@@ -148,7 +148,7 @@ public class MemberOrderController {
         @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
         @RequestParam(value = "require", required = false) String require,
         Order order, ShippingInfo shippingInfo,
-        HttpSession session,
+        HttpSession session, @ModelAttribute("payment") Payment payment,
         RedirectAttributes redirectAttributes) {
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -158,12 +158,10 @@ public class MemberOrderController {
             shippingInfo.setRequire(require);
 
             order.setShippingInfo(shippingInfo);
-
             if (selectedItems != null && !selectedItems.isEmpty()) {
-                order = orderService.processOrder(info, selectedItems, order);
+                order = orderService.processOrder(info, selectedItems, order, payment);
             } else {
-                order = orderService.processOrder(info, order);
-//                order = orderService.processOrder(info);
+                order = orderService.processOrder(info, order, payment);
             }
 
             redirectAttributes.addFlashAttribute("order", order);
@@ -185,9 +183,6 @@ public class MemberOrderController {
             return "redirect:/";
         }
     }
-
-
-
 
 
 

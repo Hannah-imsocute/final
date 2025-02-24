@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,5 +19,12 @@ public class Review {
   private String content; // 내용
   private int block;
   private int starRate; // 별점
-  
+  private String image;
+  private long reviewImgNum; // 리뷰이미지번호
+
+  private String[] listFilename;
+  private List<MultipartFile> selectFile; // 이미지 파일
+
+
+
 }

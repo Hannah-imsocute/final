@@ -10,6 +10,8 @@
                i.QUANTITY       AS quantity,
                pk.STATE         AS packageState,
                pr.ITEM          AS productName,
+               pr.PRODUCTCODE as productCode,
+               pr.PRICE as price,
                s.BRANDNAME      AS brandName,
                pr.THUMBNAIL as thumbnail,
               TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
@@ -24,12 +26,13 @@
         ORDER  BY p.order_date DESC
     </select>
 
-    <!--리뷰작성-->
-    <insert id="insertReview" parameterType="com.sp.app.model.myPage">
-        insert into PRODUCTREVIEW (REVIEW_NUM, MEMBERIDX, PRODUCTCODE, CONTENT, BLOCK, STARRATE) VALUES
-            (SEQ_PRODUCTREVIEW.nextval, #{memberIdx}, #{productCode}, #{content}, #{block}, #{starRate})
-    </insert>
+ <!--   OFFSET #{offset} ROWS FETCH FIRST #{size}
+    ROWS ONLY-->
 
+    <select id="dataCount" parameterType="long" resultType="Integer">
+        SELECT NVL(COUNT(*), 0) FROM product
+        WHERE categoryCode = #{categoryCode}
+    </select>
 
 
 </mapper>

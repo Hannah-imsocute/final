@@ -24,8 +24,8 @@
     <!-- 결제 내역 등록 -->
     <!-- COMFIRMCODE -> 승인번호 -->
     <insert id="insertPayment" parameterType="com.sp.app.model.Payment">
-        insert into PAYBYMETHOD (ORDER_CODE, MEMBERIDX, BYMETHOD, COMFIRMCODE, PROVIDER, confirm_date, card)
-        values (#{orderCode}, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_CHAR(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{card} )
+        insert into PAYBYMETHOD (ORDER_CODE, MEMBERIDX, BYMETHOD, CONFIRMCODE, PROVIDER, CONFIRM_DATE, CARDNUMBER)
+        values (#{orderCode}, #{memberIdx}, #{byMethod}, #{confirmCode}, #{provider}, TO_DATE(#{confirmDate}, 'YYYY-MM-DD HH24:MI:SS'), #{cardNumber, jdbcType=NUMERIC} )
     </insert>
 
 <!--   &lt;!&ndash;  주문 상세 정보 등록  &ndash;&gt;-->

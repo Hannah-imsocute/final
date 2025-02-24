@@ -21,5 +21,7 @@ public class myPage {
   private long netPay;
   private long memberIdx;
   private String thumbnail; // 상품이미지
+  private int price;
+  private long productCode;
 
 }

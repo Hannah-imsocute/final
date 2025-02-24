@@ -12,10 +12,5 @@ public interface MyPageMapper {
 
   // 주문 내역 불러오기
   List<myPage> getOrdersHistory(long memberIdx);
-
-  // 상품평 작성하기
-  void insertReview(Map<String, Object> param) throws SQLException;
-
-
-
+  int dataCount();
 }
