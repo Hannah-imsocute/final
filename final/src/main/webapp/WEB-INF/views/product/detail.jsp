@@ -61,7 +61,7 @@
 								
 					<c:if test="${dto.optionCount > 0}">
 						<div class="mt-2">
-							<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.soldOut == 1 ? 'disabled':''}>
+							<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.blind == 1 ? 'disabled':''}>
 								<option value="">${listOption[0].option_name}</option>
 								<c:forEach var="vo" items="${listOptionDetail}">
 									<c:if test="${dto.optionCount == 1}">
@@ -79,7 +79,7 @@
 			
 					<c:if test="${dto.optionCount > 1}">
 						<div class="mt-2 border-bottom pb-2">
-							<select class="form-select requiredOption2" data-optionNum2="${listOption[1].option_code2}" ${dto.soldOut == 1 ? 'disabled':''}>
+							<select class="form-select requiredOption2" data-optionNum2="${listOption[1].option_code2}" ${dto.blind == 1 ? 'disabled':''}>
 								<option value="">${listOption[1].option_name}</option>
 								<c:forEach var="vo" items="${listOptionDetail2}">
 									<c:if test="${dto.optionCount != 1}">
@@ -97,7 +97,7 @@
 						<div class="col-auto fw-semibold pt-1">총상품금액</div>
 						<div class="col text-end">
 							<label>총수량 <span class="product-totalQty">0</span>개 | </label>
-							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">0</span>원</label>
+							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">${dto.salePrice}</span>원</label>
 						</div>
 					</div>
 				</div>

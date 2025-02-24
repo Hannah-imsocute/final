@@ -574,7 +574,7 @@ UPLOADDATE         DATE           NOT NULL,
 MODIFIED      DATE           NULL,							
 CATEGORYCODE  NUMBER         NOT NULL,							
 THUMBNAIL     VARCHAR2(100)  NOT NULL,							
-SOLDOUT       NUMBER         NOT NULL,							
+BLIND       NUMBER         NOT NULL,							
 CONSTRAINT PK_PRODUCT PRIMARY KEY (PRODUCTCODE)							
 );							
 							

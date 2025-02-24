@@ -2,6 +2,7 @@ package com.sp.app.artist.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -171,6 +172,29 @@ public class ProductManageServiceImpl implements ProductManageService{
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	public List<ProductManage> listProduct(Map<String, Object> map) {
+		List<ProductManage> list = null;
+		try {
+			list = mapper.listProduct(map);
+			
+			int discountPrice; //할인되는 가격
+			for(ProductManage dto : list) {
+				discountPrice = 0;
+				if(dto.getDiscount()>0) {
+					discountPrice = (int)(dto.getPrice() * dto.getDiscount()/100);
+				}
+				dto.setSalePrice(dto.getPrice() - discountPrice);
+			}
+			
+			
+		} catch (Exception e) {
+			log.info("listProduct : ", e);
+		} 
+		
+		return list;
 	}
 
 }

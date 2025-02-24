@@ -118,55 +118,51 @@
         <div class="new-registration-box">
        		<button class="new-registration">새로고침</button>
         </div>
+		<div class="col-auto pt-2 text-end">
+			${dataCount}개(${page}/${total_page} 페이지)
+		</div>   
         <table>
-            <thead>
+            <thead> 
                 <tr>
                     <th>대분류</th>
                     <th>소분류</th>
                     <th>작품 코드</th>
                     <th>작품명</th>
-                    <th>가격</th>
+                    <th>작품가격</th>
+                    <th>판매가격</th>
                     <th>할인 율</th>
                     <th>광고여부</th>
-                    <th>재고</th>
                     <th>수정일</th>
                     <th>변경</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>식품</td>
-                    <td>베이커리</td>
-                    <td>1112</td>
-                    <td>케이크</td>
-                    <td>10,000</td>
-                    <td>5%</td>
-                    <td>부</td>
-                    <td>20</td>
-                    <td>2025-01-31</td>
-                    <td>
-                        <button class="primary">재고</button>
-                        <button class="secondary">수정</button>
-                        <button class="danger">삭제</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>식품</td>
-                    <td>베이커리</td>
-                    <td>1111</td>
-                    <td>구름빵</td>
-                    <td>10,000</td>
-                    <td>5%</td>
-                    <td>여</td>
-                    <td>20</td>
-                    <td>2025-01-31</td>
-                    <td>
-                        <button class="primary">재고</button>
-                        <button class="secondary">수정</button>
-                        <button class="danger">삭제</button>
-                    </td>
-                </tr>
-            </tbody>
+ <!------- --------- ------------------------------------>
+   
+ <!------- --------- ------------------------------------>
+  			<tbody>
+				<c:forEach var="vo" items="${productList}" varStatus="status">
+					<tr valign="middle">
+						<td>대분류</td>
+						<td>${vo.categoryCode }</td>
+						<td>${vo.productCode}</td>
+						<td class="product-subject left">
+							<img src="${pageContext.request.contextPath}/uploads/products/${vo.thumbnail}">
+							<a href="#"><label>${dto.item}</label></a>
+						</td>
+						<td><fmt:formatNumber value="${vo.price}" type="number" groupingUsed="true"/>원</td>  
+						<td><fmt:formatNumber value="${vo.salePrice}" type="number" groupingUsed="true"/>원</td> 
+						<td>${vo.discount}%</td>
+						<td>${vo.addOptions}</td>
+						<td>${vo.modified}</td>
+						<td>
+							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/update'">수정</button>
+							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/delete'">삭제</button>
+						</td>
+					</tr>					
+				</c:forEach>
+			</tbody>
+      
+      
         </table>
         <div class="search-area">
             <select>

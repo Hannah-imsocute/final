@@ -29,7 +29,7 @@ public class MainProduct {
 	private String modified; //수정한 날짜 
 	private int categoryCode;
 	private String thumbnail;
-	private int soldOut; //품절여부
+	private int blind; //여부
 	
 	//상품 카테고리
 	private String name; //상품카테고리 이름

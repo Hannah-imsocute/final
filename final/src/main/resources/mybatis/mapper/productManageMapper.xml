@@ -43,7 +43,7 @@
 		    modified,        
 		    categorycode,    
 		    thumbnail,       
-		    soldout    
+		    blind    
 		    )
 		VALUES (
 		    #{productCode},
@@ -69,7 +69,7 @@
 	
 	  	<!-- 옵션1, 옵션2 리스트-->
 	<select id="listProductOption" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
-		SELECT option_code, productCode, option_name, option_price, parent_option, soldOut
+		SELECT option_code, productCode, option_name, option_price, parent_option, soldout
 		FROM productOption
 		WHERE productCode = #{productCode}
 		ORDER BY parent_option NULLS FIRST, parent_option
@@ -110,9 +110,17 @@
 
 
 	<insert id="insertProductOptionDetail" parameterType="com.sp.app.artist.model.ProductManage">
-		INSERT INTO productoptiondetail(optionDetail_code, option_code, option_value)
+		INSERT INTO productOptionDetail(optionDetail_code, option_code, option_value)
 		VALUES  (seq_productOptionDetail.NEXTVAL, #{option_code}, #{option_value})
 	</insert>
+	
+	<select id="listProduct" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind
+		FROM product p 
+		JOIN productCategory c 
+	    ON p.categoryCode = c.categoryCode
+	    ORDER BY upload DESC
+	</select>
 	
 	
 	

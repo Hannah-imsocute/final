@@ -1,7 +1,7 @@
 package com.sp.app.artist.mapper;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -30,6 +30,8 @@ public interface ProductManageMapper {
     //옵션정보
     public List<ProductManage> listProductOption(long productCode) ;
 	public List<ProductManage> listOptionDetail(long option_code) ;
+	
+    public List<ProductManage> listProduct(Map<String, Object> map) ;
 	
     
     

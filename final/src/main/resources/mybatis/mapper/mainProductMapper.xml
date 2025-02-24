@@ -15,7 +15,7 @@
 		FROM product p
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.SOLDOUT = 0
+		WHERE p.blind = 0
 		ORDER BY p.upload DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
@@ -28,7 +28,7 @@
 		FROM product p
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.SOLDOUT = 0 
+		WHERE p.blind = 0 
 		ORDER BY buyCount DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
@@ -41,7 +41,7 @@
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
         LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
-		WHERE p.SOLDOUT = 0
+		WHERE p.blind = 0
 		ORDER BY 
 		  CASE 
 		    WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
@@ -66,7 +66,7 @@
 		JOIN productCategory c ON p.categoryCode = c.categoryCode
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.SOLDOUT = 0 AND p.categoryCode = #{categoryCode}
+		WHERE p.blind = 0 AND p.categoryCode = #{categoryCode}
 		ORDER BY p.upload DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
@@ -80,7 +80,7 @@
 		JOIN productCategory c ON p.categoryCode = c.categoryCode
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.SOLDOUT = 0  AND p.categoryCode = #{categoryCode}
+		WHERE p.blind = 0  AND p.categoryCode = #{categoryCode}
 		ORDER BY buyCount DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
@@ -94,7 +94,7 @@
         JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
         JOIN MEMBER m ON m.memberIdx = s.memberIdx
         LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
-		WHERE p.SOLDOUT = 0 AND p.categoryCode = #{categoryCode} 
+		WHERE p.blind = 0 AND p.categoryCode = #{categoryCode} 
 		ORDER BY 
 		  CASE 
 		    WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
@@ -113,7 +113,7 @@
 	</select>
 	
 	<select id="findById" parameterType="Long" resultType="com.sp.app.model.MainProduct">
-	    SELECT productCode, p.brand_code, s.brandName, item, price, discount, addOptions, describe, upload, modified, p.categoryCode, name, thumbnail, soldOut
+	    SELECT productCode, p.brand_code, s.brandName, item, price, discount, addOptions, describe, upload, modified, p.categoryCode, name, thumbnail, blind
 		FROM product p
         JOIN SELLER_BRAND S ON P.brand_code = s.brand_code 
         JOIN productCategory c ON c.categoryCode = p.categoryCode 
