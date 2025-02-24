@@ -152,7 +152,7 @@ public class ProductManageController{
 			// TODO: handle exception
 		}
     	return "redirect:" + request.getContextPath() + "/artist/productManage/list";
-
+    }
 
     // Session 에서 회원코드 반환
     private static Long getMemberIdx(HttpSession session) {
