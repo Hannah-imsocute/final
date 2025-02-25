@@ -46,19 +46,6 @@ public class ProductManageController{
 		uploadPath = this.storageService.getRealPath("/uploads/product");		
 	}	
 
-	
-	@GetMapping("write")
-	public String writeForm() throws Exception{ 
-		
-		return "artist/productManage/write";
-	}
-	
-	@PostMapping("write")
-	public String writeSubmit() throws Exception{ 
-		return "artist/productManage/list";
-	}
-	
-	
 
 	@GetMapping("listMainCategory")
 	public String listMainCategory(Model model) throws Exception{
@@ -78,7 +65,7 @@ public class ProductManageController{
 	@ResponseBody
 	@GetMapping("listSubCategory")
 	public Map<String, ?> listSubCategory(
-			@RequestParam(name = "parentCategoryCode") long parentCategoryCode) throws Exception{
+			@RequestParam(name = "parentCategoryCode") int parentCategoryCode) throws Exception{
 		Map<String, Object> model = new HashMap<>();
 			
 		try {
@@ -113,7 +100,7 @@ public class ProductManageController{
 	}
 	
 	
-    @PostMapping("create")
+    @PostMapping("write")
     public String createProduct(ProductManage dto,
                                 @RequestParam(value = "thumbnailFile", required = true) MultipartFile thumbnailFile,
 //                                @RequestParam(value = "addFiles", required = false) MultipartFile[] addFiles,
@@ -155,10 +142,101 @@ public class ProductManageController{
     	return "redirect:" + request.getContextPath() + "/artist/productManage/list";
     }
 
+
     // Session 에서 회원코드 반환
     private static Long getMemberIdx(HttpSession session) {
       SessionInfo member = (SessionInfo) session.getAttribute("member");
       return member.getMemberIdx();
     }
-	
+    
+    @GetMapping("article")
+    public String article(Model model) {
+    	try {
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return "artist/productManage/article";
+    	
+    }
+    
+    @GetMapping("update")
+    public String updateForm(
+    		@RequestParam("productCode") long productCode,
+    		@RequestParam("categoryCode") int categoryCode,
+    		@RequestParam("parentCategoryCode") int parentCategoryCode,
+//	    	@RequestParam(name = "page") String page,
+    		HttpServletRequest request,
+    		Model model) throws Exception {
+    	try {
+			ProductManage dto = Objects.requireNonNull(service.findById(productCode));
+			
+			//카테고리
+			List<ProductManage> listMainCategory = service.listMainCategory();
+			List<ProductManage> listSubCategory = service.listSubCategory(parentCategoryCode);
+			
+			//추가 이미지
+			List<ProductManage> listAddFiles = service.listAddFiles(productCode);
+		
+			//옵션1/옵션2 옵션명
+			List<ProductManage> listProductOption = service.listProductOption(productCode);
+
+			//옵션1/옵션2 상세옵션
+			List<ProductManage> listOptionDetail = null;
+			List<ProductManage> listOptionDetail2 = null;
+			if(listProductOption.size() > 0) {
+				dto.setOption_code(listProductOption.get(0).getOption_code());
+				dto.setOption_name(listProductOption.get(0).getOption_name());
+				listOptionDetail = service.listOptionDetail(listProductOption.get(0).getOption_code());
+			}
+			if(listProductOption.size() > 1) {
+				dto.setOption_code2(listProductOption.get(1).getOption_code());
+				dto.setOption_name2(listProductOption.get(1).getOption_name());
+				listOptionDetail2 = service.listOptionDetail(listProductOption.get(1).getOption_code());
+			}
+			model.addAttribute("mode", "update");
+			model.addAttribute("dto", dto);
+			model.addAttribute("listMainCategory", listMainCategory);
+			model.addAttribute("listSubCategory", listSubCategory);
+			model.addAttribute("listAddFiles", listAddFiles);
+			model.addAttribute("listOptionDetail", listOptionDetail);
+			model.addAttribute("listOptionDetail2", listOptionDetail2);
+//		    model.addAttribute("page", page);
+			
+			return "artist/productManage/write";
+			
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+//    	String qs = "parentCategoryCode=" + parentCategoryCode + "&categoryCode=" + categoryCode + "&page=" + page;
+    	String qs = "parentCategoryCode=" + parentCategoryCode + "&categoryCode=" + categoryCode;
+    	return "redirect:/artist/productManage/list/" + "?" + qs;
+    }
+    
+
+    
+    @PostMapping("update")
+    public String updateSubmit(ProductManage dto,
+    		//@RequestParam(name="page") String page,
+    		Model model ) throws Exception {
+    	try {
+			service.updateProduct(dto, uploadPath);
+		} catch (Exception e) {
+			log.info("updateSubmit : ", e);
+		}
+
+//    	String qs = "parentCategoryCode=" + dto.getParentCategoryCode() + "&categoryCode=" + dto.getCategoryCode() + "&page=" + page;
+    	String qs = "parentCategoryCode=" + dto.getParentCategoryCode() + "&categoryCode=" + dto.getCategoryCode();
+    	return "redirect:/artist/productManage/list/" + "?" + qs;
+
+    }
+    
+ 
+    
+    
 }
+
+    
+    
+   

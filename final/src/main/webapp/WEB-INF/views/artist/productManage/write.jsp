@@ -105,7 +105,7 @@
                 <!-- 새롭게 추가한 등록 전용 엔드포인트(create)로 전송 -->
                 <form name="productForm" class="product-form" method="post" 
                       enctype="multipart/form-data" 
-                      action="${pageContext.request.contextPath}/artist/productManage/create">
+                      action="${pageContext.request.contextPath}/artist/productManage/write">
                     
                     <!-- 카테고리 선택 -->
                     <div class="form-group">
@@ -245,7 +245,9 @@
                         <div id="additional-images-preview" class="preview-grid"></div>
                     </div>
                     
-                    <button type="submit" class="submit-btn" onclick="smartEditInDescribe()">등록하기</button>
+                    <button type="submit" class="submit-btn" onclick="smartEditInDescribe()">${mode=="update"?"수정완료":"등록완료"}</button>
+                	<button type="reset" class="btn btn-light">다시입력</button>
+                	<button type="button" class="btn btn-light" onclick="location.href='${url}';">${mode=="update"?"수정취소":"등록취소"}</button>
                 </form>
             </section>
         </div>

@@ -40,4 +40,16 @@ public interface ProductManageMapper {
   	public void deleteProductimage(long productCode);
   	public void deleteCartitem(long productCode);
   	public void deleteProductoption(long productCode);
+  	
+  	//작품 수정 시 작품 조회
+	public ProductManage findById(long productCode);
+	
+	//작품 수정 시 추가 이미지 조회
+	public List<ProductManage> listAddFiles(long productCode);
+	
+	//작품 수정
+	public ProductManage updateProduct(ProductManage dto, String uploadPath);
+  	
+
+	
 }

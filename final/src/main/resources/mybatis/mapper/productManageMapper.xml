@@ -115,7 +115,7 @@
 	</insert>
 	
 	<select id="listProduct" parameterType="map" resultType="com.sp.app.artist.model.ProductManage">
-		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind, b.brand_code, m.memberIdx
+		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind, b.brand_code, b.brandName, m.memberIdx
 		FROM product p 
 		JOIN productCategory c 
 	    ON p.categoryCode = c.categoryCode
@@ -145,6 +145,33 @@
 	<delete id="deleteProductoption" parameterType="Long" >
 		delete PRODUCTOPTION where productCode = #{productCode}
 	</delete>
+	
+	<!-- 작품 수정시 작품 조회 -->
+	<select id="findById" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, brand_code, item, Price, discount, addOptions, describe, upload, modified, thumbnail, blind, m.memberIdx
+		FROM product p 
+		JOIN productCategory c 
+	    ON p.categoryCode = c.categoryCode
+        WHERE productCode = ${productCode} 	
+	</select>
+	
+	<!-- 작품 수정시 추가 이미지 조회 -->
+	<select id="listAddFiles" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
+		SELECT image_code, productCode, imageFileName
+		FROM productImage
+		WHERE productCode = ${productCode}	
+	</select>	
+	
+	<!-- 작품 수정 -->
+	<update id="updateProduct" parameterType="com.sp.app.artist.model.ProductManage">
+		UPDATE product 
+		SET categoryCode = #{categoryCode}, item =#{item}, price = #{price}
+		discount = #{discount}, describe = #{describe}, thumbnail = #{thumbnail}, 
+		update_date = SYSDATE
+		WHERE productCode = #{productCode}
+	</update>
+	
+
 
 </mapper>
 	

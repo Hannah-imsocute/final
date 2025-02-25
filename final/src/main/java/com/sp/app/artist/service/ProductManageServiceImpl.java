@@ -1,6 +1,6 @@
 package com.sp.app.artist.service;
 
-import java.sql.SQLException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,7 +13,6 @@ import com.sp.app.artist.mapper.ProductManageMapper;
 import com.sp.app.artist.model.ProductManage;
 import com.sp.app.common.StorageService;
 import com.sp.app.exception.StorageException;
-import com.sp.app.model.MainProduct;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -210,6 +209,52 @@ public class ProductManageServiceImpl implements ProductManageService{
 			log.info("deleteProduct");
 		}
 		
+	}
+
+	@Override
+	public ProductManage findById(long productCode) {
+		ProductManage dto = null;
+		try {
+			dto = mapper.findById(productCode);
+		} catch (Exception e) {
+			log.info("findById :", e);
+		}	
+		return dto;
+	}
+
+	@Override
+	public List<ProductManage> listAddFiles(long productCode) {
+		List<ProductManage> list = null;
+		try {
+			list = mapper.listAddFiles(productCode);
+		} catch (Exception e) {
+			log.info("listAddFiles : ", e);
+		}
+		return list;
+	}
+
+	@Transactional(rollbackFor = {Exception.class})
+	@Override
+	public ProductManage updateProduct(ProductManage dto, String uploadPath) {
+		try {
+			String filename = storageService.uploadFileToServer(dto.getThumbnailFile(), uploadPath);
+			if(filename != null) {
+				if(!dto.getThumbnail().isBlank()) {
+					deleteUploadFile(uploadPath, dto.getThumbnail());
+				}
+				dto.setThumbnail(filename);
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean deleteUploadFile(String uploadPath, String filename) {
+		return storageService.deleteFile(uploadPath, filename);
 	}
 
 }

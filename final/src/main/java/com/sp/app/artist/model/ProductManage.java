@@ -29,11 +29,12 @@ public class ProductManage {
 		private String modified; //수정한 날짜 
 		private int categoryCode;
 		private String thumbnail;
+		private MultipartFile thumbnailFile; //파일 수정에서 기존 파일 삭제시 MultipartFile 필요
 		private int blind; //작품 차단여부
 		
 		//상품 카테고리
 		private String name; //상품카테고리 이름
-		private int ParentCategoryCode; //상품 상위카테고리
+		private int parentCategoryCode; //상품 상위카테고리
 
 		//상품 이미지
 		private long imageCode;

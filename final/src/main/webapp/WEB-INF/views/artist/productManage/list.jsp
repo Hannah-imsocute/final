@@ -148,9 +148,6 @@
                     <th>변경</th>
                 </tr>
             </thead>
- <!------- --------- ------------------------------------>
-   
- <!------- --------- ------------------------------------>
   			<tbody>
 				<c:forEach var="vo" items="${productList}" varStatus="status">
 					<tr valign="middle">
@@ -170,8 +167,10 @@
 						<td>${vo.modified}</td>
 						<td>
 							<!-- 수정 버튼도 필요한 경우 productCode를 파라미터로 전달할 수 있습니다. -->
-							<button type="button" class="btn border" onclick="location.href='${pageContext.request.contextPath}/artist/productManage/update?productCode=${vo.productCode}'">수정</button>
-							<!-- 삭제 버튼은 자바스크립트 함수를 호출 -->
+							<button type="button" class="btn border btn-update" 
+								data-productcode="${vo.productCode}"
+								data-categoryCode="${vo.categoryCode}"
+								data-parentcategorycode="${vo.parentCategoryCode}">수정</button>
 							<button type="button" class="btn border" onclick="deleteProduct('${vo.productCode}')">삭제</button>
 						</td>
 					</tr>					
@@ -222,6 +221,26 @@ function deleteProduct(productCode) {
     document.body.appendChild(form);
     form.submit();
   }
+  
+$(document).ready(function(){
+    $('.btn-update').on('click', function(){
+        // 버튼의 data 속성에서 필요한 값을 읽어옵니다.
+        var productCode = $(this).data('productcode');
+        var categoryCode = $(this).data('categorycode');
+        var parentCategoryCode = $(this).data('parentcategorycode');
+        
+        // 컨트롤러의 GET 매핑 URL과 쿼리 스트링을 구성합니다.
+        var updateUrl = '/artist/product/update' +
+            '?productCode=' + productCode +
+            '&categoryCode=' + categoryCode +
+            '&parentCategoryCode=' + parentCategoryCode;
+        
+        // 구성된 URL로 페이지 이동하여 updateForm 메서드를 호출합니다.
+        window.location.href = updateUrl;
+    });
+});
+  
+  
 </script>
 </body>
 </html>
