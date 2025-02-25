@@ -20,4 +20,8 @@ public interface AdminReportMapper {
 	
 	public Report findByIdOfProduct(long num);
 	public Report findByIdOfReview(long num);
+	
+	public void updateProcess(Map<String, Object> map);
+	public void updateBlindOfProduct(long num);
+	public void updateBlindOfReview(long num);
 }

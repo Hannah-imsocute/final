@@ -16,4 +16,6 @@ public interface AdminReportService {
 	public List<Report> getListOfReviews(Map<String, Object> map);
 	
 	public Report findById(Map<String, Object> map);
+	
+	public void updateReport(long num, String mode, String type);
 }

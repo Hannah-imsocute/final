@@ -72,10 +72,11 @@ body {
 	<main class="main-container">
 		<!-- 탭 네비게이션 -->
 		<ul class="nav nav-tabs mb-4">
-			<li class="nav-item"><a class="nav-link active" href="#">공지사항</a>
+			<li class="nav-item"><a class="nav-link " href="#">공지사항</a>
 			</li>
-			<li class="nav-item"><a class="nav-link" href="#">문의사항</a></li>
+			<li class="nav-item"><a class="nav-link active" href="#">문의사항</a></li>
 			<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+			<!-- 오른쪽 정렬 -->
 			<li class="nav-item ms-auto">
 				<button type="button" class="btn btn-primary"
 					onclick="location.href='${pageContext.request.contextPath}/admin/notice/write'">

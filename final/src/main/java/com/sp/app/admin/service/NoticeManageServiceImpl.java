@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.sp.app.admin.mapper.NoticeManageMapper;
+import com.sp.app.admin.model.Information;
 import com.sp.app.admin.model.Notice;
 
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,26 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 			log.info("===============findById : ", e);
 		}
 		return dto;
+	}
+
+	
+	
+	@Override
+	public void insertInfo(Map<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int dataCountOfInfo() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Information> getListOfInfo(int offset, int size) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

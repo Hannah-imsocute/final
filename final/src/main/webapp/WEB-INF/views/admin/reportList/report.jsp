@@ -125,13 +125,9 @@
 							</tbody>
 						</table>
 					</div>
-
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">반려</button>
-						 <button type="button" class="btn btn-success" id="processReportBtn">정지</button>
+							
 					</div>
-
 				</div>
 			</div>
 		</div>
@@ -171,6 +167,32 @@
 	<script type="text/javascript">
 		var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
 		
+		$(function(){
+			$('#rejectBtn').click(function(){
+				let reportNum = $('#reportId').text();
+				let url = '${pageContext.request.contextPath}/admin/report/update';
+				let params = {reportNum : reportNum, mode : 'seller', type : 'reject'};
+				
+				const fn = function(data){
+					location.href='${pageContext.request.contextPath}/admin/report/main';
+				};
+				
+				ajaxRequest(url, 'post', params, 'json', fn);
+			});
+			$('#processReportBtn').click(function (){
+				let reportNum = $('#reportId').text();
+				let url = '${pageContext.request.contextPath}/admin/report/update';
+				let params = {reportNum : reportNum, mode : 'seller', type : 'blind'};
+				
+				const cb = function () {
+					location.href='${pageContext.request.contextPath}/admin/report/main';
+				};
+				
+				ajaxRequest(url, 'post', params, 'json', cb);
+				
+			});
+		});
+		
 		$(function() {
 			$('.search-btn')
 					.click(
@@ -191,13 +213,17 @@
 					
 					const callback = function(data){
 						let out = '';
-						
+						console.log(data);
 						let category_name = data.dto.category_name;
 						let name = data.dto.name;
 						let productcode = data.dto.productcode;
 						let reason = data.dto.reason;
 						let reportdate = data.dto.report_date;
 						let sellerreport_num = data.dto.sellerreport_num;
+						
+						let processdate = data.dto.processdate ?  data.dto.processdate : '-';
+						let process = data.dto.processdate ? '처리완료' : '미처리';
+						let color = data.dto.processdate ? 'text-primary' : 'text-danger';
 						
 						out += '<tr>';
 						out += '	<th class="bg-light">신고번호</th>';
@@ -231,12 +257,33 @@
 						
 						out += '<tr>';
 						out += '	<th class="bg-light">신고처리여부</th>'
-						out += '	<td id="reportStatus" class="fw-bold text-danger">' + + '</td>';
+						out += '	<td id="reportStatus" class="fw-bold '+ color +'">' + process + '</td>';
 						out += '</tr>';
 
 						out += '<tr>';
 						out += '	<th class="bg-light">신고처리일</th>'
+						out += '	<td id="reportDate">' + processdate + '</td>';
 						out += '</tr>';
+						
+						// 아 개빡치네 이거 왜 반대로 나옴 
+						console.log(data.dto.processdate)
+						
+						if(! data.dto.processdate ){
+							btns += `<button type="button" class="btn btn-secondary" id="rejectBtn"
+								data-bs-dismiss="modal">반려</button>
+								<button type="button" class="btn btn-success"
+									id="processReportBtn" data-bs-dismiss="modal">정지</button>`;
+						}else {
+							btns += `<button type="button" class="btn btn-success"
+								data-bs-dismiss="modal">닫기</button>`;
+						}
+						
+						
+						$('.detailsTable').html('');
+						$('.detailsTable').append(out);
+						$('.modal-footer').html('');
+						$('.modal-footer').html(btns);
+						
 						
 						myModal.show();
 					}

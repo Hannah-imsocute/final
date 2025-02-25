@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -155,5 +156,25 @@ public class AdminReportManageController {
 		} catch (Exception e) {
 		}
 		return map;
+	}
+	
+	@PostMapping("update")
+	@ResponseBody
+	public Map<String, Object> updateState(@RequestParam(name = "reportNum") long reportNum,
+								@RequestParam(name = "mode") String mode,
+								@RequestParam(name = "type") String type) {
+		// 신고번호, 리뷰인지 작가인지 , reject 인지 blind 인지 
+		
+		Map<String, Object> model = new HashMap<>();
+		try {
+			
+			service.updateReport(reportNum, mode, type);
+			// 뭐업데이트 해야되는지 생각
+			// processdate 입력하고 => 작품신고면 작품 blind
+			// 리뷰신고면 => 리뷰 blind
+		} catch (Exception e) {
+			
+		}
+		return model;
 	}
 }

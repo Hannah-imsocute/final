@@ -88,7 +88,7 @@
 
 					<div class="modal-body">
 						<table class="table table-bordered">
-							<tbody>
+							<tbody class="contentBody">
 								<tr>
 									<th class="bg-light">신고번호</th>
 									<td id="reportId">12345</td>
@@ -124,13 +124,7 @@
 							</tbody>
 						</table>
 					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">반려</button>
-						 <button type="button" class="btn btn-success" id="processReportBtn">정지</button>
-					</div>
-
+					<div class="modal-footer"></div>
 				</div>
 			</div>
 		</div>
@@ -170,7 +164,34 @@
 	<script type="text/javascript">
 		var myModal = new bootstrap.Modal(document
 				.getElementById('staticBackdrop'));
-
+		
+		$(function(){
+			$('#rejectBtn').click(function(){
+				let reportNum = $('#reportId').text();
+				let url = '${pageContext.request.contextPath}/admin/report/update';
+				let params = {reportNum : reportNum, mode : 'reviews', type : 'reject'};
+				
+				const fn = function(data){
+					location.href='${pageContext.request.contextPath}/admin/report/reviews';
+				};
+				
+				ajaxRequest(url, 'post', params, 'json', fn);
+			});
+			
+			$('#processReportBtn').click(function (){
+				let reportNum = $('#reportId').text();
+				let url = '${pageContext.request.contextPath}/admin/report/update';
+				let params = {reportNum : reportNum, mode : 'reviews', type : 'blind'};
+				
+				const cb = function () {
+					location.href='${pageContext.request.contextPath}/admin/report/reviews';
+				};
+				
+				ajaxRequest(url, 'post', params, 'json', cb);
+				
+			});
+		});
+		
 		$(function() {
 			$('.search-btn')
 					.click(
@@ -191,8 +212,78 @@
 						let params = {num : num , mode : 'reviews'};
 						
 						const callback = function(data){
-							console.log(data);
-							console.log(data.state);
+							let out = '';
+							let btns = '';
+							
+							let category_name = data.dto.category_name;
+							let name = data.dto.name;
+							let review_num = data.dto.review_num;
+							let content = data.dto.content;
+							let reportdate = data.dto.report_date;
+							let report_code = data.dto.report_code;
+							
+							let processdate = data.dto.processdate ?  data.dto.processdate : '-';
+							let process = data.dto.processdate ? '처리완료' : '미처리';
+							let color = data.dto.processdate ? 'text-primary' : 'text-danger';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">신고번호</th>';
+							out += '	<td id="reportId">'+ report_code +'</td>';	
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">리뷰번호</th>'
+							out += '	<td id="productCode">' + review_num + '</td>';
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">신청인</th>'
+							out += '	<td id="applicant">'+ name +'</td>';
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">신청일</th>'
+							out += '	<td id="applicationDate">'+ reportdate +'</td>';
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">카테고리</th>'
+							out += '	<td id="reportCategory">'+ category_name +'</td>';
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">신고사유</th>'
+							out += '	<td id="reportReason">'+ content +'</td>';	
+							out += '</tr>';
+							
+							out += '<tr>';
+							out += '	<th class="bg-light">신고처리여부</th>'
+							out += '	<td id="reportStatus" class="fw-bold '+ color +'">' + process + '</td>';
+							out += '</tr>';
+
+							out += '<tr>';
+							out += '	<th class="bg-light">신고처리일</th>'
+							out += '	<td id="reportDate">' + processdate + '</td>';
+							out += '</tr>';
+							
+							// 아 개빡치네 이거 왜 반대로 나옴 
+							console.log(data.dto.processdate)
+							
+							if(! data.dto.processdate ){
+								btns += `<button type="button" class="btn btn-secondary" id="rejectBtn"
+									data-bs-dismiss="modal">반려</button>
+									<button type="button" class="btn btn-success"
+										id="processReportBtn" data-bs-dismiss="modal">정지</button>`;
+							}else {
+								btns += `<button type="button" class="btn btn-success"
+									data-bs-dismiss="modal">닫기</button>`;
+							}
+							
+							$('.contentBody').html('');
+							$('.contentBody').html(out);
+							$('.modal-footer').html('');
+							$('.modal-footer').html(btns);
+							
 							myModal.show();
 						}
 						

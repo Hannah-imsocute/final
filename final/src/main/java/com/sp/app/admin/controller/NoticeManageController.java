@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sp.app.admin.model.Event;
+import com.sp.app.admin.model.Information;
 import com.sp.app.admin.model.Notice;
 import com.sp.app.admin.service.EventManageService;
 import com.sp.app.admin.service.NoticeManageService;
@@ -21,6 +22,7 @@ import com.sp.app.common.MyUtil;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.model.SessionInfo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +39,9 @@ public class NoticeManageController {
 	
 	@GetMapping("main")
 	public String handleMain(@RequestParam(name = "page", defaultValue = "1")int page,
-							Model model) {
-		
+							Model model, HttpServletRequest req) {
+		String cp = req.getContextPath();
 		try {
-			// 페이징 처리해야됨 기차느니까 나중에 ㄱㄱ 
-			
 			int size = 10;
 			int total = 0;
 			int dataCount = service.dataCount();
@@ -55,6 +55,11 @@ public class NoticeManageController {
 			
 			List<Notice> list = service.getList(offset, size);
 			
+			String listUrl = cp + "/admin/notice/main?page="+page;
+			
+			String paging = util.pagingUrl(page, total, listUrl);
+			
+			model.addAttribute("paging", paging);
 			model.addAttribute("list",list);
 			
 		} catch (Exception e) {
@@ -119,5 +124,36 @@ public class NoticeManageController {
 		return "admin/noticeList/article";
 	}
 	
+	
+	@GetMapping("info")
+	public String handleInfo(@RequestParam(name = "page", defaultValue = "1")int page,
+							Model model, HttpServletRequest req) {
+		String cp = req.getContextPath();
+		try {
+			int size = 10;
+			int total = 0;
+			int dataCount = service.dataCount();
+			
+			total = util.pageCount(dataCount, size);
+			
+			page = Math.min(page, total);
+			
+			int offset = (page - 1) * size;
+			if(offset < 0) offset = 0;
+			
+			List<Information> list;
+			
+			String listUrl = cp + "/admin/notice/info?page="+page;
+			
+			String paging = util.pagingUrl(page, total, listUrl);
+			
+			model.addAttribute("paging", paging);
+		//	model.addAttribute("list",list);
+			
+		} catch (Exception e) {
+			log.info("===================handleInfo : ", e);
+		}
+		return"admin/noticeList/information";
+	}
 	
 }

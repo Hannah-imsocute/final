@@ -1,9 +1,11 @@
 package com.sp.app.admin.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.AdminReportMapper;
 import com.sp.app.admin.model.Report;
@@ -88,6 +90,36 @@ public class AdminReportServiceImpl implements AdminReportService{
 			log.info("===================findById : ", e);
 		}
 		return dto;
+	}
+
+	@Transactional
+	@Override
+	public void updateReport(long num, String mode, String type) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			map.put("type", type);
+			map.put("mode", mode);
+			map.put("num", num);
+			
+			mapper.updateProcess(map);
+			
+			if(type.equals("blind")) {
+				Report dto = findById(map);
+				updateblind(type, dto);
+			}
+			
+		} catch (Exception e) {
+			log.info("=============updateReport", e);
+		}
+	}
+	
+	public void updateblind(String type, Report dto) {
+		
+		if(type.equals("seller")) {
+			mapper.updateBlindOfProduct(dto.getProductcode());
+		}else {
+			mapper.updateBlindOfReview(dto.getReview_num());
+		}
 	}
 
 }
