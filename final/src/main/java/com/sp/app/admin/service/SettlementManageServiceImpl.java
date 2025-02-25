@@ -19,14 +19,28 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 	
 	@Override
 	public int dataCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		
+		try {
+			result = mapper.dataCount(map);
+		} catch (Exception e) {
+			log.info("dataCount : ", e);
+		}
+		
+		return result;
 	}
 
 	@Override
 	public List<SettlementManage> listSettlement(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<SettlementManage> list = null;
+		
+		try {
+			list = mapper.listSettlementMainTab1SubTab1(map);
+		} catch (Exception e) {
+			log.info("listSettlement : ", e);
+		}
+		
+		return list;
 	}
 
 	@Override

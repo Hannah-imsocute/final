@@ -13,7 +13,7 @@ import com.sp.app.admin.model.SettlementManage;
 @Mapper
 public interface SettlementManageMapper {
 	public int dataCount(Map<String, Object> map);
-	public List<SettlementManage> listSettlement(Map<String, Object> map);
+	public List<SettlementManage> listSettlementMainTab1SubTab1(Map<String, Object> map);
 	
 	public SettlementManage findById(Long memberIdx);
 	public SettlementManage findBySeller(String brandName);

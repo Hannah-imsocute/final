@@ -1,6 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+
+<style>
+a.profile:link {
+	text-decoration: none;
+}
+a.profile:hover {
+	color: orange !important;
+	text-decoration: underline;
+}
+</style>
 		
 <table class="table table-borderless mt-0 mb-0 bg-transparent">
 	<tr>
@@ -27,35 +37,26 @@
 <table class="table table-hover board-list">
 	<thead class="table-light">
 		<tr> 
-			<th width="50">번호</th>
-			<th width="160">아이디</th>
-			<th width="80">이름</th>
-			<th width="130">생년월일</th>
-			<th width="150">전화번호</th>
-			<th width="100">권한</th>
+			<th width="70">번호</th>
+			<th width="130">정산번호</th>
+			<th width="130">브랜드이름</th>
+			<th width="130">정산금액</th>
+			<th width="130">날짜</th>
 			<th width="100">상태</th>
-			<th>이메일</th>
+			<th width="100"></th>
 		</tr>
 	</thead>
 	
 	<tbody>
 		<c:forEach var="dto" items="${list}" varStatus="status">
-			<tr class="hover" onclick="profile('${dto.memberIdx}', '${page}');"> 
+			<tr class="hover" onclick="profile('', '${page}');"> 
 				<td>${dataCount - (page-1) * size - status.index}</td>
-				<td>${dto.email}</td>
-				<td>${dto.nickname}</td>
-				<td>${dto.dob}</td>
-				<td>${dto.phone}</td>
-				<td>
-					<c:choose>
-						<c:when test="${dto.authority=='USER'}">회원</c:when>
-						<c:when test="${dto.authority=='AUTHOR'}">작가</c:when>
-						<c:when test="${dto.authority=='ADMIN'}">관리자</c:when>
-						<c:otherwise>기타</c:otherwise>
-					</c:choose>
-				</td>
-				<td>${dto.block==0?"활성":"차단"}</td>
-				<td>${dto.email}</td>
+				<td>${dto.settlement_num}</td>
+				<td>${dto.brandname}</td>
+				<td>${dto.point_amount}</td>
+				<td>${dto.settlement_date}</td>
+				<td>${dto.state == 1 ? "완료" : "대기"}</td>
+				<td> <a class="profile" href="${pageContext.request.contextPath}/admin/settlementManage/profile"><font color="gray"> 상세보기 </font></a></td>
 			</tr>
 		</c:forEach>
 	</tbody>
@@ -75,7 +76,7 @@
 				<select id="searchType" name="schType" class="form-select">
 					<option value="email"     ${schType=="email" ? "selected":""}>아이디</option>
 					<option value="nickname"   ${schType=="nickname" ? "selected":""}>이름</option>
-					<option value="phone"        ${schType=="phone" ? "selected":""}>전화번호</option>
+
 				</select>
 			</div>
 			<div class="col-auto p-1">
