@@ -194,6 +194,8 @@ public class ProductManageController{
 				dto.setOption_name2(listProductOption.get(1).getOption_name());
 				listOptionDetail2 = service.listOptionDetail(listProductOption.get(1).getOption_code());
 			}
+			dto.setOptionCount(listProductOption.size());
+			
 			model.addAttribute("mode", "update");
 			model.addAttribute("dto", dto);
 			model.addAttribute("listMainCategory", listMainCategory);

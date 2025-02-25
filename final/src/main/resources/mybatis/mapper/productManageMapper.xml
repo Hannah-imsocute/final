@@ -148,7 +148,7 @@
 	
 	<!-- 작품 수정시 작품 조회 -->
 	<select id="findById" parameterType="Long" resultType="com.sp.app.artist.model.ProductManage">
-		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, brand_code, item, Price, discount, addOptions, describe, upload, modified, thumbnail, blind, m.memberIdx
+		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, brand_code, item, Price, discount, addOptions, describe, upload, modified, thumbnail, blind
 		FROM product p 
 		JOIN productCategory c 
 	    ON p.categoryCode = c.categoryCode

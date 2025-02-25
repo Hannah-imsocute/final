@@ -113,7 +113,7 @@
                         <select name="main-category">
                             <option value="">:: 메인 카테고리 선택 ::</option>
                             <c:forEach var="vo" items="${listMainCategory}">
-                                <option value="${vo.categoryCode}" ${parentCategoryCode==vo.categoryCode?"selected":""}>
+                                <option value="${vo.categoryCode}" ${dto.parentCategoryCode==vo.categoryCode?"selected":""}>
                                     ${vo.name}
                                 </option>
                             </c:forEach>
@@ -121,7 +121,7 @@
                         <select name="categoryCode">
                             <option value="">:: 카테고리 선택 ::</option>
                             <c:forEach var="vo" items="${listSubCategory}">
-                                <option value="${vo.categoryCode}" ${categoryCode==vo.categoryCode?"selected":""}>
+                                <option value="${vo.categoryCode}" ${dto.categoryCode==vo.categoryCode?"selected":""}>
                                     ${vo.name}
                                 </option>
                             </c:forEach>
@@ -131,19 +131,21 @@
                     <!-- 작품 기본 정보 -->
                     <div class="form-group">
                         <label>작품명</label>
-                        <input type="text" name="item" required>
+                        <input type="text" name="item" value="${dto.item}" required>
                     </div>
                     <div class="form-group">
                         <label>작품 가격</label>
-                        <input type="number" name="price" required>
+                        <input type="number" name="price" value="${dto.price}" required>
                     </div>
                     <div class="form-group">
                         <label>할인율</label>
-                        <input type="number" name="discount">
+                        <input type="number" step="any" name="discount" value="${dto.discount}">
                     </div>
-                    <div class="form-group">
+                    
+                    <!-- 배송비 컬럼 나중에 product 테이블에 생기면 hidden 풀기 -->
+                    <div class="form-group" hidden=true>
                         <label>배송비</label>
-                        <input type="number" name="shipping">
+                        <input type="number" name="shipping" value="">
                     </div>
                     
                     <!-- 옵션 관련 -->
@@ -190,18 +192,18 @@
         				<label>옵션 2</label>
                         <input type="text" name="option_name2" placeholder="옵션명" value="${dto.option_name2}">
                       		<c:if test="${mode=='update'}">
-								<input type="hidden" name="option_code2" value="${empty dto.option_code2 ? 0 : dto.option_code2}">
+								<input type="hidden" name="option_code2" value="${empty dto.option_code ? 0 : dto.option_code}">
 							</c:if>
 							<div class = option-area2>
 								<div class="col-auto pe-0 d-flex flex-row optionValue-area2">   <!-- 부트스트랩 -->
 									<c:forEach var="vo" items="${listOptionDetail2}">
 										<div class="input-group pe-1">
-											<input type="text" name="option_value2" placeholder="옵션값" value="${vo.option_value2}">
-											<input type="hidden" name="optionDetail_code2" value="${vo.optionDetail_code2}">
+											<input type="text" name="option_value2" placeholder="옵션값" value="${vo.option_value}">
+											<input type="hidden" name="optionDetail_code2" value="${vo.optionDetail_code}">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
 										</div>
 									</c:forEach>
-									<c:if test="${empty listOptionDetail || listOptionDetail.size() < 1}">
+									<c:if test="${empty listOptionDetail2 || listOptionDetail2.size() < 1}">
 										<div class="input-group pe-1">
 											<input type="text" name="option_values2" style="flex:none; width: 90px;" placeholder="옵션값">
 											<i class="bi bi-dash input-group-text ps-2 pe-2 bg-white option-minus"></i>
@@ -228,7 +230,7 @@
                     <!-- 작품 설명 -->
                     <div class="form-group">
                         <label>작품 설명</label>
-                        <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;"></textarea>
+                        <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;">${dto.describe}</textarea>
                     </div>
                     
                     <!-- 메인 이미지 업로드 -->

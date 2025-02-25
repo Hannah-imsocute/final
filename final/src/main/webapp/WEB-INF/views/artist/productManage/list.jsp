@@ -230,7 +230,7 @@ $(document).ready(function(){
         var parentCategoryCode = $(this).data('parentcategorycode');
         
         // 컨트롤러의 GET 매핑 URL과 쿼리 스트링을 구성합니다.
-        var updateUrl = '/artist/product/update' +
+        var updateUrl = '/artist/productManage/update' +
             '?productCode=' + productCode +
             '&categoryCode=' + categoryCode +
             '&parentCategoryCode=' + parentCategoryCode;
