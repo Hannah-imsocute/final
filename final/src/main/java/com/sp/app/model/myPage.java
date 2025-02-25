@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class myPage {
+public class MyPage {
 
   private String orderCode;
   private String orderState; // 주문상태
@@ -23,5 +23,6 @@ public class myPage {
   private String thumbnail; // 상품이미지
   private int price;
   private long productCode;
+  private int reviewCount;
 
 }
