@@ -4,7 +4,7 @@
 <mapper namespace="com.sp.app.mapper.MyPageMapper">
 
     <select id="getOrdersHistory" parameterType="long"
-            resultType="com.sp.app.model.myPage">
+            resultType="com.sp.app.model.MyPage">
         SELECT p.order_code     AS orderCode,
                i.order_state    AS orderState,
                i.QUANTITY       AS quantity,
