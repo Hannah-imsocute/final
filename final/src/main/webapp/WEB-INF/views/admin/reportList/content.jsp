@@ -20,10 +20,9 @@
 	<main>
 		<div class="content-around">
 			<ul class="nav nav-tabs">
-				<li class="nav-item"><a class="nav-link active"
-					aria-current="page"
+				<li class="nav-item"><a class="nav-link " aria-current="page"
 					href="${pageContext.request.contextPath}/admin/report/main">작품신고</a></li>
-				<li class="nav-item"><a class="nav-link"
+				<li class="nav-item active"><a class="nav-link"
 					href="${pageContext.request.contextPath}/admin/report/reviews">작품후기신고</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">댓글신고</a></li>
 			</ul>
@@ -46,7 +45,7 @@
 						<thead>
 							<tr>
 								<th>신고번호</th>
-								<th>상품코드</th>
+								<th>리뷰번호</th>
 								<!--  신고종류에 따라 이름만 바꾸기 상품 | 댓글 | 후기  -->
 								<th>신고자</th>
 								<th>신고사유</th>
@@ -57,11 +56,11 @@
 						</thead>
 						<tbody>
 							<c:forEach var="dto" items="${list}" varStatus="status">
-								<tr class="reportrows" data-num="${dto.sellerreport_num}">
+								<tr class="reportrows" data-num="${dto.report_code}">
 									<td>${status.count}</td>
-									<td>${dto.productcode }</td>
+									<td>${dto.review_num}</td>
 									<td>${dto.name}</td>
-									<td>${dto.reason}</td>
+									<td>${dto.content}</td>
 									<td>${dto.report_date }</td>
 									<td>${dto.category_name}</td>
 									<td>${ empty dto.processdate ? '처리필요':'처리완료'}</td>
@@ -89,13 +88,13 @@
 
 					<div class="modal-body">
 						<table class="table table-bordered">
-							<tbody class="detailsTable">
+							<tbody>
 								<tr>
 									<th class="bg-light">신고번호</th>
 									<td id="reportId">12345</td>
 								</tr>
 								<tr>
-									<th class="bg-light">상품코드</th>
+									<th class="bg-light">리뷰번호</th>
 									<td id="reviewId">67890</td>
 								</tr>
 								<tr>
@@ -135,7 +134,6 @@
 				</div>
 			</div>
 		</div>
-
 	</main>
 	<script type="text/javascript">
 	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
@@ -168,80 +166,38 @@
 		$.ajax(url, settings);
 	};
 	</script>
+
 	<script type="text/javascript">
-		var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-		
+		var myModal = new bootstrap.Modal(document
+				.getElementById('staticBackdrop'));
+
 		$(function() {
 			$('.search-btn')
 					.click(
 							function() {
 								let keyword = $('.search-input').val();
 								let category = $('.category-select').val();
-								let url = '${pageContext.request.contextPath}/admin/report/main?keyword='
+								let url = '${pageContext.request.contextPath}/admin/report/reviews?keyword='
 										+ encodeURIComponent(keyword, 'utf-8')
 										+ '&category=' + category;
 
 								location.href = url;
 							});
 			$('.reportrows').each(function() {
-				$(this).click(function(){
-					let num = $(this).attr('data-num');
-					let url = '${pageContext.request.contextPath}/admin/report/details';
-					let params = {num : num , mode : 'seller'};
-					
-					const callback = function(data){
-						let out = '';
+				$(this).click(function() {
+					$(this).click(function(){
+						let num = $(this).attr('data-num');
+						let url = '${pageContext.request.contextPath}/admin/report/details';
+						let params = {num : num , mode : 'reviews'};
 						
-						let category_name = data.dto.category_name;
-						let name = data.dto.name;
-						let productcode = data.dto.productcode;
-						let reason = data.dto.reason;
-						let reportdate = data.dto.report_date;
-						let sellerreport_num = data.dto.sellerreport_num;
+						const callback = function(data){
+							console.log(data);
+							console.log(data.state);
+							myModal.show();
+						}
 						
-						out += '<tr>';
-						out += '	<th class="bg-light">신고번호</th>';
-						out += '	<td id="reportId">'+ sellerreport_num +'</td>';	
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">상품코드</th>'
-						out += '	<td id="productCode">' + productcode + '</td>';
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">신청인</th>'
-						out += '	<td id="applicant">'+ name +'</td>';
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">신청일</th>'
-						out += '	<td id="applicationDate">'+ reportdate +'</td>';
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">카테고리</th>'
-						out += '	<td id="reportCategory">'+ category_name +'</td>';
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">신고사유</th>'
-						out += '	<td id="reportReason">'+ reason +'</td>';	
-						out += '</tr>';
-						
-						out += '<tr>';
-						out += '	<th class="bg-light">신고처리여부</th>'
-						out += '	<td id="reportStatus" class="fw-bold text-danger">' + + '</td>';
-						out += '</tr>';
-
-						out += '<tr>';
-						out += '	<th class="bg-light">신고처리일</th>'
-						out += '</tr>';
-						
-						myModal.show();
-					}
-					
-					ajaxRequest(url, 'post', params, 'json', callback);
+						ajaxRequest(url, 'post', params, 'json', callback );
+					});
 				});
 			});
 		});

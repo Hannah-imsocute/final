@@ -1,12 +1,12 @@
 package com.sp.app.service;
 
 
-import com.sp.app.model.myPage;
-
 import java.util.List;
+
+import com.sp.app.model.MyPage;
 
 public interface MyPageService {
 
-  List<myPage> getOrdersHistory(long memberIdx);
+  List<MyPage> getOrdersHistory(long memberIdx);
 
 }

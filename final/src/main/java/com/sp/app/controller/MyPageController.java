@@ -85,8 +85,8 @@ public class MyPageController {
             paramMap.put("memberIdx", member.getMemberIdx());
             productParams.add(paramMap);
             int balance = pointService.getPointEnabled(member.getMemberIdx());
-            List<myPage> ordersHistory = myPageService.getOrdersHistory(member.getMemberIdx());
-            for (myPage item : ordersHistory) {
+            List<MyPage> ordersHistory = myPageService.getOrdersHistory(member.getMemberIdx());
+            for (MyPage item : ordersHistory) {
                 model.addAttribute("orderDate", item.getOrderDate());
             }
             model.addAttribute("balance", balance); // 현재 사용할 수 있는 포인트 금액
@@ -141,7 +141,7 @@ public class MyPageController {
 
 
             SessionInfo member = (SessionInfo) session.getAttribute("member");
-            List<myPage> ordersHistory = myPageService.getOrdersHistory(member.getMemberIdx());
+            List<MyPage> ordersHistory = myPageService.getOrdersHistory(member.getMemberIdx());
             model.addAttribute("ordersHistory", ordersHistory);
         } catch (Exception e) {
             log.error("detail", e);

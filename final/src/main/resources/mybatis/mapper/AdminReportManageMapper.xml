@@ -11,15 +11,32 @@
 				category_num = #{category}
 			</if>
 			<if test="kwd != null and kwd != '' ">
-				and INSTR(content,#{kwd}) &gt; 0
+				and INSTR(reason,#{kwd}) &gt; 0
 			</if>
 		</where>
 	</select>
 	<select id="getListOfProduct" parameterType="map"
 		resultType="com.sp.app.admin.model.Report">
-		SELECT sellerReport_num, productcode, memberidx, reason, TO_CHAR(report_date,'YYYY-MM-DD') report_date,
-		category_num, TO_CHAR(processdate,'YYYY-MM-DD') processdate , TO_CHAR(releasedate, 'YYYY-MM-DD')releasedate
-		FROM item_report
+		SELECT sellerReport_num,name, productcode, ir.memberidx, reason, TO_CHAR(report_date,'YYYY-MM-DD') report_date,
+		ir.category_num, category_name , TO_CHAR(processdate,'YYYY-MM-DD')processdate , TO_CHAR(releasedate, 'YYYY-MM-DD')releasedate
+		FROM item_report ir 
+		LEFT OUTER JOIN member_info m ON m.memberidx = ir.memberidx
+		LEFT OUTER JOIN report_category rc ON rc.category_num = ir.category_num
+		<where>
+			<if test="category != 0 ">
+				ir.category_num = #{category}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				and INSTR(reason,#{kwd}) &gt; 0
+			</if>
+		</where>
+	</select>
+	<select id="getCategoryOfReport" resultType="com.sp.app.admin.model.Report">
+		SELECT category_num, category_name FROM report_category 
+	</select>
+	
+	<select id="dataCountOfReviews" parameterType="map" resultType="Integer">
+		SELECT COUNT(*) FROM ProductReviewReport
 		<where>
 			<if test="category != 0 ">
 				category_num = #{category}
@@ -29,8 +46,36 @@
 			</if>
 		</where>
 	</select>
-	<select id="getCategoryOfReport" resultType="com.sp.app.admin.model.Report">
-		SELECT category_num, category_name FROM report_category 
+	
+	<select id="getListOfReviews" parameterType="map" resultType="com.sp.app.admin.model.Report">
+		SELECT report_code, prr.memberidx, review_num, prr.category_num, category_name, content,  TO_CHAR(report_date, 'YYYY-MM-DD') report_date,
+		TO_CHAR(processdate,'YYYY-MM-DD')processdate, name
+		FROM ProductReviewReport prr
+		LEFT OUTER JOIN member_info m ON m.memberidx = prr.memberidx
+		LEFT OUTER JOIN report_category rc ON rc.category_num = prr.category_num
+		<where>
+			<if test="category != 0 ">
+				prr.category_num = #{category}
+			</if>
+			<if test="kwd != null and kwd != '' ">
+				and INSTR(content,#{kwd}) &gt; 0
+			</if>
+		</where>
 	</select>
 	
+	<select id="findByIdOfProduct" parameterType="Long" resultType="com.sp.app.admin.model.Report">
+		SELECT sellerReport_num,name, productcode, ir.memberidx, reason, TO_CHAR(report_date,'YYYY-MM-DD') report_date,
+		ir.category_num, category_name , TO_CHAR(processdate,'YYYY-MM-DD')processdate , TO_CHAR(releasedate, 'YYYY-MM-DD')releasedate
+		FROM item_report ir 
+		LEFT OUTER JOIN member_info m ON m.memberidx = ir.memberidx
+		LEFT OUTER JOIN report_category rc ON rc.category_num = ir.category_num
+		WHERE sellerReport_num = #{num}
+	</select>
+	<select id="findByIdOfReview" parameterType="Long" resultType="com.sp.app.admin.model.Report">
+		SELECT report_code, memberidx, review_num, category_num, content, report_date, TO_CHAR(processdate,'YYYY-MM-DD')processdate
+		FROM productreviewreport prr
+		LEFT OUTER JOIN member_info m ON m.memberidx = prr.memberidx
+		LEFT OUTER JOIN report_category rc ON rc.category_num = prr.category_num
+		WHERE report_code = #{num}
+	</select>
 </mapper>

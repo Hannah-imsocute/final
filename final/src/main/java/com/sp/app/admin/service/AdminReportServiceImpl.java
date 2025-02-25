@@ -51,4 +51,43 @@ public class AdminReportServiceImpl implements AdminReportService{
 		return list;
 	}
 
+	@Override
+	public int dataCountOfReviews(Map<String, Object> map) {
+		int result = 0 ;
+		try {
+			result = mapper.dataCountOfReviews(map);
+		} catch (Exception e) {
+			log.info("==========dataCountOfReviews", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Report> getListOfReviews(Map<String, Object> map) {
+		List<Report> list = null;
+		try {
+			list = mapper.getListOfReviews(map);
+		} catch (Exception e) {
+			log.info("==================getListOfReviews", e);
+		}
+		return list;
+	}
+
+	@Override
+	public Report findById(Map<String, Object> map) {
+		Report dto = null;
+		try {
+			String mode = (String) map.get("mode");
+			long num = (Long) map.get("num");
+			if(mode.equals("seller")) {
+				dto = mapper.findByIdOfProduct(num);
+			}else {
+				dto = mapper.findByIdOfReview(num);
+			}
+		} catch (Exception e) {
+			log.info("===================findById : ", e);
+		}
+		return dto;
+	}
+
 }

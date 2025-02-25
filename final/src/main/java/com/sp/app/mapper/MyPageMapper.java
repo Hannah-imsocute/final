@@ -1,16 +1,15 @@
 package com.sp.app.mapper;
 
-import com.sp.app.model.myPage;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import com.sp.app.model.MyPage;
 
 @Mapper
 public interface MyPageMapper {
 
   // 주문 내역 불러오기
-  List<myPage> getOrdersHistory(long memberIdx);
+  List<MyPage> getOrdersHistory(long memberIdx);
   int dataCount();
 }

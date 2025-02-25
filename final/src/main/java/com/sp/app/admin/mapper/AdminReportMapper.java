@@ -14,4 +14,10 @@ public interface AdminReportMapper {
 	public List<Report> getListOfProduct(Map<String, Object> map);
 	
 	public List<Report> getCategoryOfReport();
+	
+	public int dataCountOfReviews(Map<String, Object> map);
+	public List<Report> getListOfReviews(Map<String, Object> map);
+	
+	public Report findByIdOfProduct(long num);
+	public Report findByIdOfReview(long num);
 }

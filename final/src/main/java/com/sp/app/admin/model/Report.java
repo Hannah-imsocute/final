@@ -14,16 +14,14 @@ public class Report {
 	private String processdate;
 	private String releasedate;
 	
-	
 	// 공용 
 	private String report_date;
 	private long memberidx;
-	private String nickname;
+	private String name;
 	
 	// 후기 카테고리
 	private String category_name;
 	private long category_num;
-
 	
 	// 후기 신고 
 	private long report_code;
