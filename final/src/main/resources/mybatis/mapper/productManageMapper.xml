@@ -115,10 +115,12 @@
 	</insert>
 	
 	<select id="listProduct" parameterType="map" resultType="com.sp.app.artist.model.ProductManage">
-		SELECT p.productCode, c.parentCategoryCode, c.categoryCode, item, Price, discount, addoptions, modified, thumbnail, blind, b.brand_code, b.brandName, m.memberIdx
+		SELECT p.productCode, c.parentCategoryCode, c_parent.name AS parentCategoryName, c.categoryCode, c.name AS categoryName, item, Price, discount, addoptions, modified, thumbnail, blind, b.brand_code, b.brandName, m.memberIdx
 		FROM product p 
 		JOIN productCategory c 
 	    ON p.categoryCode = c.categoryCode
+        LEFT JOIN productCategory c_parent
+        ON c_parent.categoryCode = c.parentCategoryCode 
         JOIN seller_brand b 
         ON b.brand_code = p.brand_code
         JOIN member m
@@ -164,10 +166,15 @@
 	
 	<!-- 작품 수정 -->
 	<update id="updateProduct" parameterType="com.sp.app.artist.model.ProductManage">
-		UPDATE product 
-		SET categoryCode = #{categoryCode}, item =#{item}, price = #{price}, discount = #{discount},
-			describe = #{describe}, thumbnail = #{thumbnail}, modified = SYSDATE
-		WHERE productCode = #{productCode}
+	UPDATE product 
+  	SET categoryCode = #{categoryCode}, 
+      item = #{item}, 
+      price = #{price}, 
+      discount = #{discount},
+      describe = #{describe}, 
+      thumbnail = #{thumbnail}, 
+      modified = SYSDATE
+ 	 WHERE productCode = #{productCode}
 	</update>
 	
 	<!-- 작품 수정시 이미지 삭제 -->

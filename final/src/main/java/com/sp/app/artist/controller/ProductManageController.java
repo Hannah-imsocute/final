@@ -230,8 +230,8 @@ public class ProductManageController{
 		}
 
 //    	String qs = "parentCategoryCode=" + dto.getParentCategoryCode() + "&categoryCode=" + dto.getCategoryCode() + "&page=" + page;
-    	String qs = "parentCategoryCode=" + dto.getParentCategoryCode() + "&categoryCode=" + dto.getCategoryCode();
-    	return "redirect:/artist/productManage/list/" + "?" + qs;
+
+        return "redirect:/artist/productManage/list";
 
     }
     

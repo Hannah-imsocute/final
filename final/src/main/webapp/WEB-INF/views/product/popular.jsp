@@ -343,7 +343,6 @@ $(document).ready(function() {
 $(document).ready(function() {
 	$('.product-list').on('click', '.product-box', function(){
 		let productCode = $(this).find('.product-productCode').attr('data-productCode');
-		 alert(productCode)
 		 if (!productCode) {
 		        console.warn("상품 코드가 없습니다.", $(this).attr('data-productCode'));
 		        alert("상품 코드가 없습니다.");

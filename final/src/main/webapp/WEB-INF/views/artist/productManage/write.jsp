@@ -148,7 +148,7 @@
                 <!-- 새롭게 추가한 등록 전용 엔드포인트(create)로 전송 -->
                 <form name="productForm" class="product-form" method="post" 
                       enctype="multipart/form-data" 
-                      action="${pageContext.request.contextPath}/artist/productManage/write">
+                      action="${pageContext.request.contextPath}/artist/productManage/${mode}">
                     
                     <!-- 카테고리 선택 -->
                     <div class="form-group">
