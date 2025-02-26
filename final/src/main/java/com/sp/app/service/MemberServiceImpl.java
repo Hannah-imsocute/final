@@ -4,6 +4,7 @@ import com.sp.app.mail.Mail;
 import com.sp.app.mail.MailSender;
 import com.sp.app.mapper.MemberMapper;
 import com.sp.app.model.Member;
+import com.sp.app.model.Seller;
 import com.sp.app.model.ShippingInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,14 @@ public class MemberServiceImpl implements MemberService {
 
 
   @Override
+  @Transactional
   public void insertMember(Member dto) throws Exception {
-
+	  try {
+		mapper.insertMember1(dto);
+		mapper.insertMember2(dto);
+	} catch (Exception e) {
+		log.info("==============insert", e);
+	}
   }
 
   @Override
@@ -272,6 +279,50 @@ public class MemberServiceImpl implements MemberService {
     }
     return info;
   }
+
+@Override
+public boolean checkOfSeller(String email) {
+	boolean is = false;
+	try {
+		int result = mapper.checkOfSeller(email);
+		is = result == 0 ? false : true; 
+	} catch (Exception e) {
+		log.info("=================checkOfSeller", e);
+	}
+	return is;
+}
+
+@Override
+@Transactional
+public void insertAllOfSeller(Seller seller) throws Exception {
+	
+	try {
+		// 그러면 이전에 입점신청을 받았던 기록을 들고와야함 => email 기준 승인받은걸 찾으면 될듯 => 기본키가 아니라서 부정확할까봐 걱정이됨 
+		Seller history = mapper.getHistory(seller.getEmail());
+		
+		Member member = Member.builder()
+				.email(seller.getEmail())
+				.name(history.getName())
+				.phone(history.getPhone())
+				.birth(seller.getBirth())
+				.password(seller.getPassword())
+				.nickName(seller.getNickname())
+				.build();
+		
+		// 회원  member 
+		mapper.insertMember1(member);
+		mapper.insertMember2(member);
+		
+		// 브랜드  seller_brand
+		mapper.sellerinfo(history);
+		// 작가계좌 seller_bankaccount
+		mapper.sellerBankInfo(seller);
+	
+	} catch (Exception e) {
+		log.info("===================insertAllOfSeller", e);
+		throw e;
+	}
+}
 
 
 

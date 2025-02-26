@@ -33,7 +33,7 @@
 			<div class="step-title">가입 정보 입력하기</div>
 
 			<!-- 폼 시작 -->
-			<form>
+			<form name="registerForm" method="post">
 				<!-- 이메일 -->
 				<div class="form-group">
 					<label>이메일 <span class="required">*</span></label>
@@ -57,6 +57,7 @@
 						<!-- 중복확인 버튼 -->
 						<button type="button" class="dup-check-btn">중복확인</button>
 					</div>
+					 <div class="dup-check-msg" data-valid="false" style="margin-top: 8px; color: red;"></div>
 				</div>
 
 				<!-- 이름 -->
@@ -68,7 +69,7 @@
 				<!-- 닉네임 -->
 				<div class="form-group">
 					<label>닉네임 <span class="required">*</span></label> <input
-						name="nickname" type="text" placeholder="닉네임을 입력해주세요." required>
+						name="nickName" type="text" placeholder="닉네임을 입력해주세요." required>
 				</div>
 
 				<!-- 비밀번호 -->
@@ -118,20 +119,11 @@
 							개인정보 수집 및 이용 동의
 						</label> <span class="option-link">보기</span>
 					</div>
-					<div class="checkbox-item">
-						<label> <input type="checkbox" class="chk"> [선택]
-							개인정보 수집 및 이용 동의
-						</label> <span class="option-link">보기</span>
-					</div>
-					<div class="checkbox-item">
-						<label> <input type="checkbox" class="chk"> [선택]
-							할인쿠폰/이벤트/뉴스레터 수신 동의
-						</label> <span class="option-link">보기</span>
-					</div>
 				</div>
 
 				<!-- 가입 버튼 -->
-				<button type="submit" class="submit-btn">회원가입하기</button>
+				<button type="button" class="submit-btn">회원가입하기</button>
+				<input type="hidden" name="email" value="">
 			</form>
 		</div>
 	</main>
@@ -140,43 +132,51 @@
 	</footer>
 
 	<script type="text/javascript">
-	const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
-		
-		const settings = {
-				type: method, 
-				data: requestParams,
-				dataType: responseType,
-				success:function(data) {
-					callback(data);
-				},
-				beforeSend: function(jqXHR) {
-				},
-				complete: function () {
-				},
-				error: function(jqXHR) {
-					console.log(jqXHR.responseText);
-				}
-		};
-		
-		if(file) {
-			settings.processData = false;  
-			settings.contentType = false; 
-		}
-		
-		if(contentType.toLowerCase() === 'json') {
-			settings.contentType = 'application/json; charset=utf-8';
-		}
-		
-		$.ajax(url, settings);
-	};
 	
-	$(function (){
-		//$('dup-check-btn').click(fun)
-	});
-	
-	$('.chkAll').click(function() {
+	// 아이디 중복체크 검사 
+	$('.dup-check-btn').click(function(){
+		let email = $('.email-user').val()+'@'+$('.email-domain').val();
+		
+		let url = '${pageContext.request.contextPath}/member/register/idcheck';
+		let params = {email : email};
+		
+		const callback = function(data){
+			let state = data.state;
 			
+			if(state == 'true'){
+				$('.dup-check-msg').attr('data-valid', 'true').css('color','green').text('사용 가능한 이메일입니다.');
+				$('input[name=email]').val(email);
+			}else {
+				$('.dup-check-msg').attr('data-valid', 'false').css('color','red').text('사용 불가능한 이메일입니다.');
+			}
+		};
+		ajaxRequest(url, 'post', params, 'json', callback);
 	});
+	
+	$(function(){
+		// domain change 이벤트
+		$('.domain-select').change(function(){
+			let domain = $(this).val();
+			$('.email-domain').val('');
+			$('.email-domain').val(domain);
+		});
+		
+		
+		// submit
+		$('.submit-btn').click(function(){
+			let url = '${pageContext.request.contextPath}/member/register';
+			
+			let $form = document.querySelector('form[name=registerForm]');
+			
+			$form.action = url;
+			$form.submit();
+		});
+	
+		$('.chkAll').
+	});
+	
+	
+	
 	</script>
 </body>
 </html>

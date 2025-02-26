@@ -1,6 +1,7 @@
 package com.sp.app.mapper;
 
 import com.sp.app.model.Member;
+import com.sp.app.model.Seller;
 import com.sp.app.model.ShippingInfo;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -42,6 +43,18 @@ public interface MemberMapper {
 	public void updateFailureCountReset(String userId) throws SQLException;
 
 	ShippingInfo getShippingInfo(Long memberIdx) throws Exception;
+	
+	// 회원가입 insert
+	public void insertMember1(Member dto) throws SQLException;
+	public void insertMember2(Member dto) throws SQLException;
 
-
+	// 작가 이메일 검증 
+	public int checkOfSeller(String email);
+	
+	// 입점 신청 내역 가져오기
+	public Seller getHistory(String email);
+	
+	// 브랜드 및 계좌 insert 
+	public void sellerinfo (Seller seller);
+	public void sellerBankInfo(Seller seller);
 }
