@@ -30,10 +30,10 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 	}
 
 	@Override
-	public int dataCount() {
+	public int dataCount(String kwd) {
 		int result = 0;
 		try {
-			result = mapper.dataCount();
+			result = mapper.dataCount(kwd);
 		} catch (Exception e) {
 			log.info("==============dataCount : ", e);
 		}
@@ -41,12 +41,13 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 	}
 
 	@Override
-	public List<Notice> getList(int offset, int size) {
+	public List<Notice> getList(int offset, int size, String kwd) {
 		List<Notice> list = null;
 		try {
 			Map<String, Object> map = new HashMap<>();
 			map.put("offset", offset);
 			map.put("size", size);
+			map.put("kwd", kwd);
 			
 			list = mapper.getList(map);
 			
@@ -68,25 +69,40 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 		return dto;
 	}
 
-	
+
 	
 	@Override
-	public void insertInfo(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public int dataCountOfInfo(String kwd) {
+		int result = 0;
+		try {
+			result = mapper.dataCountOfInfo(kwd);
+		} catch (Exception e) {
+			log.info("===============dataCountInfo", e);
+		}
+		return result;
 	}
 
+	
 	@Override
-	public int dataCountOfInfo() {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Information> getListOfInfo(int offset, int size, String kwd) {
+		List<Information> list = null;
+		try {
+			
+			Map<String, Object> map = new HashMap<>();
+			
+			map.put("offset", offset);
+			map.put("size", size);
+			map.put("kwd", kwd);
+			
+			list = mapper.getListOfInfo(map);
+			
+		} catch (Exception e) {
+			log.info("==================getListOfInfo", e);
+		}
+		return list;
 	}
 
-	@Override
-	public List<Information> getListOfInfo(int offset, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 	
 }

@@ -11,13 +11,14 @@ import com.sp.app.admin.model.Notice;
 
 @Mapper
 public interface NoticeManageMapper {
+	
 	public void insertNotice(Map<String, Object> map) throws SQLException;
 	public Notice findById(long num);
-	public int dataCount();
+	public int dataCount(String kwd);
 	public List<Notice> getList(Map<String, Object> map);
 	
-	public void insertInfo(Map<String, Object> map) throws SQLException;
-	public int dataCountOfInfo();
-	public List<Information> getListOfInfo(int offset, int size);
-
+	
+	public int dataCountOfInfo(String kwd);
+	public List<Information> getListOfInfo(Map<String, Object> map);
+	public void updateInfo(Information info) throws SQLException;
 }

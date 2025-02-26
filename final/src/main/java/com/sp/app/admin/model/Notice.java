@@ -18,4 +18,5 @@ public class Notice {
 	private int fixed;
 	private String create_date;
 	private long category_num;
+	private String category_name;
 }

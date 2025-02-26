@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.admin.mapper.NoticeManageMapper">
+	<insert id="insertNotice" parameterType="map">
+		INSERT INTO event_notice (evt_not_num, adminidx, subject, fixed,
+		create_date,
+		<if test=" yesOrno == '1' ">
+			category_num,
+		</if>
+		textcontent) VALUES (SEQ_EVENT_NOTICE.NEXTVAL,
+		#{dto.adminidx},#{dto.subject} ,#{dto.fixed}, SYSDATE,
+		<if test=" yesOrno == '1' ">
+			#{dto.category_num},
+		</if>
+		#{dto.textcontent} )
+	</insert>
+
+	<select id="dataCount" resultType="Integer"
+		parameterType="String">
+		SELECT COUNT(*) FROM event_notice
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0
+			</if>
+		</where>
+	</select>
+
+	<select id="getList" parameterType="map"
+		resultType="com.sp.app.admin.model.Notice">
+		SELECT evt_not_num, nickname, adminidx, subject, fixed,
+		TO_CHAR(create_date, 'YYYY-MM-DD')create_date, en.category_num, catename
+		textcontent
+		FROM event_notice en 
+		LEFT OUTER JOIN member m ON m.memberidx = en.adminidx
+		LEFT OUTER JOIN all_category ac ON ac.category_num = en.category_num
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0
+			</if>
+		</where>
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<select id="findById" parameterType="Long"
+		resultType="com.sp.app.admin.model.Notice">
+		SELECT evt_not_num, adminidx, nickname, subject, fixed, TO_CHAR(create_date,
+		'YYYY-MM-DD')create_date, en.category_num, catename, textcontent
+		FROM event_notice en 
+		LEFT OUTER JOIN member m ON m.memberidx = en.adminidx
+		LEFT OUTER JOIN all_category ac ON ac.category_num = en.category_num
+		WHERE evt_not_num = #{num}
+	</select>
+
+	<select id="dataCountOfInfo" parameterType="String"
+		resultType="Integer">
+		SELECT COUNT(*) FROM information
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0
+			</if>
+		</where>
+	</select>
+	
+	<select id="getListOfInfo" parameterType="map" resultType="com.sp.app.admin.model.Information">
+		SELECT info_num, info.memberidx, nickname, subject, textcontent, adminidx, answerstate,
+			TO_CHAR(apply_date, 'YYYY-MM-DD') apply_date ,TO_CHAR(answer_date, 'YYYY-MM-DD') answer_date, 
+			info.category_num, catename, answer_content
+		FROM information info
+		LEFT OUTER JOIN member m ON m.memberidx = info.memberidx
+		LEFT OUTER JOIN all_category ac ON ac.category_num = info.category_num
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0
+			</if>
+		</where>
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
+	</select>
+</mapper>

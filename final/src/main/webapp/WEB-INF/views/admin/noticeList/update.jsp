@@ -63,7 +63,7 @@ body {
 					<div class="mb-4">
 						<label for="subject" class="form-label">제목</label> <input
 							type="text" class="form-control" id="subject" name="subject"
-							value="${category == 'event' ?  dto.subject  : '' }"
+							value="${dto.subject}"
 							placeholder="제목을 입력하세요." required>
 					</div>
 
@@ -82,38 +82,29 @@ body {
 							<div class="d-flex gap-4">
 								<div class="form-check">
 									<input class="form-check-input" type="radio" name="fixed"
-										id="faqYes" value="1" ${category == 'event' ? 'disabled' : ''}>
+										id="faqYes" value="1" ${dto.fixed == 1 ? 'checked' : ''}>
 									<label class="form-check-label" for="faqYes">예</label>
 								</div>
 								<div class="form-check">
 									<input class="form-check-input defaultfaq" type="radio" name="fixed"
-										id="faqNo" value="0" ${ category == 'event' ? 'disabled' : ''}
-										> <label class="form-check-label" for="faqNo">아니오</label>
+										id="faqNo" value="0" ${dto.fixed == 0 ? 'checked' : ''}	>
+										 <label class="form-check-label" for="faqNo">아니오</label>
 								</div>
 							</div>
-							<!-- 당첨자 추첨하기 버튼 -->
-
-							<c:if test="${category == 'event'}">
-								<button type="button" class="btn btn-success btn-win"
-									data-valid="true"
-									style="white-space: nowrap; font-weight: bold;"
-									onclick="GetWinners();">당첨자 추첨하기</button>
-							</c:if>
+							
 						</div>
 					</div>
 
 					<!-- 카테고리 선택(Select) -->
 					<div class="mb-4">
 						<label for="category" class="form-label">카테고리</label> <select
-							class="form-select" id="category" name="category_num"
-							<c:if test="${category eq 'event'}">disabled</c:if>>
-							<option value="0">선택하세요</option>
-							<option value="2">배송</option>
-							<option value="3">주문</option>
-							<option value="4">결제</option>
-							<option value="5">회원</option>
-							<option value="6"
-								<c:if test="${category eq 'event'}">selected</c:if>>이벤트당첨</option>
+							class="form-select" id="category" name="category_num">
+							<option value="0" ${dto.category_num == 0 ? 'selected':'' }>선택하세요</option>
+							<option value="2" ${dto.category_num == 2 ? 'selected':'' }>배송</option>
+							<option value="3" ${dto.category_num == 3 ? 'selected':'' }>주문</option>
+							<option value="4" ${dto.category_num == 4 ? 'selected':'' }>결제</option>
+							<option value="5" ${dto.category_num == 5 ? 'selected':'' }>회원</option>
+							<option value="6" ${dto.category_num == 6 ? 'selected':'' }>이벤트당첨</option>
 						</select>
 					</div>
 
@@ -137,8 +128,9 @@ body {
 					fCreator : 'createSEditor2',
 					fOnAppLoad : function() {
 						// 로딩 완료 후
-						oEditors.getById['textcontent']
-								.setDefaultFont('돋움', 12);
+						oEditors.getById['textcontent'].setDefaultFont('돋움', 12);
+						let content = '<c:out value="${dto.textcontent}" />';
+						oEditors.getById['textcontent'].setIR(content);
 					},
 				});
 	</script>
@@ -184,8 +176,7 @@ body {
 					$('#category').prop('disabled', false);
 				}
 			});
-
-			$('.defaultfaq').trigger('click');
+			
 		});
 
 		function Submit() {
@@ -199,44 +190,6 @@ body {
 			$form.submit();
 		}
 		
-		function GetWinners(){
-			let valid = $('.btn-win').attr('data-valid');
-			if(valid == 'false'){
-				return false;
-			}
-			let size = prompt('당첨자 수를 입력해주세요')
-			
-			if(size == null){
-				alert('유효한 당첨자수를 지정해야합니다');
-				return false;
-			}
-			
-			let url = "${pageContext.request.contextPath}/admin/event/getwinners";
-			
-			let num = '${empty dto.event_article_num ?  0 : dto.event_article_num }';
-
-			let params = {num : num, size : size};
-			
-			const fn = function jsonreturn(data){
-				
-				let winners = '';
-				winners += '<p>==== 당첨자 목록 ======</p>';
-				let count = 0;
-				for(el of data.list){
-					let email = el.email;
-					let nickname = el.nickname;
-					let memberidx = el.memberidx;
-					
-					winners += '<p> '+ ++count +' 닉네임 : ' + nickname + ', email : ' + email + '</p>';
-				}
-				oEditors.getById["textcontent"].exec("PASTE_HTML", [winners]); //내용밀어넣기
-				
-				$('.btn-win').attr('data-valid', 'false');
-				$('.btn-win').prop('disabled', true);
-			}
-			
-			ajaxRequest(url, 'get', params ,'json', fn);
-		}
 		
 	</script>
 </body>

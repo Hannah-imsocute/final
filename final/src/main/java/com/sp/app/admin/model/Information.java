@@ -17,6 +17,7 @@ public class Information {
 	
 	private int answerstate;
 	private String answer_date;
+	private String answer_content;
 	
 	private long category_num;
 	private String category_name;
