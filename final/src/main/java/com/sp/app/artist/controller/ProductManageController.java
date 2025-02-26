@@ -1,5 +1,6 @@
 package com.sp.app.artist.controller;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,10 +109,10 @@ public class ProductManageController{
                                 HttpSession session,
                                 Model model) throws Exception {
     	
-    	Long memberIdx = getMemberIdx(session);
-    	dto.setMemberIdx(memberIdx);
+//    	Long memberIdx = getMemberIdx(session);
+//    	dto.setMemberIdx(memberIdx);
     
- //   	dto.setMemberIdx(2); // 테스트소스
+    	dto.setMemberIdx(2); // 테스트소스
 		
         // 제품(작품) 정보를 DB에 저장하는 신규 메서드
         service.insertProduct(dto, thumbnailFile, uploadPath);
@@ -233,6 +234,32 @@ public class ProductManageController{
     	return "redirect:/artist/productManage/list/" + "?" + qs;
 
     }
+    
+    @ResponseBody
+    @PostMapping("deleteFile")
+  	public Map<String, ?> deleteFile(
+  			@RequestParam(name = "image_code") long image_code,
+  			@RequestParam(name = "imageFileName") String imageFileName
+  		) throws Exception { 
+      	
+    	System.out.println("image_code"+image_code);
+    	System.out.println("imageFileName"+imageFileName);
+    	
+    	Map<String, Object> model = new HashMap<>();
+      	
+      	String state = "false";
+    	try {
+    		String pathString = uploadPath + File.separator + imageFileName;
+      		service.deleteProductFile(image_code, pathString);
+  		
+      		state = "true";
+  		} catch (Exception e) {
+  			// TODO: handle exception
+  		}
+    	model.put("state", state);
+      	return model;
+      }
+
     
  
     

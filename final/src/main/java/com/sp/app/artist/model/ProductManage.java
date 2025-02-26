@@ -36,8 +36,8 @@ public class ProductManage {
 		private String name; //상품카테고리 이름
 		private int parentCategoryCode; //상품 상위카테고리
 
-		//상품 이미지
-		private long imageCode;
+		//상품 추가 이미지
+		private long image_code;
 		private String imageFileName;
 		private List<MultipartFile> addFiles;
 		

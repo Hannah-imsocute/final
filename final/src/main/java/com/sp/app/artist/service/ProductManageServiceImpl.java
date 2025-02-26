@@ -257,4 +257,20 @@ public class ProductManageServiceImpl implements ProductManageService{
 		return storageService.deleteFile(uploadPath, filename);
 	}
 
+	@Override
+	public void deleteProductFile(long image_code, String pathString) {
+		try {
+			if (pathString != null && pathString.isBlank()) {
+				storageService.deleteFile(pathString);
+			}
+			mapper.deleteProductFile(image_code);
+			
+		} catch (Exception e) {
+			log.info("deleteProductFile : ", e);
+			
+			throw e;
+		}
+		
+	}
+
 }

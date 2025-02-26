@@ -56,37 +56,80 @@
             height: 40px;
         }
         
-         .product-option1 {
-    		margin-bottom: 15px; /* 원하는 간격(예: 20px)을 설정 */
- 		 }
-        
-        /* 다중 이미지 미리보기 스타일 */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .preview-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            animation: fadeIn 0.4s ease;
-        }
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        .preview-item:hover img {
-            transform: scale(1.05);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
+        /* 메인 이미지 & 추가 이미지 업로드 input 크기 조정 */
+		.form-group input[type="file"] {
+		    height: 30px;  /* 원하는 높이로 조정 (기본값보다 작게) */
+		    font-size: 12px;  /* 글자 크기도 줄여서 정렬 맞추기 */
+		    padding: 2px;  /* 내부 여백 줄이기 */
+		}
+		        
+		/* 메인 이미지 업로드 영역 - 회색 테두리 추가 */
+		.form-group.mainBox {
+		    border: 1px solid #ccc; /* 연한 회색 테두리 */
+		    padding: 5px; /* 내부 여백 */
+		    border-radius: 5px; /* 모서리 둥글게 */
+		}
+		
+	
+		/* 메인 이미지 크기 조정 */
+		.form-group.main img{
+		    width: 40px;
+		    height: 40px;
+		    object-fit: cover;
+		    margin-bottom:5px;
+		    border-radius: 5px;
+		
+		}
+		/* 이미지 호버 효과 */
+		.form-group.main img:hover {
+		    transform: scale(1.05);
+		}
+		
+				
+		/* 추가 이미지 크기 조정 */
+		.form-group.add img {
+		    width: 40px;
+		    height: 40px;
+		    object-fit: cover;
+		    margin-bottom:5px;
+		    border-radius: 5px;
+		}
+		
+		
+		/* 추가 이미지 업로드 영역 - 회색 테두리 추가 */
+		.form-group.addBox {
+		    border: 1px solid #ccc; /* 연한 회색 테두리 */
+		    padding: 5px; /* 내부 여백 */
+		    border-radius: 5px; /* 모서리 둥글게 */
+		}
+		
+		
+		/* 다중 이미지 미리보기 스타일 */
+		.preview-grid {
+		    display: grid;
+		    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+		    gap: 5px;
+	
+		}
+		
+		/* 추가 이미지 스타일 */
+		.add-img {
+		    width: 40px;
+		    height: 40px;
+		    object-fit: cover;
+		    transition: transform 0.3s ease;
+		}
+		
+		/* 이미지 호버 효과 */
+		.add-img:hover {
+		    transform: scale(1.05);
+		}
+		
+		/* 페이드 인 애니메이션 */
+		@keyframes fadeIn {
+		    from { opacity: 0; }
+		    to   { opacity: 1; }
+		}
     </style>
 </head>
 <body>
@@ -156,7 +199,7 @@
 											<option value="1" ${dto.optionCount==1?'selected':''}>옵션 하나</option>
 											<option value="0" ${dto.optionCount==0?'selected':''}>옵션 없음</option>
 										</select>
-								<small class="form-control-plaintext help-block">상품 재고가 존재하면 옵션 변경은 불가능합니다.</small>
+								
                     </div>
                     <div class="form-group">
                         <div class = "product-option1">
@@ -234,17 +277,29 @@
                     </div>
                     
                     <!-- 메인 이미지 업로드 -->
-                    <div class="form-group">
+                    <div class="form-group main">
                         <label>메인 이미지</label>
-                        <input type="file" name="thumbnailFile" accept="image/*">
+                        <div class="form-group mainBox">
+                        	<img src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}">       
+                        	<input type="file" name="thumbnailFile" accept="image/*">
+                        </div>
                     </div>
                     
                     <!-- 추가 이미지 업로드 + 다중 미리보기 -->
-                    <div class="form-group">
+                    <div class="form-group add">
                         <label>추가 이미지</label>
-                        <input type="file" name="addFiles" multiple accept="image/*">
                         <!-- 미리보기 영역 -->
-                        <div id="additional-images-preview" class="preview-grid"></div>
+                          <div class="form-group addBox">
+                        	<div id= "additional-images-preview" class="preview-grid">
+                        		<c:forEach var="vo" items="${listAddFiles}">
+									<img src="${pageContext.request.contextPath}/uploads/product/${vo.imageFileName}"
+										class="item delete-img add-img"
+										data-imagecode="${vo.image_code}"		
+										data-imagefilename="${vo.imageFileName}">
+								</c:forEach>
+                       		 </div>
+                        	<input type="file" name="addFiles" multiple accept="image/*">
+                        </div>
                     </div>
                     
                     <button type="submit" class="submit-btn" onclick="smartEditInDescribe()">${mode=="update"?"수정완료":"등록완료"}</button>
@@ -316,7 +371,7 @@
                 Array.from(files).forEach(file => {
                     if (file && file.type.match('imag.*')) {
                         const objectUrl = URL.createObjectURL(file);
-                        const previewItem = $('<div class="preview-item"></div>');
+                        const previewItem = $('<div class="preview-grid"></div>');
                         const img = $('<img>').attr('src', objectUrl);
     
                         // 이미지 로드 후 메모리 해제
@@ -494,6 +549,78 @@
         function smartEditInDescribe(elClickedObj) {
             oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
         }
+        
+        
+     // 대표(썸네일) 이미지
+        window.addEventListener('DOMContentLoaded', ev => {
+        	let img = '${dto.thumbnail}';
+        	
+        	const viewerEL = document.querySelector('.table-form .thumbnail-viewer');
+        	const inputEL = document.querySelector('form[name=productForm] input[name=thumbnailFile]');
+        	
+        	if( img ) { // 수정인 경우
+        		img = '${pageContext.request.contextPath}/uploads/product/' + img;
+        		viewerEL.textContent = '';
+        		viewerEL.style.backgroundImage = 'url(' + img + ')';
+        	}
+        	
+        	viewerEL.addEventListener('click', ev => {
+        		inputEL.click();
+        	});
+        	
+        	inputEL.addEventListener('change', ev => {
+        		let file = ev.target.files[0];
+        		if(! file) {
+        			viewerEL.textContent = '';
+        			if( img ) {
+        				img = '${pageContext.request.contextPath}/uploads/product/' + img;
+        			} else {
+        				img = '${pageContext.request.contextPath}/dist/images/add_photo.png';
+        			}
+        			viewerEL.style.backgroundImage = 'url(' + img + ')';
+        			
+        			return;
+        		}
+        		
+        		if(! file.type.match('image.*')) {
+        			inputEL.focus();
+        			return;
+        		}
+        		
+        		var reader = new FileReader();
+        		reader.onload = function(e) {
+        			viewerEL.textContent = '';
+        			viewerEL.style.backgroundImage = 'url(' + e.target.result + ')';
+        		}
+        		reader.readAsDataURL(file);			
+        	});
+        });
+
+        
+        
+     
+
+     // 수정에서 등록된 추가 이미지 삭제
+     $(function(){
+     	$('.delete-img').click(function(){
+     		if(! confirm('이미지를 삭제 하시겠습니까 ?')) {
+     			return false;
+     		}
+     		
+     		let $img = $(this);
+     		let image_code = $img.attr('data-imagecode');
+     		let imageFileName = $img.attr('data-imagefilename');
+     		let url = '${pageContext.request.contextPath}/artist/productManage/deleteFile';
+     		
+     		$.ajaxSetup({ beforeSend: function(e) { e.setRequestHeader('AJAX', true); } });
+     		$.post(url, {image_code:image_code, imageFileName:imageFileName}, function(data){
+     			$img.remove();
+     		}, 'json').fail(function(jqXHR){
+     			console.log(jqXHR.responseText);
+     		});
+     	});
+     });
+
         
     </script>
 </body>
