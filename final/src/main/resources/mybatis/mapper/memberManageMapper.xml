@@ -31,6 +31,10 @@
 			</choose>
 	</sql>
 	
+	
+	
+	
+	
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT COUNT(*)
 		FROM member m1

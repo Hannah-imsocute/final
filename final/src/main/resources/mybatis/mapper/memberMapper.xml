@@ -3,6 +3,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.MemberMapper">
 
+	<insert id="insertMember1" parameterType="com.sp.app.model.Member">
+		INSERT INTO member (memberidx, email, password, nickname, block, reg_date)
+		VALUES (seq_member.NEXTVAL, #{email}, #{password}, #{nickName}, 0 , SYSDATE)
+	</insert>
+	
+	<insert id="insertMember2" parameterType="com.sp.app.model.Member">
+		INSERT INTO member_info (memberidx, name, phone, dob) 
+		VALUES (seq_member.CURRVAL, #{name}, #{phone}, #{birth})
+	</insert>
 
 	<select id="loginMember" parameterType="String" resultType="com.sp.app.model.Member">
 		SELECT MEMBERIDX, email, PASSWORD, NICKNAME, BLOCK, REG_DATE, LASTMODIFIED
@@ -14,13 +23,6 @@
 		UPDATE member SET LASTLOGIN = SYSDATE, FAILCOUNT = 0
 		WHERE email = #{email}
 	</update>
-
-	<insert id="insertMember1" parameterType="com.sp.app.model.Member">
-		INSERT INTO member(memberIdx, email, PASSWORD, NICKNAME,
-						   BLOCK, REG_DATE, LASTMODIFIED, FAILCOUNT)
-		VALUES (SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{username}, 0,
-				SYSDATE, SYSDATE, 0)
-	</insert>
 
 	<select id="findByUserEmail" parameterType="String" resultType="com.sp.app.model.Member">
 		select m.MEMBERIDX, EMAIL, PASSWORD, NICKNAME,
@@ -99,6 +101,25 @@
 		WHERE MEMBERIDX = #{memberIdX} AND FIRSTADDR = 1
 	</select>
 
-
-
+	<!--  작가 회원가입 이메일 검증  -->
+	<select id="checkOfSeller" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) FROM seller_apply WHERE email = #{email} and agreed = 0
+	</select>
+	
+	<!--  입점 신청 내역 가져오기  -->
+	<select id="getHistory" parameterType="String" resultType="com.sp.app.model.Seller">
+		SELECT seller_apply_num, name, email, phone, brandname, brandintro, intropeice, forextra
+		FROM seller_apply 
+		WHERE email = #{email} and agreed = 0
+	</select>
+	
+	<insert id="sellerinfo" parameterType="com.sp.app.model.Seller">
+		INSERT INTO seller_brand (brand_code, memberidx, phone, brandname, brandintro, enable) 
+		VALUES (SEQ_SELLER_BRAND.NEXTVAL, seq_member.CURRVAL, #{phone}, #{brandName}, #{brandIntro}, 0)
+	</insert>
+	
+	<insert id="sellerBankInfo" parameterType="com.sp.app.model.Seller">
+		INSERT INTO seller_bankaccount (memberidx, bank, accnumber, accimage) 
+		VALUES (seq_member.CURRVAL, #{bank}, #{accNumber}, #{accImage})
+	</insert>
 </mapper>

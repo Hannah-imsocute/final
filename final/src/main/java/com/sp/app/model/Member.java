@@ -10,6 +10,7 @@ public class Member {
 	private long memberIdx;
 	private String email;
 	private String password;
+	private String name;
 	private String nickName;
 	private String birth;
 	private int block;
