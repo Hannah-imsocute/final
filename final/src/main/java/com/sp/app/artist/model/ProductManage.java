@@ -32,6 +32,9 @@ public class ProductManage {
 		private MultipartFile thumbnailFile; //파일 수정에서 기존 파일 삭제시 MultipartFile 필요
 		private int blind; //작품 차단여부
 		
+		private String parentCategoryName;
+		private String categoryName;
+		
 		//상품 카테고리
 		private String name; //상품카테고리 이름
 		private int parentCategoryCode; //상품 상위카테고리

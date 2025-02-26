@@ -137,9 +137,10 @@
             <thead> 
                 <tr>
                     <th>작품 코드</th>
-                    <th>대분류</th>
-                    <th>소분류</th>
+                    <th>메인카테고리</th>
+                    <th>카테고리</th>
                     <th>작품명</th>
+                    <th>작품이미지</th>
                     <th>작품가격</th>
                     <th>판매가격</th>
                     <th>할인 율</th>
@@ -152,8 +153,9 @@
 				<c:forEach var="vo" items="${productList}" varStatus="status">
 					<tr valign="middle">
 						<td>${vo.productCode}</td>
-						<td>${vo.parentCategoryCode}</td>
-						<td>${vo.categoryCode }</td>
+						<td>${vo.parentCategoryName}</td>
+						<td>${vo.categoryName }</td>
+						<td>${vo.item }</td>
 						<td class="product-subject left">
 							<div class="img-container">
 							  <img src="${pageContext.request.contextPath}/uploads/product/${vo.thumbnail}" class="img-custom">
@@ -166,7 +168,7 @@
 						<td>${vo.addOptions}</td>
 						<td>${vo.modified}</td>
 						<td>
-							<!-- 수정 버튼도 필요한 경우 productCode를 파라미터로 전달할 수 있습니다. -->
+							<!-- 수정 버튼도 필요한 경우 productCode를 파라미터로 전달. -->
 							<button type="button" class="btn border btn-update" 
 								data-productcode="${vo.productCode}"
 								data-categoryCode="${vo.categoryCode}"

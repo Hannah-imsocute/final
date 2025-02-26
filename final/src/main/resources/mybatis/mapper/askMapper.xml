@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.AskMapper">
+
+    <insert id="insertAsk" parameterType="com.sp.app.model.Ask">
+        INSERT INTO SELLER_ASK (ask_num, memberIdx, ProductCode, subject, content, category, ASKDATE, answer_state
+            ) VALUES (SELLER_ASK_SEQ.NEXTVAL, #{memberIdx}, #{productCode}, #{subject}, #{content}, #{category}, sysdate, 0)
+    </insert>
+
+    <select id="getAskList" parameterType="map" resultType="com.sp.app.model.Ask">
+        select subject, content, category, answer_state as answerState,
+               s.memberIdx as memberIdx, s.productcode as productCode,
+               p.ITEM as productName, s1.BRANDNAME as brandName,
+               askdate as askDate, answer_state as answerState, answer_content as answerContent, answer_date as answerDate
+        from SELLER_ASK s
+                 LEFT JOIN PRODUCT p ON p.PRODUCTCODE = s.PRODUCTCODE
+                 LEFT JOIN SELLER_BRAND s1 ON p.BRAND_CODE = s1.BRAND_CODE
+        where s.memberIdx = #{memberIdx}
+
+        offset #{offset} rows fetch first #{size} rows only
+    </select>
+
+    <select id="dataCount" resultType="java.lang.Integer">
+        select NVL(count(*), 0)
+        from SELLER_ASK
+        where memberIdx = #{memberIdx}
+    </select>
+
+</mapper>
