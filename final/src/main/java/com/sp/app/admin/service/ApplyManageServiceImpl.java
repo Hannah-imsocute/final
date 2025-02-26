@@ -77,7 +77,8 @@ public class ApplyManageServiceImpl implements ApplyManageService {
 	        if ("0".equals(agreed)) {  // 승인
 	            content = "<br><br>안녕하세요, " + sellerName + "님.<br><br>"
 	                    + "귀하의 입점 신청이 승인되었습니다.<br>"
-	                    + "로그인하시어 작가님의 꿈을 마음껏 펼치시길 바라겠습니다.<br><br>"
+	                    + "http://localhost:9090/member/register/seller"
+	                    + "안내드릴린 링크로 회원가입하시어 작가님의 꿈을 마음껏 펼치시길 바라겠습니다.<br><br>"
 	                    + "감사합니다.<br><br>"
 	                    + "- 뚝딱뚝딱 드림 -";
 	            subject = "뚝딱뚝딱 " + sellerName + "님 입점 신청 승인";

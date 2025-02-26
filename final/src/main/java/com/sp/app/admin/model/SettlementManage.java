@@ -21,7 +21,7 @@ public class SettlementManage {
 	private String orderStateDate;
 	
 	// 정산에 관련된 dto
-	private  String settlement_num;
+	private String settlement_num;
 	private String brand_code;
 	private String brandname;
 	private String nickname;
@@ -30,6 +30,13 @@ public class SettlementManage {
 	private String deposit;
 	private String pointbalance;
 	private String state;
+	
+	// 현금 정산 관련 dto
+	private String withdraw_num;
+	private String point_amount2;
+	private String surcharge;
+	private String withdraw_date;
+	private String state2;
 	
 	
 }

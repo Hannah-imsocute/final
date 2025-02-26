@@ -82,6 +82,7 @@
 					<table class="table write-form mb-1">
 						<tr>
 							<td width="110" class="bg-light">아이디</td>
+							<td class="col-sm-4">${dto.email}</td>
 							<td><p class="form-control-plaintext"></p></td>
 						</tr>
 						<tr>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sp.app.admin.mapper.SettlementManageMapper">
-    <!-- 회원 리스트 -->
+<mapper
+	namespace="com.sp.app.admin.mapper.SettlementManageMapper">
+	<!-- 회원 리스트 -->
 	<sql id="search-conditions">
 		<choose>
 			<when test="schType == 'email'">
@@ -15,88 +16,121 @@
 	</sql>
 
 	<sql id="role-conditions">
-			<choose>
-				<when test="role == 1">
-					AND ( authority = 'USER' )
-				</when>
-				<when test="role == 2">
-					AND ( authority = 'AUTHOR' )
-				</when>
-				<when test="role == 3">
-					AND ( authority = 'ADMIN' )
-				</when>
-				<otherwise>
-					AND ( authority = 'USER' OR authority = 'maybeUser' )
-				</otherwise>
-			</choose>
+		<choose>
+			<when test="role == 1">
+				AND ( authority = 'USER' )
+			</when>
+			<when test="role == 2">
+				AND ( authority = 'AUTHOR' )
+			</when>
+			<when test="role == 3">
+				AND ( authority = 'ADMIN' )
+			</when>
+			<otherwise>
+				AND ( authority = 'USER' OR authority = 'maybeUser' )
+			</otherwise>
+		</choose>
 	</sql>
-	
+
 	<select id="dataCount" parameterType="map" resultType="Integer">
-		SELECT COUNT(*)
+		SELECT
+		COUNT(*)
 		FROM settlement_point
-    </select>
-    
-	<select id="listSettlementMainTab1SubTab1" parameterType="map" resultType="com.sp.app.admin.model.SettlementManage">
-		SELECT p.settlement_num, p.brand_code, b.brandname, m.nickname, TO_CHAR(point_amount, '999,999,999') point_amount, TO_CHAR(settlement_date, 'YY/MM/DD') settlement_date, p.deposit, p.pointbalance, p.state
+	</select>
+
+	<select id="dataCount2" parameterType="map" resultType="Integer">
+		SELECT
+		COUNT(*)
+		FROM settlement_cash
+	</select>
+
+	<select id="listSettlementMainTab1SubTab1" parameterType="map"
+		resultType="com.sp.app.admin.model.SettlementManage">
+		SELECT p.settlement_num, p.brand_code, b.brandname,
+		m.nickname, TO_CHAR(point_amount, '999,999,999') point_amount,
+		TO_CHAR(settlement_date, 'YY/MM/DD') settlement_date, p.deposit,
+		p.pointbalance, p.state
 		FROM settlement_point p
-		JOIN seller_brand b ON b.brand_code = p.brand_code
+		JOIN seller_brand b ON
+		b.brand_code = p.brand_code
 		JOIN member m ON b.memberidx = m.memberidx
 	</select>
-	
-	<select id="subTabContent2" parameterType="map" resultType="com.sp.app.admin.model.SettlementManage">
-		SELECT p.settlement_num, p.brand_code, b.brandname, m.nickname, TO_CHAR(point_amount, '999,999,999') point_amount, TO_CHAR(settlement_date, 'YY/MM/DD') settlement_date, p.deposit, p.pointbalance, p.state
-		FROM settlement_point p
-		JOIN seller_brand b ON b.brand_code = p.brand_code
+
+	<select id="listSettlementMainTab1SubTab2" parameterType="map"
+		resultType="com.sp.app.admin.model.SettlementManage">
+		SELECT DISTINCT c.withdraw_num, c.brand_code, b.brandname,
+		m.nickname, TO_CHAR(c.point_amount, '999,999,999') point_amount2,
+		TO_CHAR(surcharge, '999,999,999') surcharge,
+		TO_CHAR(withdraw_date, 'YY/MM/DD') withdraw_date, c.state as state2
+		FROM settlement_cash c
+		JOIN settlement_point p ON c.brand_code = p.brand_code
+		JOINseller_brand b ON b.brand_code = p.brand_code
 		JOIN member m ON b.memberidx = m.memberidx
 	</select>
 
-	<select id="findById" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
+	<select id="findById" parameterType="String"
+		resultType="com.sp.app.admin.model.SettlementManage">
+		SELECT p.settlement_date, t.brand_code, o.order_code, o.productcode, t.item,
+		t.price,
+		(t.price - (t.price * t.discount / 100)) discount,
+		 (t.price * t.discount / 100) discountt,
+		(t.price - (t.price * t.discount / 100)) + (t.price * t.discount / 100)
+		realprice
+		FROM settlement_point p
+		JOIN settlement_detail d ON p.settlement_num = d.settlement_num
+		LEFT JOIN settlement_cash c ON c.brand_code = p.brand_code
+		JOIN order_item o ON o.item_code = d.item_code
+		JOIN product t ON o.productcode = t.productcode
+		WHERE o.order_code = #{order_code}
+	</select>
+
+	<select id="findByUserId" parameterType="String"
+		resultType="com.sp.app.admin.model.SettlementManage">
 
 	</select>
-	
-	<select id="findByUserId" parameterType="String" resultType="com.sp.app.admin.model.SettlementManage">
 
-	</select>
-	
 	<update id="updateFailureCountReset" parameterType="Long">
 
 	</update>
 
-    <update id="updateMember1" parameterType="map">
+	<update id="updateMember1" parameterType="map">
 
-    </update>
-    
-    <update id="updateMember2" parameterType="map">
+	</update>
 
-    </update>
-    
-    <update id="updateMemberEnabled" parameterType="map">
+	<update id="updateMember2" parameterType="map">
 
-    </update>
-    
-    <delete id="deleteMember1" parameterType="map">
+	</update>
 
-    </delete>
-    
-    <delete id="deleteMember2" parameterType="map">
+	<update id="updateMemberEnabled" parameterType="map">
 
-    </delete>
-      
-	<insert id="insertMemberStatus" parameterType="com.sp.app.admin.model.SettlementManage">
-	
+	</update>
+
+	<delete id="deleteMember1" parameterType="map">
+
+	</delete>
+
+	<delete id="deleteMember2" parameterType="map">
+
+	</delete>
+
+	<insert id="insertMemberStatus"
+		parameterType="com.sp.app.admin.model.SettlementManage">
+
 	</insert>
-	
-	
-	<select id="listMemberStatus" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
-	
-	</select>
 
-	
-	<select id="findByStatus" parameterType="Long" resultType="com.sp.app.admin.model.SettlementManage">
+
+	<select id="listMemberStatus" parameterType="Long"
+		resultType="com.sp.app.admin.model.SettlementManage">
 
 	</select>
-	
-	<!-- 어쏘러티(권한) 테이블 --> 
+
+
+	<select id="findByStatus" parameterType="Long"
+		resultType="com.sp.app.admin.model.SettlementManage">
+
+	</select>
+
+	<!-- 어쏘러티(권한) 테이블 -->
 	<update id="updateAuthority" parameterType="map">
 
 	</update>

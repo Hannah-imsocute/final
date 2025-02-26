@@ -2,6 +2,7 @@ package com.sp.app.admin.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -31,24 +32,18 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 	}
 
 	@Override
-	public List<SettlementManage> listSettlement(Map<String, Object> map) {
-		List<SettlementManage> list = null;
+	public int dataCount2(Map<String, Object> map) {
+		int result = 0;
 		
 		try {
-			list = mapper.listSettlementMainTab1SubTab1(map);
+			result = mapper.dataCount2(map);
 		} catch (Exception e) {
-			log.info("listSettlement : ", e);
+			log.info("dataCount2 : ", e);
 		}
 		
-		return list;
+		return result;
 	}
-
-	@Override
-	public SettlementManage findById(Long memberIdx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public SettlementManage findBySeller(String brandName) {
 		// TODO Auto-generated method stub
@@ -61,4 +56,68 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 		
 	}
 
+	@Override
+	public List<SettlementManage> listSettlementMainTab1SubTab1(Map<String, Object> map) {
+		List<SettlementManage> list = null;
+		
+		try {
+			list = mapper.listSettlementMainTab1SubTab1(map);
+		} catch (Exception e) {
+			log.info("listSettlementMainTab1SubTab1 : ", e);
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<SettlementManage> listSettlementMainTab1SubTab2(Map<String, Object> map) {
+		List<SettlementManage> list = null;
+		
+		try {
+			list = mapper.listSettlementMainTab1SubTab2(map);
+		} catch (Exception e) {
+			log.info("listSettlementMainTab1SubTab2 : ", e);
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<SettlementManage> listSettlementMainTab2SubTab1(Map<String, Object> map) {
+		List<SettlementManage> list = null;
+		
+		try {
+			list = mapper.listSettlementMainTab2SubTab1(map);
+		} catch (Exception e) {
+			log.info("listSettlementMainTab2SubTab1 : ", e);
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<SettlementManage> listSettlementMainTab2SubTab2(Map<String, Object> map) {
+		List<SettlementManage> list = null;
+		
+		try {
+			list = mapper.listSettlementMainTab2SubTab1(map);
+		} catch (Exception e) {
+			log.info("listSettlementMainTab2SubTab2 : ", e);
+		}
+		
+		return list;
+	}
+
+	@Override
+	public SettlementManage findById(String settlement_num) {
+		SettlementManage dto = null;
+		
+		try {
+			dto = Objects.requireNonNull(mapper.findById(settlement_num));
+		} catch (Exception e) {
+			log.info("findById : ", e);
+		}
+		
+		return dto;
+	}
 }

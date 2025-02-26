@@ -42,7 +42,7 @@
 	<div class="row g-3 mt-4">
 	    <div id="ageChart" class="col-md-6">
 	        <div class="card p-3" style="height: 400px;">
-	            <div id="ageChartContainer" style="height: 100%;"></div> <!-- 차트 컨테이너로 높이 100% -->
+	            <div id="ageChartContainer" style="height: 100%;"></div>
 	        </div>
 	    </div>
 	

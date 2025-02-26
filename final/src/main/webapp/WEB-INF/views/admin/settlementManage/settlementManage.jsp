@@ -115,26 +115,35 @@ $(function(){
     loadSubTabContent(1, 1); // 메인탭 1번, 서브탭 1번 로드
 
     // 메인탭 클릭 이벤트
-    $('button[role="tab"]').on('click', function(e){
+    $('#myTab button[role="tab"]').on('click', function(e){
         const mainTab = $(this).attr('data-tab');
         switchMainTab(mainTab);
     });
 
     // 서브탭 클릭 이벤트
-    $('button[data-sub-tab]').on('click', function(e){
+    $('#subTab button[data-sub-tab]').on('click', function(e){
         const subTab = $(this).attr('data-sub-tab');
-        const mainTab = $('#mainTab .active').attr('data-tab'); // 현재 활성화된 메인탭
+        const mainTab = $('#myTab .active').attr('data-tab'); // 현재 활성화된 메인탭 찾기
+        
+        // 기존 서브탭에서 active 제거하고 새로 클릭한 서브탭에 추가
+        $('#subTab .active').removeClass('active');
+        $(this).addClass('active');
+
         loadSubTabContent(mainTab, subTab);
     });
 });
 
 function switchMainTab(mainTab) {
-    // 활성화된 메인탭을 비활성화
-    $('button[role="tab"].active').removeClass('active');
-    // 해당 메인탭을 활성화
+    // 기존 메인탭 비활성화
+    $('#myTab .active').removeClass('active');
+    // 새 메인탭 활성화
     $('#tab-' + mainTab).addClass('active');
-    
-    // 기본적으로 서브탭 1번을 로드
+
+    // 서브탭 초기화 (기본적으로 서브탭 1번 활성화)
+    $('#subTab .active').removeClass('active');
+    $('#sub-tab-1').addClass('active');
+
+    // 서브탭 1번 콘텐츠 로드
     loadSubTabContent(mainTab, 1);
 }
 
@@ -142,7 +151,7 @@ function loadSubTabContent(mainTab, subTab) {
     const url = '/admin/settlementManage/list'; // 서버에서 데이터를 받아오는 URL
     const params = {
         mainTab: mainTab, // 메인탭 번호
-        subTab: subTab   // 서브탭 번호
+        subTab: subTab,   // 서브탭 번호
     };
 
     $.ajax({
@@ -150,58 +159,14 @@ function loadSubTabContent(mainTab, subTab) {
         type: 'GET',
         data: params,
         success: function(response) {
-            if (subTab === 1) {
-                $('#subTabContent1').html(response); // 서브탭 1의 콘텐츠 업데이트
+            $('#subTabContent1').html(''); // 기존 콘텐츠 초기화
+            if (subTab == "1") {
+                $('#subTabContent1').html(response).show();
+                $('#subTabContent2').hide();
             } else {
-                $('#subTabContent2').html(response); // 서브탭 2의 콘텐츠 업데이트
+                $('#subTabContent2').html(response).show();
+                $('#subTabContent1').hide();
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);
-        }
-    });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-$(function(){
-	$('#tab-0-0').addClass('active');
-	
-    $('button[role="tab"]').on('click', function(e){
-    	const tab = $(this).attr('data-tab');
-    	
-		if(tab !== '4') {
-			resetList();
-		} 
-    });	
-});
-
-$(function(){
-	listMember(1);
-});
-
-function listMember(page) {
-    let url = '${pageContext.request.contextPath}/admin/settlementManage/list';    
-    let formData = $('form[name=memberSearchForm]').serialize();
-    formData += '&page=' + page;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: formData,
-        dataType: 'text',
-        success: function(data) {
-            $('#nav-tabContent').html(data);        
         },
         error: function(xhr, status, error) {
             console.error('AJAX 요청 실패:', error);
@@ -260,138 +225,4 @@ $(function(){
 	});
 });
 
-function profile(memberIdx, page) {
-    // 회원 상세 보기
-    let url = '${pageContext.request.contextPath}/admin/settlementManage/profile';
-    let formData = 'memberIdx=' + memberIdx + '&page=' + page;
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: formData,
-        dataType: 'text',
-        success: function(data) {
-            $('#nav-tabContent').html(data);  // 받아온 데이터를 해당 요소에 삽입
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);  // 에러 처리
-        }
-    });
-}
-
-function statusDetailesMember() {
-	$('#memberStatusDetailesDialogModal').modal('show');	
-}
-
-function selectStatusChange() {
-	const f = document.memberStatusDetailesForm;
-
-	let code = f.reason.value;
-	
-	if(! code) {
-		return;
-	}
-
-	if(code!=='0' && code!=='8') {
-		f.reason.value = code;
-	}
-	
-	f.reason.focus();
-}
-
-function updateMember() {
-	$('#memberUpdateDialogModal').modal('show');
-}
-
-function updateMemberOk(page) {
-    // 회원 정보 변경(권한, 이름, 생년월일)
-    const f = document.memberUpdateForm;
-
-    if (!f.email.value) {
-        alert('이름을 입력 하세요.');
-        f.email.focus();
-        return;
-    }
-
-    if (f.authority.value === 'maybeUSer') {
-        f.block.value = '1';    
-    }
-
-    if (!confirm('회원 정보를 수정하시겠습니까 ? ')) {
-        return;
-    }
-
-    let url = '${pageContext.request.contextPath}/admin/settlementManage/updateMember';
-    let formData = $('#memberUpdateForm').serialize();
-
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        dataType: 'json',
-        success: function(data) {
-            listMember(page);  // 회원 목록을 갱신
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);  // 에러 처리
-        }
-    });
-
-    $('#memberUpdateDialogModal').modal('hide');
-}
-
-
-function deleteMember(memberIdx) {
-	// 회원 삭제
-	
-}
-
-function updateStatusOk(page) {
-    // 회원 상태 변경
-    const f = document.memberStatusDetailesForm;
-
-    if (!f.reason.value) {
-        alert('상태 코드를 선택하세요.');
-        f.reason.focus();
-        return;
-    }
-
-    if (!confirm('상태 정보를 수정하시겠습니까 ? ')) {
-        return;
-    }
-
-    let url = '${pageContext.request.contextPath}/admin/settlementManage/updateMemberStatus';
-    let formData = $('#memberStatusDetailesForm').serialize();
-
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        dataType: 'json',
-        success: function(data) {
-            listMember(page);  // 회원 목록 갱신
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX 요청 실패:', error);  // 에러 처리
-        }
-    });
-
-    $('#memberStatusDetailesDialogModal').modal('hide');
-}
-
-
-
-$(function(){
-	// 모달창이 닫힐때 aria-hidden="true"와 포커스 충돌로 발생하는 에러 해결
-	$('#nav-tabContent').on('hide.bs.modal', '#memberUpdateDialogModal', function () {
-		$('button, input, select, textarea').each(function () {
-	        $(this).blur();
-	    });
-	});
-	$('#nav-tabContent').on('hide.bs.modal', '#memberStatusDetailesDialogModal', function () {
-		$('button, input, select, textarea').each(function () {
-	        $(this).blur();
-	    });
-	});	
-});
 </script>
