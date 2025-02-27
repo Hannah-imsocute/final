@@ -126,7 +126,7 @@
     <!--유저 쿠폰 조회-->
     <select id="getCouponList" parameterType="Long" resultType="com.sp.app.model.Coupon">
         select COUPONCODE, c.VALID as couponValid, c.RATE as couponRate,
-               c.EXPIREDATE as expireDate
+               c.COUPONSTART as couponStart, c.EXPIREDATE as expireDate, uc.VALID as couponValid
         from USER_HAVE_COUPON uc
         left join COUPON c on c.COUPON_CODE = uc.COUPONCODE
         where memberIdx = #{memberIdx}

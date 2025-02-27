@@ -4,6 +4,7 @@ import com.sp.app.model.MemberPoint;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -23,5 +24,11 @@ public interface PointMapper {
 
     long getPointSaveNUm();
 
-    void insertReviewPoint() throws SQLException; // 포인트 적립
+    void insertReviewPoint(MemberPoint point) throws SQLException; // 포인트 적립
+
+    List<MemberPoint> getUserSaveAmount1(long memberIdx);
+
+    int dataCount(long memberIdx);
+
+    int getSaveAmount(long memberIdx); // 포인트누적금액
 }

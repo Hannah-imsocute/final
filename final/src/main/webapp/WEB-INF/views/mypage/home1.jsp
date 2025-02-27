@@ -3,8 +3,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!DOCTYPE html>
-<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>내 정보</title>
@@ -240,7 +238,8 @@
       text-align: center;
     }
     .explore-btn {
-      margin-top: 10px;
+      display: block;              /* 버튼을 블록요소로 변경 */
+      margin: 10px auto;           /* 가운데 정렬 */
       background-color: #fa7c00;
       color: #fff;
       border: none;
@@ -248,6 +247,7 @@
       padding: 8px 16px;
       cursor: pointer;
       font-size: 0.9rem;
+      transition: background-color 0.3s;
     }
     .explore-btn:hover { background-color: #e26d00; }
     footer {
@@ -402,6 +402,77 @@
     #submitWriteReview:hover {
       background-color: #e26d00;
     }
+
+    /* ==================== 쿠폰 모달 (새로운 디자인) ==================== */
+    #couponModal {
+      display: none;
+      position: fixed;
+      z-index: 2100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      overflow-y: auto;
+      padding-top: 80px;
+    }
+    #couponModal .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      position: relative;
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    #couponModal .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #fa7c00;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    #couponModal .modal-content .close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.2s;
+    }
+    #couponModal .modal-content .close:hover {
+      color: #fa7c00;
+    }
+    #couponModal .modal-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #couponModal .modal-content li {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #couponModal .modal-content li:last-child {
+      border-bottom: none;
+    }
+    #couponModal .modal-content .coupon-code {
+      font-weight: bold;
+      color: #333;
+    }
+    #couponModal .modal-content .coupon-expire {
+      color: #999;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -442,7 +513,7 @@
     </div>
 
     <div class="notice-box">
-      <p>한번만 구매하면 다음을 통한 혜택을 받을 수 있어요!</p>
+      <p>오늘도 뚝딱뚝딱 하로 가볼까</p>
     </div>
     <div class="coupon-box">
       <p>
@@ -475,15 +546,18 @@
                     </div>
                     <div class="shipping-fee">배송비: 무료</div>
                     <div class="product-actions">
-                      <button>반품신청</button>
-                      <button>교환신청</button>
-                      <!-- 모달을 띄우는 버튼 -->
-                      <button id="openWriteReviewBtn" class="btn-review"
-                              data-product-code="${order.productCode}"
-                              data-product-name="${order.productName}"
-                              data-product-image="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}">
-                        상품평 작성
-                      </button>
+                      <button class="btn-refunds">반품신청</button>
+                      <button class="btn-refunds">교환신청</button>
+
+                      <c:if test="${not empty ordersHistory}">
+                        <button id="openWriteReviewBtn" class="btn-review"
+                                data-product-code="${order.productCode}"
+                                data-product-name="${order.productName}"
+                                data-product-order="${order.orderCode}"
+                                data-product-image="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}">
+                          상품평 작성
+                        </button>
+                      </c:if>
                     </div>
                   </div>
                   <div class="cart-icon"
@@ -509,7 +583,7 @@
     </div>
 
     <div class="banner-box">
-      졸업의 주인공을 찬란하고 빛나게 (배너 예시)
+      졸업의 주인공을 찬란하고 빛나게
     </div>
 
     <div class="section-title">
@@ -534,7 +608,7 @@
     </div>
     <div class="list-box">
       <p class="empty-msg">최근 본 작품이 없습니다.</p>
-      <button class="explore-btn">지금 구경하기</button>
+      <button class="explore-btn" onclick="location.href='${pageContext.request.contextPath}/product/category'">뚝딱뚝딱 하기</button>
     </div>
   </div>
 </div>
@@ -595,6 +669,7 @@
       <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
       <input type="hidden" id="productCode" name="productCode" value="">
       <input type="hidden" id="productName" name="productName" value="">
+      <input type="hidden" id="orderCode" name="orderCode" value="">
       <!-- 작성완료 버튼 -->
       <button type="button" id="submitWriteReview" class="btn-submit">작성완료</button>
     </form>
@@ -609,10 +684,12 @@
     $('.btn-review').click(function(){
       var productCode = $(this).data('product-code');
       var productName = $(this).data('product-name');
+      var orderCode = $(this).data('product-order');
       var productImage = $(this).data('product-image');
 
       $('#productCode').val(productCode);
       $('#productName').val(productName);
+      $('#orderCode').val(orderCode);
 
       $('#reviewProductImage').attr('src', productImage);
       $('#reviewProductName').text(productName);
@@ -678,7 +755,6 @@
     });
 
     $(".cart-icon").click(function(event){
-      event.preventDefault();
       var productCode = $(this).data('product-code');
       var price = $(this).data('price');
       var quantity = 1;
@@ -714,6 +790,23 @@
       }
     });
   });
+
+  $(function () {
+    $('.btn-refunds').click(function (){
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: params,
+        dataType: "text",
+        success: function(data){
+          alert('상품을 장바구니에 담았습니다.');
+        },
+        error: function(jqXHR) {
+          console.log(jqXHR.responseText);
+        }
+      });
+    })
+  })
 </script>
 </body>
 </html>

@@ -18,7 +18,7 @@
     </insert>
 
     <update id="updateReview" parameterType="com.sp.app.model.Review">
-        update PRODUCTREVIEW set content = #{content}, set starrate = #{starrate}
+        update PRODUCTREVIEW set content = #{content}, starrate = #{starRate}
         where memberIdx = #{memberIdx} and review_num = #{reviewNum}
     </update>
 
@@ -29,13 +29,28 @@
     <select id="dataCount" parameterType="Long" resultType="Integer">
         SELECT NVL(COUNT(*), 0)
         FROM PRODUCTREVIEW
+        where memberIdx = #{memberIdx}
     </select>
 
-    <select id="getlistReview" parameterType="map" resultType="com.sp.app.model.Review">
-        select pr.REVIEW_NUM, pr.MEMBERIDX, pr.CONTENT, pr.STARRATE, m.NICKNAME, pi.IMAGE
+  <!--  <select id="getlistReview" parameterType="map" resultType="com.sp.app.model.Review">
+        select pr.REVIEW_NUM, pr.MEMBERIDX, pr.CONTENT, pr.STARRATE,
+               pr ,m.NICKNAME, pi.IMAGE
         from PRODUCTREVIEW pr
                  LEFT JOIN MEMBER m ON pr.MEMBERIDX = m.MEMBERIDX
                  LEFT JOIN PRODUCTREVIEWIMAGE pi ON pr.REVIEW_NUM = pi.REVIEW_NUM
+        where pr.MEMBERIDX = #{memberIdx}
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+-->
+    <select id="getlistReview" parameterType="map" resultType="com.sp.app.model.Review">
+        select pr.REVIEW_NUM as reviewNum, pr.MEMBERIDX as memberIdx, pr.CONTENT, pr.STARRATE as starRate,
+              pi.IMAGE as image, o.ITEM_CODE as itemCode, o.PRODUCTCODE as productCode, p.ITEM as productName,
+             p.THUMBNAIL
+        from PRODUCTREVIEW pr
+                 LEFT JOIN MEMBER m ON pr.MEMBERIDX = m.MEMBERIDX
+                 LEFT JOIN PRODUCTREVIEWIMAGE pi ON pr.REVIEW_NUM = pi.REVIEW_NUM
+                 LEFT JOIN ORDER_ITEM o ON o.PRODUCTCODE = pr.PRODUCTCODE
+                 LEFT JOIN PRODUCT p ON p.PRODUCTCODE = o.PRODUCTCODE
         where pr.MEMBERIDX = #{memberIdx}
         OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
     </select>
@@ -45,5 +60,40 @@
         from PRODUCTREVIEWIMAGE
         where REVIEW_NUM = #{reviewNum}
     </select>
+
+    <select id="getReviewHistory" parameterType="long" resultType="com.sp.app.model.MyPage">
+        SELECT
+            p.order_code      AS orderCode,
+            pr.PRODUCTCODE    AS productCode,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM PRODUCTREVIEW rev
+                             JOIN ORDER_ITEM oi2 ON oi2.PRODUCTCODE = rev.PRODUCTCODE
+                    WHERE oi2.ORDER_CODE = p.order_code
+                      AND rev.PRODUCTCODE = pr.PRODUCTCODE
+                ) THEN 1 ELSE 0
+                END AS reviewCount
+        FROM product_order p
+                 JOIN order_item i ON p.order_code = i.order_code
+                 JOIN product pr   ON i.productcode = pr.productcode
+                 JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+                 JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE p.memberidx = #{memberIdx}
+    </select>
+
+
+    <select id="getReviewUpdateNum" parameterType="long" resultType="com.sp.app.model.Review">
+        SELECT
+            p.review_num as reviewNum,
+            p.starrate as starRate,
+            p.content,
+            pe.IMAGE,
+            memberIdx as memberIdx
+        FROM PRODUCTREVIEW p
+                 LEFT JOIN PRODUCTREVIEWIMAGE pe ON p.REVIEW_NUM = pe.REVIEW_NUM
+        WHERE p.review_num = #{reviewNum}
+    </select>
+
 
 </mapper>

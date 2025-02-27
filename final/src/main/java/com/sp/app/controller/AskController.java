@@ -58,6 +58,7 @@ public class AskController {
             model.addAttribute("dataCount", dataCount);
             model.addAttribute("total_page", total_page);
             model.addAttribute("askList", askList);
+            model.addAttribute("page", current_page);
 
         } catch(Exception e) {
             log.error("문의하기 내역 불러오던 중 오류 발생..", e);

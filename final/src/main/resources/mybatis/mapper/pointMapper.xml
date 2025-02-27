@@ -3,23 +3,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.PointMapper">
 
-    <!--포인트 이력 등록-->
-    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
-    <!--        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">-->
-    <!--            SELECT SEQ_POINT_EXPIRED.nextval FROM dual-->
-    <!--        </selectKey>-->
-    <!--        insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE)-->
-    <!--        VALUES (#{pointSaveNum}, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate)-->
-    <!--    </insert>-->
-
-    <!--    <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">-->
-    <!--&lt;!&ndash;        <selectKey keyProperty="pointSaveNum" resultType="long" order="BEFORE">&ndash;&gt;-->
-    <!--&lt;!&ndash;            SELECT SEQ_POINT_EXPIRED.nextval FROM dual&ndash;&gt;-->
-    <!--&lt;!&ndash;        </selectKey>&ndash;&gt;-->
-    <!--        insert into POINT_EXPIRED (POINT_SAVE_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)-->
-    <!--        VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})-->
-    <!--    </insert>-->
-
     <insert id="insertPointHistory" parameterType="com.sp.app.model.MemberPoint">
         insert into POINT_EXPIRED (EXPIRED_NUM, MEMBERIDX, ORDER_CODE, USEDAMOUNT, USEDDATE, POINT_SAVE_NUM)
         VALUES (SEQ_POINT_EXPIRED.nextval, #{memberIdx}, #{orderCode}, #{usedAmount}, sysdate, #{pointSaveNum})
@@ -60,11 +43,19 @@
     </select>
 
     <!-- 회원이 사용한 포인트 총합 조회 -->
-    <select id="getUsedPoint" parameterType="Long" resultType="int">
+   <select id="getUsedPoint" parameterType="Long" resultType="int">
         SELECT NVL(SUM(USEDAMOUNT), 0) AS usedPoint
         FROM POINT_EXPIRED
         WHERE MEMBERIDX = #{memberIdx}
     </select>
+
+<!--
+    <select id="getUsedPoint" parameterType="Long" resultType="int">
+        select NVL((SUM(BALANCE)), 0)
+        from POINT_SAVE
+        where MEMBERIDX = 1 and ENABLE = 0;
+    </select>
+-->
 
     <select id="getPointSaveNum" parameterType="long" resultType="long">
         SELECT point_save_num
@@ -83,8 +74,24 @@
     </insert>
 
 
+    <select id="getUserSaveAmount1" parameterType="long" resultType="com.sp.app.model.MemberPoint">
+        select SAVEAMOUNT as saveAmount, SAVEDATE as saveDate, EXPIREDATE as expireDate, REASON, ENABLE
+        from POINT_SAVE where MEMBERIDX = #{memberIdx}
+    </select>
 
 
+    <select id="dataCount" resultType="java.lang.Integer">
+        select nvl(count(*), 0)
+        from POINT_SAVE
+        where MEMBERIDX = #{memberIdx}
+    </select>
+
+
+    <select id="getSaveAmount" resultType="java.lang.Integer">
+        select NVL(SUM(SAVEAMOUNT), 0)
+        from POINT_SAVE
+        where MEMBERIDX = #{memberIdx}
+    </select>
 
 
 </mapper>

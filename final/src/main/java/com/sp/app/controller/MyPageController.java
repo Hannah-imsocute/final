@@ -6,7 +6,6 @@ import com.sp.app.model.*;
 import com.sp.app.service.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,45 +35,42 @@ public class MyPageController {
     private final PointService pointService;
     private final MyPageService myPageService;
     private final PaginateUtil paginateUtil;
+    private final ReviewService reviewService;
+    private final ChangeService changeService;
 
 
-//	private String uploadPath;
-//
-//	@PostConstruct
-//	public void init() {
-//		uploadPath = this.storageService.getRealPath("/uploads/mypage");
-//	}
+	private String uploadPath;
 
-    private String uploadPath;
-
-    @PostConstruct
-    public void init() {
-        uploadPath = this.storageService.getRealPath("/uploads/review");
-    }
-
+	@PostConstruct
+	public void init() {
+		uploadPath = this.storageService.getRealPath("/uploads/mypage");
+	}
 
     public String getUserProfile(HttpSession session, Model model) {
         try {
             SessionInfo member = (SessionInfo) session.getAttribute("member");
+            if(member == null) {
+                return "redirect:/member/login";
+            }
             Member userProfile = memberService.findByUserEmail(member.getEmail());
-            model.addAttribute("userProfile", userProfile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            String profileImageFile = imageUploadService.getProfileImageFile(member.getMemberIdx());
 
+            session.setAttribute("userProfile", userProfile);
+            session.setAttribute("profileImageFile", profileImageFile);
+
+            model.addAttribute("userProfile", userProfile);
+            model.addAttribute("profileImageFile", profileImageFile);
+
+
+        } catch (Exception e) {
+
+        }
         return "mypage/sidebar";
     }
 
-//	@ModelAttribute("profileImageFile")
-//	public String getProfileImageFile(@ModelAttribute("userProfile") Member userProfile) {
-//		return userProfile.get();
-//	}
-
-
     @GetMapping("home")
     public String home(
-            HttpSession session, Model model
-    ) {
+            HttpSession session, Model model) {
         try {
             SessionInfo member = (SessionInfo) session.getAttribute("member");
             // 쿠폰 리스트 가져오기
@@ -96,7 +95,15 @@ public class MyPageController {
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("ordersHistory", ordersHistory);
 
-//			model.addAttribute("orderList", orderList);
+//            Member byUserEmail = memberService.findByUserEmail(member.getEmail());
+            String profileImageFile = imageUploadService.getProfileImageFile(member.getMemberIdx());
+
+            session.setAttribute("userProfile", userProfile);
+            session.setAttribute("profileImageFile", profileImageFile);
+
+            model.addAttribute("userProfile", userProfile);
+            model.addAttribute("profileImageFile", profileImageFile);
+
         } catch (Exception e) {
             log.error("마이페이지  예외 발생", e);
         }
@@ -108,7 +115,7 @@ public class MyPageController {
     public Map<String, Object> image(
             HttpSession session,
             @RequestParam("profileFile") MultipartFile file,
-            UserImage userImage
+            UserImage dto
     ) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -116,11 +123,10 @@ public class MyPageController {
             if (info == null) {
                 throw new Exception("로그인 정보가 없습니다.");
             }
-            // 이미지 업로드 후 저장된 파일명 반환
-            String savedFilename = imageUploadService.uploadImage(file);
-            userImage.setImageFileName(savedFilename);
-            // 기존 프로필 이미지 파일 조회 (memberService에서 해당 회원의 프로필 이미지 파일명을 반환)
-//			String profileImageFile = memberService.getProfileImageFile(info.getMemberIdx());
+
+            dto.setMemberIdx(info.getMemberIdx());
+
+            String savedFilename = imageUploadService.uploadImage(file, dto);
 
             map.put("success", true);
             map.put("image", savedFilename);
@@ -134,21 +140,150 @@ public class MyPageController {
     @GetMapping("detail")
     public String detail(
             @RequestParam(value = "page", defaultValue = "1") int current_page,
-            HttpSession session, Model model) {
+            @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+            HttpSession session, Model model, HttpServletRequest request) {
         try {
 			int size = 5;
 			int dataCount = 0;
 
-
             SessionInfo member = (SessionInfo) session.getAttribute("member");
-            List<MyPage> ordersHistory = myPageService.getOrdersHistory(member.getMemberIdx());
+
+            dataCount = myPageService.dataCount(member.getMemberIdx()); // 구매한 내역 개수
+
+            int total_page = paginateUtil.pageCount(dataCount, size); // 전체 페이지
+
+            current_page = Math.min(current_page, total_page); // 현재 페이지와 전체 페이지 비교
+
+            int offset = (current_page - 1) * size;
+            if(offset < 0) offset = 0;
+
+            String cp = request.getContextPath();
+            String listUrl = cp + "/review/detail";
+
+            if(keyword != null && !keyword.isEmpty()){
+                listUrl += "?keyword=" + keyword;
+            }
+
+            String paging = paginateUtil.paging(current_page, total_page, listUrl);
+            Map<String, Object> map = new HashMap<>();
+            map.put("offset", offset);
+            map.put("size", size);
+            map.put("dataCount", dataCount);
+            map.put("memberIdx", member.getMemberIdx());
+
+
+            List<MyPage> ordersHistory = myPageService.getOrdersHistory1(map);
             model.addAttribute("ordersHistory", ordersHistory);
+            model.addAttribute("paging", paging);
+            model.addAttribute("size", size);
+            model.addAttribute("offset", offset);
+            model.addAttribute("total_page", total_page);
+            model.addAttribute("page", current_page);
+
+
+//            List<Change> changeList = changeService.getChangeState(member.getMemberIdx());
+//            Map<Long, Change> changeMap = new HashMap<>();
+//            for (Change c : changeList) {
+//                changeMap.put(c.getItemCode(), c);
+//                int changeState = c.getChangeState();
+//                model.addAttribute("changeState", changeState);
+//            }
+//            model.addAttribute("changeList", changeList);
+//            model.addAttribute("changeMap", changeMap);
+            return "mypage/detail";
         } catch (Exception e) {
             log.error("detail", e);
             throw new RuntimeException(e);
         }
-        return "mypage/detail";
     }
+
+    @GetMapping("orderDetail")
+    public String orderDetail(
+            @RequestParam("orderCode") String orderCode,
+            HttpSession session, Model model) {
+        try {
+            SessionInfo member = (SessionInfo) session.getAttribute("member");
+            if (member == null) {
+                return "redirect:/member/login";
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("memberIdx", member.getMemberIdx());
+            map.put("orderCode", orderCode);
+
+            MyPage orderDetail = myPageService.getOrderHistoryDetail(map);
+            model.addAttribute("orderDetail", orderDetail);
+
+        } catch (Exception e) {
+            log.error("주문상세 조회 중 오류 발생", e);
+            return "mypage/detail";
+        }
+        return "mypage/orderDetail"; // JSP 파일명
+    }
+
+
+    @GetMapping("refunds")
+    public String changeRequest(@ModelAttribute Change change,
+                                @RequestParam long itemCode,
+                                HttpSession session, Model model) {
+        try {
+            SessionInfo member = (SessionInfo) session.getAttribute("member");
+            changeService.insertChangeRequest(change);
+
+
+        } catch(Exception e) {
+            log.error("changeRequest", e);
+        }
+        return "redirect:/mypage/detail";
+    }
+
+    @GetMapping("refunds/detail")
+    public String changeDetail(
+            @RequestParam(value = "page", defaultValue = "1") int current_page,
+            @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
+            HttpServletRequest request, HttpSession session, Model model) {
+
+        try {
+            int size = 5;
+            int dataCount = 0;
+            SessionInfo member = (SessionInfo) session.getAttribute("member");
+            if(member == null) {
+                log.error("member가 null..");
+            }
+            dataCount = changeService.dataCount(member.getMemberIdx());
+
+            int total_page = paginateUtil.pageCount(dataCount, size);
+
+            current_page = Math.min(current_page, total_page);
+
+            int offset = (current_page - 1) * size;
+            if(offset < 0) offset = 0;
+
+            String cp = request.getContextPath();
+            String listUrl = cp + "/mypage/refunds/detail";
+
+            String paging = paginateUtil.paging(current_page, total_page, listUrl);
+            Map<String, Object> map = new HashMap<>();
+            map.put("offset", offset);
+            map.put("size", size);
+            map.put("dataCount", dataCount);
+            map.put("memberIdx", member.getMemberIdx());
+
+            List<Change> requestList = changeService.getRequestList(map);
+            log.error("requestList{}", requestList);
+            model.addAttribute("paging", paging);
+            model.addAttribute("dataCount", dataCount);
+            model.addAttribute("offset", offset);
+            model.addAttribute("total_page", total_page);
+            model.addAttribute("size", size);
+            model.addAttribute("page", current_page);
+            model.addAttribute("requestList", requestList);
+        } catch(Exception e) {
+            log.error("changeDetail error", e);
+        }
+        return "mypage/refunds";
+    }
+
 
 
 }

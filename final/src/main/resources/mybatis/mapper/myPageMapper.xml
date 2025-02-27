@@ -30,9 +30,106 @@
     ROWS ONLY-->
 
     <select id="dataCount" parameterType="long" resultType="Integer">
-        SELECT NVL(COUNT(*), 0) FROM product
-        WHERE categoryCode = #{categoryCode}
+        SELECT
+            NVL(count(*), 0) as count
+        FROM   product_order p
+            JOIN order_item i ON p.order_code = i.order_code
+            JOIN product pr   ON i.productcode = pr.productcode
+            JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+            JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE  p.memberidx = #{memberIdx}
+        ORDER  BY p.order_date DESC
+    </select>
+
+  <!--  <select id="getOrdersHistory1" parameterType="map"
+            resultType="com.sp.app.model.MyPage">
+        SELECT p.order_code     AS orderCode,
+               i.order_state    AS orderState,
+               i.QUANTITY       AS quantity,
+               pk.STATE         AS packageState,
+               pr.ITEM          AS productName,
+               pr.PRODUCTCODE as productCode,
+               pr.PRICE as price,
+               s.BRANDNAME      AS brandName,
+               pr.THUMBNAIL as thumbnail,
+               TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
+               i.quantity       AS quantity,
+               i.price          AS netPay
+        FROM   product_order p
+                   JOIN order_item i ON p.order_code = i.order_code
+                   JOIN product pr   ON i.productcode = pr.productcode
+                   JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+                   JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE  p.memberidx = #{memberIdx}
+        ORDER  BY p.order_date DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+        </select>-->
+
+    <select id="getOrdersHistory1" parameterType="map" resultType="com.sp.app.model.MyPage">
+        SELECT
+            p.order_code      AS orderCode,
+            i.order_state     AS orderState,
+            i.QUANTITY        AS quantity,
+            i.ITEM_CODE       AS itemCode,
+            pk.STATE          AS packageState,
+            pr.ITEM           AS productName,
+            pr.PRODUCTCODE    AS productCode,
+            pr.PRICE          AS price,
+            s.BRANDNAME       AS brandName,
+            pr.THUMBNAIL      AS thumbnail,
+            TO_CHAR(p.order_date, 'YYYYMMDD') AS orderDate,
+            i.price           AS netPay,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM PRODUCTREVIEW pr2
+                    WHERE pr2.PRODUCTCODE = pr.PRODUCTCODE
+                      AND pr2.MEMBERIDX = #{memberIdx}
+                ) THEN 1 ELSE 0
+                END AS reviewCount
+        FROM product_order p
+                 JOIN order_item i ON p.order_code = i.order_code
+                 JOIN product pr   ON i.productcode = pr.productcode
+                 JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+                 JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+        WHERE p.memberidx = #{memberIdx}
+        ORDER BY p.order_date DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+
+    <select id="getOrderHistoryDetail" resultType="com.sp.app.model.MyPage">
+        SELECT
+            p.order_code      AS orderCode,
+            i.order_state     AS orderState,
+            i.QUANTITY        AS quantity,
+            i.ITEM_CODE       AS itemCode,
+            pk.STATE          AS packageState,
+            pr.ITEM           AS productName,
+            pr.PRODUCTCODE    AS productCode,
+            pr.PRICE          AS price,
+            pr.DISCOUNT       AS discount,
+            s.BRANDNAME       AS brandName,
+            pr.THUMBNAIL      AS thumbnail,
+            TO_CHAR(p.order_date, 'YYYYMMDD') AS orderDate,
+            i.price           AS netPay,
+            pk.RECEIVERNAME as receiverName, pk.PHONE,
+            pk.ADDRTITLE as addrTitle,
+            pk.ADDRDETAIL as addrDetail,
+            i.SHIPPING,
+            ph.BYMETHOD, ph.CARDNUMBER as cardNumber, ph.PROVIDER as provider
+        FROM product_order p
+                 JOIN order_item i ON p.order_code = i.order_code
+                 JOIN product pr   ON i.productcode = pr.productcode
+                 JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
+                 JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
+                 JOIN PAYBYMETHOD ph ON p.ORDER_CODE = ph.ORDER_CODE
+                 JOIN USER_HAVE_COUPON uc ON uc.MEMBERIDX = p.MEMBERIDX
+        WHERE p.memberidx = #{memberIdx} and i.ORDER_CODE = #{orderCode}
+        ORDER BY p.order_date DESC
     </select>
 
 
+    <!--    <if test="kwd != null and kwd != ''">-->
+<!--        AND INSTR(subject, #{kwd}) &gt; 0-->
+<!--    </if>-->
 </mapper>

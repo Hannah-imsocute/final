@@ -24,5 +24,17 @@ public class MyPage {
   private int price;
   private long productCode;
   private int reviewCount;
+  private long itemCode;
+  private String addrTitle;
+  private String addrDetail;
+  private String receiverName;
+  private String phone;
+  private String bymethod;
+  private long cardNumber;
+  private String provider;
+  private int shipping;
+  private double discount;
+
+
 
 }

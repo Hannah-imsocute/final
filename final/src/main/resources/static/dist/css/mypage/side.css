@@ -1,43 +1,75 @@
-/* side.css */
 .sidebar {
     width: 220px;
     margin-top: 20px;
 }
 
-.sidebar .profile-box {
-    background-color: #fff;
-    border: 1px solid #fa7c00;
-    border-radius: 8px;
+/* 프로필 박스: 원형 */
+.profile-box {
+    position: relative;
+    width: 180px;      /* 원의 지름 */
+    height: 180px;     /* 원의 지름 */
+    margin: 0 auto 15px auto;
+    border: 2px solid #fa7c00;
+    border-radius: 50%;        /* 완전한 원 */
+    overflow: hidden;
+    background-color: #fff6ed;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
     text-align: center;
-    padding: 20px 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar .profile-box button {
+/* 마우스 오버 효과 */
+.profile-box:hover {
+    background-color: #ffe8d6;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 업로드 버튼: 프로필 박스 전체를 덮음 */
+.profile-upload-btn {
+    width: 100%;
+    height: 100%;
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
 }
 
-.sidebar .profile-box .profile-pic {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+/* 프로필 이미지: 원 내부에 꽉 차게 */
+.profile-pic {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
-    margin: 0 auto;
+    border-radius: 50%;
 }
 
-.sidebar .profile-box .realname {
-    margin-top: 12px;
+/* 기본 프로필 아이콘 (Font Awesome) */
+.default-icon {
+    font-size: 90px;  /* 원의 지름에 맞추어 */
+    color: #fa7c00;
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 180px; /* 원의 높이와 동일하여 중앙 정렬 */
+}
+
+/* 닉네임: 프로필 박스 아래 중앙 */
+.nickname {
+    text-align: center;
+    margin: 0 auto 15px auto;
     font-size: 1rem;
     color: #333;
     font-weight: 700;
+    padding: 4px 10px;
+    background-color: #fa7c00;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.sidebar .menu-title {
+/* 메뉴 타이틀 */
+.menu-title {
     text-align: center;
     background-color: #fa7c00;
     color: #fff;
@@ -49,33 +81,34 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar .menu-list {
+/* 메뉴 리스트 */
+.menu-list {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.sidebar .menu-list .menu-item {
+.menu-list .menu-item {
     padding: 15px 20px;
     border-bottom: 1px solid #eee;
 }
 
-.sidebar .menu-list .menu-item:last-child {
+.menu-list .menu-item:last-child {
     border-bottom: none;
 }
 
-.sidebar .menu-list .menu-item .main-text {
+.menu-list .menu-item .main-text {
     font-weight: 700;
     font-size: 0.95rem;
     margin-bottom: 5px;
 }
 
-.sidebar .menu-list .menu-item .sub-text {
+.menu-list .menu-item .sub-text {
     font-size: 0.85rem;
     color: #888;
 }
 
-.sidebar .menu-list .menu-item .sub-text a {
+.menu-list .menu-item .sub-text a {
     display: block;
     margin-bottom: 3px;
 }

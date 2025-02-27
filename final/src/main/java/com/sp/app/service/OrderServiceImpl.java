@@ -400,6 +400,7 @@ public class OrderServiceImpl implements OrderService {
 
     // 만약 사용된 포인트가 있다면 포인트 이력 등록
     if (order.getSpentPoint() != null && order.getSpentPoint() > 0) {
+      log.debug("사용된 포인트: {}", order.getSpentPoint());
       Long pNum = pointService.getPointSaveNum(order.getMemberIdx());
 
       MemberPoint memberPoint = MemberPoint.builder()

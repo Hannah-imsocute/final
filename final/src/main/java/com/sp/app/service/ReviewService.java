@@ -1,5 +1,6 @@
 package com.sp.app.service;
 
+import com.sp.app.model.MyPage;
 import com.sp.app.model.Review;
 
 import java.util.List;
@@ -10,5 +11,11 @@ public interface ReviewService {
     void deleteReview(long num, String uploadPath) throws Exception; // 리뷰 삭제
     void updateReview(Review dto) throws Exception; // 리뷰 수정
     List<Review> listReview(Map<String, Object> map); // 리뷰 찾기
-    int dataCount(); // 리뷰 개수
+    int dataCount(long num); // 리뷰 개수
+
+    List<MyPage> getReviewHistory(long num); // 중복리뷰 막기
+    Review getReviewUpdateNum(long reviewNum);
+
+
+
 }

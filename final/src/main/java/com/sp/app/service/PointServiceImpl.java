@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -106,13 +107,35 @@ public class PointServiceImpl implements PointService {
 
     @Transactional
     @Override
-    public void insertReviewPoint() throws Exception {
+    public void insertReviewPoint(MemberPoint point) throws Exception {
         try {
-            mapper.insertReviewPoint();
+            mapper.insertReviewPoint(point);
         } catch(Exception e) {
             log.info("insertReviewPoint", e);
             throw e;
         }
+    }
+
+    @Override
+    public List<MemberPoint> getUserSaveAmount1(long memberIdx) {
+        List<MemberPoint> list = null;
+
+        try {
+            list = mapper.getUserSaveAmount1(memberIdx);
+        } catch(Exception e) {
+            log.info("getUserSaveAmount1()", e);
+        }
+        return list;
+    }
+
+    @Override
+    public int dataCount(long memberIdx) {
+        return mapper.dataCount(memberIdx);
+    }
+
+    @Override
+    public int getSaveAmount(long memberIdx) {
+        return mapper.getSaveAmount(memberIdx);
     }
 
     @Override

@@ -12,7 +12,7 @@
         select subject, content, category, answer_state as answerState,
                s.memberIdx as memberIdx, s.productcode as productCode,
                p.ITEM as productName, s1.BRANDNAME as brandName,
-               askdate as askDate, answer_state as answerState, answer_content as answerContent, answer_date as answerDate
+               TO_DATE(ASKDATE, 'YY-MM-DD') as askDate, answer_state as answerState, answer_content as answerContent, answer_date as answerDate
         from SELLER_ASK s
                  LEFT JOIN PRODUCT p ON p.PRODUCTCODE = s.PRODUCTCODE
                  LEFT JOIN SELLER_BRAND s1 ON p.BRAND_CODE = s1.BRAND_CODE

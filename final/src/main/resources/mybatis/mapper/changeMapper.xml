@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.ChangeMapper">
+
+    <insert id="insertChangeRequest" parameterType="com.sp.app.model.Change">
+        insert into CHAGE_REQUEST (CHANGE_NUM, MEMBERIDX, ITEM_CODE, CHANGE_REQUEST, CHANGE_STATE, CHANGED_DATE)
+        values (SEQ_CHANGE_REQUEST.nextval, #{memberIdx}, #{itemCode}, #{changeRequest}, #{changeState}, sysdate)
+    </insert>
+
+    <select id="getChangeState" parameterType="long" resultType="com.sp.app.model.Change">
+        select CHANGE_NUM as changeNum, memberIdx as memberIdx, ITEM_CODE as itemCode,
+               CHANGE_REQUEST as changeRequest, CHANGE_STATE as changeState, CHANGED_DATE as changeDate
+        from CHAGE_REQUEST
+        where MEMBERIDX = #{memberIdx} and ITEM_CODE = #{itemCode}
+    </select>
+
+<!--    <select id="getRequestList" parameterType="map" resultType="com.sp.app.model.Change">
+        select CHANGE_NUM as changeNum, memberIdx as memberIdx, ITEM_CODE as itemCode,
+               CHANGE_REQUEST as changeRequest, CHANGE_STATE as changeState, CHANGED_DATE as changeDate
+        from CHAGE_REQUEST
+        where MEMBERIDX = #{memberIdx}
+        offset #{offset} rows fetch first #{size} rows only
+    </select>-->
+
+    <select id="getRequestList" parameterType="map" resultType="com.sp.app.model.Change">
+        select CHANGE_NUM as changeNum, c.memberIdx as memberIdx, c.ITEM_CODE as itemCode,
+               CHANGE_REQUEST as changeRequest, CHANGE_STATE as changeState, CHANGED_DATE as changeDate,
+               o.ORDER_CODE as orderCode, p.THUMBNAIL, p.ITEM, s.BRANDNAME as brandName
+        from CHAGE_REQUEST c
+                 LEFT JOIN ORDER_ITEM o ON c.ITEM_CODE = o.ITEM_CODE
+                 LEFT JOIN PRODUCT p ON p.PRODUCTCODE = o.PRODUCTCODE
+                 LEFT JOIN SELLER_BRAND s ON s.BRAND_CODE = p.BRAND_CODE
+        where c.MEMBERIDX = #{memberIdx}
+        offset #{offset} rows fetch first #{size} rows only
+    </select>
+
+    <select id="dataCount" parameterType="long" resultType="Integer">
+        select NVL(count(*), 0)
+        from CHAGE_REQUEST
+        where MEMBERIDX = #{memberIdx}
+    </select>
+
+
+
+
+
+</mapper>
