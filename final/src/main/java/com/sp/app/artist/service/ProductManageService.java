@@ -37,7 +37,7 @@ public interface ProductManageService {
 	public List<ProductManage> listAddFiles(long productCode);
 	
 	//작품 수정
-	public void updateProduct(ProductManage dto, MultipartFile thumbnailFile, String uploadPath);
+	public void updateProduct(ProductManage dto, String uploadPath);
 	
 	//작품 수정에서 파일 수정시 파일 삭제
 	public boolean deleteUploadFile(String uploadPath, String filename);

@@ -235,7 +235,7 @@ public class ProductManageServiceImpl implements ProductManageService{
 
 	@Transactional(rollbackFor = {Exception.class})
 	@Override
-	public ProductManage updateProduct(ProductManage dto, String uploadPath) {
+	public void updateProduct(ProductManage dto, String uploadPath) {
 		try {
 			String filename = storageService.uploadFileToServer(dto.getThumbnailFile(), uploadPath);
 			if(filename != null) {
@@ -249,7 +249,6 @@ public class ProductManageServiceImpl implements ProductManageService{
 			// TODO: handle exception
 		}
 		
-		return null;
 	}
 
 	@Override
