@@ -19,6 +19,12 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 	private final SettlementManageMapper mapper;
 	
 	@Override
+	public List<SettlementManage> findByOrderCodeAndDateRange(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public int dataCount(Map<String, Object> map) {
 		int result = 0;
 		
@@ -120,4 +126,5 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 		
 		return dto;
 	}
+
 }

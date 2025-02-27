@@ -13,6 +13,8 @@ public interface SettlementManageService {
 	public List<SettlementManage> listSettlementMainTab2SubTab1(Map<String, Object> map);
 	public List<SettlementManage> listSettlementMainTab2SubTab2(Map<String, Object> map);
 	
+	List<SettlementManage> findByOrderCodeAndDateRange(Map<String, Object> params);
+	
 	public SettlementManage findById(String settlement_num);
 	public SettlementManage findBySeller(String brandName);
 	
