@@ -17,7 +17,7 @@ public class ProductManage {
 		private long memberIdx; // user session id
 	
 		private long productCode;
-		private long brandCode;
+		private long brand_code;
 		private String brandName;
 		private String item; //작품 명
 		private int price;

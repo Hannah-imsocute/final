@@ -65,6 +65,7 @@
 		        
 		/* 메인 이미지 업로드 영역 - 회색 테두리 추가 */
 		.form-group.mainBox {
+
 		    border: 1px solid #ccc; /* 연한 회색 테두리 */
 		    padding: 5px; /* 내부 여백 */
 		    border-radius: 5px; /* 모서리 둥글게 */
@@ -174,6 +175,7 @@
                     <!-- 작품 기본 정보 -->
                     <div class="form-group">
                         <label>작품명</label>
+                        <input type="hidden" name="productCode" value="${dto.productCode}">  
                         <input type="text" name="item" value="${dto.item}" required>
                     </div>
                     <div class="form-group">
@@ -273,7 +275,7 @@
                     <!-- 작품 설명 -->
                     <div class="form-group">
                         <label>작품 설명</label>
-                        <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;">${dto.describe}</textarea>
+                        <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;"><c:out value="${dto.describe}" escapeXml="false"/></textarea>
                     </div>
                     
                     <!-- 메인 이미지 업로드 -->
@@ -292,7 +294,7 @@
                           <div class="form-group addBox">
                         	<div id= "additional-images-preview" class="preview-grid">
                         		<c:forEach var="vo" items="${listAddFiles}">
-									<img src="${pageContext.request.contextPath}/uploads/product/${vo.imageFileName}"
+									<img class="item img-add" src="${pageContext.request.contextPath}/uploads/product/${vo.imageFileName}"
 										class="item delete-img add-img"
 										data-imagecode="${vo.image_code}"		
 										data-imagefilename="${vo.imageFileName}">
@@ -532,68 +534,107 @@
         	});
         });
         
-        var oEditors = [];
-        nhn.husky.EZCreator.createInIFrame({
-            oAppRef: oEditors,
-            elPlaceHolder: 'ir1',
-            sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
-            fCreator: 'createSEditor2',
-            fOnAppLoad: function(){
-                // 로딩 완료 후 기본 폰트 설정
-                oEditors.getById['ir1'].setDefaultFont('돋움', 12);
-            },
-        });
-
-        // 스마트에디터의 내용을 Describe 에 넣는다. 
-        // 이후 form 의 button에 설정한 submit() 이 동작한다.
-        function smartEditInDescribe(elClickedObj) {
-            oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
-        }
+        
         
         
      // 대표(썸네일) 이미지
-        window.addEventListener('DOMContentLoaded', ev => {
-        	let img = '${dto.thumbnail}';
+	    window.addEventListener('DOMContentLoaded', () => {
+	    const mainImageEL = document.querySelector('.form-group.mainBox img');
+	    const inputEL = document.querySelector('.form-group.mainBox input[name=thumbnailFile]');
+	
+	    // 이미지 클릭 시 파일 선택
+	    mainImageEL.addEventListener('click', () => {
+	        inputEL.click();
+	    });
+	
+	    // 파일 선택 시 이미지 변경
+	    inputEL.addEventListener('change', (ev) => {
+	        if (!ev.target.files.length) return;
+	
+	        const file = ev.target.files[0];
+	
+	        // 파일을 미리보기로 보여줌
+	        const reader = new FileReader();
+	        reader.onload = e => {
+	            mainImageEL.setAttribute('src', e.target.result);
+	        };
+	        reader.readAsDataURL(file);
+	    });
+	});
+
+
+     
+     // 추가 이미지
+        window.addEventListener('DOMContentLoaded', evt => {
+        	var sel_files = [];
         	
-        	const viewerEL = document.querySelector('.table-form .thumbnail-viewer');
-        	const inputEL = document.querySelector('form[name=productForm] input[name=thumbnailFile]');
+        	const viewerEL = document.querySelector('.product-form .preview-grid');
+        	const imgAddEL = document.querySelector('.product-form .img-add');
+        	const inputEL = document.querySelector('form[name=productForm] input[name=addFiles]');
         	
-        	if( img ) { // 수정인 경우
-        		img = '${pageContext.request.contextPath}/uploads/product/' + img;
-        		viewerEL.textContent = '';
-        		viewerEL.style.backgroundImage = 'url(' + img + ')';
-        	}
-        	
-        	viewerEL.addEventListener('click', ev => {
+        	imgAddEL.addEventListener('click', ev => {
         		inputEL.click();
         	});
         	
         	inputEL.addEventListener('change', ev => {
-        		let file = ev.target.files[0];
-        		if(! file) {
-        			viewerEL.textContent = '';
-        			if( img ) {
-        				img = '${pageContext.request.contextPath}/uploads/product/' + img;
-        			} else {
-        				img = '${pageContext.request.contextPath}/dist/images/add_photo.png';
+        		if(! ev.target.files) {
+        			let dt = new DataTransfer();
+        			for(let f of sel_files) {
+        				dt.items.add(f);
         			}
-        			viewerEL.style.backgroundImage = 'url(' + img + ')';
+        			document.productForm.addFiles.files = dt.files;
         			
-        			return;
+        	    	return;
+        	    }
+        		
+                for(let file of ev.target.files) {
+                	sel_files.push(file);
+                	
+                	let node = document.createElement('img');
+                	node.classList.add('item', 'img-item');
+                	node.setAttribute('data-imagefilename', file.name);
+
+                	const reader = new FileReader();
+                    reader.onload = e => {
+                    	node.setAttribute('src', e.target.result);
+                    };
+        			reader.readAsDataURL(file);
+                	
+        			viewerEL.appendChild(node);
+                }
+        		
+        		let dt = new DataTransfer();
+        		for(let f of sel_files) {
+        			dt.items.add(f);
         		}
         		
-        		if(! file.type.match('image.*')) {
-        			inputEL.focus();
-        			return;
-        		}
-        		
-        		var reader = new FileReader();
-        		reader.onload = function(e) {
-        			viewerEL.textContent = '';
-        			viewerEL.style.backgroundImage = 'url(' + e.target.result + ')';
-        		}
-        		reader.readAsDataURL(file);			
+        		document.productForm.addFiles.files = dt.files;		
         	});
+        	
+        	viewerEL.addEventListener('click', (e)=> {
+        		if(e.target.matches('.img-item')) {
+        			if(! confirm('선택한 파일을 삭제 하시겠습니까 ?')) {
+        				return false;
+        			}
+        			
+        			let filename = e.target.getAttribute('data-imagefilename');
+        			
+        		    for(let i = 0; i < sel_files.length; i++) {
+        		    	if(filename === sel_files[i].name){
+        		    		sel_files.splice(i, 1);
+        		    		break;
+        				}
+        		    }
+        		
+        			let dt = new DataTransfer();
+        			for(let f of sel_files) {
+        				dt.items.add(f);
+        			}
+        			document.productForm.addFiles.files = dt.files;
+        			
+        			e.target.remove();
+        		}
+        	});	
         });
 
         
@@ -621,7 +662,24 @@
      	});
      });
 
-        
+        //스마트에디터
+        var oEditors = [];
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: 'ir1',
+            sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+            fCreator: 'createSEditor2',
+            fOnAppLoad: function(){
+                // 로딩 완료 후 기본 폰트 설정
+                oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+            },
+        });
+
+        // 스마트에디터의 내용을 Describe 에 넣는다. 
+        // 이후 form 의 button에 설정한 submit() 이 동작한다.
+        function smartEditInDescribe(elClickedObj) {
+            oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
+        }
     </script>
 </body>
 </html>

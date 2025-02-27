@@ -167,14 +167,15 @@
 	<!-- 작품 수정 -->
 	<update id="updateProduct" parameterType="com.sp.app.artist.model.ProductManage">
 	UPDATE product 
-  	SET categoryCode = #{categoryCode}, 
+  	SET 
+  	  categoryCode = #{categoryCode},
       item = #{item}, 
       price = #{price}, 
       discount = #{discount},
       describe = #{describe}, 
-      thumbnail = #{thumbnail}, 
+      thumbnail = #{thumbnail, jdbcType=VARCHAR}, 
       modified = SYSDATE
- 	 WHERE productCode = #{productCode}
+ 	  WHERE productCode = #{productCode}
 	</update>
 	
 	<!-- 작품 수정시 이미지 삭제 -->

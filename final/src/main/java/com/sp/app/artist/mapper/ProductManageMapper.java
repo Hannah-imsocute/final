@@ -48,7 +48,7 @@ public interface ProductManageMapper {
 	public List<ProductManage> listAddFiles(long productCode);
 	
 	//작품 수정
-	public ProductManage updateProduct(ProductManage dto, String uploadPath);
+	public void updateProduct(ProductManage dto);
 	
 	//작품 수정 시 이미지 삭제
 	public void deleteProductFile(long image_code);
