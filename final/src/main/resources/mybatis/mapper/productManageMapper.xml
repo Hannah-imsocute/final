@@ -173,8 +173,10 @@
       price = #{price}, 
       discount = #{discount},
       describe = #{describe}, 
-      thumbnail = #{thumbnail, jdbcType=VARCHAR}, 
       modified = SYSDATE
+          <if test="thumbnail != null and thumbnail != ''">
+     		 , thumbnail = #{thumbnail, jdbcType=VARCHAR}
+   		 </if>
  	  WHERE productCode = #{productCode}
 	</update>
 	

@@ -175,7 +175,7 @@
                     <!-- 작품 기본 정보 -->
                     <div class="form-group">
                         <label>작품명</label>
-                        <input type="hidden" name="productCode" value="${dto.productCode}">  
+                        <input type="hidden" name="productCode" value="${empty dto.productCode ? 0 : dto.productCode}">
                         <input type="text" name="item" value="${dto.item}" required>
                     </div>
                     <div class="form-group">
@@ -283,7 +283,10 @@
                         <label>메인 이미지</label>
                         <div class="form-group mainBox">
                         	<img src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}">       
-                        	<input type="file" name="thumbnailFile" accept="image/*">
+							<input type="file" name="thumbnailFile" accept="image/*" ${empty dto.thumbnail ? 'required' : ''}>
+				            <input type="hidden" name="thumbnail" value="${dto.thumbnail}">          
+                      
+                      
                         </div>
                     </div>
                     
@@ -637,9 +640,25 @@
         	});	
         });
 
-        
-        
-     
+
+        //스마트에디터
+        var oEditors = [];
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: 'ir1',
+            sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+            fCreator: 'createSEditor2',
+            fOnAppLoad: function(){
+                // 로딩 완료 후 기본 폰트 설정
+                oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+            },
+        });
+
+        // 스마트에디터의 내용을 Describe 에 넣는다. 
+        // 이후 form 의 button에 설정한 submit() 이 동작한다.
+        function smartEditInDescribe(elClickedObj) {
+            oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
+        }
 
      // 수정에서 등록된 추가 이미지 삭제
      $(function(){
@@ -661,25 +680,6 @@
      		});
      	});
      });
-
-        //스마트에디터
-        var oEditors = [];
-        nhn.husky.EZCreator.createInIFrame({
-            oAppRef: oEditors,
-            elPlaceHolder: 'ir1',
-            sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
-            fCreator: 'createSEditor2',
-            fOnAppLoad: function(){
-                // 로딩 완료 후 기본 폰트 설정
-                oEditors.getById['ir1'].setDefaultFont('돋움', 12);
-            },
-        });
-
-        // 스마트에디터의 내용을 Describe 에 넣는다. 
-        // 이후 form 의 button에 설정한 submit() 이 동작한다.
-        function smartEditInDescribe(elClickedObj) {
-            oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
-        }
     </script>
 </body>
 </html>

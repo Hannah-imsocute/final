@@ -16,7 +16,7 @@ public interface ProductManageService {
 	public List<ProductManage> listSubCategory(long parentNum);
 
 	//작품 등록할때 작품 정보 인서트
-    public void insertProduct(ProductManage dto, MultipartFile thumbnailFile, String uploadPath) throws SQLException;
+    public void insertProduct(ProductManage dto,  String uploadPath) throws SQLException;
     public void insertProductImage(ProductManage dto,  String uploadPath);
     
     //등록된 작품 리스트 조회

@@ -48,38 +48,6 @@ public class ProductManageController{
 	}	
 
 
-	@GetMapping("listMainCategory")
-	public String listMainCategory(Model model) throws Exception{
-		
-		try {
-			List<ProductManage> listMainCategory = service.listMainCategory();
-			System.out.println("listMainCategory" +listMainCategory );
-			
-			model.addAttribute("listMainCategory", listMainCategory);
-		} catch (Exception e) {
-			log.info("listMainCategory : ", e);
-		}
-		
-		return "artist/productManage/write";
-	}
-	
-	@ResponseBody
-	@GetMapping("listSubCategory")
-	public Map<String, ?> listSubCategory(
-			@RequestParam(name = "parentCategoryCode") int parentCategoryCode) throws Exception{
-		Map<String, Object> model = new HashMap<>();
-			
-		try {
-			List<ProductManage> listSubCategory = service.listSubCategory(parentCategoryCode);
-			System.out.println("listSubCategory" +listSubCategory );
-			
-			model.put("listSubCategory", listSubCategory);
-		} catch (Exception e) {
-			log.info("listSubCategory : ", e);
-		}
-		
-		return model;
-	}
 
 	@GetMapping("list")
 	public String productList(HttpSession session, Model model) throws Exception{
@@ -100,11 +68,66 @@ public class ProductManageController{
 		return "artist/productManage/list";
 	}
 	
+	@ResponseBody
+	@GetMapping("listMainCategory")
+	public  Map<String, ?> listMainCategory() throws Exception{
+		Map<String, Object> model = new HashMap<>();
+		try {
+			List<ProductManage> listMainCategory = service.listMainCategory();
+			System.out.println("listMainCategory" +listMainCategory );
+			
+			model.put("listMainCategory", listMainCategory);
+		} catch (Exception e) {
+			log.info("listMainCategory : ", e);
+		}
+		
+		return model;
+	}
 	
+	@ResponseBody
+	@GetMapping("listSubCategory")
+	public Map<String, ?> listSubCategory(
+			@RequestParam(name = "parentCategoryCode") int parentCategoryCode) throws Exception{
+		Map<String, Object> model = new HashMap<>();
+			
+		try {
+			List<ProductManage> listSubCategory = service.listSubCategory(parentCategoryCode);
+			System.out.println("listSubCategory" +listSubCategory );
+			
+			model.put("listSubCategory", listSubCategory);
+		} catch (Exception e) {
+			log.info("listSubCategory : ", e);
+		}
+		
+		return model;
+	}
+	
+	 @GetMapping("write")
+	    public String writeForm(Model model) throws Exception {
+	    
+	    	try {
+	    		List<ProductManage> listMainCategory = service.listMainCategory();
+				List<ProductManage> listSubCategory = null;
+	    		
+				long parentCategoryCode= 0;
+				
+				if(listMainCategory.size() > 0) {
+					parentCategoryCode = listMainCategory.get(0).getCategoryCode();
+				}
+				listSubCategory = service.listSubCategory(parentCategoryCode);		
+				model.addAttribute("mode","write");
+	    	    model.addAttribute("listMainCategory",listMainCategory);
+	    	    model.addAttribute("listSubCategory",listSubCategory);
+	   
+			} catch (Exception e) {
+				log.info("writeForm : " , e);
+			}
+	    	return "artist/productManage/write";
+	       
+	    }
+		
     @PostMapping("write")
-    public String createProduct(ProductManage dto,
-                                @RequestParam(value = "thumbnailFile", required = true) MultipartFile thumbnailFile,
-//                                @RequestParam(value = "addFiles", required = false) MultipartFile[] addFiles,
+    public String writeSubmit(ProductManage dto,
                                 HttpServletRequest request,
                                 HttpSession session,
                                 Model model) throws Exception {
@@ -113,14 +136,16 @@ public class ProductManageController{
 //    	dto.setMemberIdx(memberIdx);
     
     	dto.setMemberIdx(2); // 테스트소스
-		
+    	
         // 제품(작품) 정보를 DB에 저장하는 신규 메서드
-        service.insertProduct(dto, thumbnailFile, uploadPath);
+        service.insertProduct(dto, uploadPath);
         
         // 등록한 작품 리스트 조회
         Map<String, Object> map = new HashMap<>();
+        Long memberIdx = getMemberIdx(session);
+        map.put("memberIdx", memberIdx); 
         List<ProductManage> productList = service.listProduct(map);
-       
+      
         model.addAttribute("productList",productList);
         // 등록 후 목록 페이지로 리다이렉트 (contextPath 포함)
         
@@ -221,6 +246,7 @@ public class ProductManageController{
     
     @PostMapping("update")
     public String updateSubmit(ProductManage dto,
+    		
     		//@RequestParam(name="page") String page,
     		Model model ) throws Exception {
     	try {

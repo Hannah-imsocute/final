@@ -88,12 +88,13 @@ public class ProductManageServiceImpl implements ProductManageService{
 
 	@Transactional(rollbackFor = {Exception.class})
 	@Override
-	public void insertProduct(ProductManage dto, MultipartFile thumbnailFile, String uploadPath) {
+	public void insertProduct(ProductManage dto, String uploadPath) {
 		try {
 
 			// 메인 이미지 업로드 처리
-	        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-	            String mainFilename = storageService.uploadFileToServer(thumbnailFile, uploadPath);
+	        if (dto.getThumbnailFile() != null && !dto.getThumbnailFile().isEmpty()) {
+	        	// String originFileName = dto.getThumbnailFile().getOriginalFilename(); 원본파일명 컬럼추가되면 로직 살리기
+	            String mainFilename = storageService.uploadFileToServer(dto.getThumbnailFile(), uploadPath);
 	            dto.setThumbnail(mainFilename);
 	        }
 	        // 메인상품 저장
@@ -245,8 +246,20 @@ public class ProductManageServiceImpl implements ProductManageService{
 				dto.setThumbnail(filename);
 				
 			}
+			
+			mapper.updateProduct(dto);
+
+			// 추가 이미지
+			if(! dto.getAddFiles().isEmpty()) {
+				insertProductImage(dto, uploadPath);
+			}
+			
+			// 옵션 수정
+	//			updateProductOption(dto);
+			
+			
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.info("updateProduct :", e);
 		}
 		
 	}
@@ -255,6 +268,8 @@ public class ProductManageServiceImpl implements ProductManageService{
 	public boolean deleteUploadFile(String uploadPath, String filename) {
 		return storageService.deleteFile(uploadPath, filename);
 	}
+	
+	
 
 	@Override
 	public void deleteProductFile(long image_code, String pathString) {
