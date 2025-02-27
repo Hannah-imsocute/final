@@ -8,16 +8,20 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sp.app.admin.model.Information;
 import com.sp.app.admin.model.Notice;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.service.NoticeService;
 
 import lombok.RequiredArgsConstructor;
+import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/notice/*")
@@ -114,20 +118,48 @@ public class NoticeController {
 		return "notice/article";
 	}
 	
-	
 	// 문의 사항 폼띄우기
 	@GetMapping("goinquiry")
-	public String gointoInquiry() {
-		return"";
+	public String gointoInquiry(Model model) {
+		return "notice/inquiry";
 	}
 	
+	@PostMapping("inquiries")
+	public String handelSubmit(@ModelAttribute Information dto) {
+		try {
+			service.insertInquiry(dto);
+		} catch (Exception e) {
+		}
+		return "redirect:/";
+	}
 	
 	// 문의 사항 리스트 
 	@GetMapping("inquire")
 	@ResponseBody
-	public Map<String, Object> handleInquire() {
+	public Map<String, Object> handleInquire(@RequestParam(name = "keyword", defaultValue = "")String kwd,
+											@RequestParam(name = "page", defaultValue = "1")int page,
+											Model model) {
 		Map<String, Object> map = new HashMap<>();
+		int size = 10;
+		int total = 0;
+		int dataCount = 0;
 		try {
+			kwd = URLDecoder.decode(kwd,"utf-8");
+			map.put("kwd", kwd);
+			
+			dataCount = service.dataCountOfInquiry(kwd);
+			total = util.pageCount(dataCount, size);
+			
+			int offset = (page -1) * size;
+			if(offset < 0 ) offset = 0 ;
+			
+			map.put("offset", offset);
+			map.put("size", size);
+		
+			// 리스트 불러오면 됨 
+			List<Information> list = service.getListOfInquiry(map);
+			// 페이징 처리
+			
 			map.put("state", "true");
 		} catch (Exception e) {
 		}

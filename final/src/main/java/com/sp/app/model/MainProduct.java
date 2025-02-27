@@ -16,6 +16,8 @@ import lombok.Setter;
 public class MainProduct {
 	private long memberIdx; // user session id
 	
+	private String liked;	// 좋아요 여부 
+	
 	private long productCode;
 	private long brandCode;
 	private String brandName;

@@ -1,10 +1,12 @@
 package com.sp.app.mapper;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sp.app.admin.model.Information;
 import com.sp.app.admin.model.Notice;
 
 @Mapper
@@ -26,4 +28,7 @@ public interface NoticeMapper {
 	
 	public Notice findByIdOfNotice(long num);
 	
+	public void insertInquiry(Information dto) throws SQLException;
+	public int dataCountOfInquiry(String kwd);
+	public List<Information> getListOfInquiry(Map<String, Object> map);
 }

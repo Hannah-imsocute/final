@@ -233,10 +233,10 @@ public class ProductController {
 		@GetMapping("recommendMain") 
 		public ResponseEntity<Map<String, Object>> recommendMain(
 				@RequestParam(name = "page", defaultValue = "1") int current_page, 
-				HttpServletRequest req ) throws Exception{
+				HttpServletRequest req, HttpSession session ) throws Exception{
 
-			 Map<String, Object> response = new HashMap<>();
-			
+			Map<String, Object> response = new HashMap<>();
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
 			try {
 
 				int size = 10;  // 페이지 당 포함 컨텐츠 수
@@ -255,6 +255,7 @@ public class ProductController {
 				
 				map.put("offset", offset);
 				map.put("size", size);
+				map.put("memberidx", info.getMemberIdx());
 				
 				List<MainProduct> list = service.listRecommendMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 				

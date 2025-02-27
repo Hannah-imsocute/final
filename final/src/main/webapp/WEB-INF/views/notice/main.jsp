@@ -169,7 +169,7 @@ body {
 		<h2 class="title">고객센터</h2>
 		<p class="subtitle">
 			무엇을 도와드릴까요? 
-			<a onclick="openInquiryform()"
+			<a onclick="location.href='${pageContext.request.contextPath}/notice/goinquiry'"
 				class="go-inquiry">1:1문의 남기러가기</a>
 		</p>
 
@@ -236,8 +236,8 @@ body {
 			<div class="tab-pane fade" id="inquiry" role="tabpanel" data-page="0"
 				data-total="1">
 
-				<div class="notice-table-wrapper">
-					<table class="notice-table">
+				<div class="inquiry-table-wrapper">
+					<table class="inquiry-table">
 						<thead>
 							<tr>
 								<th>번호</th>

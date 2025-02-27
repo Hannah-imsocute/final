@@ -55,18 +55,19 @@ body {
 	margin-bottom: 1.5rem;
 }
 
-/* 상품 카드들을 가로로 나열 (flex) */
+/* 상품 카드들을 그리드로 5열로 배치 */
 .best-items-wrap {
-	display: flex;
-	justify-content: space-between; /* 카드 간격 넓게 분배 */
-	gap: 1rem; /* 카드 사이 간격 (브라우저 호환 필요시 주의) */
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 1rem;
 }
 
 /* 개별 상품 카드 */
 .best-item {
 	background-color: #fff;
-	width: 18%; /* 5개 정도 나란히 보이도록 비율 조정 */
+	width: 100%;  /* 그리드 셀 전체를 채우도록 */
 	min-width: 160px; /* 너무 좁아지지 않도록 최소너비 */
+	margin-bottom: 20px;
 	border: 1px solid #eee;
 	border-radius: 6px;
 	overflow: hidden;

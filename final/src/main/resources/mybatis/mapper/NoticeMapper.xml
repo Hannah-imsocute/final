@@ -2,6 +2,33 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.NoticeMapper">
+	
+	<insert id="insertInquiry" parameterType="com.sp.app.admin.model.Information">
+		INSERT INTO information 
+		(info_num, memberidx, subject, textcontent, apply_date, category_num, answerstate) 
+		VALUES (SEQ_INFORMATION.NEXTVAL, #{memberidx}, #{subject}, #{textcontent}, SYSDATE, #{category_num}, 0) 	
+	</insert>
+	
+	<select id="dataCountOfInquiry" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM information 
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0 
+			</if>
+		</where>
+	</select>
+	
+	<select id="getListOfInquiry" parameterType="map" resultType="com.sp.app.admin.model.Information">
+		SELECT info_num, memberidx, subject, textcontent, adminidx, answerstate, apply_date, answer_date, category_num, answer_content
+		FROM information
+		<where>
+			<if test="kwd != null and kwd != '' ">
+				INSTR(subject, #{kwd}) > 0 
+			</if>
+		</where>
+		OFFSET #{offset} ROWS FETCH FIRST ${size} ROWS ONLY
+	</select>
+
 	<select id="DataCountFaq" resultType="Integer"
 		parameterType="map">
 		SELECT COUNT(*) 

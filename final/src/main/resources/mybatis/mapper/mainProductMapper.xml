@@ -3,177 +3,215 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.MainProductMapper">
 	<!-- 일반 상품 목록 -->
-	
-	<select id="totalDataCount" parameterType="map" resultType="Integer">
+
+	<select id="totalDataCount" parameterType="map"
+		resultType="Integer">
 		SELECT NVL(COUNT(*), 0) dataCount FROM product
 	</select>
-	
-	<!-- 카테고리 별 작품 조회 초화면 (메인) 리스트-->
-	<select id="listCategoryMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-	SELECT p.productCode, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname
+
+	<!-- 카테고리 별 작품 조회 초화면 (메인) 리스트 -->
+	<select id="listCategoryMainProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname
 		FROM product p
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
 		WHERE p.blind = 0
-		ORDER BY p.upload DESC
+		ORDER BY
+		p.upload DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
-	
-	<!-- 인기작품 순 작품 조회 초화면 (메인) 리스트-->
-	<select id="listPopularMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-       SELECT p.productCode, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname, 
-               (SELECT count(o.productCODE) from order_item o where o.productCode = p.productCode) buyCount
+
+	<!-- 인기작품 순 작품 조회 초화면 (메인) 리스트 -->
+	<select id="listPopularMainProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname,
+		(SELECT count(o.productCODE) from order_item o where o.productCode =
+		p.productCode) buyCount
 		FROM product p
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.blind = 0 
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		WHERE p.blind = 0
 		ORDER BY buyCount DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
-	
-    <!-- 추천작품 순 작품 조회 초화면 (메인) (현재 광고중인 작품 > 광고중이지는 않지만 멤버십구매이력있는 작품 > 그 외 작품 최신순)-->
-	<select id="listRecommendMainProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-    	   SELECT p.productCode, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname, i.startDate AS 광고시작일자, i.expireDate AS 광고종료일자 
+
+	<!-- 추천작품 순 작품 조회 초화면 (메인) (현재 광고중인 작품 > 광고중이지는 않지만 멤버십구매이력있는 작품 > 그 외 작품 
+		최신순) -->
+	<select id="listRecommendMainProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname, i.startDate AS 광고시작일자,
+		i.expireDate AS 광고종료일자 , NVL2(liked.productcode, 'liked','unliked') as
+		liked
 		FROM product p
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
-        LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
-		WHERE p.blind = 0
-		ORDER BY 
-		  CASE 
-		    WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
-		    WHEN i.product_Code IS NOT NULL THEN 2
-		    ELSE 3
-		  END,
-		  p.upload DESC
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		LEFT OUTER JOIN (SELECT productcode FROM liked_item WHERE memberidx = #{memberidx})
+		liked ON liked.PRODUCTCODE = p.PRODUCTCODE
+		LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
+		WHERE
+		p.blind = 0
+		ORDER BY
+		CASE
+		WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
+		WHEN i.product_Code IS NOT NULL THEN 2
+		ELSE 3
+		END,
+		p.upload DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 
 	<!-- 카테고리별 조회시 데이터 개수 -->
 	<select id="dataCount" parameterType="map" resultType="Integer">
-		SELECT NVL(COUNT(*), 0) dataCount FROM product
-		WHERE categoryCode = #{categoryCode}
+		SELECT
+		NVL(COUNT(*), 0) dataCount FROM product
+		WHERE categoryCode =
+		#{categoryCode}
 	</select>
-	
-	<!-- 카테고리 별 작품 리스트-->
-	<select id="listCategoryProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-	SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname
-		FROM product p
-		JOIN productCategory c ON p.categoryCode = c.categoryCode
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.blind = 0 AND p.categoryCode = #{categoryCode}
-		ORDER BY p.upload DESC
-		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-	</select>
-	
-	<!-- 인기작품 순 작품 리스트-->
-	<select id="listPopularProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-	   SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname, 
-               (SELECT count(o.productCODE) from order_item o where o.productCode = p.productCode) buyCount
-		FROM product p
-		JOIN productCategory c ON p.categoryCode = c.categoryCode
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
-		WHERE p.blind = 0  AND p.categoryCode = #{categoryCode}
-		ORDER BY buyCount DESC
-		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-	</select>
-	
-	<!-- 추천작품 순 작품 리스트 (현재 광고중인 작품 > 광고중이지는 않지만 멤버십구매이력있는 작품 > 그 외 작품 최신순)-->
-	<select id="listRecommendProduct" parameterType="map" resultType="com.sp.app.model.MainProduct">
-    	   SELECT p.productCode, p.categoryCode, c.name, p.item, price, 
-		       discount, m.nickname, THUMBNAIL, s.brandname, i.startDate AS 광고시작일자, i.expireDate AS 광고종료일자 
-		FROM product p
-		JOIN productCategory c ON p.categoryCode = c.categoryCode
-        JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
-        JOIN MEMBER m ON m.memberIdx = s.memberIdx
-        LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
-		WHERE p.blind = 0 AND p.categoryCode = #{categoryCode} 
-		ORDER BY 
-		  CASE 
-		    WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
-		    WHEN i.product_Code IS NOT NULL THEN 2
-		    ELSE 3
-		  END,
-		  p.upload DESC
-		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-	</select>
-	
 
-	<select id="findByCategoryId" parameterType="int" resultType="com.sp.app.model.MainProduct">
+	<!-- 카테고리 별 작품 리스트 -->
+	<select id="listCategoryProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.categoryCode, c.name, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname
+		FROM product p
+		JOIN productCategory
+		c ON p.categoryCode = c.categoryCode
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		WHERE p.blind = 0 AND
+		p.categoryCode = #{categoryCode}
+		ORDER BY p.upload DESC
+		OFFSET #{offset}
+		ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<!-- 인기작품 순 작품 리스트 -->
+	<select id="listPopularProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.categoryCode, c.name, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname,
+		(SELECT count(o.productCODE) from order_item o where o.productCode =
+		p.productCode) buyCount
+		FROM product p
+		JOIN productCategory c ON
+		p.categoryCode = c.categoryCode
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		WHERE p.blind = 0 AND
+		p.categoryCode = #{categoryCode}
+		ORDER BY buyCount DESC
+		OFFSET #{offset}
+		ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<!-- 추천작품 순 작품 리스트 (현재 광고중인 작품 > 광고중이지는 않지만 멤버십구매이력있는 작품 > 그 외 작품 최신순) -->
+	<select id="listRecommendProduct" parameterType="map"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, p.categoryCode, c.name, p.item, price,
+		discount, m.nickname, THUMBNAIL, s.brandname, i.startDate AS 광고시작일자,
+		i.expireDate AS 광고종료일자
+		FROM product p
+		JOIN productCategory c ON p.categoryCode = c.categoryCode
+		JOIN SELLER_BRAND s ON s.brand_code = p.brand_code
+		JOIN MEMBER m ON m.memberIdx = s.memberIdx
+		LEFT OUTER JOIN membership_item i ON i.product_Code = p.productCode
+		WHERE
+		p.blind = 0 AND p.categoryCode = #{categoryCode}
+		ORDER BY
+		CASE
+		WHEN i.startDate &lt;= SYSDATE AND i.expireDate &gt;= sysdate THEN 1
+		WHEN i.product_Code IS NOT NULL THEN 2
+		ELSE 3
+		END,
+		p.upload DESC
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+
+	<select id="findByCategoryId" parameterType="int"
+		resultType="com.sp.app.model.MainProduct">
 		SELECT categoryCode, name, parentCategoryCode
-		FROM productCategory
+		FROM
+		productCategory
 		WHERE categoryCode = #{cateoryCode}
 	</select>
-	
-	<select id="findById" parameterType="Long" resultType="com.sp.app.model.MainProduct">
-	    SELECT productCode, p.brand_code, s.brandName, item, price, discount, addOptions, describe, upload, modified, p.categoryCode, name, thumbnail, blind
+
+	<select id="findById" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT productCode, p.brand_code, s.brandName, item, price, discount,
+		addOptions, describe, upload, modified, p.categoryCode, name,
+		thumbnail, blind
 		FROM product p
-        JOIN SELLER_BRAND S ON P.brand_code = s.brand_code 
-        JOIN productCategory c ON c.categoryCode = p.categoryCode 
+		JOIN SELLER_BRAND S ON P.brand_code = s.brand_code
+		JOIN productCategory c ON c.categoryCode = p.categoryCode
 		WHERE productCode = #{productCode}
 	</select>
 
-	<select id="listMainProductFile" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+	<select id="listMainProductFile" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
 		SELECT p.productCode, image_code, imageFileName
-		FROM productImage i
+		FROM
+		productImage i
 		JOIN product p
 		ON i.productCode = p.productCode
-		WHERE p.productCode = #{productCode}
+		WHERE
+		p.productCode = #{productCode}
 	</select>
-	
-	<select id="listMainProductReview" parameterType="Long" resultType="com.sp.app.model.MainProduct">
+
+	<select id="listMainProductReview" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
 		SELECT review_num, p.productCode, nickName, content
-		FROM product p 
+		FROM
+		product p
 		JOIN productReview r
-		ON p.productCode = r.productCode 
+		ON p.productCode = r.productCode
 		JOIN MEMBER m
 		ON m.memberIdx = r.memberIdx
-		WHERE p.productCode = #{productCode}
+		WHERE p.productCode =
+		#{productCode}
 	</select>
 
 	<!-- 작품 후기글 신고 -->
 	<select id="insertReveiwReport" parameterType="map">
-		INSERT INTO productreivewreport (
-		    report_code,
-		    memberidx,
-		    review_num,
-		    category_num,
-		    content,
-		    report_date
+		INSERT INTO
+		productreivewreport (
+		report_code,
+		memberidx,
+		review_num,
+		category_num,
+		content,
+		report_date
 		) VALUES (
-		    SEQ_PRODUCTREIVEWREPORT.NEXTVAL,
-		    #{memberIdx},
-		    #{review_num},
-		    #{categoryNum},
-		    #{content},
-		    sysdate
+		SEQ_PRODUCTREIVEWREPORT.NEXTVAL,
+		#{memberIdx},
+		#{review_num},
+		#{categoryNum},
+		#{content},
+		sysdate
 		)
 	</select>
-	
+
 	<!-- 작품 신고 -->
 	<select id="insertProductReport" parameterType="map">
-			INSERT INTO item_report (
-			    sellerreport_num,
-			    productcode,
-			    memberidx2,
-			    reason,
-			    report_date,
-			    category_num
-			) VALUES (
-			    SEQ_ITEM_REPORT.NEXTVAL,
-			    #{productCode},
-			    #{memberIdx},
-			    #{content},
-			    sysdate,
-			    #{categoryNum}
-			)
+		INSERT INTO item_report (
+		sellerreport_num,
+		productcode,
+		memberidx2,
+		reason,
+		report_date,
+		category_num
+		) VALUES (
+		SEQ_ITEM_REPORT.NEXTVAL,
+		#{productCode},
+		#{memberIdx},
+		#{content},
+		sysdate,
+		#{categoryNum}
+		)
 	</select>
 
 </mapper>

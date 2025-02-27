@@ -1,11 +1,14 @@
+
 package com.sp.app.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import com.sp.app.admin.model.Information;
 import com.sp.app.admin.model.Notice;
 import com.sp.app.mapper.NoticeMapper;
 
@@ -75,6 +78,7 @@ public class NoticeServiceImpl implements NoticeService{
 		return result;
 	}
 
+	
 	@Override
 	public Notice findByIdOfNotice(long num) {
 		Notice dto = null;
@@ -85,4 +89,38 @@ public class NoticeServiceImpl implements NoticeService{
 		}
 		return dto;
 	}
+
+	
+	@Override
+	public void insertInquiry(Information dto) throws SQLException {
+		try {
+			mapper.insertInquiry(dto);
+		} catch (Exception e) {
+			log.info("==================insertInquiry : ", e);
+		}
+	}
+
+	@Override
+	public int dataCountOfInquiry(String kwd) {
+		int result = 0;
+		try {
+			result = mapper.dataCountOfInquiry(kwd);
+		} catch (Exception e) {
+			log.info("================dataCountOfInquiry", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Information> getListOfInquiry(Map<String, Object> map) {
+		List<Information> list = null;
+		try {
+			list = mapper.getListOfInquiry(map);
+		} catch (Exception e) {
+			log.info("=================getListofInquiry", e);
+		}
+		return list;
+	}
+	
+	
 }

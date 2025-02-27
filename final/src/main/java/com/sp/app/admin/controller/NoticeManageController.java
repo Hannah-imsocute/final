@@ -119,6 +119,7 @@ public class NoticeManageController {
 		return "admin/noticeList/article";
 	}
 
+	// 수정 마무리 안됨 jsp 작업 중 
 	@GetMapping("edit/{num}")
 	public String handleEdit(@PathVariable(name = "num") long num , Model model) {
 		try {
@@ -131,4 +132,5 @@ public class NoticeManageController {
 		}
 		return "admin/noticeList/update";
 	}
+	
 }
