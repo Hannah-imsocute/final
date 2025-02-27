@@ -160,7 +160,7 @@ body {
 					<c:forEach var="dto" items="${list}" varStatus="status">
 						<tr>
 							<th scope="row">${status.count}</th>
-							<td data-num=""><a href="" class="subject-link">${dto.subject}</a>
+							<td data-num=""><a href="${pageContext.request.contextPath}/admin/notice/infodetails/${dto.info_num}" class="subject-link">${dto.subject}</a>
 							</td>
 							<td>${dto.nickname}</td>
 							<td>${dto.apply_date}</td>

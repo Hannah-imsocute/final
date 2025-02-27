@@ -116,6 +116,14 @@ public class EventServiceImpl implements EventService {
 			sb.append(String.valueOf(day));
 			
 			map.put("expiredate", sb.toString());
+			System.out.println("============================");
+			System.out.println("============================");
+			System.out.println(map.get("couponcode"));
+			System.out.println(map.get("memberidx"));
+			System.out.println(map.get("expiredate"));
+			System.out.println("============================");
+			System.out.println("============================");
+			
 			mapper.insertGetCoupon(map);
 		} catch (Exception e) {
 			log.info("========================insertGetCoupon : ", e);

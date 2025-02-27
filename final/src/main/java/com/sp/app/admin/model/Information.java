@@ -8,8 +8,9 @@ import lombok.Setter;
 public class Information {
 	private long info_num;
 	private long memberidx;
-	
+	private String nickname;
 	private long adminidx;
+	private String adminnickname;
 	
 	private String subject;
 	private String textcontent;
@@ -20,5 +21,5 @@ public class Information {
 	private String answer_content;
 	
 	private long category_num;
-	private String category_name;
+	private String catename;
 }

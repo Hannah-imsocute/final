@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,8 +18,10 @@ import com.sp.app.admin.model.Notice;
 import com.sp.app.admin.service.EventManageService;
 import com.sp.app.admin.service.NoticeManageService;
 import com.sp.app.common.PaginateUtil;
+import com.sp.app.model.SessionInfo;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -133,4 +136,31 @@ public class NoticeManageController {
 		return "admin/noticeList/update";
 	}
 	
+	
+	@GetMapping("infodetails/{num}")
+	public String handleInfoArticle(@PathVariable("num")long num, Model model) {
+		try {
+			Information dto = Objects.requireNonNull(service.findByIdOfInfo(num));
+			model.addAttribute("dto", dto);
+			
+		} catch (NullPointerException e) {
+			return "redirect:/admin/notice/main";
+		} catch (Exception e) {
+		}
+		return "admin/noticeList/infoArticle";
+	}
+	
+	@PostMapping("reply")
+	public String handleReply(@RequestParam(name = "info_num")long num , @RequestParam(name = "answer")String answer,
+							HttpSession session) {
+		try {
+			SessionInfo info = (SessionInfo) session.getAttribute("member");
+			
+			service.updateInfo(info.getMemberIdx(), num, answer);
+			
+		} catch (Exception e) {
+			log.info("===============",e );
+		}
+		return "redirect:/admin/notice/info";
+	}
 }

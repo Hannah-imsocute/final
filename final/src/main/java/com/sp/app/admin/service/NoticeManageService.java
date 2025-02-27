@@ -16,4 +16,6 @@ public interface NoticeManageService {
 	
 	public int dataCountOfInfo(String kwd);
 	public List<Information> getListOfInfo(int offset, int size, String kwd);
+	public Information findByIdOfInfo(long num);
+	public void updateInfo(long memberidx, long num , String answer) throws Exception;
 }

@@ -49,7 +49,7 @@ public class NoticeServiceImpl implements NoticeService{
 	public int DataCountFaq(Map<String, Object> map) {
 		int result = 0 ;
 		try {
-			mapper.DataCountFaq(map);
+			result = mapper.DataCountFaq(map);
 		} catch (Exception e) {
 			log.info("===========Datacount : ", e);
 		}
@@ -120,6 +120,17 @@ public class NoticeServiceImpl implements NoticeService{
 			log.info("=================getListofInquiry", e);
 		}
 		return list;
+	}
+
+	@Override
+	public Information findByIdOfInformation(long num) {
+		Information dto = null;
+		try {
+			dto = mapper.findByIdOfInformation(num);
+		} catch (Exception e) {
+			log.info("============findByIdOfInformation", e);
+		}
+		return dto;
 	}
 	
 	

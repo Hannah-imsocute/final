@@ -134,9 +134,32 @@ body {
 	font-size: 16px;
 }
 
-.notice-table tr:hover {
-	background-color: #f8f8f8;
+.inquiry-table-wrapper {
+	margin: 20px auto;
+	max-width: 1000px;
+	background-color: #fff;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.inquiry-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.inquiry-table thead {
+	background-color: #333;
+	color: #fff;
+}
+
+.inquiry-table th, .inquiry-table td {
+	padding: 15px;
+	text-align: center;
+	border-bottom: 1px solid #ddd;
+	font-size: 16px;
+}
+
 
 .status-label {
 	display: inline-block;
@@ -195,7 +218,7 @@ body {
 		<div class="divider"></div>
 
 		<!-- 검색 박스 -->
-		<div class="search-box">
+		<div class="search-box" style="display: none;">
 			<div class="input-group">
 				<input type="text" name="keyword" class="form-control"
 					placeholder="질문 키워드를 입력해주세요.">
@@ -215,7 +238,8 @@ body {
 		<!-- 탭 컨텐츠 -->
 		<div class="tab-content" id="customerTabContent">
 			<!-- FAQ 섹션 -->
-			<div class="tab-pane fade show active" id="faq" role="tabpanel">
+			<div class="tab-pane fade show active" id="faq" role="tabpanel" data-page="${page}" data-total="${total}">
+			
 				<div class="accordion" id="faqAccordion">
 					<c:forEach var="dto" items="${list}">
 						<div class="accordion-item">
@@ -230,6 +254,9 @@ body {
 						</div>
 					</c:forEach>
 				</div>
+				
+				<div class="faqPaging" style="margin-top: 15px;">${paging}</div>
+				
 			</div>
 
 			<!-- 1:1문의 섹션 -->
@@ -250,6 +277,8 @@ body {
 						</tbody>
 					</table>
 				</div>
+				
+				<div class="inqPaging"  style="margin-top: 15px;"></div>
 			</div>
 
 
@@ -270,6 +299,8 @@ body {
 						</tbody>
 					</table>
 				</div>
+				
+				<div class="notPaging"  style="margin-top: 15px;"></div>
 			</div>
 		</div>
 	</main>
@@ -303,8 +334,8 @@ body {
 				let total = $('#inquiry').attr('data-total');
 				
 				const callback = function (data){
-					$('#inquiry').attr('data-page', data-page);
-					$('#inquiry').attr('data-total', data-total);
+					$('#inquiry').attr('data-page', data.page);
+					$('#inquiry').attr('data-total', data.total);
 					
 					addInquireContent(data);		
 				}
@@ -314,32 +345,79 @@ body {
 		});
 
 		function addMoreContent(data) {
-			console.log(data);
 			let tbody = $('.notice-table').find('tbody');
 			
 			let result = '';
+			let count = 0;
 			for(let el of data.list){
 				let num	 = el.evt_not_num;
 				let subject = el.subject;
 				let create_date = el.create_date;
 				
 				result += '<tr>';
-				result += '	<td></td>';
+				result += '	<td>'+ ++count +'</td>';
 				result += '	<td><span class="status-label">공지</span></td>';
 				result += '	<td><a href="${pageContext.request.contextPath}/notice/article/'+num+'">'+ subject + '</a></td>';
 				result += '	<td>'+create_date+'</td>';
 			}
 			tbody.html(result);
+			$('.notPaging').html(data.paging);
 		}
 		
 		function addInquireContent(data){
-			console.log(data);
+			let inqtbody = $('.inquiry-table').find('tbody');
+			
+			let result = '';
+			let count = 0;
+			for(let el of data.list){
+				let num = el.info_num;
+				let subject = el.subject;
+				let apply_date = el.apply_date;
+				let answerstate = el.answerstate == '0' ? '미답변' : '답변완료';
+				
+				result += '<tr>';
+				result += '	<td>' + ++count + '</td>';
+				result += '	<td><span>' + answerstate + '</span></td>';
+				result += '	<td><a href="${pageContext.request.contextPath}/notice/inqarticle/' + num + '">' + subject + '</a></td>';
+				result += '	<td>' + apply_date + '</td>';
+			}
+			inqtbody.html(result);
+			$('.inqPaging').html(data.paging);
 		}
 		
 		
-		function openInquiryform(){
-			window.open();
+		// faq 페이징 처리 호출 메소드 
+		function loadingFaq(){
+			
 		}
+		
+		// notice 페이징처리 호출메소드
+		function loadingNotice(){
+			
+		}
+		
+		// inquiry 페이징 처리 호출 메소드 
+		function loadingInquiry(){
+			
+		}
+		
+		$(function(){
+			$('.nav-link').each(function(){
+				
+				$(this).click(function(){
+					
+					let id = $(this).attr('id');
+				
+					if(id == 'faq-tab'){
+						$('.search-box').css('display', 'none');
+						$('.keyword-box').css('display', '')
+					}else {
+						$('.search-box').css('display', '');
+						$('.keyword-box').css('display', 'none')
+					}
+				});
+			});
+		});
 	</script>
 
 </body>

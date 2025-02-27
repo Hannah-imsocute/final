@@ -23,6 +23,8 @@ public interface NoticeService {
 	public List<String> getCategory();
 
 	public Notice findByIdOfNotice(long num);
+	
+	public Information findByIdOfInformation(long num);
 
 	public void insertInquiry(Information dto) throws SQLException;
 

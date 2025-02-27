@@ -20,5 +20,6 @@ public interface NoticeManageMapper {
 	
 	public int dataCountOfInfo(String kwd);
 	public List<Information> getListOfInfo(Map<String, Object> map);
-	public void updateInfo(Information info) throws SQLException;
+	public void updateInfo(Map<String, Object> map) throws SQLException;
+	public Information findByIdOfInfo(long num);
 }

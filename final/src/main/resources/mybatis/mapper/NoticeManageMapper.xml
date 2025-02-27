@@ -41,6 +41,14 @@
 		</where>
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
+	
+	<select id="findByIdOfInfo" parameterType="Long" resultType="com.sp.app.admin.model.Information">
+		SELECT info_num, info.memberidx, nickname, subject, textcontent,TO_CHAR(apply_date, 'YYYY-MM-DD') apply_date, adminidx, answerstate,TO_CHAR(answer_date, 'YYYY-MM-DD') answer_date, answer_content, info.category_num, catename
+		FROM information info
+		LEFT OUTER JOIN member m ON m.memberidx = info.memberidx
+		LEFT OUTER JOIN all_category ac ON ac.category_num = info.category_num
+		WHERE info_num = #{num} 
+	</select>
 
 	<select id="findById" parameterType="Long"
 		resultType="com.sp.app.admin.model.Notice">
@@ -76,4 +84,9 @@
 		</where>
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
 	</select>
+	
+	<update id="updateInfo" parameterType="map">
+		UPDATE information SET adminidx = #{adminidx} , answerstate = 1, answer_date = SYSDATE , answer_content = #{answer}
+		WHERE info_num = #{num}
+	</update>
 </mapper>

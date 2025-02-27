@@ -102,6 +102,37 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 		return list;
 	}
 
+	@Override
+	public Information findByIdOfInfo(long num) {
+		Information dto = null;
+		try {
+			dto = mapper.findByIdOfInfo(num);
+		} catch (Exception e) {
+			log.info("=================findByIdOfInfo", e);
+		}
+		return dto;
+	}
+
+	@Override
+	public void updateInfo(long memberidx, long num, String answer) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+		
+			map.put("adminidx", memberidx);
+			map.put("answer", answer);
+			map.put("num", num);
+			
+			mapper.updateInfo(map);
+			
+		} catch (Exception e) {
+			log.info("====================updateInfo :", e);
+		}
+		
+	}
+
+	
+
 	
 	
 	

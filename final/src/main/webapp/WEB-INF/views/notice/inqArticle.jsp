@@ -21,7 +21,7 @@ body {
 	background-color: #f8f8f8;
 }
 
-/* 기존 .customer-center -> .cs-center */
+/* 고객센터 전체 컨테이너 */
 .cs-center {
 	text-align: center;
 	background-color: #fff;
@@ -32,27 +32,26 @@ body {
 	margin-top: 100px;
 }
 
-/* 기존 .title -> .cs-title */
+/* 타이틀 영역 */
 .cs-title {
 	font-size: 36px;
 	font-weight: bold;
 	margin-bottom: 10px;
 }
 
-/* 기존 .subtitle -> .cs-subtitle */
 .cs-subtitle {
 	font-size: 20px;
 	color: #666;
 	margin-bottom: 30px;
 }
 
-/* 기존 .divider -> .cs-divider */
+/* 구분선 */
 .cs-divider {
 	border-bottom: 2px solid #ddd;
 	margin: 30px 0;
 }
 
-/* 기존 .tab-menu -> .cs-tab-menu */
+/* 탭 메뉴 */
 .cs-tab-menu {
 	display: flex;
 	justify-content: space-around;
@@ -61,8 +60,7 @@ body {
 	padding: 0;
 }
 
-/* 기존 .nav-link -> .cs-tab-link */
-/* (주의) Bootstrap .nav-link와 겹칠 수 있으므로 커스텀 스타일은 .cs-tab-link에 적용 */
+/* (부트스트랩 nav-link 대신 커스텀 스타일 명시적으로 추가) */
 .cs-tab-menu .cs-tab-link {
 	font-size: 20px;
 	padding: 20px 50px;
@@ -85,31 +83,33 @@ body {
 	color: #fff;
 }
 
-/* 기존 .notice-post -> .cs-notice-post */
+/* 게시글(문의글) 영역 */
 .cs-notice-post {
 	text-align: left;
 	margin-top: 40px;
-	/* 필요 시 추가 스타일 가능 */
 }
 
-/* 기존 .post-title -> .cs-post-title */
+/* 게시글(문의글) 제목 */
 .cs-post-title {
 	font-size: 24px;
 	font-weight: bold;
 	margin-bottom: 10px;
 }
 
-/* 기존 .post-date -> .cs-post-date */
-.cs-post-date {
-	font-size: 14px;
-	color: #999;
+/* 게시글(문의글) 메타정보: 작성자, 작성일 */
+.cs-post-meta {
 	margin-bottom: 30px;
+	color: #999;
+	font-size: 14px;
+	display: flex;      /* 작성자 / 작성일 옆으로 배치 */
+	gap: 20px;          /* 요소 간 간격 */
 }
 
-/* 기존 .post-content -> .cs-post-content */
+/* 게시글(문의글) 본문 */
 .cs-post-content {
 	line-height: 1.6;
 	color: #333;
+	margin-bottom: 40px; /* 아래 답변영역과 간격 확보 */
 }
 
 .cs-post-content h4 {
@@ -119,6 +119,7 @@ body {
 	margin-bottom: 10px;
 }
 
+/* 표 스타일 (필요 시) */
 .cs-post-content table {
 	width: 100%;
 	border-collapse: collapse;
@@ -135,18 +136,33 @@ body {
 	text-align: center;
 }
 
-/* 반응형 예시 */
-@media ( max-width : 768px) {
-	.cs-tab-menu {
-		flex-direction: column;
-	}
-	.cs-tab-menu .cs-tab-link {
-		margin-bottom: 10px;
-	}
-	.cs-post-content table, .cs-post-content table th, .cs-post-content table td
-		{
-		font-size: 14px;
-	}
+/* 답변 섹션 */
+.cs-reply-section {
+	background-color: #f9f9f9;
+	padding: 20px;
+	border-radius: 4px;
+}
+
+.cs-reply-title {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+/* 답변 메타: 답변자, 답변일자 */
+.cs-reply-meta {
+	margin-bottom: 10px;
+	color: #999;
+	font-size: 14px;
+	display: flex;
+	gap: 20px;
+}
+
+/* 답변 내용 */
+.cs-reply-content {
+	line-height: 1.6;
+	color: #333;
 }
 
 /* 게시글 하단 네비게이션 */
@@ -200,6 +216,18 @@ body {
 	background-color: #6ab24f; /* 호버 시 색상 살짝 어둡게 */
 }
 
+/* 반응형 예시 */
+@media (max-width: 768px) {
+	.cs-tab-menu {
+		flex-direction: column;
+	}
+	.cs-tab-menu .cs-tab-link {
+		margin-bottom: 10px;
+	}
+	.cs-post-content table, .cs-post-content table th, .cs-post-content table td {
+		font-size: 14px;
+	}
+}
 </style>
 </head>
 <body>
@@ -216,17 +244,16 @@ body {
 		<!-- 탭 메뉴 -->
 		<ul class="nav nav-tabs cs-tab-menu" id="customerTab" role="tablist">
 			<li class="nav-item">
-				<!-- Bootstrap .nav-link는 유지하되, 커스텀 스타일은 .cs-tab-link로 제어 -->
 				<button class="nav-link cs-tab-link" id="faq-tab"
 					data-bs-toggle="tab" data-bs-target="#faq" type="button" role="tab">FAQ</button>
 			</li>
 			<li class="nav-item">
-				<button class="nav-link cs-tab-link" id="inquiry-tab"
+				<button class="nav-link cs-tab-link active" id="inquiry-tab"
 					data-bs-toggle="tab" data-bs-target="#inquiry" type="button"
 					role="tab">1:1문의</button>
 			</li>
 			<li class="nav-item">
-				<button class="nav-link cs-tab-link active" id="notice-tab"
+				<button class="nav-link cs-tab-link" id="notice-tab"
 					data-bs-toggle="tab" data-bs-target="#notice" type="button"
 					role="tab">공지사항</button>
 			</li>
@@ -234,25 +261,54 @@ body {
 
 		<div class="cs-divider"></div>
 
-		<!-- 단일 게시글 영역 -->
+		<!-- 단일 게시글 영역 (문의 상세) -->
 		<article class="cs-notice-post">
-			<h3 class="cs-post-title">&lt; 공지 &gt; ${dto.subject}</h3>
-			<p class="cs-post-date">${dto.create_date }</p>
+			<!-- 문의글 제목 -->
+			<h3 class="cs-post-title">${dto.subject}</h3>
 
-			<div class="cs-post-content">${dto.textcontent}</div>
+			<!-- 작성자 / 작성일자 등 -->
+			<div class="cs-post-meta">
+				<span class="cs-post-writer">작성자: ${dto.nickname}</span>
+				<span class="cs-post-date">작성일: ${dto.apply_date}</span>
+			</div>
+
+			<!-- 문의글 본문 -->
+			<div class="cs-post-content">
+				${dto.textcontent}
+			</div>
+
+			<!-- 관리자 답변 섹션 (답변 내용이 있을 경우에만 노출) -->
+			<c:if test="${not empty dto.answer_content}">
+				<div class="cs-reply-section">
+					<h4 class="cs-reply-title">관리자 답변</h4>
+					<div class="cs-reply-meta">
+						<span class="cs-reply-writer">답변자: ${dto.adminidx}</span>
+						<span class="cs-reply-date">답변일: ${dto.answer_date}</span>
+					</div>
+					<div class="cs-reply-content">
+						${dto.answer_content}
+					</div>
+				</div>
+			</c:if>
 		</article>
 
 		<div class="cs-divider"></div>
 
+		<!-- 게시글(문의글) 목록 이동, 다음글/이전글 -->
 		<div class="cs-post-nav">
 			<ul>
-				<li><span class="cs-nav-label">다음글</span> <span
-					class="cs-nav-title">없음</span></li>
-				<li><span class="cs-nav-label">이전글</span> <span
-					class="cs-nav-title">&lt;사치인TM&gt; 정성코멘 이벤트 당첨자 발표</span></li>
+				<li>
+					<span class="cs-nav-label">다음글</span> 
+					<span class="cs-nav-title">없음</span>
+				</li>
+				<li>
+					<span class="cs-nav-label">이전글</span>
+					<span class="cs-nav-title">&lt;사치인TM&gt; 정성코멘 이벤트 당첨자 발표</span>
+				</li>
 			</ul>
 		</div>
 
+		<!-- 목록으로 돌아가기 버튼 -->
 		<div class="cs-btn-area">
 			<button type="button" class="cs-btn-list" onclick="history.back()">목록보기</button>
 		</div>

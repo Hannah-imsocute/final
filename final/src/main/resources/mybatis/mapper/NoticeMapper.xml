@@ -13,17 +13,17 @@
 		SELECT COUNT(*) FROM information 
 		<where>
 			<if test="kwd != null and kwd != '' ">
-				INSTR(subject, #{kwd}) > 0 
+				INSTR(subject, #{kwd}) &gt; 0 
 			</if>
 		</where>
 	</select>
 	
 	<select id="getListOfInquiry" parameterType="map" resultType="com.sp.app.admin.model.Information">
-		SELECT info_num, memberidx, subject, textcontent, adminidx, answerstate, apply_date, answer_date, category_num, answer_content
+		SELECT info_num, memberidx, subject, textcontent, adminidx, answerstate, TO_CHAR(apply_date,'YYYY-MM-DD') apply_date , TO_CHAR(answer_date,'YYYY-MM-DD') answer_date, category_num, answer_content
 		FROM information
 		<where>
 			<if test="kwd != null and kwd != '' ">
-				INSTR(subject, #{kwd}) > 0 
+				INSTR(subject, #{kwd}) &gt; 0 
 			</if>
 		</where>
 		OFFSET #{offset} ROWS FETCH FIRST ${size} ROWS ONLY
@@ -32,40 +32,61 @@
 	<select id="DataCountFaq" resultType="Integer"
 		parameterType="map">
 		SELECT COUNT(*) 
-		FROM event_notice 
+		FROM event_notice en LEFT OUTER JOIN all_category ac ON ac.category_num = en.category_num
 		WHERE fixed = 1 
 		<if test="kwd != null and kwd != ''">
-			AND INSTR(subject, #{kwd}) &gt; 0
+			AND INSTR(catename, #{kwd}) &gt; 0
 		</if>
 	</select>
+
 	<select id="getListOfFaq"
 		resultType="com.sp.app.admin.model.Notice" parameterType="map">
 		SELECT evt_not_num , adminidx, subject, create_date,
-		NVL(category_num,0)category_num, textcontent
-		FROM event_notice WHERE fixed = 1
+		NVL(en.category_num,0)category_num, textcontent, fixed
+		FROM event_notice en 
+		LEFT OUTER JOIN all_category ac ON ac.category_num = en.category_num 
+		WHERE fixed = 1
 		<if test="kwd != null and kwd != ''">
-			AND INSTR(subject, #{kwd}) &gt; 0
+			AND INSTR(catename, #{kwd}) &gt; 0
 		</if>
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
 	</select>
+
 	<select id="getCategory" resultType="String">
 		SELECT catename FROM
 		all_category
 	</select>
+
 	<select id="getListOfNotice" parameterType="map" resultType="com.sp.app.admin.model.Notice">
 		SELECT evt_not_num , adminidx, subject, create_date,
 		NVL(category_num,0)category_num, textcontent
 		FROM event_notice WHERE fixed = 0
+		<if test="kwd != null and kwd != '' ">
+			and INSTR(subject, #{kwd)) &gt; 0 
+		</if>
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
 	</select>
+
 	<select id="DataCountNotice" resultType="Integer" parameterType="map">
 		SELECT COUNT(*) 
 		FROM event_notice 
 		WHERE fixed = 0 
+		<if test="kwd != null and kwd != '' ">
+			and INSTR(subject, #{kwd}) &gt; 0 
+		</if>
 	</select>
+	
 	<select id="findByIdOfNotice" resultType="com.sp.app.admin.model.Notice" parameterType="Long">
 		SELECT evt_not_num , adminidx, subject, create_date,
 		NVL(category_num,0)category_num, textcontent
 		FROM event_notice WHERE evt_not_num = #{num}
+	</select>
+	
+	<select id="findByIdOfInformation" parameterType="Long" resultType="com.sp.app.admin.model.Information">
+		SELECT info_num, info.memberidx, nickname, subject, textcontent, adminidx, answerstate, TO_CHAR(apply_date, 'YYYY-MM-DD') apply_date, 
+			TO_CHAR(answer_date, 'YYYY-MM-DD') answer_date, answer_content, category_num 
+		FROM information info 
+		LEFT OUTER JOIN member m ON m.memberIdx = info.memberidx
+		WHERE info_num = #{num}
 	</select>
 </mapper>
