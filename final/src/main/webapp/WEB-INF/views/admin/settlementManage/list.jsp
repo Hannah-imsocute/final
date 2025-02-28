@@ -94,7 +94,7 @@ a.profile:hover {
 					</c:when>
 				</c:choose>
 				<td><a class="profile"
-					href="${pageContext.request.contextPath}/admin/settlementManage/profile?settlement_num=${dto.settlement_num}&page=${page}"><font
+					href="${pageContext.request.contextPath}/admin/settlementManage/profile"><font
 						color="gray"> 상세보기 </font></a></td>
 			</tr>
 		</c:forEach>
