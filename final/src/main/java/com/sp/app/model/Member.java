@@ -9,6 +9,7 @@ import lombok.*;
 public class Member {
 	private long memberIdx;
 	private String email;
+	private String domain;
 	private String password;
 	private String name;
 	private String nickName;

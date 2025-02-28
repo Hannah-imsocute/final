@@ -195,7 +195,10 @@ main {
 
 				<!-- 날짜 영역 -->
 				<div class="days">
+				<c:set var="dayofweek" value="0"/>
+				<c:when test="dayofweek < ${dayofweek - 1}">
 					<div></div>
+				</c:when>
 					<div></div>
 					<div></div>
 					<div></div>

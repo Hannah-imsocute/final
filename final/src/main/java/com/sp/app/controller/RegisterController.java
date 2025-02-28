@@ -50,7 +50,8 @@ public class RegisterController {
 	@PostMapping()
 	public String handleSubmit(@ModelAttribute Member member) {
 		try {
-			// email, name, nickname, password, phone, birth
+			// email, domain name, nickname, password, phone, birth
+			member.setEmail(member.getEmail()+ "@" + member.getDomain());
 			service.insertMember(member);
 			return "redirect:/";
 		} catch (Exception e) {

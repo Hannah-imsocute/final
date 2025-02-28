@@ -47,7 +47,7 @@
 						<input type="text" class="email-domain" name="domain"
 							placeholder="예) naver.com" required />
 						<!-- 도메인 select (원하는 도메인 추가 가능) -->
-						<select class="domain-select" name="domain">
+						<select class="domain-select" name="domainselect">
 							<option value="" selected>직접입력</option>
 							<option value="naver.com">naver.com</option>
 							<option value="gmail.com">gmail.com</option>
@@ -123,7 +123,6 @@
 
 				<!-- 가입 버튼 -->
 				<button type="button" class="submit-btn">회원가입하기</button>
-				<input type="hidden" name="email" value="">
 			</form>
 		</div>
 	</main>
@@ -145,7 +144,7 @@
 			
 			if(state == 'true'){
 				$('.dup-check-msg').attr('data-valid', 'true').css('color','green').text('사용 가능한 이메일입니다.');
-				$('input[name=email]').val(email);
+				//$('input[name=email]').val(email);
 			}else {
 				$('.dup-check-msg').attr('data-valid', 'false').css('color','red').text('사용 불가능한 이메일입니다.');
 			}
@@ -172,7 +171,7 @@
 			$form.submit();
 		});
 	
-		$('.chkAll').
+		//$('.chkAll').
 	});
 	
 	

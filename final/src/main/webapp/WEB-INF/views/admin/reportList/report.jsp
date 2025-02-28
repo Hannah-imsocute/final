@@ -266,8 +266,8 @@
 						out += '</tr>';
 						
 						// 아 개빡치네 이거 왜 반대로 나옴 
-						console.log(data.dto.processdate)
-						
+						console.log(data.dto.processdate);
+						btns = '';
 						if(! data.dto.processdate ){
 							btns += `<button type="button" class="btn btn-secondary" id="rejectBtn"
 								data-bs-dismiss="modal">반려</button>
