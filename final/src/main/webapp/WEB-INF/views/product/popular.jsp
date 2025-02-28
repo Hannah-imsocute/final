@@ -86,18 +86,42 @@
  -->
 	        <!-- 메인 패널 -->
 	        <div class="main-panel">
-	            <h5 class="main-top-name">인기작품별 메인페이지입니다</h5>
-	            <div class="count">
-	              <p class="dataCount">${dataCount}개<p>
+	            <h5 class="main-top-name">모두가 인정한 인기작이에요! </h5>
+	           <br>
+				<div class="searchForm" style="display: flex; justify-content: flex-end; width: 100%;">
+					<div class="col-6 text-center">
+						<form class="row" name="searchForm">
+							<div class="col-auto p-1">
+								<select name="schType" class="form-select">
+									<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+									<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
+									<option value="reg_date" ${schType=="reg_date"?"selected":""}>등록일</option>
+									<option value="subject" ${schType=="subject"?"selected":""}>제목</option>
+									<option value="content" ${schType=="content"?"selected":""}>내용</option>
+								</select>
+							</div>
+							<div class="col-auto p-1">
+								<input type="text" name="kwd" value="${kwd}" class="form-control">
+							</div>
+							<div class="col-auto p-1">
+								<button type="button" class="btn btn-light" onclick="searchList()" style="background: orange;"> <i class="bi bi-search"></i> </button>
+							</div>
+							<div class="col-auto p-1">
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}" title="새로고침" style="background: orange;"><i class="bi bi-arrow-counterclockwise"></i></button>
+							</div>
+						</form>
+					</div>
+				</div>
+	           
+	           
+	            <div class="count" >
+	              <p class="dataCount" style="display: flex; justify-content: flex-end" hidden >${dataCount}개<p>
 	            </div>
-	            <br>
 	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0" >
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
-	                
 	           </div>
-	              <button id="loadMore" data-page ="${page}" style="margin-top: 20px;" >작품 더보기</button>
-	        </div>
-	
+	            <button id="loadMore" data-page ="${page}" style="margin-top: 20px;" >작품 더보기</button>
+	      </div>
 		</div>
 	</main>
 </body>
