@@ -10,6 +10,11 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 <link rel="stylesheet" href="/dist/css/product.css">
 
+<style type="text/css">
+
+</style>
+
+
 </head>
 <body>
 	<header>
@@ -24,48 +29,48 @@
 					<h3>전체 카테고리</h3>
 					<br>	
 					<ul>
-						<li data-categoryName="food">식품 ▾
+						<li data-categoryName="food" >식품 ▾</li>
 							<ul class="sub-menu">
-								<li data-categoryName="bakery"><a href="#">베이커리/전통간식</a></li>
-								<li data-categoryName="beverage"><a href="#">음료/주류</a></li>
-								<li data-categoryName="dish"><a href="#">요리/간편식</a></li>
-								<li data-categoryName="nongsusan"><a href="#">농수산품</a></li>
+								<li data-categoryName="bakery"><a>베이커리/전통간식</a></li>
+								<li data-categoryName="beverage"><a>음료/주류</a></li>
+								<li data-categoryName="dish"><a>요리/간편식</a></li>
+								<li data-categoryName="nongsusan"><a>농수산품</a></li>
 							</ul>
 						</li>
 
-						<li data-categoryName="fashion">패션 ▾
+						<li data-categoryName="fashion" ><a>패션 ▾</a>
 							<ul class="sub-menu">
-								<li data-categoryName="clothing"><a href="#">의류</a></li>
-								<li data-categoryName="jewelry"><a href="#">주얼리</a></li>
-								<li data-categoryName="fashion-accessory"><a href="#">패션잡화</a></li>
+								<li data-categoryName="clothing"><a>의류</a></li>
+								<li data-categoryName="jewelry"><a>주얼리</a></li>
+								<li data-categoryName="fashion-accessory"><a>패션잡화</a></li>
 							</ul>
 						</li>
 						
-						<li data-categoryName="living">리빙 ▾
+						<li data-categoryName="living" ><a>리빙 ▾</a>
 							<ul class="sub-menu">
-								<li data-categoryName="camping"><a href="#">캠핑</a></li>
-								<li data-categoryName="furniture"><a href="#">가구</a></li>
-								<li data-categoryName="home-decor"><a href="#">홈데코</a></li>
-								<li data-categoryName="kitchenware"><a href="#">주방용품</a></li>
-								<li data-categoryName="bathroom"><a href="#">욕실용품</a></li>
+								<li data-categoryName="camping"><a>캠핑</a></li>
+								<li data-categoryName="furniture"><a>가구</a></li>
+								<li data-categoryName="home-decor"><a>홈데코</a></li>
+								<li data-categoryName="kitchenware"><a>주방용품</a></li>
+								<li data-categoryName="bathroom"><a>욕실용품</a></li>
 							</ul>
 						</li>
 						
-						<li data-categoryName="stationeryMisc">문구/기타용품 ▾
+						<li data-categoryName="stationeryMisc"><a>문구/기타용품 ▾</a>
 							<ul class="sub-menu">
-								<li data-categoryName="case"><a href="#">케이스</a></li>
-								<li data-categoryName="stationery"><a href="#">문구용품</a></li>
-								<li data-categoryName="party-supplies"><a href="#">파티용품</a></li>
-								<li data-categoryName="car-accessory"><a href="#">차량용품</a></li>
+								<li data-categoryName="case"><a>케이스</a></li>
+								<li data-categoryName="stationery"><a>문구용품</a></li>
+								<li data-categoryName="party-supplies"><a>파티용품</a></li>
+								<li data-categoryName="car-accessory"><a>차량용품</a></li>
 							</ul>
 						</li>
 						
-						<li data-categoryName="beauty">뷰티 ▾
+						<li data-categoryName="beauty"><a>뷰티 ▾</a>
 							<ul class="sub-menu">
-								<li data-categoryName="skincare"><a href="#">스킨케어</a></li>
-								<li data-categoryName="hair-body-cleansing"><a href="#">헤어/바디/클렌징</a></li>
-								<li data-categoryName="perfume"><a href="#">향수</a></li>
-								<li data-categoryName="makeup"><a href="#">메이크업</a></li>
+								<li data-categoryName="skincare"><a>스킨케어</a></li>
+								<li data-categoryName="hair-body-cleansing"><a>헤어/바디/클렌징</a></li>
+								<li data-categoryName="perfume"><a>향수</a></li>
+								<li data-categoryName="makeup"><a>메이크업</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -129,6 +134,8 @@
 </body>
 
 <script type="text/javascript">
+
+
 
 // 전역변수 설정
 var total_page_count = 0;
@@ -279,6 +286,16 @@ $(document).ready(function() {
                 	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
                 	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
+                	 // 할인 여부에 따라 가격과 할인율 표시 여부 결정
+                	    if (arrayKey.discount > 0) {
+    			            $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
+    			            $productBox.find('.product-discount').text(arrayKey.discount + "%");
+    			        } else {
+    			            $productBox.find('.product-price').hide();  // 가격 숨김
+    			            $productBox.find('.product-discount').hide();  // 할인율 숨김
+    			        }
+                	    
+                	    
                 	    // 최종적으로 productList에 추가
                 	    productList.append($productBox);
                 	    
