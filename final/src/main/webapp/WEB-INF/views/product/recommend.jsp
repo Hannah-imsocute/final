@@ -21,6 +21,7 @@
 			<div class="left-panel">
 				<div class="left-menu">
 					<h3>전체 카테고리</h3>
+					<br>	
 					<ul>
 						<li data-categoryName="food">식품 ▾
 							<ul class="sub-menu">
@@ -95,7 +96,7 @@
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
 	                
 	           </div>
-	            <button id="loadMore" data-page ="${page}" >작품 더보기</button>
+	              <button id="loadMore" data-page ="${page}" style="margin-top: 20px;" >작품 더보기</button>
 	        </div>
 	
 		</div>
@@ -161,6 +162,16 @@ $(document).ready(function() {
             	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
             	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
+            	    
+            	    // 할인 여부에 따라 가격과 할인율 표시 여부 결정
+            	    if (arrayKey.discount > 0) {
+			            $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
+			            $productBox.find('.product-discount').text(arrayKey.discount + "%");
+			        } else {
+			            $productBox.find('.product-price').hide();  // 가격 숨김
+			            $productBox.find('.product-discount').hide();  // 할인율 숨김
+			        }
+            	    
             	    // 최종적으로 productList에 추가
             	    productList.append($productBox);
             	    

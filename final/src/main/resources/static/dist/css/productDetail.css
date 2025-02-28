@@ -6,13 +6,16 @@ body {
   
 }
 
+
+
 .container {
-display: grid;
+    display: grid;
     grid-template-columns: 1fr; /* 한 개의 열(세로 정렬) */
     width: 90%;
-    margin: auto;
-    padding: 20px;
+    margin: 0 auto;  /* 위아래는 0, 좌우는 auto */
+    padding: 0px;
 }
+
 
 .product-detail {
     display: flex;
@@ -110,8 +113,9 @@ display: grid;
     justify-content: center; /* 버튼 가운데 정렬 */
 }
 
+
 .btn  {
-    padding: 10px 20px;
+
     border: none;
     border-radius: 5px;
     cursor: pointer;

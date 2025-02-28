@@ -1,4 +1,5 @@
 ﻿@charset "UTF-8";
+ header { position: relative !important; }
 
 * {
 	padding: 0;
@@ -7,6 +8,10 @@
 
 *, *::after, *::before {
 	box-sizing: border-box;
+}
+
+main {
+    margin-top: 0px; /* 조정 가능 */
 }
 
 body {
@@ -27,7 +32,7 @@ body {
 
 .main-panel {
 	width: 80%;
-	padding: 70px;
+	padding: 20px;
 }
 
 .left-menu ul {
@@ -154,7 +159,6 @@ body {
 
 
 button {
-	margin-top: 20px;
 	padding: 10px 20px;
 	background: orange;
 	border: none;

@@ -42,7 +42,9 @@
                 <div class="rating">
                     ⭐⭐⭐⭐ 4.9 (312)
                 </div>
-                <p class="discount">${dto.discount }% <span class="original-price">${fmdPrice}원</span></p>
+                <c:if test="${dto.discount > 0}">
+    				<p class="discount">${dto.discount}% <span class="original-price">${fmdPrice}원</span></p>
+				</c:if>
                 <h3 class="price">${fmdSalePrice}원</h3>
  
                 <div class="promotion">
@@ -54,7 +56,7 @@
  				<!-- 옵션 정보 추가 시작 -->
  				<div class="option-group" >
 	                <c:if test="${dto.optionCount > 0}">
-						<div class="mt-2">
+						<div class="mt-2" style="text-align: left;">
 							* 필수 옵션
 						</div>
 					</c:if>
@@ -96,8 +98,8 @@
 					<div class="row mt-2 pb-2">
 						<div class="col-auto fw-semibold pt-1">총상품금액</div>
 						<div class="col text-end">
-							<label>총수량 <span class="product-totalQty">0</span>개 | </label>
-							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">${dto.salePrice}</span>원</label>
+					<!--  	<label>총수량 <span class="product-totalQty">0</span>개 | </label> -->	
+							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">${fmdSalePrice}</span>원</label>
 						</div>
 					</div>
 				</div>
