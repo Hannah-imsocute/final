@@ -237,8 +237,7 @@
     /* ★ 쿠폰 모달 */
     #couponModalOverlay { display: none; }
     #couponModalOverlay .modal {
-      width: 320px; max-width: 30%; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      height: 1000px;
+      width: 400px; max-width: 90%; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     #couponModalOverlay .modal-header {
       background: #ff8200; color: #fff; padding: 15px; border-top-left-radius: 8px; border-top-right-radius: 8px;
@@ -247,7 +246,7 @@
       margin: 0; font-size: 20px;
     }
     #couponModalOverlay .modal-body {
-      max-height: 100px; overflow-y: auto; padding: 15px;
+      max-height: 300px; overflow-y: auto; padding: 15px;
     }
     #couponModalOverlay .coupon-list { list-style: none; padding: 0; margin: 0; }
     #couponModalOverlay .coupon-item {
@@ -266,47 +265,6 @@
     }
     #couponModalOverlay .coupon-modal-cancel:hover { background: #b3b3b3; }
   </style>
-
-  <script type="text/javascript">
-    function sendOk() {
-      const f = document.orderSubmit;
-
-      // 결제 API에서 응답 받을 파라미터
-      let byMethod = '카드결제'; // 결제수단
-      let provider = '국민카드';  // 카드사
-      let confirmCode = '20250000001'; // 승인번호
-      let confirmDate = ''; // 승인 날짜
-      let cardNumber = 41202235555
-      // toISOString() : 'YYYY-MM-DDTHH:mm:ss.sssZ' 형식
-      confirmDate = new Date().toISOString().replace('T', ' ').slice(0, -5); // YYYY-MM-DD HH:mm:ss
-
-      // 결제 API에 요청할 파라미터
-      let payment = f.payment.value; // 결제할 금액
-      let merchant_uid = '${order.orderCode}';  // 고유 주문번호
-      <%--let productName = '${order.}';  // 주문상품명--%>
-      let buyer_email = '${sessionScope.member.email}';  // 구매자 이메일
-      let buyer_name = '${receiverName}';  // 구매자 이름
-      let buyer_tel = '${phone}';   // 구매자 전화번호(필수)
-      let buyer_addr = '${addTitle}' + ' ' + '${addDetail}';  // 구매자 주소
-      buyer_addr = buyer_addr.trim();
-      let buyer_postcode = '${postCode}'; // 구매자 우편번호
-
-      // 결제 API로 결제 진행
-
-      // 결제가 성공한 경우 ------------------------
-
-      // 결제 방식, 카드번호, 승인번호, 결제 날짜
-      f.byMethod.value = byMethod;
-      f.provider.value = provider;
-      f.confirmCode.value = confirmCode;
-      f.confirmDate.value = confirmDate;
-      f.cardNumber.value = cardNumber;
-
-      f.action = '${pageContext.request.contextPath}/order/submit';
-      f.submit();
-      return false;
-    }
-  </script>
 </head>
 <body>
 <header>
@@ -329,13 +287,6 @@
   <!-- 전체 폼 시작 -->
   <form action="${pageContext.request.contextPath}/order/submit" method="post" name="orderSubmit">
 
-    <input type="hidden" name="payment" value="${overallNetPay}"> <%--결제할 총 금액--%>
-    <input type="hidden" name="byMethod" value=""> <%--결제수단--%>
-    <input type="hidden" name="provider" value=""> <%--카드사 --%>
-    <input type="hidden" name="confirmCode" value=""> <%--승인번호--%>
-    <input type="hidden" name="confirmDate" value=""> <%--승인날짜--%>
-    <input type="hidden" name="cardNumber" value=> <%--승인날짜--%>
-
     <c:choose>
       <c:when test="${mode eq 'direct'}">
         <%--직접구매--%>
@@ -349,7 +300,7 @@
         </c:forEach>
       </c:when>
       <c:otherwise>
-        <%--  장바구니 구매--%>
+       <%--  장바구니 구매--%>
         <c:if test="${not empty cartItems}">
           <c:forEach var="cart" items="${cartItems}">
             <input type="hidden" name="selectedItems" value="${cart.cartItemCode}" />
@@ -378,7 +329,6 @@
             <div class="recipient-info">
               <strong class="recipient-name"><c:out value="${receiverName}" /></strong>
               <span class="recipient-phone"><c:out value="${phone}" /></span>
-              <input type="hidden" name="postCode" value="${postCode}">
             </div>
             <button type="button" class="btn-addr-change">배송지 변경</button>
           </div>
@@ -414,7 +364,7 @@
             </div>
           </div>
           <div class="point-use-row">
-            <span>나의 포인트 <strong data-balance="${balance}">${balance}원</strong></span>
+            <span>나의 포인트 <strong>${balance}원</strong></span>
             <div class="point-input-wrap">
               <input type="text" name="spentPoint" placeholder="0"/>
               <button type="button" class="point-btn">전액사용</button>
@@ -438,13 +388,13 @@
           <div style="margin-top: 15px; font-size:14px; color:#999;">
             다른 결제수단으로도 결제 가능합니다.
           </div>
-<%--          <div style="margin-top: 15px;">--%>
-<%--            <label for="paymentSelect" style="font-size:14px;">결제수단 선택:</label>--%>
-<%--            <select id="paymentSelect" name="payment">--%>
-<%--              <option value="카드" selected>카드</option>--%>
-<%--              <option value="계좌이체">계좌이체</option>--%>
-<%--            </select>--%>
-<%--          </div>--%>
+          <div style="margin-top: 15px;">
+            <label for="paymentSelect" style="font-size:14px;">결제수단 선택:</label>
+            <select id="paymentSelect" name="payment">
+              <option value="카드" selected>카드</option>
+              <option value="계좌이체">계좌이체</option>
+            </select>
+          </div>
         </div>
       </div> <!-- //order-left -->
 
@@ -500,8 +450,7 @@
           <input type="hidden" name="spentPoint" id="spentPoint" value="0" />
 
           <!-- 폼 제출 버튼 -->
-          <button class="btn-submit-order" type="button" onclick="sendOk()">결제하기</button>
-          <button type="button" class="btn btn-light btn-lg" style="width: 250px;" onclick="location.href='${pageContext.request.contextPath}/';">결제취소</button>
+          <button class="btn-submit-order" type="submit">결제하기</button>
         </div>
       </div> <!-- //order-right -->
     </div> <!-- //order-content -->
@@ -693,7 +642,7 @@
         success: function(response) {
           if(response.status === "success") {
             $modalOverlay.hide();
-            $("#hiddenAddrName").val(addName);
+            $("#hiddenAddrName").val(receiverName);
             $("#hiddenPostCode").val(postCode);
             $("#hiddenAddTitle").val(addTitle);
             $("#hiddenAddDetail").val(addDetail);
