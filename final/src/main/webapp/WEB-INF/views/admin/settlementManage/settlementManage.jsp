@@ -108,6 +108,26 @@
 
 <script type="text/javascript">
 
+function loadProfile(settlement_num, page) {
+    let url = '${pageContext.request.contextPath}/admin/settlementManage/profile';  // 요청 URL
+    let formData = 'settlement_num=' + settlement_num + '&page=' + page;
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: formData,
+        dataType: 'html',  // HTML로 응답을 처리
+        success: function(data) {
+            $('#tab-content').html(data);  // 받아온 데이터를 해당 요소에 삽입
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX 요청 실패:', error);  // 에러 처리
+        }
+    });
+}
+
+
+
 $(function(){
     // 기본적으로 메인탭 1번과 서브탭 1번을 활성화
     $('#tab-1').addClass('active');

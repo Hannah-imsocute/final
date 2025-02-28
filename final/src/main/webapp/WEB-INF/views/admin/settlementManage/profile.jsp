@@ -15,10 +15,6 @@
 		<td class="col-sm-4"></td>
 		<td class="bg-light col-sm-2 fw-bold">권 한</td>
 		<td class="col-sm-4">
-			<c:choose>
-
-				<c:otherwise>기타</c:otherwise>
-			</c:choose>
 		</td>
 	</tr>
 	<tr>
@@ -82,7 +78,7 @@
 					<table class="table write-form mb-1">
 						<tr>
 							<td width="110" class="bg-light">아이디</td>
-							<td class="col-sm-4">${dto.email}</td>
+							<td class="col-sm-4">}</td>
 							<td><p class="form-control-plaintext"></p></td>
 						</tr>
 						<tr>
@@ -184,8 +180,8 @@
 	
 						                </c:choose>
 						            </td>
-						            <td>${vo.registerId}</td>
-						            <td>${vo.block_date}</td>
+						            <td>}</td>
+						            <td>}</td>
 						        </tr>
 						    </c:forEach>
 										  

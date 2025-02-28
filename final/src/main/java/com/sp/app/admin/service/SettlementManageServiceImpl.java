@@ -2,7 +2,6 @@ package com.sp.app.admin.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,16 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 	private final SettlementManageMapper mapper;
 	
 	@Override
-	public List<SettlementManage> findByOrderCodeAndDateRange(Map<String, Object> params) {
-		// TODO Auto-generated method stub
-		return null;
+	public SettlementManage findByOrderCodeAndDateRange(String settlement_num) {
+		SettlementManage dto = null;
+		
+		try {
+			dto = mapper.findByOrderCodeAndDateRange(settlement_num);
+		} catch (Exception e) {
+			log.info("findById : ", e);
+		}
+		
+		return dto;
 	}
 	
 	@Override
@@ -116,15 +122,6 @@ public class SettlementManageServiceImpl implements SettlementManageService {
 
 	@Override
 	public SettlementManage findById(String settlement_num) {
-		SettlementManage dto = null;
-		
-		try {
-			dto = Objects.requireNonNull(mapper.findById(settlement_num));
-		} catch (Exception e) {
-			log.info("findById : ", e);
-		}
-		
-		return dto;
+		return null;
 	}
-
 }

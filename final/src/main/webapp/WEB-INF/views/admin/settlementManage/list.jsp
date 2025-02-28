@@ -93,9 +93,9 @@ a.profile:hover {
 						<td>${dto.state2 == 1 ? "완료" : "대기"}</td>
 					</c:when>
 				</c:choose>
-				<td><a class="profile"
-					href="${pageContext.request.contextPath}/admin/settlementManage/profile"><font
-						color="gray"> 상세보기 </font></a></td>
+					<td><a class="profile" href="javascript:void(0);" 
+					   onclick="loadProfile('${dto.settlement_num}');">
+					   <font color="gray">상세보기</font></a></td>
 			</tr>
 		</c:forEach>
 	</tbody>

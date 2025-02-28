@@ -54,9 +54,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         .build();
 
     session.setAttribute("member", info);
+    
+    String redirectUrl = determineRedirectUrl(info);
+    
+    redirectStrategy.sendRedirect(request, response, redirectUrl);
 
     // redirect 설정
-    resultRedirectStrategy(request, response, authentication);
+    // resultRedirectStrategy(request, response, authentication);
 
   }
 
@@ -77,5 +81,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
   public void setDefaultUrl(String defaultUrl) {
     this.defaultUrl = defaultUrl;
   }
-
+  
+  private String determineRedirectUrl(SessionInfo info) {
+	    // 사용자 권한에 따라 리다이렉트할 URL을 결정
+	    if (info.getUserLevel() == NumericRoleGranted.ADMIN) {
+	        return "/admin";  // 관리자 페이지
+	    } else {
+	        return "/";  // 일반 사용자는 홈으로 리다이렉트
+	    }
+  }
 }

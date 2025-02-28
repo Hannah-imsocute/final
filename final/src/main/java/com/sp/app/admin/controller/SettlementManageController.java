@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -113,11 +112,11 @@ public class SettlementManageController {
 
 	// 상세보기 페이지
 	@GetMapping("profile")
-	public String profile(@RequestParam(name = "settlement_num") String settlement_num,
-			@RequestParam(name = "page", defaultValue = "1") int page, Model model) throws Exception {
+	public String profile(@RequestParam(value = "settlement_num", defaultValue = "0") String settlement_num,
+			@RequestParam(name = "page", defaultValue = "1") int page, Model model, HttpServletResponse resp) throws Exception {
 		try {
 			// settlement_num에 맞는 상세 정보 조회
-			SettlementManage dto = Objects.requireNonNull(service.findById(settlement_num));
+			SettlementManage dto = service.findByOrderCodeAndDateRange(settlement_num);
 
 			model.addAttribute("dto", dto);
 			model.addAttribute("page", page);

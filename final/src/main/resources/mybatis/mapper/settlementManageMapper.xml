@@ -78,8 +78,7 @@
 		LEFT JOIN settlement_cash c ON c.brand_code = p.brand_code
 		JOIN order_item o ON o.item_code = d.item_code
 		JOIN product t ON o.productcode = t.productcode
-		AND p.settlement_date BETWEEN #{startDate} AND #{endDate}
-		WHERE o.order_code = #{order_code}
+		WHERE p.settlement_num = #{settlement_num}
 	</select>
 
 	<select id="findByUserId" parameterType="String"

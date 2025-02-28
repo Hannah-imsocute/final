@@ -15,6 +15,7 @@
 						title="회원가입"><i class="bi bi-person-plus"></i></a></li>
 				</ul>
 			</c:when>
+
 			<c:otherwise>
 				<ul class="nav user-menu">
 					<li class="nav-item"><a href="#" class="nav-link">사용자님</a></li>
@@ -23,6 +24,11 @@
 					<li class="nav-item"><a
 						href="${pageContext.request.contextPath}/member/logout"
 						title="로그아웃" class="nav-link"><i class="bi bi-unlock"></i></a></li>
+					<c:if test="${sessionScope.member.userLevel==99}">
+						<li class="p-2">
+							<a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a>
+						</li>					
+					</c:if>
 				</ul>
 			</c:otherwise>
 		</c:choose>
