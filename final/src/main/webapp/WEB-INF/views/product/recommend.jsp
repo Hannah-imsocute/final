@@ -107,7 +107,7 @@
 	            <div class="product-list" id="product-list" data-page="0" data-totalPage="0" >
 	                <!-- 제품 항목들이 동적으로 로드됩니다 -->
 	           </div>
-	            <button id="loadMore" data-page ="${page}" style="margin-top: 20px;" >작품 더보기</button>
+	            <button id="loadMore" data-page="${page != null ? page : 1}" style="margin-top: 20px;" >작품 더보기</button>
 	      </div>
 		</div>
 	</main>
@@ -193,11 +193,12 @@ $(document).ready(function() {
             	    // 최종적으로 productList에 추가
             	    productList.append($productBox);
             	    
-            	    page_total_count = arrayKey.total_page; // 전역변수에 전체페이지갯수 담아두기 
+            	  
             	})
             } else {
                 console.warn('올바른 상품 데이터가 아닙니다.');
             }
+           		 total_page_count = response.total_page;
 
         },
         error: function(xhr, status, error) {
@@ -269,14 +270,24 @@ $(document).ready(function() {
                 	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
                 	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
+                		 // 할인 여부에 따라 가격과 할인율 표시 여부 결정
+                	    if (arrayKey.discount > 0) {
+    			            $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
+    			            $productBox.find('.product-discount').text(arrayKey.discount + "%");
+    			        } else {
+    			            $productBox.find('.product-price').hide();  // 가격 숨김
+    			            $productBox.find('.product-discount').hide();  // 할인율 숨김
+    			        }
+                	    
                 	    // 최종적으로 productList에 추가
                 	    productList.append($productBox);
                 	    
-                	    page_total_count = arrayKey.total_page; // 전역변수에 전체페이지갯수 담아두기 
+                	   
                 	})
                 } else {
                     console.warn('올바른 상품 데이터가 아닙니다.');
                 }
+                total_page_count = response.total_page;
 
             },
             error: function(xhr, status, error) {
@@ -298,13 +309,15 @@ $(document).ready(function() {
             }      
           
             var page = parseInt($this.attr('data-page'), 10);
-            	if(isNaN(page)){
-            	page = 2;
+           	if(isNaN(page)){
+            	page = 1;
             	$this.attr('data-page', page)
+            }else{
+            	$this.attr('data-page', page++); // 페이지 갯수 증가
             }
-
+     
             $.ajax({
-                url: '/product/category',  // Spring Boot 서버 엔드포인트
+                url: '/product/recommendMain',  // Spring Boot 서버 엔드포인트
                 method: 'GET',
                 /* 요청 데이터 셋팅 */
                 data: { categoryName: categoryName
@@ -312,14 +325,17 @@ $(document).ready(function() {
                 dataType: 'json',
 				/* api 호출전 데이터 체크로직 */
                 beforeSend: function (xhr, settings){
-                	if(page >= total_page_count){ 
-                		 alert("마지막 페이지입니다."); // 마지막 페이지 알림
-                         $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
-                         return false;
-                	}
+
+                    if(page > total_page_count){ 
+                  		alert("마지막 페이지입니다."); // 마지막 페이지 알림
+                        $this.prop("disabled", true).text("마지막 페이지"); // 버튼 비활성화
+                        
+                        return false;
+                  	}
                 },
                 success: function(response) {
                     var productList = $('#product-list');
+             
 
                     // 응답 데이터가 배열인지 확인 후 처리
                     if (response && Array.isArray(response.list)) {
@@ -351,11 +367,11 @@ $(document).ready(function() {
                         
 	                    total_page_count = response.total_page; // DB 기준 갱신된 전체페이지 갯수를 전역변수에 갱신
 	                    
-	                    $this.attr('data-page', page + 1); // 페이지 갯수 증가
-	                    
                     } else {
                         console.warn('올바른 상품 데이터가 아닙니다.');
                     }
+                  
+                    $this.attr('data-page', page++); // 페이지 갯수 증가
                 },
                 error: function(xhr, status, error) {
                     alert('상품 정보를 불러오는 데 실패했습니다.');

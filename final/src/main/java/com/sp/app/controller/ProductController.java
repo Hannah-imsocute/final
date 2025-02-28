@@ -91,11 +91,11 @@ public class ProductController {
 	public ModelAndView category(HttpServletRequest req ) throws Exception{ 
 		ModelAndView mav = new ModelAndView("product/category");
 		try {
-			log.info("Main page accessed");
+			log.info("category page accessed");
 		} catch (NullPointerException e) {
 			log.error("NullPointerException in main(): ", e);
 		} catch (Exception e) {
-			log.info("main : ", e  );
+			log.info("category : ", e  );
 		}
 		
 		return mav;
@@ -152,7 +152,7 @@ public class ProductController {
 			
 			dataCount = service.totalDataCount(map);
 			System.out.println("dataCount : " + dataCount);
-			total_page = paginateUtil.pageCount(dataCount, size);
+			total_page = paginateUtil.pageCount(dataCount, size); //3 
 			
 			current_page = Math.min(current_page, total_page);
 			
@@ -163,13 +163,15 @@ public class ProductController {
 			map.put("size", size);
 			
 			List<MainProduct> list = service.listCategoryMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
-			
 			response.put("list", list);			
             response.put("page", current_page);
             response.put("dataCount", dataCount);
             response.put("size", size);
             response.put("total_page", total_page);
 			
+            System.out.println("####### current_page : " + current_page);
+            System.out.println("####### total_page : " + total_page);
+            
 		} catch (NullPointerException e) {
 			log.info("main NullPointerException : ", e  );
 			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
@@ -211,11 +213,15 @@ public class ProductController {
 				
 				List<MainProduct> list = service.listPopularMainProduct(map); // 실제 페이징기준으로 데이터 가져오는 부분
 				
+				System.out.println(current_page);
+				System.out.println(total_page);
+				
 				response.put("list", list);			
 	            response.put("page", current_page);
 	            response.put("dataCount", dataCount);
 	            response.put("size", size);
 	            response.put("total_page", total_page);
+	            
 				
 			} catch (NullPointerException e) {
 				log.info("main NullPointerException : ", e  );
