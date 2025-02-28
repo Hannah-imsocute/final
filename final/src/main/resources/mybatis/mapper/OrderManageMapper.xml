@@ -5,29 +5,34 @@
         <sql id="tebNum-list">
             <choose>
                 <when test="tepNum == 100">
-                   ( oi.orderState = 0 OR oi.orderState  =1 OR oi.orderState =7 OR oi.orderState=9)
+                 AND  (  oi.ORDER_STATE  &gt;= 1 AND oi.ORDER_STATE &lt;=  17)
                 </when>
                 <when test="tebNum == 110">
-                    (oi.orderState &gt;= 2  AND oi.orderState &lt;= 5)
+                    AND    (oi.ORDER_STATE =1)
                 </when>
-
+                <when test="tebNum == 120">
+                    AND (oi.ORDER_STATE &gt;= 3 AND oi.ORDER_STATE &lt;= 5)
+                </when>
+                <when test="tebNum == 130">
+                    AND (oi.ORDER_STATE &gt;= 16 AND oi.ORDER_STATE &lt;= 17)
+                </when>
             </choose>
         </sql>
 
             <sql id="search-list">
                 <choose>
-                    <when test="schType == 'orderNum' ">
-                        ( po.orderNum  = #{kwd} )
+                    <when test="schType == 'item_code' ">
+                        ( oi.item_code  = #{kwd} )
                     </when>
                     <when test="schType == 'invoiceNumber' ">
                         ( invoiceNumber  = #{kwd} )
                     </when>
-                    <when test="schType == 'orderDate' ">
-                        ( TO_CHAR(orderDate, 'YYYYMMDD') = #{kwd}
-                        OR TO_CHAR(orderDate, 'YYYY-MM-DD') = #{kwd} )
+                    <when test="schType == 'order_Date' ">
+                        ( TO_CHAR(order_Date, 'YYYYMMDD') = #{kwd}
+                        OR TO_CHAR(order_Date, 'YYYY-MM-DD') = #{kwd} )
                     </when>
-                    <when test="schType == 'userName'">
-                        INSTR(userName, #{kwd}) &gt; 0
+                    <when test="schType == 'nickname'">
+                        INSTR(nickname, #{kwd}) &gt; 0
                     </when>
                 </choose>
             </sql>
@@ -46,12 +51,12 @@
     <select id="listOrder" parameterType="map" resultType="com.sp.app.artist.model.OrderManage">
         SELECT po.ORDER_CODE,oi.ITEM_CODE, NICKNAME, (oi.PRICE) AS netPay, oi.SHIPPING,
         TO_CHAR(po.ORDER_DATE, 'YYYY-MM-DD HH24:MI') AS order_Date,
-        (dc.deliveryName)as company_name, p.TRACKINGNUMBER,oi.ORDER_STATE
+        (dc.deliveryName)as company_name, p.TRACKINGNUMBER,(oi.ORDER_STATE)AS orderState
         ,
         (QUANTITY)AS totalQty,
-        NVL( DECODE(ORDER_STATE, 4, 1, 10, 1, 11, 1) ,0)AS cancelRequestCount,
-        NVL( DECODE(ORDER_STATE, 6, 1, 7, 1),0 )AS exchangeRequestCount,
-        NVL(DECODE(ORDER_STATE, 3, 1, 5, 1, 12, 1),0 )AS detailCancelCount
+        NVL( DECODE(ORDER_STATE, 6, 1, 7, 1, 11, 1) ,0)AS cancelRequestCount,
+        NVL( DECODE(ORDER_STATE, 10, 1, 9, 1,12,1),0 )AS exchangeRequestCount,
+        NVL(DECODE(ORDER_STATE, 8,1),0 )AS detailCancelCount
         FROM ORDER_ITEM oi
 
         LEFT OUTER JOIN PRODUCT_ORDER po ON po.ORDER_CODE = oi.ORDER_CODE
@@ -76,7 +81,7 @@
 <!--    주문에 관한 정보-->
     <select id="findByOrderId" parameterType="String" resultType="com.sp.app.artist.model.OrderManage">
 
-        SELECT (po.ORDER_CODE)AS item_code,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,
+        SELECT (po.ORDER_CODE)AS order_code,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,
                NVL(re.refund_amount,0) AS refund_amount,po.spentpoint,SHIPPING,(dc.deliveryName)as company_name,trackingnumber
                 ,(BYMETHOD)as payMethod,(PROVIDER)as cardName,(CARDNUMBER)as authNumber,(CONFIRM_DATE)as authDate
         FROM ORDER_ITEM oi
@@ -97,24 +102,205 @@
 
 
         SELECT (oi.item_code)AS item_code ,(pd.item)AS item, (oi.PRICEFOREACH)AS salePrice ,(options)as optionValue,(oi.PRICE)as totalMoney,(QUANTITY)as qty,(pd.price)as price,(ORDER_STATE)as orderState
-        FROM ORDER_ITEM oi JOIN PRODUCT pd ON pd.PRODUCTCODE = oi.PRODUCTCODE
+        ,THUMBNAIL FROM ORDER_ITEM oi JOIN PRODUCT pd ON pd.PRODUCTCODE = oi.PRODUCTCODE
         where oi.ITEM_CODE = #{item_code}
     </select>
 
 
 
 
+<!-- 배송 설정 해주는 매퍼-->
+<update id = "updateOrderPackage" parameterType="map">
+    UPDATE PACKAGE SET TRACKINGNUMBER=#{invoiceNumber} ,company_id=#{deliveryName,jdbcType=INTEGER}  WHERE item_code= #{num,jdbcType=INTEGER}
+
+</update>
+<!-- 상태 변경 -->
+<update id="updateOrderState" parameterType="map">
+    UPDATE ORDER_ITEM SET order_State= #{orderState} ,orderStateDate=SYSDATE WHERE item_code=#{item_code}
+</update>
 
 
 
-
-
-
-
-    <select id="listDeliveryCompany" resultType="map">
+<!--배송회사 정보-->
+<select id="listDeliveryCompany" resultType="map">
         SELECT company_id,deliveryName,tel
         FROM deliveryCompany
+</select>
+
+<!--배송지 정보-->
+<select id="findByDeliveryId" parameterType="String" resultType="com.sp.app.artist.model.ShippingInfo">
+    SELECT (RECEIVERNAME)AS addrName,ADDRTITLE,ADDRDETAIL,POSTCODE,PHONE,require FROM PACKAGE WHERE ITEM_CODE = #{item_code}
+</select>
+
+
+
+<sql id="detailItemId-list">
+<choose>
+    <when test="tebNum == 100">
+        AND   ( oi.ORDER_STATE >=9 AND  oi.ORDER_STATE &lt;= 12 )
+    </when>
+    <when test="tebNum == 110 ">
+        AND    oi.ORDER_STATE &gt;= 16
+    </when>
+    <when test="tebNum == 200 ">
+        AND    ( oi.ORDER_STATE IN (6,7) )
+    </when>
+    <when test="tebNum == 210 ">
+        AND   ( oi.ORDER_STATE &gt;= 13 AND oi.ORDER_STATE &lt;= 15 )
+    </when>
+    <when test="tebNum == 220 ">
+        AND    ( oi.ORDER_STATE = 8  )
+    </when>
+    <when test="tebNum == 230 ">
+        AND     ( oi.ORDER_STATE IN ( 6, 7, 8,9,13,14,15 ) )
+    </when>
+
+</choose>
+</sql>
+
+    <sql id="detailSearch-list">
+        <choose>
+            <when test="schType =='orderNum'">
+                ( oi.orderNum  = #{kwd} )
+            </when>
+            <when test="schType == 'productName' ">
+                ( INSTR(p.productName, #{kwd}) &gt; 0 )
+            </when>
+            <when test="schType == 'orderDate' ">
+                ( TO_CHAR(po.orderDate, 'YYYYMMDD') = #{kwd}
+                OR TO_CHAR(po.orderDate, 'YYYY-MM-DD') = #{kwd} )
+            </when>
+            <when test="schType == 'userName'">
+                INSTR(userName, #{kwd}) &gt; 0
+            </when>
+        </choose>
+
+    </sql>
+
+    <select id="detailCount" parameterType="map" resultType="Integer">
+        SELECT NVL(COUNT(*),0)
+        FROM order_item oi LEFT OUTER JOIN PRODUCT pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+        LEFT OUTER JOIN SELLER_BRAND sb ON pd.BRAND_CODE = sb.BRAND_CODE
+        WHERE pd.BRAND_CODE = (SELECT BRAND_CODE FROM SELLER_BRAND WHERE MEMBERIDX= #{memberIdx})
+            <include refid="detailItemId-list"/>
+            <if test="kwd!=null and kwd!='' ">
+                AND <include refid="detailSearch-list"/>
+            </if>
     </select>
+
+
+    <select id="listDetails" parameterType="map" resultType="com.sp.app.artist.model.OrderDetailManage">
+        SELECT po.ORDER_CODE,oi.ITEM_CODE, NICKNAME, (oi.PRICE) AS netPay, oi.SHIPPING,
+        TO_CHAR(po.ORDER_DATE, 'YYYY-MM-DD HH24:MI') AS order_Date,item,
+        (dc.deliveryName)as company_name, p.TRACKINGNUMBER,(oi.ORDER_STATE)AS orderState,oi.options
+        ,(PRICEFOREACH*QUANTITY)AS orderprice,
+        (QUANTITY)AS totalQty
+
+        FROM ORDER_ITEM oi
+
+        LEFT OUTER JOIN PRODUCT_ORDER po ON po.ORDER_CODE = oi.ORDER_CODE
+        LEFT OUTER JOIN PACKAGE p ON oi.ITEM_CODE = p.ITEM_CODE
+        LEFT OUTER JOIN deliveryCompany dc ON dc.company_id = p.company_id
+
+        LEFT OUTER JOIN  PRODUCT pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+        LEFT OUTER JOIN SELLER_BRAND sb ON pd.BRAND_CODE = sb.BRAND_CODE
+        LEFT OUTER JOIN MEMBER m ON po.MEMBERIDX = m.MEMBERIDX
+        WHERE pd.BRAND_CODE = (
+        SELECT BRAND_CODE
+        FROM SELLER_BRAND
+        WHERE MEMBERIDX = #{memberIdx})
+        <include refid="detailItemId-list"/>
+        <if test="kwd!=null and kwd!=''">
+            AND <include refid="search-list"/>
+        </if>
+        ORDER BY ITEM_CODE DESC
+        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+    </select>
+
+
+
+
+    <select id="findByDetailId" parameterType="String" resultType="com.sp.app.artist.model.OrderDetailManage">
+
+        SELECT (po.ORDER_CODE)AS order_code,pd.item,OPTIONS,(oi.PRICEFOREACH)AS salePrice,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,
+               nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,(QUANTITY)AS totalQty,
+               po.spentpoint,SHIPPING,(dc.deliveryName)as company_name,(trackingnumber)as invoiceNumber,(m.EMAIL)as userId
+                ,oi.item_code
+        FROM ORDER_ITEM oi
+                 JOIN PRODUCT_ORDER po ON oi.ORDER_CODE=po.ORDER_CODE
+                 LEFT OUTER JOIN  PACKAGE p ON oi.ITEM_CODE = p.ITEM_CODE
+                 LEFT OUTER JOIN deliveryCompany dc ON dc.company_id = p.company_id
+
+
+                 LEFT OUTER JOIN member m ON m.MEMBERIDX = po.MEMBERIDX
+                 LEFT OUTER JOIN PAYBYMETHOD pm ON po.ORDER_CODE = pm.ORDER_CODE
+                 LEFT OUTER JOIN product pd ON oi.PRODUCTCODE = pd.PRODUCTCODE
+            AND oi.ORDER_STATE IN (6,7,8,9)
+        where oi.ITEM_CODE =#{item_code}
+    </select>
+
+    <select id="listOrderDetails" parameterType="String" resultType="com.sp.app.artist.model.OrderDetailManage">
+        SELECT (oi.item_code)AS item_code ,(pd.item)AS item, (oi.PRICEFOREACH)AS salePrice ,options,(oi.PRICE)as totalMoney,(QUANTITY)as totalQty,(pd.price)as price,(ORDER_STATE)as orderState
+              FROM ORDER_ITEM oi
+                 JOIN PRODUCT pd ON pd.PRODUCTCODE = oi.PRODUCTCODE
+        where oi.ITEM_CODE = #{item_code}
+    </select>
+
+
+    <select id="findByPayDetail" parameterType="String" resultType="map">
+        SELECT PROVIDER,CONFIRM_DATE,BYMETHOD,CONFIRMCODE,CARDNUMBER FROM PAYBYMETHOD pm
+        LEFT OUTER JOIN  PRODUCT_ORDER po ON pm.ORDER_CODE = po.ORDER_CODE
+        LEFT OUTER JOIN ORDER_ITEM oi ON po.ORDER_CODE = oi.ORDER_CODE
+        WHERE ITEM_CODE=#{item_code}
+    </select>
+<!--    교환신청이나  -->
+    <insert id="insertChangeRequest" parameterType="map">
+
+        INSERT INTO CHAGE_REQUEST(change_num, memberidx, item_code, change_request, change_state, changed_date)
+        values (SEQ_CHANGE_REQUEST.nextval,#{memberIdx},#{item_code},#{stateMemo,jdbcType=VARCHAR},#{detailState},SYSDATE)
+
+    </insert>
+<!-- 환불 반품 인서트-->
+    <insert id="insertRefund" parameterType="map" >
+        INSERT INTO REFUNDS(refunds_code, item_code, refund_amount, refund_reason, refund_status, refund_request_date, refund_complete_date, memberidx)
+        VALUES(SEQ_REFUNDS.nextval,#{item_code},#{refund_amount},#{refund_reason},#{refund_status},Sysdate,null,#{memberIdx})
+
+    </insert>
+
+
+
+    <update id="updateCancelAmount" parameterType="map">
+        UPDATE ORDER_ITEM SET cancelAmount = #{cancelamount}
+        WHERE item_code =#{item_code}
+    </update>
+
+    <select id="listDetailStateInfo" parameterType="String" resultType="map">
+        SELECT
+            CASE
+                WHEN c.change_num IS NOT NULL THEN 'CHANGE'
+                WHEN r.refunds_code IS NOT NULL THEN 'REFUND'
+                END AS type,
+            COALESCE(c.change_num, r.refunds_code) AS id,
+            COALESCE(c.memberidx, r.memberidx) AS memberidx,
+            COALESCE(c.item_code, r.item_code) AS item_code,
+            COALESCE(c.change_request, r.refund_reason) AS request_reason,
+            COALESCE(c.change_state, r.refund_status) AS state,
+            TO_CHAR(COALESCE(c.changed_date, r.refund_request_date), 'YYYY-MM-DD') AS request_date,  -- 날짜 형식 변경
+            TO_CHAR(r.refund_complete_date, 'YYYY-MM-DD') AS complete_date,  -- 날짜 형식 변경
+            m.nickname
+        FROM CHAGE_REQUEST c
+                 FULL OUTER JOIN REFUNDS r
+                                 ON c.memberidx = r.memberidx AND c.item_code = r.item_code
+                 LEFT JOIN member m
+                           ON m.MEMBERIDX = COALESCE(c.memberidx, r.memberidx)  -- memberidx로 연결
+        WHERE c.item_code = ${item_code} OR r.item_code = ${item_code}
+
+
+    </select>
+
+
+
+
 
 
 </mapper>

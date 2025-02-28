@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class OrderManage {
+    private String order_code;
     private String item_code;
     private long memberIdx;
     private String userId;
@@ -30,7 +31,7 @@ public class OrderManage {
     private int totalOrderCount;  //주문상품수
     private int totalQty; //상품 주문 개수
     private int detailCancelCount; //취소건수(판매취소 , 주문취소완료,반품접수,반품완료)
-    private int cancelRequestCount;//배성전 주문 취소 요청수, 반품 요청수
+    private int cancelRequestCount;//배송전 주문 취소 요청수, 반품 요청수
     private int exchangeRequestCount;//배송후 교환 요청수
 
 

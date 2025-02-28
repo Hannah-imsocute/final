@@ -28,7 +28,7 @@
     <div class="wrapper">
         <div class="body-container">
             <div class="body-title">
-                <h3><i class="bi bi-app"></i> 제목 </h3>
+                <h3><i class="bi bi-app"></i> ${title} </h3>
             </div>
 
 
@@ -43,12 +43,12 @@
                     <form class="row g-3" name="searchForm">
                         <div class="col-auto">
                             <select name="schType" class="form-select">
-                                <option value="orderNum" ${schType=="orderNum"?"selected":""}>주문번호</option>
+                                <option value="item_code" ${schType=="item_code"?"selected":""}>주문번호</option>
                                 <c:if test="${tebNum==110}">
                                     <option value="invoiceNumber" ${schType=="invoiceNumber"?"selected":""}>송장번호</option>
                                 </c:if>
-                                <option value="userName" ${schType=="userName"?"selected":""}>주문자</option>
-                                <option value="orderDate" ${schType=="orderDate"?"selected":""}>주문일자</option>
+                                <option value="nickname" ${schType=="nickname"?"selected":""}>주문자</option>
+                                <option value="order_Date" ${schType=="order_Date"?"selected":""}>주문일자</option>
                             </select>
                         </div>
                         <div class="col-auto">
@@ -150,7 +150,7 @@
         const formData = new FormData(f);
         let requestParams = new URLSearchParams(formData).toString();
 
-        let url = '${pageContext.request.contextPath}/admin/order/orderManage/${tebNum}';
+        let url = '${pageContext.request.contextPath}/artist/orderManage/${tebNum}';
         location.href = url + '?' + requestParams;
     }
 </script>
