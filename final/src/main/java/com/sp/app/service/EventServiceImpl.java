@@ -1,6 +1,7 @@
 package com.sp.app.service;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,24 +106,11 @@ public class EventServiceImpl implements EventService {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, dto.getValid());
 			
-			int year = cal.get(Calendar.YEAR);
-			int month  = cal.get(Calendar.MONTH);
-			int day = cal.get(Calendar.DATE);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			
-			StringBuffer sb = new StringBuffer();
+			String expiredate = sdf.format(cal.getTime());
 			
-			sb.append(String.valueOf(year));
-			sb.append(String.valueOf(month));
-			sb.append(String.valueOf(day));
-			
-			map.put("expiredate", sb.toString());
-			System.out.println("============================");
-			System.out.println("============================");
-			System.out.println(map.get("couponcode"));
-			System.out.println(map.get("memberidx"));
-			System.out.println(map.get("expiredate"));
-			System.out.println("============================");
-			System.out.println("============================");
+			map.put("expiredate", expiredate);
 			
 			mapper.insertGetCoupon(map);
 		} catch (Exception e) {

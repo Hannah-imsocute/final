@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,8 +35,14 @@ public class MemberServiceImpl implements MemberService {
   @Transactional
   public void insertMember(Member dto) throws Exception {
 	  try {
-		mapper.insertMember1(dto);
-		mapper.insertMember2(dto);
+		  String encPassword = bcryptEncoder.encode(dto.getPassword());
+		  dto.setPassword(encPassword);
+		  mapper.insertMember1(dto);
+		  mapper.insertMember2(dto);
+		  
+		  Map<String, Object> map = new HashMap<>();
+		  map.put("autho", "USER");
+		  mapper.insertAuthority(map);
 	} catch (Exception e) {
 		log.info("==============insert", e);
 	}
@@ -183,7 +190,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public void insertAuthority(Member dto) throws Exception {
     try {
-      mapper.insertAuthority(dto);
+     // mapper.insertAuthority(dto);
     } catch (Exception e) {
       log.info("insertAuthority", e);
     }
@@ -299,7 +306,8 @@ public void insertAllOfSeller(Seller seller) throws Exception {
 	try {
 		// 그러면 이전에 입점신청을 받았던 기록을 들고와야함 => email 기준 승인받은걸 찾으면 될듯 => 기본키가 아니라서 부정확할까봐 걱정이됨 
 		Seller history = mapper.getHistory(seller.getEmail());
-		
+		String encPassword = bcryptEncoder.encode(seller.getPassword());
+		seller.setPassword(encPassword);
 		Member member = Member.builder()
 				.email(seller.getEmail())
 				.name(history.getName())
@@ -312,6 +320,19 @@ public void insertAllOfSeller(Seller seller) throws Exception {
 		// 회원  member 
 		mapper.insertMember1(member);
 		mapper.insertMember2(member);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("email", seller.getEmail());
+		
+		long memberidx = mapper.getMemberidx(seller.getEmail());
+		
+		map.put("memberidx", memberidx);
+		map.put("autho", "AUTHOR");
+		mapper.insertAuthority(map);
+		
+		map.put("autho", "USER");
+		mapper.insertAuthority(map);
 		
 		// 브랜드  seller_brand
 		mapper.sellerinfo(history);

@@ -274,6 +274,15 @@ $(document).ready(function() {
                 	    $productBox.find('.product-salePrice').text(arrayKey.salePrice.toLocaleString() + " 원");
                 	    $productBox.find('.product-productCode').attr("data-productCode", arrayKey.productCode);
 
+                		 // 할인 여부에 따라 가격과 할인율 표시 여부 결정
+                	    if (arrayKey.discount > 0) {
+    			            $productBox.find('.product-price').text(arrayKey.price.toLocaleString() + " 원");
+    			            $productBox.find('.product-discount').text(arrayKey.discount + "%");
+    			        } else {
+    			            $productBox.find('.product-price').hide();  // 가격 숨김
+    			            $productBox.find('.product-discount').hide();  // 할인율 숨김
+    			        }
+                	    
                 	    // 최종적으로 productList에 추가
                 	    productList.append($productBox);
                 	    

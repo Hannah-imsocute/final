@@ -1,5 +1,8 @@
 package com.sp.app.controller;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +81,14 @@ public class EventController {
 				String year = dto.getStartdate().substring(0,3);
 				String month = dto.getStartdate().substring(4,5);
 				
+				LocalDate ld = LocalDate.of(Integer.parseInt(year),Integer.parseInt(month)+1, 1);
 				
+				// 1 월  ~ 7 일  
+				int dayofweek = ld.getDayOfWeek().getValue();
+				int lastday = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).lengthOfMonth();
+				
+				model.addAttribute("dayofweek", dayofweek);
+				model.addAttribute("lastday", lastday);
 				model.addAttribute("checkedDate", checkedDate);
 				model.addAttribute("year", year);
 				model.addAttribute("month", month);
@@ -96,6 +106,7 @@ public class EventController {
 		return "redirect:/event/main";
 	}
 	
+	
 	@PostMapping("checked")
 	@ResponseBody
 	public Map<String, Object> checkedInsert(@RequestBody Map<String, Object> params, HttpSession session){
@@ -111,6 +122,7 @@ public class EventController {
 		return map;
 	}
 	
+	
 	@PostMapping("getCoupon")
 	@ResponseBody
 	public Map<String, Object> getCoupon(@RequestBody Map<String, Object> params, HttpSession session){
@@ -119,11 +131,17 @@ public class EventController {
 		
 		try {
 			params.put("memberidx", info.getMemberIdx());
+			System.out.println("=========================");
+			System.out.println("=========================");
+			System.out.println(params.get("couponcode"));
+			System.out.println(params.get("eventNum"));
+			System.out.println("=========================");
+			System.out.println("=========================");
+			System.out.println("=========================");
 			
-			service.insertGetCoupon(map);
-			
+			service.insertGetCoupon(params);
+			map.put("state", "true");
 		} catch (Exception e) {
-			
 		}
 		
 		return map;

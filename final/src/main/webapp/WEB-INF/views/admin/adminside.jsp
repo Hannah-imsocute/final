@@ -21,11 +21,10 @@
 	        <li><a class="menu-item" href="<c:url value='/admin/applyList' />">입점 신청 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/settlementManage' />">결제 및 정산 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/productList' />">상품 관리</a></li>
-	        <li><a class="menu-item" href="<c:url value='/admin/eventList' />">이벤트 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/event/main' />">이벤트 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/membershipList' />">광고 상품 관리</a></li>
-	        <li><a class="menu-item" href="<c:url value='/admin/noticeList' />">공지사항 관리</a></li>
-	        <li><a class="menu-item" href="<c:url value='/admin/inquiryList' />">문의사항 관리</a></li>
-	        <li><a class="menu-item" href="<c:url value='/admin/reportList' />">신고 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/notice/main' />">공지 및 문의 관리</a></li>
+	        <li><a class="menu-item" href="<c:url value='/admin/report/main' />">신고 관리</a></li>
 	        <li><a class="menu-item" href="<c:url value='/admin/statsList' />">통계 및 보고</a></li>
 	    </ul>
 	</div>

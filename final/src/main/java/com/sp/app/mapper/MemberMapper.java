@@ -36,7 +36,7 @@ public interface MemberMapper {
 	public void generatePwd(Member dto) throws Exception;
 	public boolean isPasswordCheck(String email, String password);
 
-	public void insertAuthority(Member dto) throws SQLException;
+	public void insertAuthority(Map<String, Object> map) throws SQLException;
 	public void deleteAuthority(Map<String, Object> map) throws SQLException;
 	public String findByAuthority(String email);
 
@@ -47,7 +47,8 @@ public interface MemberMapper {
 	// 회원가입 insert
 	public void insertMember1(Member dto) throws SQLException;
 	public void insertMember2(Member dto) throws SQLException;
-
+	public long getMemberidx(String email);
+	public void inserAuthForSeller(Map<String, Object> map) throws SQLException;
 	// 작가 이메일 검증 
 	public int checkOfSeller(String email);
 	

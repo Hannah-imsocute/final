@@ -50,6 +50,7 @@ public class EventManageServiceImpl implements EventManageService {
 	public void insertEvent(Event dto) throws Exception {
 		try {
 			
+			dto.setThumbnail(dto.getThumbnail());
 			mapper.insertEvent(dto);
 			
 			if(! dto.getEventType().equalsIgnoreCase("comment")) {
