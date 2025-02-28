@@ -29,14 +29,15 @@
 					<h3>전체 카테고리</h3>
 					<br>	
 					<ul>
-						<li data-categoryName="food" >식품 ▾</li>
+						<li data-categoryName="food">식품 ▾
 							<ul class="sub-menu">
-								<li data-categoryName="bakery"><a>베이커리/전통간식</a></li>
-								<li data-categoryName="beverage"><a>음료/주류</a></li>
-								<li data-categoryName="dish"><a>요리/간편식</a></li>
-								<li data-categoryName="nongsusan"><a>농수산품</a></li>
+								<li data-categoryName="bakery"><a href="#">베이커리/전통간식</a></li>
+								<li data-categoryName="beverage"><a href="#">음료/주류</a></li>
+								<li data-categoryName="dish"><a href="#">요리/간편식</a></li>
+								<li data-categoryName="nongsusan"><a href="#">농수산품</a></li>
 							</ul>
 						</li>
+						
 
 						<li data-categoryName="fashion" ><a>패션 ▾</a>
 							<ul class="sub-menu">
@@ -114,7 +115,7 @@
 								<button type="button" class="btn btn-light" onclick="searchList()" style="background: orange;"> <i class="bi bi-search"></i> </button>
 							</div>
 							<div class="col-auto p-1" >
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}" title="새로고침"  style="background: orange;"><i class="bi bi-arrow-counterclockwise"></i></button>
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/categoryMain" title="새로고침"  style="background: orange;"><i class="bi bi-arrow-counterclockwise"></i></button>
 							</div>
 						</form>
 					</div>

@@ -107,7 +107,7 @@
 								<button type="button" class="btn btn-light" onclick="searchList()" style="background: orange;"> <i class="bi bi-search"></i> </button>
 							</div>
 							<div class="col-auto p-1">
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}" title="새로고침" style="background: orange;"><i class="bi bi-arrow-counterclockwise"></i></button>
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/popularMain" title="새로고침" style="background: orange;"><i class="bi bi-arrow-counterclockwise"></i></button>
 							</div>
 						</form>
 					</div>

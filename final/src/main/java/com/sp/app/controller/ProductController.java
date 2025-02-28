@@ -71,22 +71,7 @@ public class ProductController {
     		new AbstractMap.SimpleEntry<>("perfume"            , 24),  // 향수
     		new AbstractMap.SimpleEntry<>("makeup"             , 25)   // 메이크업
         );
-	
-    @GetMapping("main")
-	public ModelAndView main(HttpServletRequest req ) throws Exception{ 
-		ModelAndView mav = new ModelAndView("product/main");
-		try {
-			log.info("Main page accessed");
-		} catch (NullPointerException e) {
-			log.error("NullPointerException in main(): ", e);
-		} catch (Exception e) {
-			log.info("main : ", e  );
-		}
-		
-		return mav;
-	}
-    
-    
+
 	@GetMapping("category")
 	public ModelAndView category(HttpServletRequest req ) throws Exception{ 
 		ModelAndView mav = new ModelAndView("product/category");
@@ -142,7 +127,7 @@ public class ProductController {
 		
 		try {
 
-			int size = 10;  // 페이지 당 포함 컨텐츠 수
+			int size = 15;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
@@ -194,7 +179,7 @@ public class ProductController {
 			
 			try {
 
-				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int size = 15;  // 페이지 당 포함 컨텐츠 수
 				int total_page; // 전체 페이지 수
 				int dataCount;  // 전체 데이터 컨텐츠 수
 				
@@ -245,7 +230,7 @@ public class ProductController {
 			SessionInfo info = (SessionInfo) session.getAttribute("member");
 			try {
 
-				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int size = 15;  // 페이지 당 포함 컨텐츠 수
 				int total_page; // 전체 페이지 수
 				int dataCount;  // 전체 데이터 컨텐츠 수
 				
@@ -303,7 +288,7 @@ public class ProductController {
 
 		    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
 		    
-		    int size = 10;  // 페이지 당 포함 컨텐츠 수
+		    int size = 15;  // 페이지 당 포함 컨텐츠 수
 			int total_page; // 전체 페이지 수
 			int dataCount;  // 전체 데이터 컨텐츠 수
 			
@@ -364,7 +349,7 @@ public class ProductController {
 		        }
 
 			    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
-				int size = 10;  // 페이지 당 포함 컨텐츠 수
+				int size = 15;  // 페이지 당 포함 컨텐츠 수
 				int total_page; // 전체 페이지 수
 				int dataCount;  // 전체 데이터 컨텐츠 수
 				
@@ -427,7 +412,7 @@ public class ProductController {
 				        }
 
 					    int categoryCode = categoryMap.get(categoryName); // 카테고리명을 카테고리코드로 변환
-						int size = 10;  // 페이지 당 포함 컨텐츠 수
+						int size = 15;  // 페이지 당 포함 컨텐츠 수
 						int total_page; // 전체 페이지 수
 						int dataCount;  // 전체 데이터 컨텐츠 수
 						
