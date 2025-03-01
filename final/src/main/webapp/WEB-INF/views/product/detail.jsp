@@ -10,6 +10,60 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 <link rel="stylesheet" href="/dist/css/productDetail.css">
 
+<style type="text/css">
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    margin-top: 15px;
+}
+
+.quantity-control .quantity-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+
+.quantity-control .quantity-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-control .quantity-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.quantity-control input {
+    width: 50px;
+    height: 35px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.row.mt-2.pb-2, .quantity-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+</style>
+
+
+
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -92,14 +146,22 @@
 						</div>
 					</c:if>
 								
-					<div class="order-area">
-					</div>
+                    <div class="order-area">
+				 <!-- 수량 조절 -->
+				   	<div class="quantity-control">
+				        <span class="quantity-label quantity-label fw-semibold pt-1">수량</span>
+				        <button class="btn quantity-decrease">-</button>
+				        <input type="number" class="quantity-input" value="1" min="1">
+				        <button class="btn quantity-increase">+</button>
+				   	</div>
+				   </div>
+
 								
 					<div class="row mt-2 pb-2">
-						<div class="col-auto fw-semibold pt-1">총상품금액</div>
+						<div class="col-auto fw-semibold pt-1">총작품금액</div>
 						<div class="col text-end">
-					<!--  	<label>총수량 <span class="product-totalQty">0</span>개 | </label> -->	
-							<label><span class="product-totalAmount fs-5 fw-semibold text-primary">${fmdSalePrice}</span>원</label>
+					  	<span class="product-totalQty"></span>
+					   <span class="product-totalAmount fs-5 fw-semibold text-primary">${fmdSalePrice}</span>원
 						</div>
 					</div>
 				</div>
@@ -456,9 +518,8 @@ $(function(){
 		event.preventDefault();
 
 		var productCode = "${dto.productCode}";
-		var quantity = 1;
-		var price = "${dto.price}";
-
+		var quantity = parseInt($('.quantity-input').val());
+		var price = "${dto.salePrice}";
 		let params = { productCode: productCode, quantity: quantity, price: price };
 		let url = "${pageContext.request.contextPath}/cart/add";
 
@@ -470,6 +531,7 @@ $(function(){
 	});
 });
 
+
 $('.buy-btn').click(function (event) {
     event.preventDefault();
     var productCode = "${dto.productCode}";
@@ -479,7 +541,61 @@ $('.buy-btn').click(function (event) {
           + "&quantity=" + quantity
           + "&mode=direct";
  });
+ 
 
+//수량, 총금액 가져오기
+$(function() {
+    var salePrice = parseInt($('.product-totalAmount').text().replace(/[^0-9]/g, '')); // 원 단위 제거 후 숫자로 변환
+    var productCode = $('.quantity-input').data('product-code'); // 상품 코드 가져오기
+
+    // 페이지 로드 시 sessionStorage에서 해당 productCode의 수량 가져오기
+    var savedQuantity = sessionStorage.getItem(`productQuantity_${productCode}`);
+    if (savedQuantity) {
+        $('.quantity-input').val(savedQuantity);
+    } else {
+        $('.quantity-input').val(1); // 기본값 1
+    }
+
+    function updateTotalPrice() {
+        var quantity = parseInt($('.quantity-input').val());
+        var totalPrice = salePrice * quantity;
+        $('.product-totalAmount').text(totalPrice.toLocaleString()); // 천 단위 콤마 추가
+
+        // 변경된 수량을 해당 productCode 기준으로 sessionStorage에 저장
+        sessionStorage.setItem(`productQuantity_${productCode}`, quantity);
+    }
+
+    // 수량 증가
+    $('.quantity-increase').click(function() {
+        var quantityInput = $(this).siblings('.quantity-input');
+        var currentQuantity = parseInt(quantityInput.val());
+        quantityInput.val(currentQuantity + 1);
+        updateTotalPrice();
+    });
+
+    // 수량 감소
+    $('.quantity-decrease').click(function() {
+        var quantityInput = $(this).siblings('.quantity-input');
+        var currentQuantity = parseInt(quantityInput.val());
+        if (currentQuantity > 1) {
+            quantityInput.val(currentQuantity - 1);
+            updateTotalPrice();
+        }
+    });
+
+    // 수량 직접 입력 시 실시간 반영
+    $('.quantity-input').on('input', function() {
+        var quantity = parseInt($(this).val());
+        if (isNaN(quantity) || quantity < 1) {
+            $(this).val(1);
+            quantity = 1;
+        }
+        updateTotalPrice();
+    });
+
+    // 페이지 로드 시 총 가격 업데이트
+    updateTotalPrice();
+});
 
 </script>
 	
