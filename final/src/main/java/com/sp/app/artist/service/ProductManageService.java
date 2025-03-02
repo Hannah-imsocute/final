@@ -45,6 +45,10 @@ public interface ProductManageService {
 	//작품 수정에서 파일 수정시 파일 삭제
 	public void deleteProductFile(long image_code, String pathString);
 	
+	//작품 옵션 수정
+	public void updateProductOption(ProductManage dto);
+	
+	public void insertProductOption(ProductManage dto);
 	
 	
 

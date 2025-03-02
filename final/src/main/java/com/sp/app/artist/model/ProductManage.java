@@ -68,6 +68,10 @@ public class ProductManage {
 		private List<Long> optionDetail_codes2;
 		private List<String> option_values2;
 		
+		// 수정전 옵션
+		private long prevOption_code;
+		private long prevOption_code2;
+		
 		
 		
 		

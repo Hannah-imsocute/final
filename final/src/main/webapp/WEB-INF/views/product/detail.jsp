@@ -120,14 +120,7 @@
 							<select class="form-select requiredOption" data-option_code="${listOption[0].option_code}" ${dto.blind == 1 ? 'disabled':''}>
 								<option value="">${listOption[0].option_name}</option>
 								<c:forEach var="vo" items="${listOptionDetail}">
-									<c:if test="${dto.optionCount == 1}">
-										<option value="${vo.optionDetail_code}" data-optionValue="${vo.option_value}">
-											${vo.option_value}${vo.totalStock < 5 ? ' 재고 - ' + vo.totalStock : ''}
-										</option>
-									</c:if>
-									<c:if test="${dto.optionCount != 1}">
 										<option value="${vo.optionDetail_code}">${vo.option_value}</option>
-									</c:if>
 								</c:forEach>
 							</select>
 						</div>

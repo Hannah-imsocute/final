@@ -310,6 +310,14 @@
                     <button type="submit" class="submit-btn" onclick="smartEditInDescribe()">${mode=="update"?"수정완료":"등록완료"}</button>
                 	<button type="reset" class="btn btn-light">다시입력</button>
                 	<button type="button" class="btn btn-light" onclick="location.href='${url}';">${mode=="update"?"수정취소":"등록취소"}</button>
+                	<c:if test="${mode=='update'}">
+						<input type="hidden" name="productCode" value="${dto.productCode}">
+						<input type="hidden" name="thumbnail" value="${dto.thumbnail}">
+						<input type="hidden" name="page" value="${page}">
+						
+						<input type="hidden" name="prevOption_code" value="${empty dto.option_code ? 0 : dto.option_code}">
+						<input type="hidden" name="prevOption_code2" value="${empty dto.option_code2 ? 0 : dto.option_code2}">
+					</c:if>
                 </form>
             </section>
         </div>

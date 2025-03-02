@@ -1,6 +1,7 @@
 package com.sp.app.artist.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -254,8 +255,8 @@ public class ProductManageServiceImpl implements ProductManageService{
 				insertProductImage(dto, uploadPath);
 			}
 			
-			// 옵션 수정
-	//			updateProductOption(dto);
+			//옵션 수정
+			updateProductOption(dto);
 			
 			
 		} catch (Exception e) {
@@ -284,6 +285,148 @@ public class ProductManageServiceImpl implements ProductManageService{
 			
 			throw e;
 		}
+		
+	}
+
+	@Override
+	public void updateProductOption(ProductManage dto) {
+		try {
+			if(dto.getOptionCount() == 0) {
+				// 기존 옵션1, 옵션2 삭제
+				if(dto.getPrevOption_code2() != 0) {
+//					mapper.deleteOptionDetail2(dto.getPrevOption_code2());
+//					mapper.deleteProductOption(dto.getPrevOption_code2());
+				}
+				
+				if(dto.getPrevOption_code() != 0) {
+//					mapper.deleteOptionDetail2(dto.getPrevOption_code());
+//					mapper.deleteProductOption(dto.getPrevOption_code());
+				}
+				
+				return;
+			} else if(dto.getOptionCount() == 1) {
+				// 기존 옵션 2 삭제
+				if(dto.getPrevOption_code2() != 0) {
+//					mapper.deleteOptionDetail2(dto.getPrevOption_code2());
+//					mapper.deleteProductOption(dto.getPrevOption_code2());
+				}
+			}
+			
+			long detailCode, parentCode;
+			
+			// 옵션1 -----
+			// 옵션1이 없는 상태에서 옵션1을 추가한 경우
+			if(dto.getOption_code() == 0) {
+			// 부모 옵션 처리		
+			long optionCode = mapper.seq_productOption(); // 부모 옵션코드 채번. 자식옵션은 이것을 parentcode로 사용
+			dto.setOption_code(optionCode);
+
+			mapper.insertProductOption(dto); // 부모 옵션등록
+		    List<String> optionValues = dto.getOption_values();
+		    if(optionValues != null) {
+		    	for(String OptionValue : optionValues) {
+		    		dto.setOption_value(OptionValue);
+		    		mapper.insertProductOptionDetail(dto); // 부모 옵션상세 등록
+		    	}
+		    }
+		    // 자식 옵션 처리
+		    if(dto.getOptionCount() > 1) {
+		    	long optionCode2 = mapper.seq_productOption(); // 자식 옵션코드 채번
+		    	dto.setOption_code(optionCode2);
+		    	dto.setOption_name(dto.getOption_name2());
+		    	dto.setParent_option(optionCode); // 부모 옵션코드사용
+		    	mapper.insertProductOption(dto); // 자식 옵션등록
+		    	List<String> optionValues2 = dto.getOption_values2();
+		    	if(optionValues2 != null) {
+		    		for(String OptionValue2 : optionValues2) {
+		    			dto.setOption_value(OptionValue2);
+		    			mapper.insertProductOptionDetail(dto); // 자식 옵션상세 등록
+		    		}
+		    	}
+		    }
+	
+		return;
+	}
+			// 옵션1이 존재하는 경우 옵션1 수정
+//			mapper.updateProductOption(dto);
+			
+			// 기존 옵션1 옵션값 수정
+			int size = dto.getOptionDetail_codes().size();
+			for(int i = 0; i < size; i++) {
+				dto.setOptionDetail_code(dto.getOptionDetail_codes().get(i));
+				dto.setOption_value(dto.getOption_values().get(i));
+//				mapper.updateOptionDetail(dto);
+			}
+
+			// 새로운 옵션1 옵션값 추가
+			dto.setOptionDetail_codes(new ArrayList<Long>());
+			for(int i = size; i < dto.getOptionDetail_codes().size(); i++) {
+//				detailCode = mapper.detailSeq(); 
+//				dto.setOptionDetail_code(detailCode);
+				dto.setOption_value(dto.getOption_values().get(i));
+//				mapper.insertOptionDetail(dto);
+				
+//				dto.getOptionDetail_codes().add(detailCode);
+			}
+
+			// 옵션2 -----
+			if(dto.getOptionCount() > 1) {
+				//  옵션2가 없는 상태에서 옵션2를 추가한 경우
+				parentCode = dto.getOption_code(); // 옵션1 옵션번호 
+				if(dto.getOption_code2() == 0) {
+//					long optionCode2 = mapper.optionSeq();
+//					dto.setOptionCode(optionCode2);
+//					dto.setOptionName(dto.getOptionName2());
+//					dto.setParentOption(parentNum);
+					mapper.insertProductOption(dto);
+					
+					// 옵션 2 값 추가
+					dto.setOptionDetail_codes2(new ArrayList<Long>());
+					for(String optionValue2 : dto.getOption_values2()) {
+//						detailCode = mapper.detailSeq(); 
+//						dto.setOptionDetail_code(detailCode);
+						dto.setOption_value(optionValue2);
+//						mapper.insertOptionDetail(dto);
+						
+//						dto.getOptionDetail_codes2().add(detailCode);
+					}
+					
+					return;
+				} 
+				
+				// 옵션2 가 존재하는 경우 옵션2 수정
+				dto.setOption_code(dto.getOption_code2());
+				dto.setOption_name(dto.getOption_name2());
+//				mapper.updateProductOption(dto);
+				
+				// 기존 옵션2 옵션값 수정
+				int size2 = dto.getOptionDetail_codes2().size();
+				for(int i = 0; i < size2; i++) {
+					dto.setOptionDetail_code(dto.getOptionDetail_codes2().get(i));
+					dto.setOption_value(dto.getOption_values2().get(i));
+//					mapper.updateOptionDetail(dto);
+				}
+	
+				// 새로운 옵션2 옵션값 추가
+				dto.setOptionDetail_codes2(new ArrayList<Long>());
+				for(int i = size2; i < dto.getOption_values2().size(); i++) {
+//					detailCode = mapper.detailSeq(); 
+//					dto.setOptionDetail_code(detailCode);
+					dto.setOption_value(dto.getOption_values2().get(i));
+//					mapper.insertOptionDetail(dto);
+					
+//					dto.getOptionDetail_codes2().add(detailCode);
+				}
+			}
+		} catch (Exception e) {
+			log.info("updateProductOption : ", e);
+			
+			throw e;
+		}
+	}
+	
+	@Override
+	public void insertProductOption(ProductManage dto) {
 		
 	}
 
