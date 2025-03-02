@@ -64,7 +64,7 @@
             <div class="col-5-custom">
               <div class="best-item" onclick="location.href='${pageContext.request.contextPath}/product/${dto.productCode}'">
                 <div class="best-item-img">
-                  <img src="${pageContext.request.contextPath}/uploads/product/${dto.imageFileName}" alt="${dto.item}">
+                  <img src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}" alt="${dto.item}" >
                 </div>
                 <p class="best-item-desc">${dto.item}</p>
                 <button class="heart-btn">
