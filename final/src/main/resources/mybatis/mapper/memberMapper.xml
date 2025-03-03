@@ -31,10 +31,13 @@
 			   mi.PHONE, TO_CHAR(mi.DOB, 'YYYY-MM-DD') AS birth,
 			   r.authority
 		from MEMBER m
-				 LEFT JOIN MEMBER_ADDRESS ma ON m.MEMBERIDX = ma.MEMBERIDX
-				 LEFT JOIN MEMBER_INFO mi ON m.MEMBERIDX = mi.MEMBERIDX
-				 LEFT JOIN ROLES r ON m.MEMBERIDX = r.MEMBERIDX
-		where email = #{email} AND BLOCK = 0 
+				 LEFT JOIN MEMBER_ADDRESS ma
+						   ON m.MEMBERIDX = ma.MEMBERIDX AND ma.FIRSTADDR = 1
+				 LEFT JOIN MEMBER_INFO mi
+						   ON m.MEMBERIDX = mi.MEMBERIDX
+				 LEFT JOIN ROLES r
+						   ON m.MEMBERIDX = r.MEMBERIDX
+		where email = #{email} AND BLOCK = 0
 	</select>
 
 	<!-- 시퀀스값 가져오기 -->
