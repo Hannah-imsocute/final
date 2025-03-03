@@ -48,12 +48,7 @@ public class HomeController {
 			map.put("memberidx", info.getMemberIdx());
 			
 			List<MainProduct> list = service.listRecommendMainProduct(map);
-			System.out.println("===================================");
-			System.out.println("===================================");
-			System.out.println(list);
-			System.out.println("===================================");
-			System.out.println("===================================");
-			
+
 			model.addAttribute("list", list);
 			model.addAttribute("page", page);
 			model.addAttribute("total", total);

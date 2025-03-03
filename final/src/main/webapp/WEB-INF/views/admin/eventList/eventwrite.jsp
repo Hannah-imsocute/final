@@ -99,7 +99,7 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"
 							data-bs-dismiss="modal">취소</button>
-						<button type="button" class="btn btn-primary btnupload"
+						<button type="button" class="btn btn-primary btnupload" data-bs-dismiss="modal"
 							data-type="coupon">등록</button>
 					</div>
 				</div>
@@ -226,6 +226,7 @@
 				
 				$('input[name=eventdetail]').val(string);
 				$('input[name=eventdetail]').attr('data-status', "true");
+				
 			}
 			
 			

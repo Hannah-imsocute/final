@@ -129,9 +129,9 @@ public class AdminEventController {
 			if(mode.equals("ongoingEvent")) {
 				datacount = service.dataCountValidEvent();
 			}else if (mode.equals("closedEvent")) {
-				// datacount = service.메소드명()
-			}else if (mode.equals("winners")) {
-				// datacount = service.메소드명()
+				datacount = service.dataCountClosedEvent();
+			}else if (mode.equals("couponsetting")) {
+				datacount = service.dataCountOfCoupon();
 			}
 			
 			total = util.pageCount(datacount, size);
@@ -148,9 +148,9 @@ public class AdminEventController {
 			if(mode.equals("ongoingEvent")) {
 				list = service.getListOFValidEvent(map);
 			}else if (mode.equals("closedEvent")) {
-				// list = service.메소드명(map);
+				list = service.getListOfClosedEvent(map);
 			}else if (mode.equals("winners")) {
-				// list = service.메소드명(map);
+				list = service.getListOfCoupon(map);
 			}
 		} catch (Exception e) {
 			log.info("===========handleRendering : ", e);

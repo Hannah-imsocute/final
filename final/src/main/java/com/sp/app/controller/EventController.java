@@ -2,11 +2,13 @@ package com.sp.app.controller;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,22 +79,42 @@ public class EventController {
 				
 				List<String> checkedDate = service.selectChecked(dto.getEvent_article_num(), info.getMemberIdx());
 				
+				// 오늘 날짜
+				Calendar cal = Calendar.getInstance();
+				int ty = cal.get(Calendar.YEAR);
+				int tm = cal.get(Calendar.MONTH)+1;
+				int td = cal.get(Calendar.DATE);
+				// 이벤트 달력 
+				int ey = Integer.parseInt(dto.getStartdate().substring(0, 4));
+				int em;
+				if(dto.getStartdate().substring(6,8).indexOf("-") != -1) {
+					em = Integer.parseInt(dto.getStartdate().substring(6,7));
+				}else {
+					em = Integer.parseInt(dto.getStartdate().substring(6, 8));
+				}
 				
-				String year = dto.getStartdate().substring(0,3);
-				String month = dto.getStartdate().substring(4,5);
+				// 이벤트 달 기준1일
+				cal.set(ey, em-1, 1);
 				
-				LocalDate ld = LocalDate.of(Integer.parseInt(year),Integer.parseInt(month)+1, 1);
+				int year = cal.get(Calendar.YEAR);
+				int month = cal.get(Calendar.MONTH)+1;
 				
-				// 1 월  ~ 7 일  
-				int dayofweek = ld.getDayOfWeek().getValue();
-				int lastday = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).lengthOfMonth();
+				// 마지막 날
+				int lastdate =cal.getActualMaximum(Calendar.DATE);
 				
-				model.addAttribute("dayofweek", dayofweek);
-				model.addAttribute("lastday", lastday);
-				model.addAttribute("checkedDate", checkedDate);
+				// 1일 기준 요일  일 1 - 토 7
+				int week = cal.get(Calendar.DAY_OF_WEEK);
+				
+				
+				model.addAttribute("ty", ty);
+				model.addAttribute("tm", tm);
+				model.addAttribute("td", td);
 				model.addAttribute("year", year);
 				model.addAttribute("month", month);
+				model.addAttribute("lastDate", lastdate);
+				model.addAttribute("week", week);
 				model.addAttribute("dto", dto);
+				
 				return "event/clockinArticle";
 
 			}else {
@@ -101,7 +123,7 @@ public class EventController {
 				return "event/commentArticle";
 			}
 		} catch (Exception e) {
-			
+			System.out.println(e);
 		}
 		return "redirect:/event/main";
 	}
@@ -131,13 +153,6 @@ public class EventController {
 		
 		try {
 			params.put("memberidx", info.getMemberIdx());
-			System.out.println("=========================");
-			System.out.println("=========================");
-			System.out.println(params.get("couponcode"));
-			System.out.println(params.get("eventNum"));
-			System.out.println("=========================");
-			System.out.println("=========================");
-			System.out.println("=========================");
 			
 			service.insertGetCoupon(params);
 			map.put("state", "true");

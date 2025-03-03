@@ -117,7 +117,7 @@ body {
 								댓글
 						</label> <label> <input type="radio" name="eventType"
 								value="attendance"
-								${dto.eventType=='clockin' ? 'checked disabled':'disabled'}>
+								${dto.eventType=='clockin' || dto.eventType=='checkin' ? 'checked disabled':'disabled'}>
 								출석체크
 						</label></td>
 					</tr>
@@ -127,7 +127,7 @@ body {
 								<c:when test="${dto.eventType=='coupon'}">
             		쿠폰명 : ${dto.event.couponname} 쿠폰 코드 : ${dto.event.coupon_code} 
             		</c:when>
-								<c:when test="${dto.eventType=='clockin'}">
+								<c:when test="${dto.eventType=='clockin'|| dto.eventType == 'checkin' }">
             		일일포인트 : ${dto.event.daybyday} 주간 포인트 : ${dto.event.weekly} 월간 포인트 : ${dto.event.monthly}
             		</c:when>
 								<c:otherwise>
@@ -159,8 +159,8 @@ body {
 		function pickWinners(){
 			//window.open('${pageContext.request.contextPath}/admin/event/winners?num=${dto.event_article_num}','_blank', 'width=500, height=700, scrollbars=yes, resizable=no');
 			
-			let url = "${pageContext.request.contextPath}/admin/notice/write?category=event"+${dto.event_article_num};
-			location.href = url;
+			//let url = "${pageContext.request.contextPath}/admin/notice/write?category=event"+${dto.event_article_num};
+			//location.href = url;
 		}
 	</script>
 </body>

@@ -328,9 +328,9 @@ public void insertAllOfSeller(Seller seller) throws Exception {
 		long memberidx = mapper.getMemberidx(seller.getEmail());
 		
 		map.put("memberidx", memberidx);
-		map.put("autho", "AUTHOR");
-		mapper.insertAuthority(map);
-		
+		// 회원 권한 전부 넣어주는게 맞는데 기은오빠랑 회의결과 지금 돌리기에는 늦음 
+		//map.put("autho", "AUTHOR");
+		//mapper.insertAuthority(map);
 		map.put("autho", "USER");
 		mapper.insertAuthority(map);
 		

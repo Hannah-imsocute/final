@@ -59,6 +59,7 @@ public class EventServiceImpl implements EventService {
 			
 		} catch (Exception e) {
 			log.info("==============selectChecked");
+			System.out.println(e);
 		}
 		return list;
 	}

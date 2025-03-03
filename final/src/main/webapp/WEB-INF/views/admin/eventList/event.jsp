@@ -100,7 +100,6 @@ tbody td {
 				<li class="nav-item"><a class="nav-link active ongoingEvent"
 					aria-current="page" href="#" data-mode="ongoingEvent" data-page="1">진행중인 이벤트</a></li>
 				<li class="nav-item"><a class="nav-link closedEvent" data-mode="closedEvent" data-page="1">종료된 이벤트</a></li>
-				<li class="nav-item"><a class="nav-link winners" data-mode="winners" data-page="1">당첨자 발표</a></li>
 				<li class="nav-item"><a class="nav-link couponsetting" data-mode="couponsetting" data-page="1">쿠폰 관리</a></li>
 			</ul>
 			<div class="btn-cover">
@@ -120,13 +119,14 @@ tbody td {
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="dto" items="${list}">
+						<c:forEach var="dto" items="${list}" varStatus="status">
 							<tr>
-								<td></td>
+								<td>${status.count}</td>
 								<td><a href="${pageContext.request.contextPath}/admin/event/article/${dto.event_article_num}?type=${dto.eventType}" data-eventnum="${dto.event_article_num}">${dto.subject}</a></td>
 								<td>${dto.startdate}</td>
 								<td>${dto.enddate }</td>
 								<td class="status">
+								진행중 
 								</td>
 								<td>
 									<button type="button" class="edit-btn btn">수정</button>
@@ -192,6 +192,8 @@ tbody td {
 					
 					if(data.mode == 'ongoingEvent'){
 						ongoingEvent(data);
+					}else if(data.mode == 'closedEvent'){
+						closedEvent(data);
 					}
 				}
 				$('tbody').html('');
@@ -204,6 +206,7 @@ tbody td {
 		console.log(data.list);
 		
 		let out = '';
+		let count = 0;
 		for(el of data.list){
 			let num = el.event_article_num;
 			let subject = el.subject;
@@ -212,11 +215,11 @@ tbody td {
 			let type = el.eventType;
 			
 			out += '<tr>';
-			out += '	<td></td>';
+			out += '	<td>'+ ++count +'</td>';
 			out += '	<td><a href="${pageContext.request.contextPath}/admin/event/article/'+num+'?type='+type+'" data-eventnum="'+num+'">'+subject+'</a></td>';
 			out += '	<td>'+startdate+'</td>';
 			out += '	<td>'+enddate+'</td>';
-			out += '	<td class="staus">종료</td>';
+			out += '	<td style="color: red;">종료</td>';
 			out += '	<td></td>';
 		}
 		
@@ -227,6 +230,7 @@ tbody td {
 		console.log(data);
 		
 		let out = '';
+		let count = 0;
 		for(el of data.list){
 			let num = el.event_article_num;
 			let subject = el.subject;
@@ -235,7 +239,7 @@ tbody td {
 			let type = el.eventType;
 			
 			out += '<tr>';
-			out += '	<td></td>';
+			out += '	<td>'+ ++count +'</td>';
 			out += '	<td><a href="${pageContext.request.contextPath}/admin/event/article/'+num+'?type='+type+'" data-eventnum="'+num+'">'+subject+'</a></td>';
 			out += '	<td>'+startdate+'</td>';
 			out += '	<td>'+enddate+'</td>';

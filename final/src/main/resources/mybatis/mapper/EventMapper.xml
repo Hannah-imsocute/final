@@ -83,7 +83,7 @@
 	<select id="checkedDate" parameterType="map" resultType="String">
 		SELECT
 		TO_CHAR(clockindate, 'YYYY-MM-DD') clockindate FROM clockin_log WHERE
-		clockin_num = #{num} and memberidx = #{memberIdx};
+		clockin_num = #{num} and memberidx = #{memberIdx}
 	</select>
 
 

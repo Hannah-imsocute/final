@@ -160,6 +160,91 @@ main {
 	background-color: #ffc107;
 	transform: translateY(-2px);
 }
+
+/* 테이블 전체 스타일 */
+.table {
+	width: 60%; /* 적절한 너비 */
+	margin: 20px auto; /* 가운데 정렬 */
+	border-collapse: collapse; /* 셀 간격 제거 (한 줄로 보이도록) */
+	background-color: #fff; /* 배경 흰색 */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
+	border-radius: 8px; /* 모서리를 둥글게 */
+	overflow: hidden; /* 테이블 모서리가 둥글게 잘리도록 */
+}
+
+/* 테이블 헤더(요일) 스타일 */
+.table thead td {
+	background-color: #333; /* 짙은색 배경 */
+	color: #fff; /* 글자는 흰색 */
+	font-weight: bold;
+	padding: 10px;
+	text-transform: uppercase; /* 대문자 (선택사항) */
+	text-align: center;
+	font-size: 14px;
+}
+
+/* 본문 셀 스타일 */
+.table tbody td {
+	border: 1px solid #e5e5e5; /* 옅은 테두리 */
+	padding: 12px;
+	text-align: center;
+	font-size: 14px;
+	cursor: pointer; /* 마우스 포인터 표시 */
+	transition: background-color 0.2s ease;
+}
+
+/* Hover 시 배경색 변화 */
+.table tbody td:hover {
+	background-color: #f5f5f5;
+}
+
+/* 오늘 날짜 .today 강조 */
+.today {
+	background-color: #2979ff;
+	color: #fff;
+	font-weight: bold;
+	border-radius: 4px; /* 셀 내부에서 약간 둥글림 */
+}
+
+/* 달력에 표시하지 않는 빈 칸(.gray) */
+.gray {
+	background-color: #fafafa;
+	color: #ccc;
+}
+
+/* 그 외 일반 날짜(.other) */
+.other {
+	background-color: #fff;
+	color: #333;
+}
+
+/* 하트 */
+.heart-icon-wrap {
+	position: relative;
+	display: inline-block;
+	/* 하트(아이콘)와 숫자의 크기를 조절합니다. */
+	font-size: 32px; /* 좀 크게 설정: 24px, 32px 등 */
+	width: 32px;
+	height: 32px;
+}
+
+/* 아이콘 스타일 */
+.heart-icon-wrap i {
+	color: red; /* 테두리만 있는 하트이므로 빨간색 outline */
+	line-height: 32px; /* 세로 정렬 보정 */
+}
+
+/* 하트 중앙에 숫자를 겹쳐 표시 */
+.heart-number {
+	position: absolute;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 16px; /* 숫자 크기 */
+	font-weight: bold;
+	color: red; /* 숫자 색상 (하트와 같은 색이면 테두리와 어울림) */
+	pointer-events: none; /* 마우스로 클릭 시 숫자 때문에 이벤트가 가로막히지 않도록 (선택) */
+}
 </style>
 </head>
 <body>
@@ -168,136 +253,65 @@ main {
 	</header>
 	<main>
 		<div class="post-container">
-			<h2 class="post-title">${dto.subject }</h2>
+			<h2 class="post-title">${dto.subject}</h2>
 			<p class="post-date">${dto.startdate }~${dto.enddate }</p>
-			<div class="post-image">
-				<img alt="썸네일" src="/uploads/event/${dto.thumbnail}">
-			</div>
-			<p class="post-content">${dto.textcontent}</p>
+			<div class="post-image"></div>
+			<p class="post-content"></p>
 
-			<div class="calendar-container">
-				<!-- 달력 상단 -->
-				<div class="calendar-header">
-					<div class="month-year">${year}년 ${month}월</div>
-					<!-- 이전달/다음달 버튼 등 필요시 추가 -->
-				</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<td>일</td>
+						<td>월</td>
+						<td>화</td>
+						<td>수</td>
+						<td>목</td>
+						<td>금</td>
+						<td>토</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<c:forEach var="i" begin="1" end="${week-1}">
+							<td class='gray'></td>
+						</c:forEach>
 
-				<!-- 요일 표시 -->
-				<div class="weekdays">
-					<div class="weekend">일</div>
-					<div>월</div>
-					<div>화</div>
-					<div>수</div>
-					<div>목</div>
-					<div>금</div>
-					<div class="weekend">토</div>
-				</div>
+						<c:forEach var="i" begin="1" end="${lastDate}">
+							<c:set var="cls" value="${i==td ? 'today':'other' }" />
+							<td class="${cls}">
+								<!-- 하트를 감싸는 컨테이너 -->
+								<div class="heart-icon-wrap">
+									<!-- 하트 아이콘 -->
+									<i class="bi bi-heart"></i>
+									<!-- 하트 위에 겹칠 숫자 -->
+									<span class="heart-number">${i}</span>
+								</div>
+							</td>
+							<c:set var="week" value="${week+1}" />
+							<c:if test="${lastDate!=i && week%7==1 }">
+								<c:out value="</tr><tr>" escapeXml="false" />
+							</c:if>
+						</c:forEach>
 
-				<!-- 날짜 영역 -->
-				<div class="days">
-				<c:set var="dayofweek" value="0"/>
-				<c:when test="dayofweek < ${dayofweek - 1}">
-					<div></div>
-				</c:when>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div class="day">1</div>
-					<div class="day">2</div>
-					<div class="day weekend">3</div>
-					<div class="day weekend">4</div>
-					<div class="day">5</div>
-					<div class="day">6</div>
-					<div class="day">7</div>
-					<div class="day">8</div>
-					<div class="day">9</div>
-					<div class="day weekend">10</div>
-					<div class="day weekend">11</div>
-					<div class="day">12</div>
-					<div class="day">13</div>
-					<div class="day">14</div>
-					<div class="day">15</div>
-					<div class="day">16</div>
-					<div class="day weekend">17</div>
-					<div class="day weekend">18</div>
-					<div class="day">19</div>
-					<div class="day">20</div>
-					<div class="day">21</div>
-					<div class="day">22</div>
-					<div class="day">23</div>
-					<div class="day weekend">24</div>
-					<div class="day weekend">25</div>
-					<div class="day">26</div>
-					<div class="day">27</div>
-					<div class="day">28</div>
-					<div class="day">29</div>
-					<div class="day">30</div>
-					<div class="day weekend">31</div>
-				</div>
+						<c:if test="${week%7!=1}">
+							<c:set var="w" value="${week%7==0?7:week%7}" />
+							<c:forEach var="i" begin="${w}" end="7">
+								<td class='gray'></td>
+							</c:forEach>
+						</c:if>
+					</tr>
+				</tbody>
 
-				<!-- 출석하기 버튼 -->
-				<button type="button" class="attendance-button">출석하기</button>
-			</div>
+			</table>
+
+			<!-- 출석하기 버튼 -->
+			<button type="button" class="attendance-button">출석하기</button>
 
 		</div>
 	</main>
 
 	<script type="text/javascript">
-	/*
-		const ajaxRequest = function(url, method, requestParams, responseType, callback, file = false, contentType = 'text') {
 		
-			const settings = {
-					type: method, 
-					data: requestParams,
-					dataType: responseType,
-					success:function(data) {
-						callback(data);
-					},
-					beforeSend: function(jqXHR) {
-					},
-					complete: function () {
-					},
-					error: function(jqXHR) {
-						console.log(jqXHR.responseText);
-					}
-			};
-		
-			if(file) {
-				settings.processData = false;  
-				settings.contentType = false; 
-			}
-		
-			if(contentType.toLowerCase() === 'json') {
-				settings.contentType = 'application/json; charset=utf-8';
-			}
-		
-			$.ajax(url, settings);
-		};
-	*/
-		$(function(){
-			$('.attendance-button').click(function(){
-				
-				// 이미 출석했으면 우야노
-				
-				let date = new Date();
-				let year = date.getFullYear();
-				let month = date.getMonth()+1;
-				let day = date.getDate();
-				let num = ${dto.event.clockin_num};
-				
-				let url = '${pageContext.request.contextPath}/event/checked';
-				let params = {year : year , month : month , day : day , num : num};
-				
-				const after = function (data){
-					if(data.state == 'true'){
-						alert('출석을 완료했습니다 !!');
-					}
-				}
-				
-				ajaxRequest(url, 'post', JSON.stringify(params), 'json', after, false, 'json');
-				
-			});
-		});
 	</script>
 </body>
 </html>

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sp.app.admin.mapper.EventManageMapper;
 import com.sp.app.admin.model.Event;
+import com.sp.app.admin.model.EventType;
 import com.sp.app.admin.model.Winners;
 import com.sp.app.common.MyUtil;
 
@@ -116,6 +117,50 @@ public class EventManageServiceImpl implements EventManageService {
 		} catch (Exception e) {
 			log.info("=====================insertWinners : ", e);
 		}
+	}
+
+	@Override
+	public int dataCountClosedEvent() {
+		int result = 0;
+		try {
+			result = mapper.dataCountClosedEvent();
+		} catch (Exception e) {
+			log.info("==============dataCountClosedEvent : ", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Event> getListOfClosedEvent(Map<String, Object> map) {
+		List<Event> list = null;
+		try {
+			list = mapper.getListOfClosedEvent(map);
+		} catch (Exception e) {
+			log.info("===================getLIstOFClosedEvent", e);
+		}
+		return list;
+	}
+
+	@Override
+	public int dataCountOfCoupon() {
+		int result = 0;
+		try {
+			result = mapper.dataCountOfCoupon();
+		} catch (Exception e) {
+			log.info("==============dataCountOfCoupon : ", e);
+		}
+		return result;
+	}
+
+	@Override
+	public List<Event> getListOfCoupon(Map<String, Object> map) {
+		List<Event> list = null;
+		try {
+			list = mapper.getListOfCoupon(map);
+		} catch (Exception e) {
+			log.info("===================getLIstOFClosedEvent", e);
+		}
+		return list;
 	}
 
 }

@@ -43,14 +43,18 @@
 		parameterType="com.sp.app.admin.model.EventType">
 		<if test="eventType == 'coupon'">
 			INSERT INTO coupon (coupon_code, couponname, valid,
-			rate, couponstart, expiredate, event_article_num) VALUES
-			(#{coupon_code}, #{couponname}, #{valid}, #{rate}, #{couponstart},
+			rate,
+			couponstart, expiredate, event_article_num) VALUES
+			(#{coupon_code},
+			#{couponname}, #{valid}, #{rate}, #{couponstart},
 			#{expiredate},SEQ_EVENT_ARTICLE.CURRVAL )
 		</if>
 		<if test="eventType == 'clockin' or eventType=='checkin' ">
 			INSERT INTO clockin_event (clockin_num, daybyday,
-			weekly, monthly, event_article_num) VALUES
-			(SEQ_CLOCKIN_EVENT.NEXTVAL, #{daybyday}, #{weekly}, #{monthly},
+			weekly,
+			monthly, event_article_num) VALUES
+			(SEQ_CLOCKIN_EVENT.NEXTVAL,
+			#{daybyday}, #{weekly}, #{monthly},
 			SEQ_EVENT_ARTICLE.CURRVAL)
 
 		</if>
@@ -58,7 +62,7 @@
 
 	<select id="dataCountValidEvent" resultType="Integer">
 		SELECT COUNT(*) FROM
-		event_article
+		event_article WHERE SYSDATE &lt; ENDDATE
 	</select>
 
 	<select id="getListOFValidEvent" parameterType="map"
@@ -67,10 +71,42 @@
 		thumbnail, TO_CHAR(startdate, 'YYYY-MM-DD') startdate ,
 		TO_CHAR(enddate, 'YYYY-MM-DD') enddate, created
 		FROM event_article
+		WHERE SYSDATE &lt; ENDDATE
+		OFFSET #{offset} ROWS FETCH FIRST #{size}
+		ROWS ONLY
+	</select>
+
+
+	<select id="dataCountClosedEvent" resultType="Integer">
+		SELECT COUNT(*)
+		FROM
+		event_article WHERE SYSDATE &gt; ENDDATE
+	</select>
+
+	<select id="getListOfClosedEvent" parameterType="map"
+		resultType="com.sp.app.admin.model.Event">
+		SELECT event_article_num , subject, textcontent, eventtype,
+		thumbnail,
+		TO_CHAR(startdate, 'YYYY-MM-DD') startdate ,
+		TO_CHAR(enddate,
+		'YYYY-MM-DD') enddate, created
+		FROM event_article
 		WHERE SYSDATE &gt; ENDDATE
 		OFFSET #{offset} ROWS FETCH FIRST #{size}
 		ROWS ONLY
 	</select>
+
+	<select id="dataCountOfCoupon" resultType="Integer">
+		SELECT COUNT(*) FROM coupon
+	</select>
+
+	<select id="getListOfCoupon" parameterType="map"
+		resultMap="event">
+		SELECT coupon_code, couponname, valid, rate, couponstart, expiredate, event_article_num
+		FROM coupon 
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY 
+	</select>
+
 
 	<select id="findByIdOfEvent" parameterType="map"
 		resultMap="event">
@@ -83,7 +119,7 @@
 			<when test="type == 'coupon'">
 				coupon_code, couponname, valid, rate
 			</when>
-			<when test="type == 'clockin'">
+			<when test="type == 'clockin' or type=='checkin'">
 				clockin_num, daybyday, weekly, monthly
 			</when>
 			<when test="type == 'comment'">
@@ -96,7 +132,7 @@
 				JOIN coupon c ON c.event_article_num =
 				ea.event_article_num
 			</when>
-			<when test="type == 'clockin'">
+			<when test="type == 'clockin' or type=='checkin'">
 				JOIN clockin_event ce ON ce.event_article_num =
 				ea.event_article_num
 			</when>
