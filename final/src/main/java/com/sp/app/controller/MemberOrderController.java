@@ -28,12 +28,14 @@ public class MemberOrderController {
     private final CartItemService cartItemService;
     private final ShippingService shippingService;
     private final PointService pointService;
+    private final OptionService optionService;
 
     @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
     public String orderForm(
         @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
         @RequestParam(name = "productCode", required = false) List<Long> productCodes,
         @RequestParam(name = "quantity", required = false) List<Integer> quantities,
+        @RequestParam(name = "discount", required = false, defaultValue="0") int discountAmount,
         @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
         HttpSession session, Model model) throws Exception {
 
@@ -70,7 +72,6 @@ public class MemberOrderController {
         List<OrderItem> orderItems = new ArrayList<>();
 
         if ("direct".equals(mode)) {
-            // 바로 구매: productCodes와 quantities가 반드시 넘어와야 함.
             if (productCodes == null || quantities == null ||
                 productCodes.isEmpty() || quantities.isEmpty()) {
                 throw new Exception("주문 정보가 부족합니다. (직접 구매)");
@@ -79,12 +80,16 @@ public class MemberOrderController {
                 OrderItem item = new OrderItem();
                 item.setProductCode(productCodes.get(i));
                 item.setQuantity(quantities.get(i));
-                // DB에서 상품 정보를 가져와서 DB 가격 사용
                 OrderItem productInfo = orderService.getProductCode(productCodes.get(i));
                 if (productInfo == null) {
                     throw new Exception("상품 정보가 존재하지 않습니다. productCode=" + productCodes.get(i));
                 }
-                item.setPriceForeach(productInfo.getPrice());
+
+                int discountedPrice = productInfo.getPrice() - discountAmount;
+                if (discountedPrice < 0) discountedPrice = 0;
+
+//                item.setPriceForeach(productInfo.getPrice());
+                item.setPriceForeach(discountedPrice);
                 item.setPrice(quantities.get(i) * item.getPriceForeach());
                 orderItems.add(item);
             }
@@ -131,6 +136,20 @@ public class MemberOrderController {
         Order order = new Order();
         order.setOrderCode(productOrderCode);
         order.setTotalPrice(overallNetPay);
+
+        Map<Long, List<Option>> productOptionsMap = new HashMap<>();
+        for (int i = 0; i < productCodes.size(); i++) {
+            long code = productCodes.get(i);
+            List<Option> optionList = optionService.getOptionList(code);
+            productOptionsMap.put(code, optionList);
+        }
+        model.addAttribute("optionList", productOptionsMap);
+
+
+        for (CartItem cartItem : cartItems) {
+            model.addAttribute("name", cartItem.getItem());
+        }
+
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("orderItems", orderItems);

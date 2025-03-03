@@ -175,18 +175,25 @@
             <div class="card">
                 <h3>주문정보</h3>
                 <div class="order-items">
-                    <!-- 예: 상품 썸네일 -->
+                        <%-- 할인금액 계산: (총 상품금액 × (할인율 / 100)) --%>
+                    <c:set var="discountPrice" value="${orderDetail.price * orderDetail.quantity * (orderDetail.discount / 100.0)}" />
                     <img src="${pageContext.request.contextPath}/uploads/product/${orderDetail.thumbnail}"
                          alt="상품이미지" />
                     <div class="item-info">
                         <p class="product-name">
                             <strong>${orderDetail.productName}</strong>
                         </p>
+                        <p> 주문번호:
+                            <stront>${orderDetail.orderCode}</stront>
+                        </p>
                         <p>상품가격:
                             <fmt:formatNumber value="${orderDetail.price}" pattern="#,###"/>원
                         </p>
+                        <p>상품수량:
+                            ${orderDetail.quantity}개
+                        </p>
                         <p>할인금액:
-                            <fmt:formatNumber value="${orderDetail.discount}" pattern="#,###"/>원
+                            <fmt:formatNumber value="${discountPrice}" pattern="#,###"/>원
                         </p>
                         <p>배송비:
                             <fmt:formatNumber value="${orderDetail.shipping}" pattern="#,###"/>원

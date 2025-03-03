@@ -35,7 +35,8 @@ public class CartController {
       Map<String, Object> params = new HashMap<>();
       params.put("memberIdx", memberIdx);
 
-      List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
+//      List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
+      List<CartItem> list = cartItemService.getCartItemsByCodes(params);
       for (CartItem cartItem : list) {
         model.addAttribute("cartItemCode", cartItem.getCartItemCode());
       }

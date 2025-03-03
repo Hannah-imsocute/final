@@ -319,8 +319,11 @@ public class OrderServiceImpl implements OrderService {
       int couponValueForItem = (cartItem.getCouponValue() != null) ? cartItem.getCouponValue() : 0;
       int spentPointForItem = (cartItem.getSpentPoint() != null) ? cartItem.getSpentPoint() : 0;
 
-      // 총합 = 상품금액 + 배송비 - 쿠폰할인 - 포인트사용
-      int netPay = totalPrice + shipping - couponValueForItem - spentPointForItem;
+      double discountRate = (cartItem.getDiscount() > 0) ? cartItem.getDiscount() : 0;
+      int discountForItem = (int) (totalPrice * (discountRate / 100.0));
+
+      // 총합 = 상품금액 + 배송비 - 쿠폰할인 - 포인트사용 - 할인
+      int netPay = totalPrice + shipping - couponValueForItem - spentPointForItem - discountForItem;
       overallNetPay += netPay;
     }
 
@@ -381,7 +384,6 @@ public class OrderServiceImpl implements OrderService {
       }
     }
 
-
     payment.setOrderCode(orderCode);
     payment.setMemberIdx(order.getMemberIdx());
     payment.setByMethod(payment.getByMethod()); // 결제수단
@@ -437,17 +439,6 @@ public class OrderServiceImpl implements OrderService {
     return order;
   }
 
-//  /**
-//   * [기존] 전체 장바구니 아이템 구매 로직
-//   */
-//  @Override
-//  @Transactional(rollbackFor = Exception.class)
-//  public Order processOrder(SessionInfo sessionInfo) throws Exception {
-//    // 1) 전체 장바구니 가져오기
-//    List<CartItem> cartItems = cartItemService.getCartListByMember(sessionInfo.getMemberIdx());
-//    // 2) 공통 메서드 호출 (orderFromView = null)
-//    return processOrderInternal(sessionInfo, cartItems, null);
-//  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -493,11 +484,13 @@ public class OrderServiceImpl implements OrderService {
    */
   @Transactional(rollbackFor = Exception.class)
   public Order processDirectOrder(SessionInfo sessionInfo, Order orderFromView, Payment payment) throws Exception {
+
     if (orderFromView == null || orderFromView.getProductCodes() == null || orderFromView.getQuantities() == null) {
       throw new Exception("주문 정보가 부족합니다. (직접 구매)");
     }
 
     // OrderFromView의 상품 정보를 CartItem 형태로 변환
+    List<OrderItem> oiList = orderFromView.getOrderItems(); // Controller서 넣어둔 OrderItem 리스트
     List<CartItem> cartItems = new ArrayList<>();
     for (int i = 0; i < orderFromView.getProductCodes().size(); i++) {
       Long productCode = orderFromView.getProductCodes().get(i);
@@ -518,7 +511,6 @@ public class OrderServiceImpl implements OrderService {
           .build();
 
       cartItems.add(cartItem);
-
 
     }
 

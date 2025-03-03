@@ -23,7 +23,7 @@
 
     <select id="getCartItemsByMemberAndProduct" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
         SELECT CART_ITEM_CODE AS cartItemCode, MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT,
-               c.PRODUCTCODE AS productCode,
+               c.PRODUCTCODE AS productCode, DISCOUNT as discount,
                QUANTITY, p.PRICE, CREATED, CART_OPTION AS cartOption
         FROM CART_ITEM c
         LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
@@ -48,7 +48,7 @@
     </select>
 
 
-    <select id="getCartItemsByCodes" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
+   <!-- <select id="getCartItemsByCodes" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
         SELECT
         CART_ITEM_CODE AS cartItemCode,
         MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT, c.PRODUCTCODE AS productCode, QUANTITY,
@@ -56,6 +56,24 @@
         FROM CART_ITEM c
         LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
         WHERE MEMBERIDX = #{memberIdx}
+        <if test="selectedCodes != null and selectedCodes.size() > 0">
+            AND CART_ITEM_CODE IN
+            <foreach collection="selectedCodes" item="code" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+    </select>-->
+
+    <select id="getCartItemsByCodes" parameterType="map" resultType="com.sp.app.model.cart.CartItem">
+        SELECT
+        CART_ITEM_CODE AS cartItemCode,
+        c.MEMBERIDX AS memberIdx, p.ITEM, p.DISCOUNT, c.PRODUCTCODE AS productCode, QUANTITY,
+        p.PRICE, CREATED, CART_OPTION AS cartOption, s.BRAND_CODE as brandCode,
+        s.BRANDNAME as brandName
+        FROM CART_ITEM c
+        LEFT JOIN PRODUCT p ON p.PRODUCTCODE = c.PRODUCTCODE
+        LEFT JOIN SELLER_BRAND s ON p.BRAND_CODE = s.BRAND_CODE
+        WHERE c.MEMBERIDX = #{memberIdx}
         <if test="selectedCodes != null and selectedCodes.size() > 0">
             AND CART_ITEM_CODE IN
             <foreach collection="selectedCodes" item="code" open="(" separator="," close=")">
