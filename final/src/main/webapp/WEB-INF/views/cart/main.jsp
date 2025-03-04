@@ -256,7 +256,7 @@
                                             <c:out value="${cart.item}"/>
                                         </div>
                                         <div class="item-option">
-                                            <c:out value="${cart.cartOption != null ? cart.cartOption : '옵션없음'}"/>
+                                            <c:out value="${cart.optionName != null ? cart.optionName : '옵션없음'}"/>
                                         </div>
                                     </div>
                                     <div class="cart-item-right">

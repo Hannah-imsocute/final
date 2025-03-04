@@ -2,14 +2,14 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>내 정보</title>
-  <!-- 헤더 리소스 include -->
   <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
-  <!-- Font Awesome 아이콘 (별, 장바구니 등) 사용 위해 CDN 추가 -->
+  <!-- Font Awesome 아이콘 (별, 장바구니 등) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
   <style>
@@ -99,7 +99,7 @@
       color: #fa7c00;
     }
 
-    /* ==================== 최근 주문 내역 리스트 ==================== */
+    /* ==================== 주문 내역 리스트 ==================== */
     .list-box.recent-orders {
       border: none;
       box-shadow: none;
@@ -118,16 +118,11 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
       list-style: none;
     }
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
     .order-date {
       font-size: 0.95rem;
       font-weight: 900;
       color: #666;
+      margin-bottom: 8px;
     }
     .order-code {
       font-size: 0.88rem;
@@ -137,6 +132,7 @@
     .order-body {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
     }
     .product-image {
       width: 100px;
@@ -154,18 +150,44 @@
       margin-bottom: 6px;
       color: #333;
     }
+    /* 상품 정보 디테일 영역: 레이블과 값 정렬 */
+    .product-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      margin-top: 10px;
+    }
+    .detail-item {
+      flex: 1 1 45%;
+      font-size: 0.9rem;
+    }
+    .detail-item .label {
+      font-weight: bold;
+      color: #666;
+      margin-right: 5px;
+    }
+    .detail-item .value {
+      color: #333;
+    }
     .product-price {
       font-size: 1.1rem;
       font-weight: bold;
       color: #fa7c00;
-      margin-bottom: 4px;
+      margin: 10px 0;
     }
     .shipping-fee {
       font-size: 0.9rem;
-      color: #666;
+      font-weight: bold;
+      color: #fa7c00;
       margin-bottom: 8px;
     }
-    .product-actions button {
+
+    /* ==================== 버튼/아이콘 스타일 ==================== */
+    .product-actions {
+      margin-top: 10px;
+    }
+    .product-actions button,
+    .btn-inquiry {
       display: inline-block;
       margin-right: 6px;
       margin-bottom: 6px;
@@ -176,15 +198,19 @@
       border: 1px solid #ddd;
       border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
-    .product-actions button:hover {
+    .product-actions button:hover,
+    .btn-inquiry:hover {
       background-color: #f0f0f0;
+      color: #fa7c00;
     }
     .cart-icon {
       margin-left: 16px;
       font-size: 24px;
       color: #fa7c00;
       cursor: pointer;
+      transition: color 0.3s;
     }
     .cart-icon:hover {
       color: #e26d00;
@@ -233,13 +259,14 @@
       padding: 20px;
       margin: 20px 0;
       font-size: 0.95rem;
+      font-weight: 600;
       color: #666;
       background-color: #fdf9f4;
       text-align: center;
     }
     .explore-btn {
-      display: block;              /* 버튼을 블록요소로 변경 */
-      margin: 10px auto;           /* 가운데 정렬 */
+      display: block;
+      margin: 10px auto;
       background-color: #fa7c00;
       color: #fff;
       border: none;
@@ -308,14 +335,12 @@
     #reviewProductInfo {
       display: flex;
       align-items: center;
-      justify-content: left;
       gap: 15px;
       margin-bottom: 20px;
       border-bottom: 1px solid #eee;
       padding-bottom: 15px;
     }
     #reviewProductInfo img {
-      margin-top: 10px;
       max-width: 120px;
       border-radius: 8px;
     }
@@ -371,12 +396,7 @@
       border: 1px solid #ddd;
       border-radius: 4px;
     }
-    /* ==================== 파일 선택 & 작성완료 버튼 ==================== */
-    /* 실제 file input 숨김 */
-    #selectFile {
-      display: none;
-    }
-    /* 커스텀 파일 선택 버튼 */
+    #selectFile { display: none; }
     .file-input-label {
       display: inline-block;
       padding: 8px 12px;
@@ -473,6 +493,26 @@
       color: #999;
       font-size: 0.9rem;
     }
+
+
+    .recent-view-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    .product-view {
+      flex: 1;
+      max-width: calc(20% - 10px);
+    }
+
+    .product-img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+
   </style>
 </head>
 <body>
@@ -512,20 +552,22 @@
       </div>
     </div>
 
-    <div class="notice-box">
-      <p>오늘도 뚝딱뚝딱 하로 가볼까</p>
+    <div class="banner-box">
+<%--      <p>--%>
+        오늘도 뚝딱뚝딱 하로 가볼까 !!!
+<%--      </p>--%>
     </div>
-    <div class="coupon-box">
+    <div class="coupon-box banner-box">
       <p>
         <span class="highlight">+1,200원</span>으로 매월 <span class="highlight">4천원 쿠폰</span>
         &nbsp;→ 최대 <span class="highlight">10%</span> 할인
       </p>
     </div>
 
-    <!-- 최근 주문 내역 영역 -->
+    <!-- 최근 주문 내역 영역 (주문 내역 부분만 깔끔하게 정렬) -->
     <div class="section-title">
       최근 주문 내역
-      <a href="${pageContext.request.contextPath}/mypage/detail" class="section-more">상세보기 &gt;</a>
+      <a href="${pageContext.request.contextPath}/mypage/detail" class="section-more">전체보기 &gt;</a>
     </div>
     <div class="list-box recent-orders">
       <c:choose>
@@ -533,23 +575,55 @@
           <ul>
             <c:forEach var="order" items="${ordersHistory}" varStatus="loopStatus" begin="0" end="1">
               <li class="order-item-container">
+                <div class="order-date">${order.orderDate}</div>
                 <div class="order-header">
-                  <span class="order-date">${order.orderDate}</span>
                   <span class="order-code">주문번호: ${order.orderCode}</span>
                 </div>
                 <div class="order-body">
                   <img src="${pageContext.request.contextPath}/uploads/product/${order.thumbnail}" class="product-image" />
                   <div class="product-info">
                     <div class="product-title">${order.productName}</div>
-                    <div class="product-price">
-                      <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
+                    <!-- 상품 정보 디테일 영역 -->
+                    <div class="product-details">
+                      <div class="detail-item">
+                        <span class="label">단가:</span>
+                        <span class="value"><fmt:formatNumber value="${order.priceforeach}" pattern="#,###" />원</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="label">수량:</span>
+                        <span class="value">${order.quantity}개</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="label">상품 가격:</span>
+                        <span class="value"><fmt:formatNumber value="${order.priceforeach * order.quantity}" pattern="#,###" />원</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="label">할인 금액:</span>
+                        <span class="value"><fmt:formatNumber value="${order.discount}" pattern="#,###" />원</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="label">결제 금액:</span>
+                        <span class="value"><fmt:formatNumber value="${order.netPay}" pattern="#,###" />원</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="label">배송비:</span>
+                        <span class="value">
+                            <c:choose>
+                              <c:when test="${order.shipping == 0}">
+                                무료
+                              </c:when>
+                              <c:otherwise>
+                                <fmt:formatNumber value="${order.shipping}" pattern="#,###" />원
+                              </c:otherwise>
+                            </c:choose>
+                          </span>
+                      </div>
                     </div>
-                    <div class="shipping-fee">배송비: 무료</div>
+                    <!-- 상품 정보 영역 끝 -->
                     <div class="product-actions">
                       <button class="btn-refunds">반품신청</button>
                       <button class="btn-refunds">교환신청</button>
-
-                      <c:if test="${not empty ordersHistory}">
+                      <c:if test="${order.reviewCount == 0}">
                         <button id="openWriteReviewBtn" class="btn-review"
                                 data-product-code="${order.productCode}"
                                 data-product-name="${order.productName}"
@@ -570,7 +644,9 @@
               </li>
               <c:if test="${loopStatus.index == 1}">
                 <div class="detail-button-wrap">
-                  <button class="detail-button" onclick="location.href='${pageContext.request.contextPath}/mypage/detail'">주문내역 전체보기</button>
+                  <button class="detail-button" onclick="location.href='${pageContext.request.contextPath}/mypage/detail'">
+                    주문내역 전체보기
+                  </button>
                 </div>
               </c:if>
             </c:forEach>
@@ -604,42 +680,46 @@
 
     <div class="section-title">
       최근 본 작품
-      <a href="#" class="section-more">더보기 &gt;</a>
+      <div class="recent-view-container">
+        <c:forEach var="dto" items="${viewProductHistory}" begin="0" end="4">
+          <div class="product-view" onclick="location.href='${pageContext.request.contextPath}/product/${dto.productCode}'">
+            <img class="product-img" src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}" alt="${dto.item}">
+          </div>
+        </c:forEach>
+      </div>
+<%--      <a href="#" class="section-more">더보기 &gt;</a>--%>
     </div>
     <div class="list-box">
-      <p class="empty-msg">최근 본 작품이 없습니다.</p>
-      <button class="explore-btn" onclick="location.href='${pageContext.request.contextPath}/product/category'">뚝딱뚝딱 하기</button>
+      <button class="explore-btn" onclick="location.href='${pageContext.request.contextPath}/product/category'">
+        뚝딱뚝딱 하기
+      </button>
     </div>
+  </div>
+</div>
+
+<!-- 쿠폰 모달 추가 -->
+<div id="couponModal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>쿠폰 정보</h3>
+    <c:if test="${empty couponList}">
+      <p>보유하신 쿠폰이 없습니다.</p>
+    </c:if>
+    <ul>
+      <c:forEach var="coupon" items="${couponList}">
+        <li>
+          <span class="coupon-code">${coupon.couponName}</span>
+          <span class="coupon-expire">${coupon.expireDate}</span>
+        </li>
+      </c:forEach>
+    </ul>
   </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 
-<!-- 쿠폰 모달 -->
-<div id="couponModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h3>쿠폰 리스트</h3>
-    <c:choose>
-      <c:when test="${not empty couponList}">
-        <ul>
-          <c:forEach var="coupon" items="${couponList}">
-            <li>
-              <span class="coupon-code">${coupon.couponCode}</span>
-              <span class="coupon-expire">만료일: ${coupon.expireDate}</span>
-            </li>
-          </c:forEach>
-        </ul>
-      </c:when>
-      <c:otherwise>
-        <p>쿠폰이 없습니다.</p>
-      </c:otherwise>
-    </c:choose>
-  </div>
-</div>
-
-<!-- 리뷰 작성 모달 (세련된 디자인 적용) -->
-<div id="writeReviewModal">
+<!-- =============== [모달] 리뷰 작성 =============== -->
+<div id="writeReviewModal" class="modal">
   <div class="modal-content">
     <span class="close" id="closeWriteReviewBtn">&times;</span>
     <h3>상품평 작성</h3>
@@ -659,7 +739,7 @@
         <input type="radio" id="star1" name="starRate" value="1" /><label for="star1" title="1 star"><i class="fas fa-star"></i></label>
       </div>
       <!-- 내용 입력 영역 -->
-      <label for="reviewContent"></label>
+      <label for="reviewContent" style="display:none;">리뷰내용</label>
       <textarea id="reviewContent" name="content" placeholder="최소 10자를 입력하세요."></textarea>
       <!-- 파일 업로드 & 미리보기 영역 -->
       <label for="selectFile" class="file-input-label">📁 파일 선택</label>

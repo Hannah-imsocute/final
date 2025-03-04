@@ -73,13 +73,16 @@ public class ReviewController {
         }
     }
 
-    @PutMapping("edit/{reviewNum}")
+    @PostMapping("edit/{reviewNum}")
     @ResponseBody
     public ResponseEntity<?> updateReview(
-            @PathVariable("reviewNum") long reviewNum, Review dto
+            @PathVariable("reviewNum") long reviewNum, Review dto,
+            HttpSession session
     ) {
         try {
-            reviewService.updateReview(dto);
+            SessionInfo member = (SessionInfo) session.getAttribute("member");
+            dto.setMemberIdx(member.getMemberIdx());
+            reviewService.updateReview(dto, uploadPath);
             return new ResponseEntity<>("리뷰가 수정되었습니다.", HttpStatus.OK);
         } catch (Exception e) {
             log.error("[updateReview] 리뷰 수정 중 예외 발생", e);
@@ -106,7 +109,8 @@ public class ReviewController {
     @GetMapping("list")
     public String listReview(
             @RequestParam(value="page", defaultValue="1") int current_page,
-            HttpSession session, Model model, HttpServletRequest request
+            HttpSession session, Model model, HttpServletRequest request,
+            Review review
     ) {
         try {
             SessionInfo member = (SessionInfo) session.getAttribute("member");
@@ -131,13 +135,14 @@ public class ReviewController {
             paramMap.put("offset", offset);
             paramMap.put("size", size);
             List<Review> list = reviewService.listReview(paramMap);
-
+//            List<Review> reviews = reviewService.listReviewFile(review);
             model.addAttribute("paging", paging);
             model.addAttribute("page", current_page);
             model.addAttribute("total_page", total_page);
             model.addAttribute("offset", offset);
             model.addAttribute("size", size);
             model.addAttribute("reviewList", list);
+//            model.addAttribute("reviews", reviews); // 리뷰 이미지 목록
         } catch (Exception e) {
             log.error("[listReview] 리뷰 목록 조회 중 예외 발생", e);
         }

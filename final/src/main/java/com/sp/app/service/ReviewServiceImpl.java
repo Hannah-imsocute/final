@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,32 +30,32 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public void insertReview(Review dto, String uploadPath) throws SQLException {
         try {
-            dto.setMemberIdx(dto.getMemberIdx());
-            dto.setProductCode(dto.getProductCode());
-            dto.setReviewNum(dto.getReviewNum());
+            // 리뷰 작성
             dto.setImage(uploadPath);
-            dto.setContent(dto.getContent());
             dto.setBlock(0);
+            mapper.insertReview(dto);
 
-            mapper.insertReview(dto); // 리뷰 작성
-
+            // 리뷰 이미지 등록 파일이 있을 경우에만
+            if (dto.getSelectFile() != null && !dto.getSelectFile().isEmpty()) {
+                List<MultipartFile> files = dto.getSelectFile();
+                for (MultipartFile file : files) {
+                    String fileName = storageService.uploadFileToServer(file, uploadPath);
+                    dto.setImage(fileName);
+                    mapper.insertImageReview(dto);
+                }
+            }
+            // 리뷰 포인트 적립
+            int saveAmount = (dto.getSelectFile() != null) ? 100 : 50;
             MemberPoint point = MemberPoint.builder()
                     .memberIdx(dto.getMemberIdx())
                     .reason("리뷰 적립")
-                    .saveAmount(50)
-                    .balance(50)
+                    .saveAmount(saveAmount)
+                    .balance(saveAmount)
                     .build();
+            pointService.insertReviewPoint(point);
 
-            if(dto.getSelectFile() == null) {
-                dto.setImage(dto.getImage());
-                mapper.insertImageReview(dto);
-
-                point.setSaveAmount(100);
-                point.setBalance(100);
-            }
-            pointService.insertReviewPoint(point); // 리뷰 포인트 작성 해주는곳
         } catch (Exception e) {
-            log.error("insertReview", e);
+            log.error("insertReview error", e);
         }
     }
 
@@ -75,8 +77,27 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void updateReview(Review dto) throws Exception {
+    public void updateReview(Review dto, String uploadPath) throws Exception {
         try {
+
+            if(dto.getSelectFile() != null && !dto.getSelectFile().isEmpty()) {
+                if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+                    String[] oldFiles = dto.getImage().split(",");
+                    for (String oldFile : oldFiles) {
+                        storageService.deleteFile(uploadPath, oldFile.trim());
+                    }
+                }
+                List<MultipartFile> newFiles = dto.getSelectFile();
+                List<String> storedFileNames = new ArrayList<>();
+                for (MultipartFile file : newFiles) {
+                    String newFileName = storageService.uploadFileToServer(file, uploadPath);
+                    storedFileNames.add(newFileName);
+                    dto.setImage(newFileName);
+                    mapper.insertImageReview(dto);
+                }
+                String joinedFileNames = String.join(",", storedFileNames);
+                dto.setImage(joinedFileNames);
+            }
             mapper.updateReview(dto);
         } catch(Exception e) {
             log.info("updateReview", e);
@@ -121,6 +142,12 @@ public class ReviewServiceImpl implements ReviewService{
             log.info("getReviewUpdateNum", e);
         }
         return updatedReview;
+    }
+
+    @Override
+    public List<Review> listReviewFile(Review review) {
+
+        return mapper.listReviewFile(review.getReviewNum());
     }
 
 

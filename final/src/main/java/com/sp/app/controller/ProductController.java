@@ -458,9 +458,16 @@ public class ProductController {
 	// 상품상세보기 초화면 조회
 	@GetMapping("{productCode}")
 	public String productDetail(@PathVariable("productCode") long productCode,
-			Model model) throws Exception{
+			Model model, HttpSession session, ViewProduct viewProduct) throws Exception{
 		
 		try {
+			SessionInfo member = (SessionInfo) session.getAttribute("member");
+			if(member != null) {
+				viewProduct.setMemberIdx(member.getMemberIdx());
+				viewProduct.setProductCode(productCode);
+				viewService.insertOrUpdateRecentViewed(viewProduct);
+			}
+
 			//상품
 			MainProduct dto = Objects.requireNonNull(service.findById(productCode));
 	

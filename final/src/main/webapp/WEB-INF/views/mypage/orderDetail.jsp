@@ -187,7 +187,7 @@
                             <stront>${orderDetail.orderCode}</stront>
                         </p>
                         <p>상품가격:
-                            <fmt:formatNumber value="${orderDetail.price}" pattern="#,###"/>원
+                            <fmt:formatNumber value="${orderDetail.priceforeach}" pattern="#,###"/>원
                         </p>
                         <p>상품수량:
                             ${orderDetail.quantity}개
@@ -197,6 +197,7 @@
                         </p>
                         <p>배송비:
                             <fmt:formatNumber value="${orderDetail.shipping}" pattern="#,###"/>원
+<%--                        <div class="shipping-fee">${orderDetail.shipping == 0 ? '배송비:무료' : orderDetail.shipping}</div>--%>
                         </p>
                     </div>
                     <div class="price-info">
@@ -226,13 +227,16 @@
                 <!-- 결제 정보 -->
                 <div class="card">
                     <h3>결제정보</h3>
+                    <p class="label">카드사 : ${orderDetail.bymethod}</p>
+                    <fmt:formatNumber value="${orderDetail.cardNumber}" pattern="0" var="cardStr" />
+                    <c:if test="${fn:length(cardStr) > 6}">
+                        <p class="label">카드 번호: ${fn:substring(cardStr, 0, 6)}*****${fn:substring(cardStr, 6, 12)}</p>
+                    </c:if>
+                    <p class="label">승인 번호: ${orderDetail.confirmCode}</p>
+                    <p class="label">승인 날짜: ${orderDetail.confirmDate}</p>
                     <p>
                         <span class="label">결제금액:</span>
                         <fmt:formatNumber value="${orderDetail.netPay}" pattern="#,###"/>원
-                    </p>
-                    <p>
-                        <span class="label">할인금액:</span>
-                        <fmt:formatNumber value="${orderDetail.discount}" pattern="#,###"/>원
                     </p>
                 </div>
             </div>

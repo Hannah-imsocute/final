@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.ViewMapper">
+
+    <select id="existsRecentViewed" resultType="int">
+        SELECT COUNT(*)
+        FROM RECENT_VIEWED
+        WHERE memberIdx = #{memberIdx}
+          AND productCode = #{productCode}
+    </select>
+
+    <insert id="insertViewProduct" parameterType="com.sp.app.model.ViewProduct">
+        INSERT INTO RECENT_VIEWED (memberIdx, PRODUCTCODE, view_time)
+          VALUES (#{memberIdx}, #{productCode}, sysdate)
+    </insert>
+
+    <update id="updateRecentViewed">
+        UPDATE RECENT_VIEWED
+        SET view_time = SYSDATE
+        WHERE memberIdx = #{memberIdx}
+          AND productCode = #{productCode}
+    </update>
+
+
+    <select id="getViewProductHistory" resultType="com.sp.app.model.ViewProduct">
+        SELECT rv.PRODUCTCODE as productCode, rv.view_time as viewTime, p.ITEM, p.THUMBNAIL
+        FROM RECENT_VIEWED rv
+                 JOIN PRODUCT p ON rv.PRODUCTCODE = p.PRODUCTCODE
+        WHERE rv.memberIdx = #{memberIdx}
+        ORDER BY rv.view_time DESC
+            FETCH FIRST 5 ROWS ONLY
+    </select>
+</mapper>

@@ -77,6 +77,7 @@
     <select id="getUserSaveAmount1" parameterType="long" resultType="com.sp.app.model.MemberPoint">
         select SAVEAMOUNT as saveAmount, SAVEDATE as saveDate, EXPIREDATE as expireDate, REASON, ENABLE
         from POINT_SAVE where MEMBERIDX = #{memberIdx}
+        order by SAVEDATE desc
     </select>
 
 

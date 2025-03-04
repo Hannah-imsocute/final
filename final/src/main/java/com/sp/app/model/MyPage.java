@@ -34,6 +34,9 @@ public class MyPage {
   private String provider;
   private int shipping;
   private double discount;
+  private int priceforeach;
+  private String confirmCode; // 승인코드
+  private String confirmDate; // 승인날짜
 
 
 

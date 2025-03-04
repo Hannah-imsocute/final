@@ -371,6 +371,11 @@ public class OrderServiceImpl implements OrderService {
           .orderState(0)
           .build();
 
+      if (orderItem.getOptions() != null) {
+        List<String> optionList = Arrays.asList(orderItem.getOptions().split(","));
+        log.debug("옵션 리스트: {}", optionList);
+      }
+
       orderMapper.insertOrderDetail(orderItem);
 
       // 배송 정보 등록 (아이템 단위)

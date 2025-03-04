@@ -21,6 +21,9 @@ public interface ReviewMapper {
     // 리뷰 수정
     void updateReview(Review dto) throws SQLException;
 
+
+    // 이미지 파일 수정
+    void updateImageReview(Review review) throws SQLException;
     // 상품평 삭제하기
     void deleteReview(long num) throws SQLException;
 

@@ -50,23 +50,6 @@ public class CartController {
     return "cart/main";
   }
 
-  //  @PostMapping("add")
-  public String addCartItem(
-          @RequestParam("productCode") Long productCode,
-          @RequestParam("quantity") Integer quantity,
-          @RequestParam("price") Integer price, HttpSession session) throws Exception {
-
-    Long memberIdx = getMemberIdx(session);
-
-    CartItem cartItem = new CartItem();
-    cartItem.setProductCode(productCode);
-    cartItem.setQuantity(quantity);
-    cartItem.setPrice(price);
-
-    cartItemService.insertCartItem(cartItem, memberIdx);
-
-    return "redirect:/cart/list";
-  }
 
   @PostMapping("add")
   public String addCartItem(@ModelAttribute("cartItem") CartItem cartItem, HttpSession session) throws Exception {

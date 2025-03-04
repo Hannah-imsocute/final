@@ -132,15 +132,35 @@
             margin-bottom: 6px;
             color: #333;
         }
+        /* 상품 정보 디테일 영역: 레이블과 값 정렬 */
+        .product-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            margin-top: 10px;
+        }
+        .detail-item {
+            flex: 1 1 45%;
+            font-size: 0.9rem;
+        }
+        .detail-item .label {
+            font-weight: bold;
+            color: #666;
+            margin-right: 5px;
+        }
+        .detail-item .value {
+            color: #333;
+        }
         .product-price {
             font-size: 1.1rem;
             font-weight: bold;
             color: #fa7c00;
-            margin-bottom: 4px;
+            margin: 10px 0;
         }
         .shipping-fee {
             font-size: 0.9rem;
-            color: #666;
+            font-weight: bold;
+            color: #fa7c00;
             margin-bottom: 8px;
         }
 
@@ -258,7 +278,7 @@
          ************************************************************/
         /* 공통 모달 배경 */
         .modal {
-            display: none; /* 기본 감춤 */
+            display: none;
             position: fixed;
             z-index: 2000;
             left: 0;
@@ -293,7 +313,6 @@
         }
 
         /* 리뷰 작성 모달 */
-        #writeReviewModal { /* .modal 공통 사용 */ }
         #writeReviewModal .modal-content h3 {
             margin-top: 0;
             margin-bottom: 15px;
@@ -343,7 +362,7 @@
             font-size: 1rem;
             border: 1px solid #ddd;
             border-radius: 4px;
-            resize: none; /* 요청사항: resize 고정 */
+            resize: none;
             outline: none;
         }
         textarea:focus {
@@ -363,9 +382,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        #selectFile {
-            display: none;
-        }
+        #selectFile { display: none; }
         .file-input-label {
             display: inline-block;
             padding: 8px 12px;
@@ -413,10 +430,9 @@
             border-radius: 4px;
         }
         #inquiryForm textarea {
-            resize: none; /* textarea resize 고정 */
+            resize: none;
             min-height: 100px;
         }
-        /* 상품 문의 제출 버튼 디자인 */
         #submitInquiry {
             background-color: #fa7c00;
             color: #fff;
@@ -427,7 +443,7 @@
             cursor: pointer;
             margin-top: 10px;
             transition: background-color 0.3s;
-            display: block; /* 원하는 경우 block으로 변경 */
+            display: block;
         }
         #submitInquiry:hover {
             background-color: #e26d00;
@@ -457,7 +473,7 @@
         }
 
         .asktextArea {
-            resize: none; /* 추가적으로 class로 잡힌 부분도 고정 */
+            resize: none;
         }
 
         /************************************************************
@@ -504,7 +520,7 @@
 
     <!-- Content -->
     <div class="content">
-        <h2>주문 내역 상세</h2>
+        <h2>최근 주문 내역</h2>
 
         <!-- 주문 내역 리스트 -->
         <div class="list-box detail-orders">
@@ -520,6 +536,7 @@
                             </div>
 
                             <li class="order-item-container">
+                                <div class="order-date">${order.orderDate}</div>
                                 <div class="order-header">
                                     <div class="order-header2">
                                         <span class="order-code">주문번호: ${order.orderCode}</span>
@@ -531,10 +548,51 @@
                                          class="product-image" />
                                     <div class="product-info">
                                         <div class="product-title">${order.productName}</div>
-                                        <div class="product-price">
-                                            <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
+                                        <!-- 깔끔하게 정렬된 상품 정보 영역 -->
+                                        <div class="product-details">
+                                            <div class="detail-item">
+                                                <span class="label">단가:</span>
+                                                <span class="value">
+                                                    <fmt:formatNumber value="${order.priceforeach}" pattern="#,###" />원
+                                                </span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="label">수량:</span>
+                                                <span class="value">${order.quantity}개</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="label">상품 가격:</span>
+                                                <span class="value">
+                                                    <fmt:formatNumber value="${order.priceforeach * order.quantity}" pattern="#,###" />원
+                                                </span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="label">할인 금액:</span>
+                                                <span class="value">
+                                                    <fmt:formatNumber value="${order.discount}" pattern="#,###" />원
+                                                </span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="label">결제 금액:</span>
+                                                <span class="value">
+                                                    <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
+                                                </span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <span class="label">배송비:</span>
+                                                <span class="value">
+                                                    <c:choose>
+                                                        <c:when test="${order.shipping == 0}">
+                                                            무료
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <fmt:formatNumber value="${order.shipping}" pattern="#,###" />원
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="shipping-fee">배송비 무료</div>
+                                        <!-- 상품 정보 영역 끝 -->
                                         <div class="product-actions">
                                             <!-- 반품 신청 버튼 -->
                                             <button class="btn-request" data-request-type="return"

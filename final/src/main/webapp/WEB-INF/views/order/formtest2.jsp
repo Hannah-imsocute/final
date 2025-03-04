@@ -638,13 +638,18 @@
     <c:choose>
       <c:when test="${mode eq 'direct'}">
         <c:if test="${not empty orderItems}">
-          <c:forEach var="dto" items="${orderItems}">
+          <c:forEach var="dto" items="${orderItems}" varStatus="status">
             <input type="hidden" name="productCode" value="${dto.productCode}" />
             <input type="hidden" name="quantity" value="${dto.quantity}" />
             <input type="hidden" name="itemCode" value="${dto.itemCode}" />
             <c:if test="${not empty dto.options}">
-              <input type="hidden" name="options" value="${dto.options}" />
+<%--              <input type="hidden" name="options" value="${dto.options}" />--%>
+<%--              <input type="hidden" name="orderItems[${status.index}].options" value="${dto.options}" />--%>
+              <c:forEach var="opt" items="${dto.options}" varStatus="optStatus">
+                <input type="hidden" name="orderItems[${status.index}].options[${optStatus.index}]" value="${opt}" />
+              </c:forEach>
             </c:if>
+
             <!-- 추가 필드 -->
             <input type="hidden" name="priceforeach" value="${dto.priceForeach}" />
             <input type="hidden" name="price" value="${dto.price}" />

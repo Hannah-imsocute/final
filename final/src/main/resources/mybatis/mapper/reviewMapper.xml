@@ -22,6 +22,11 @@
         where memberIdx = #{memberIdx} and review_num = #{reviewNum}
     </update>
 
+    <update id="updateImageReview">
+        update PRODUCTREVIEWIMAGE set IMAGE = #{image}
+        where memberIdx = #{memberIdx} and review_num = #{reviewNum}
+    </update>
+
     <delete id="deleteReview" parameterType="Long">
         delete from PRODUCTREVIEW where review_num = #{reviewNum}
     </delete>
@@ -55,10 +60,13 @@
         OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
     </select>
 
+<!--    select REVIEW_IMG_NUM, IMAGE, REVIEW_NUM-->
+<!--    from PRODUCTREVIEWIMAGE-->
     <select id="listReviewFile" parameterType="long" resultType="com.sp.app.model.Review">
-        select REVIEW_IMG_NUM, IMAGE, REVIEW_NUM
-        from PRODUCTREVIEWIMAGE
-        where REVIEW_NUM = #{reviewNum}
+        select REVIEW_IMG_NUM, IMAGE, p.REVIEW_NUM
+        from PRODUCTREVIEWIMAGE pi
+                 LEFT JOIN PRODUCTREVIEW p ON p.REVIEW_NUM = pi.REVIEW_NUM
+        where p.REVIEW_NUM = #{reviewNum}
     </select>
 
     <select id="getReviewHistory" parameterType="long" resultType="com.sp.app.model.MyPage">

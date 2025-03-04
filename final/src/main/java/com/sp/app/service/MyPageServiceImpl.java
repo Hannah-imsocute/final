@@ -2,6 +2,7 @@ package com.sp.app.service;
 
 import com.sp.app.mapper.MyPageMapper;
 import com.sp.app.model.MyPage;
+import com.sp.app.model.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class MyPageServiceImpl implements MyPageService{
       log.info("getOrderHistoryDetail", e);
     }
     return dto;
+  }
+
+  @Override
+  public Payment getPaymentHistory(Payment payment) {
+    return mapper.getPaymentHistory(payment);
   }
 
 

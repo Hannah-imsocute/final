@@ -2,6 +2,7 @@ package com.sp.app.mapper;
 
 import com.sp.app.model.MyPage;
 import com.sp.app.model.OrderItem;
+import com.sp.app.model.Payment;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface MyPageMapper {
   int dataCount(long memberIdx);
   MyPage getOrderHistoryDetail(Map<String, Object> map);
 
+  // 결제 내역 불러오기
+  Payment getPaymentHistory(Payment payment);
 }

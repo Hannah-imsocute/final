@@ -15,7 +15,6 @@
     <style>
         /* 기본 Reset 및 Base 스타일 */
         header { position: relative !important; }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -178,7 +177,7 @@
             opacity: 0.5;
             pointer-events: none;
         }
-        /* 모달 스타일 (리뷰 수정) */
+        /* 리뷰 수정 모달 */
         #editReviewModal {
             display: none;
             position: fixed;
@@ -209,6 +208,19 @@
             font-weight: bold;
             cursor: pointer;
         }
+        /* 모달 내 상품 정보 영역 */
+        #editReviewModal .modal-product-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #editReviewModal .modal-product-info img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 15px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
         /* 폼 내부 요소 */
         .review-form textarea {
             width: 100%;
@@ -223,6 +235,10 @@
         }
         .review-form textarea:focus {
             border-color: #fa7c00;
+        }
+        /* 파일 input 숨김 */
+        #editSelectFile {
+            display: none;
         }
         .file-input-label {
             display: inline-block;
@@ -339,7 +355,7 @@
                         <div class="review-content">
                             <h5>${review.productName}</h5>
                             <p><c:out value="${review.content}" /></p>
-                            <c:if test="${not empty review.selectFile}">
+                            <c:if test="${not empty review.image}">
                                 <img src="${pageContext.request.contextPath}/uploads/review/${review.image}"
                                      alt="리뷰 이미지" class="review-img">
                             </c:if>
@@ -368,7 +384,7 @@
             </c:forEach>
         </div>
 
-        <!-- 페이징 -->
+        <!-- 페이지네이션 -->
         <ul class="pagination">
             <li class="arrow ${page == 1 ? 'disabled' : ''}">
                 <a href="?page=${page - 1}">&lt;</a>
@@ -394,7 +410,7 @@
     <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>
 
-<!-- 리뷰 수정 모달 (AJAX PUT 처리) -->
+<!-- =============== [모달] 리뷰 수정 =============== -->
 <div id="editReviewModal">
     <div class="modal-content">
         <span class="close" id="closeEditReviewBtn">&times;</span>
@@ -402,7 +418,7 @@
         <form id="editReviewForm" action="#" method="post" class="review-form" enctype="multipart/form-data">
             <!-- 수정할 리뷰 번호 (숨김) -->
             <input type="hidden" id="editReviewNum" name="reviewNum" value="">
-            <!-- 모달 상단 상품 정보 -->
+            <!-- 모달 내 상품 정보 영역 -->
             <div id="editReviewProductInfo" class="modal-product-info">
                 <img id="editReviewProductImage" src="" alt="상품 이미지">
                 <span id="editReviewProductName"></span>
@@ -422,12 +438,12 @@
                 <label for="editStar1" title="1 star"><i class="fas fa-star"></i></label>
             </div>
             <textarea id="editReviewContent" name="content" placeholder="최소 10자를 입력하세요."></textarea>
-
-            <!-- 파일 업로드 -->
+            <!-- 파일 업로드 (다중 파일 가능) -->
             <label for="editSelectFile" class="file-input-label">📁 파일 선택</label>
+            <!-- 숨긴 file input -->
             <input type="file" id="editSelectFile" name="selectFile" multiple accept="image/*" />
 
-            <!-- 기존 리뷰 이미지 미리보기 -->
+            <!-- 새로 선택한 파일 미리보기 -->
             <div id="editFilePreview" class="file-preview"></div>
 
             <!-- 수정 완료 버튼 -->
@@ -436,7 +452,10 @@
     </div>
 </div>
 
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // [1] 수정 버튼 클릭 시: 해당 리뷰 정보를 가져와 모달에 표시
     function editReview(btn) {
         var reviewNum = $(btn).data('review-num');
         var productImage = $(btn).data('image');
@@ -460,21 +479,27 @@
         });
     }
 
+    // [2] 모달에 데이터 세팅
     function showEditReviewModal(reviewData) {
+        // 리뷰 번호
         $('#editReviewNum').val(reviewData.reviewNum);
+        // 리뷰 내용
         $('#editReviewContent').val(reviewData.content);
+
+        // 별점
         $('#editReviewForm input[name="starRate"]').prop('checked', false);
         if (reviewData.starRate) {
             $('#editStar' + reviewData.starRate).prop('checked', true);
         }
+
+        // 상품 정보
         $('#editReviewProductImage').attr('src', reviewData.productImage || '');
         $('#editReviewProductName').text(reviewData.productName || '');
-        $('#editFilePreview').empty();
-        if (reviewData.existingReviewImage) {
-            $('#editFilePreview').append(
-                '<img src="' + reviewData.existingReviewImage + '" alt="기존 리뷰 이미지">'
-            );
-        }
+
+        // 새로 선택할 파일 미리보기 영역 초기화
+        $('#editFilePreview').empty().hide();
+
+        // 모달 열기
         $('#editReviewModal').show();
     }
 
@@ -483,6 +508,7 @@
     }
 
     $(document).ready(function(){
+        // 모달 닫기
         $('#closeEditReviewBtn').click(function(){
             closeModal('#editReviewModal');
         });
@@ -491,13 +517,29 @@
                 closeModal('#editReviewModal');
             }
         });
+
+        $('#editSelectFile').on('change', function(){
+            $('#editFilePreview').empty().show();
+            var files = this.files;
+            if(files) {
+                $.each(files, function(index, file){
+                    var reader = new FileReader();
+                    reader.onload = function(e){
+                        var img = $('<img>').attr('src', e.target.result);
+                        $('#editFilePreview').append(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
         $('#submitEditReview').on('click', function(e) {
-            e.preventDefault();
             var reviewNum = $('#editReviewNum').val();
             var formData = new FormData($('#editReviewForm')[0]);
+
             $.ajax({
                 url: '${pageContext.request.contextPath}/review/edit/' + reviewNum,
-                type: 'PUT',
+                type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,21 +26,19 @@ import java.util.Map;
 @Slf4j
 public class MyPageController {
 
-    private final CartItemService cartItemService;
     private final OrderService orderService;
     private final CouponService couponService;
-    private final ShippingService shippingService;
     private final MemberService memberService;
     private final StorageService storageService;
     private final ImageUploadService imageUploadService;
     private final PointService pointService;
     private final MyPageService myPageService;
     private final PaginateUtil paginateUtil;
-    private final ReviewService reviewService;
     private final ChangeService changeService;
+    private final ViewService viewService;
 
 
-	private String uploadPath;
+    private String uploadPath;
 
 	@PostConstruct
 	public void init() {
@@ -88,14 +87,15 @@ public class MyPageController {
             for (MyPage item : ordersHistory) {
                 model.addAttribute("orderDate", item.getOrderDate());
             }
+            List<ViewProduct> viewProductHistory = viewService.getViewProductHistory(member.getMemberIdx());
             model.addAttribute("balance", balance); // 현재 사용할 수 있는 포인트 금액
             model.addAttribute("couponList", couponList); // 쿠폰 리스트
             model.addAttribute("couponCount", couponCount); // 쿠폰 개수
             model.addAttribute("userPoint", userPoint);
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("ordersHistory", ordersHistory);
+            model.addAttribute("viewProductHistory", viewProductHistory);
 
-//            Member byUserEmail = memberService.findByUserEmail(member.getEmail());
             String profileImageFile = imageUploadService.getProfileImageFile(member.getMemberIdx());
 
             session.setAttribute("userProfile", userProfile);
@@ -180,16 +180,6 @@ public class MyPageController {
             model.addAttribute("total_page", total_page);
             model.addAttribute("page", current_page);
 
-
-//            List<Change> changeList = changeService.getChangeState(member.getMemberIdx());
-//            Map<Long, Change> changeMap = new HashMap<>();
-//            for (Change c : changeList) {
-//                changeMap.put(c.getItemCode(), c);
-//                int changeState = c.getChangeState();
-//                model.addAttribute("changeState", changeState);
-//            }
-//            model.addAttribute("changeList", changeList);
-//            model.addAttribute("changeMap", changeMap);
             return "mypage/detail";
         } catch (Exception e) {
             log.error("detail", e);
@@ -200,7 +190,7 @@ public class MyPageController {
     @GetMapping("orderDetail")
     public String orderDetail(
             @RequestParam("orderCode") String orderCode,
-            HttpSession session, Model model) {
+            HttpSession session, Model model, Payment payment) {
         try {
             SessionInfo member = (SessionInfo) session.getAttribute("member");
             if (member == null) {
@@ -210,9 +200,12 @@ public class MyPageController {
             Map<String, Object> map = new HashMap<>();
             map.put("memberIdx", member.getMemberIdx());
             map.put("orderCode", orderCode);
+            payment.setOrderCode(orderCode);
 
+            Payment paymentHistory = myPageService.getPaymentHistory(payment);
             MyPage orderDetail = myPageService.getOrderHistoryDetail(map);
             model.addAttribute("orderDetail", orderDetail);
+            model.addAttribute("paymentHistory", paymentHistory);
 
         } catch (Exception e) {
             log.error("주문상세 조회 중 오류 발생", e);

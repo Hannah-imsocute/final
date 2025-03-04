@@ -1,7 +1,6 @@
 package com.sp.app.model;
 
 import lombok.*;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 

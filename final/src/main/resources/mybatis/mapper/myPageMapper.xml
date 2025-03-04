@@ -14,6 +14,9 @@
                pr.PRICE as price,
                s.BRANDNAME      AS brandName,
                pr.THUMBNAIL as thumbnail,
+               i.SHIPPING        AS shipping,
+               pr.DISCOUNT       AS discount,
+               i.PRICEFOREACH    AS priceforeach,
               TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
                i.quantity       AS quantity,
                i.price          AS netPay
@@ -26,8 +29,7 @@
         ORDER  BY p.order_date DESC
     </select>
 
- <!--   OFFSET #{offset} ROWS FETCH FIRST #{size}
-    ROWS ONLY-->
+
 
     <select id="dataCount" parameterType="long" resultType="Integer">
         SELECT
@@ -76,7 +78,10 @@
             pr.PRODUCTCODE    AS productCode,
             pr.PRICE          AS price,
             s.BRANDNAME       AS brandName,
+            i.SHIPPING        AS shipping,
+            pr.DISCOUNT       AS discount,
             pr.THUMBNAIL      AS thumbnail,
+            i.PRICEFOREACH    AS priceforeach,
             TO_CHAR(p.order_date, 'YYYYMMDD') AS orderDate,
             i.price           AS netPay,
             CASE
@@ -119,7 +124,9 @@
             i.SHIPPING        AS shipping,
             ph.BYMETHOD,
             TO_NUMBER(REGEXP_REPLACE(ph.CARDNUMBER, '[^0-9]', '')) AS cardNumber,
-            ph.PROVIDER as provider
+            ph.PROVIDER as provider,
+            CONFIRMCODE as confirmCode,
+            CONFIRM_DATE as confirmDate
         FROM product_order p
                  LEFT JOIN order_item i ON p.order_code = i.order_code
                  LEFT JOIN product pr   ON i.productcode = pr.productcode
@@ -136,7 +143,7 @@
                CARDNUMBER cardNumber
         from PAYBYMETHOD p
                  LEFT JOIN ORDER_ITEM o ON o.ORDER_CODE = p.ORDER_CODE
-        where o.PRODUCTCODE = #{orderCode}
+        where o.ORDER_CODE = #{orderCode}
     </select>
 
 

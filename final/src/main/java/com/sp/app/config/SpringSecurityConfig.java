@@ -26,12 +26,11 @@ public class SpringSecurityConfig {
                           "/member/emailCheck", "/member/pwdFind", "/member/expired", "/member/account","/uploads/event/**","/uploads/product/**",
                           "/dist/**", "/uploads/photo/**", "/favicon.ico","/cart/*", "/kakao/*", "/WEB-INF/views/**", "/admin/**", "/static/**"};
 
-//    "/favicon.ico",
     http.cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable) // 공격 못하게 막음
         .requestCache(request -> request.requestCache(requestCache))
         .headers(headers -> headers
-            .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); ; // 스프링 버전 6부터 ?continue 가 붙어서 지움..
+            .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
      http.authorizeHttpRequests(authoriz -> authoriz
         .requestMatchers(excludeUri).permitAll()
