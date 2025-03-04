@@ -14,4 +14,5 @@ public class ViewProduct {
     private String item;
     private String thumbnail;
     private String viewTime;
+
 }
