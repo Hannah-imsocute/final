@@ -43,6 +43,7 @@ public class ProductController {
 	private final MainProductService service;
 	private final ProductManageService productManageServcie; 
 	private final PaginateUtil paginateUtil;
+	private final ViewService viewService;
 
 	// 카테고리명 카테고리코드로 변환
     public static final Map<String, Integer> categoryMap = Map.ofEntries(
