@@ -25,7 +25,9 @@ import com.sp.app.artist.service.ProductManageService;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.model.MainProduct;
 import com.sp.app.model.SessionInfo;
+import com.sp.app.model.ViewProduct;
 import com.sp.app.service.MainProductService;
+import com.sp.app.service.ViewService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -465,7 +467,7 @@ public class ProductController {
 			if(member != null) {
 				viewProduct.setMemberIdx(member.getMemberIdx());
 				viewProduct.setProductCode(productCode);
-				viewService.insertOrUpdateRecentViewed(viewProduct);
+				ViewService.insertOrUpdateRecentViewed(viewProduct);
 			}
 
 			//상품

@@ -83,13 +83,13 @@
 	<select id="checkedDate" parameterType="map" resultType="String">
 		SELECT
 		TO_CHAR(clockindate, 'YYYY-MM-DD') clockindate FROM clockin_log WHERE
-		clockin_num = #{num} and memberidx = #{memberIdx}
+		event_article_num = #{num} and memberidx = #{memberIdx}
 	</select>
 
 
 	<insert id="insertCheckin" parameterType="map">
 		INSERT INTO clockin_log
-		(log_num, clockin_num, memberidx, clockindate) VALUES (
+		(log_num, event_article_num, memberidx, clockindate) VALUES (
 		SEQ_CLOCKIN_LOG.NEXTVAL , #{num}, #{memberidx}, SYSDATE)
 	</insert>
 

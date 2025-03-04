@@ -2,7 +2,11 @@ package com.sp.app.controller;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +81,20 @@ public class EventController {
 			}else if(Type.equalsIgnoreCase("clockin") || Type.equalsIgnoreCase("checkin")) {
 				dto = service.findById(map);
 				
+				List<String> chkdates = new ArrayList<>();
 				List<String> checkedDate = service.selectChecked(dto.getEvent_article_num(), info.getMemberIdx());
+				
+				if(checkedDate.size() != 0 ) {
+					for(String date : checkedDate) {
+						String realday = date.substring(date.lastIndexOf("-")+1);
+						if(realday.startsWith("0")) {
+							chkdates.add(date.substring(date.lastIndexOf("-")+2));
+						}else {
+							chkdates.add(realday);
+						}
+					}
+					Collections.sort(chkdates, Comparator.comparingInt(Integer::parseInt));
+				}
 				
 				// 오늘 날짜
 				Calendar cal = Calendar.getInstance();
@@ -106,6 +123,7 @@ public class EventController {
 				int week = cal.get(Calendar.DAY_OF_WEEK);
 				
 				
+				model.addAttribute("checked", chkdates);
 				model.addAttribute("ty", ty);
 				model.addAttribute("tm", tm);
 				model.addAttribute("td", td);
@@ -131,7 +149,7 @@ public class EventController {
 	
 	@PostMapping("checked")
 	@ResponseBody
-	public Map<String, Object> checkedInsert(@RequestBody Map<String, Object> params, HttpSession session){
+	public Map<String, Object> checkedInsert(@RequestParam Map<String, Object> params, HttpSession session){
 		Map<String, Object> map = new HashMap<>();
 		SessionInfo info = (SessionInfo) session.getAttribute("member");
 		try {

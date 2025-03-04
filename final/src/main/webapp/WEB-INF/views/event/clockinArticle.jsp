@@ -284,7 +284,7 @@ main {
 									<!-- 하트 아이콘 -->
 									<i class="bi bi-heart"></i>
 									<!-- 하트 위에 겹칠 숫자 -->
-									<span class="heart-number">${i}</span>
+									<span class="heart-number" data-number="${i}">${i}</span>
 								</div>
 							</td>
 							<c:set var="week" value="${week+1}" />
@@ -311,7 +311,20 @@ main {
 	</main>
 
 	<script type="text/javascript">
-		
+	$(function(){
+		$('.attendance-button').click(function(){
+			let url = '${pageContext.request.contextPath}/event/checked';
+			let params = {num : ${dto.event_article_num} };
+			
+			const callback = function(data){
+				alert('출석체크가 완료되었습니다 ! ');
+				$('.attendance-button').prop('disabled', true);
+				
+			};
+			
+			ajaxRequest(url, 'post', params, 'json', callback);
+		});
+	});	
 	</script>
 </body>
 </html>
