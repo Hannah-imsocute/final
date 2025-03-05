@@ -2,9 +2,6 @@ package com.sp.app.model.cart;
 
 import lombok.*;
 
-import java.util.List;
-
-
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +22,5 @@ public class CartItem {
   private Integer optionPrice; // 옵션가격
   private Integer couponValue = 0;
   private Integer spentPoint = 0;
+  private String thumbnail;
 }
