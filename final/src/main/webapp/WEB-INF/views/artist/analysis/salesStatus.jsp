@@ -97,7 +97,7 @@
 
 <script type="text/javascript">
 $(function(){
-	let url = '${pageContext.request.contextPath}/admin/analysis/charts';
+	let url = '${pageContext.request.contextPath}/artist/charts';
 	
 	$.getJSON(url, function(data){
 		console.log(data);
