@@ -149,7 +149,8 @@
                 <!-- 새롭게 추가한 등록 전용 엔드포인트(create)로 전송 -->
                 <form name="productForm" class="product-form" method="post" 
                       enctype="multipart/form-data" 
-                      action="${pageContext.request.contextPath}/artist/productManage/${mode}">
+                      action="${pageContext.request.contextPath}/artist/productManage/${mode}"
+					  onsubmit="return validateProductForm()">
                     
                     <!-- 카테고리 선택 -->
                     <div class="form-group">
@@ -285,7 +286,7 @@
                         	<img src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}">       
 							<input type="file" name="thumbnailFile" accept="image/*" ${empty dto.thumbnail ? 'required' : ''}>
 				            <input type="hidden" name="thumbnail" value="${dto.thumbnail}">          
-                      
+				            <input type="hidden" name="thumbnailChangYn" value="">          
                       
                         </div>
                     </div>
@@ -570,6 +571,10 @@
 	            mainImageEL.setAttribute('src', e.target.result);
 	        };
 	        reader.readAsDataURL(file);
+
+			// 이미지가 변경되었으므로 thumbnailChangYn 값을 'Y'로 설정
+			const thumbnailChangeYnInput = document.querySelector('input[name="thumbnailChangYn"]');
+			thumbnailChangeYnInput.value = 'Y';
 	    });
 	});
 
@@ -667,6 +672,22 @@
         function smartEditInDescribe(elClickedObj) {
             oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []); 
         }
+
+		// 수정완료 submmit 호출 전 유효성체크 로직 
+		function validateProductForm() {
+			const form = document.forms['productForm'];
+
+			// 예: 상품명 체크 (빈 값이면 경고 후 중단)
+			const productName = form['productName'].value.trim();
+
+			// 파일이 선택 안 됐을 때 특정 필드 초기화
+			if( form['thumbnailChangYn'].value != "Y" ){
+				form['thumbnailFile'].value = "";
+				form['thumbnail'].value = "";
+			}
+
+			return true; // 검증 통과 시 폼 제출
+		}
 
      // 수정에서 등록된 추가 이미지 삭제
      $(function(){
