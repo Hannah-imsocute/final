@@ -468,7 +468,7 @@ public class ProductController {
 			if(member != null) {
 				viewProduct.setMemberIdx(member.getMemberIdx());
 				viewProduct.setProductCode(productCode);
-				ViewService.insertOrUpdateRecentViewed(viewProduct);
+				viewService.insertOrUpdateRecentViewed(viewProduct);
 			}
 
 			//상품
