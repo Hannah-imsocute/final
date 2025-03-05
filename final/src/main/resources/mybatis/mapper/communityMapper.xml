@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.CommunityMapper">
+	
+
+	<select id="dataCount" parameterType="map"
+		resultType="Integer">
+		SELECT NVL(COUNT(*), 0) dataCount FROM Community
+	</select>
+
+	<!-- 커뮤니티 리스트 -->
+	<select id="listCommunity" parameterType="map"
+		resultType="com.sp.app.model.Community">
+		SELECT community_num, c.memberidx, brandName, content, created_po,update_po
+		FROM community c
+		JOIN seller_brand s
+		on c.memberIdx = s.memberIdx
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+
+	<select id="findById" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT productCode, p.brand_code, s.brandName, item, price, discount,
+		addOptions, describe, upload, modified, p.categoryCode, name,
+		thumbnail, blind
+		FROM product p
+		JOIN SELLER_BRAND S ON P.brand_code = s.brand_code
+		JOIN productCategory c ON c.categoryCode = p.categoryCode
+		WHERE productCode = #{productCode}
+	</select>
+
+	<select id="listMainProductFile" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT p.productCode, image_code, imageFileName
+		FROM
+		productImage i
+		JOIN product p
+		ON i.productCode = p.productCode
+		WHERE
+		p.productCode = #{productCode}
+	</select>
+
+	<select id="listMainProductReview" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
+		SELECT review_num, p.productCode, nickName, content
+		FROM
+		product p
+		JOIN productReview r
+		ON p.productCode = r.productCode
+		JOIN MEMBER m
+		ON m.memberIdx = r.memberIdx
+		WHERE p.productCode =
+		#{productCode}
+	</select>
+
+	<!-- 작품 후기글 신고 -->
+	<select id="insertReveiwReport" parameterType="map">
+		INSERT INTO
+		productreivewreport (
+		report_code,
+		memberidx,
+		review_num,
+		category_num,
+		content,
+		report_date
+		) VALUES (
+		SEQ_PRODUCTREIVEWREPORT.NEXTVAL,
+		#{memberIdx},
+		#{review_num},
+		#{categoryNum},
+		#{content},
+		sysdate
+		)
+	</select>
+
+	<!-- 작품 신고 -->
+	<select id="insertProductReport" parameterType="map">
+		INSERT INTO item_report (
+		sellerreport_num,
+		productcode,
+		memberidx2,
+		reason,
+		report_date,
+		category_num
+		) VALUES (
+		SEQ_ITEM_REPORT.NEXTVAL,
+		#{productCode},
+		#{memberIdx},
+		#{content},
+		sysdate,
+		#{categoryNum}
+		)
+	</select>
+
+</mapper>
+	

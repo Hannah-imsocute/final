@@ -19,15 +19,19 @@
         .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 30px;
             max-width: 1200px;
             margin: 20px auto;
         }
-        .card {
+        .card:hover {
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            transform:scale(1.03);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+            
         }
         .card img {
             width: 100%;
@@ -78,51 +82,76 @@
 	</header>
 	<main>
     <div class="button-container">
-            <button type="button">글올리기</button>
+            <button type="button" onclick="location.href='{pageContext.request.contextPath}/community/write'">글올리기</button>
     </div>
-    <div class="container">
-        <div class="card">
-            <img src="${pageContext.request.contextPath}/uploads/community/noimage.png" alt="작가 이벤트">
-            <div class="title">진행중인 작가 이벤트</div>
-            <div class="description">플로로하니와 상상지기의 새로운 작품들을 만나보세요.</div>
-        </div>
-        <div class="card">
-            <img src="${pageContext.request.contextPath}/uploads/community/noimage.png"  alt="백설쌀">
-            <div class="title">백설쌀(영월백설오곡기능장)</div>
-            <div class="description">엄선된 품질의 백설쌀을 확인하세요!</div>
-        </div>
-        <div class="card">
-            <img src="${pageContext.request.contextPath}/uploads/community/noimage.png"  alt="비단가게">
-            <div class="title">비단가게</div>
-            <div class="description">수공예 패션 아이템을 만나보세요.</div>
-        </div>
-        <div class="card">
-            <img src="${pageContext.request.contextPath}/uploads/community/noimage.png"  alt="리스캣">
-            <div class="title">리스캣</div>
-            <div class="description">자동차 악세서리를 스타일리시하게!</div>
-        </div>
-    </div>
+
+		<div class="row community-list-search d-flex align-items-center justify-content-end">
+			<div class="col-auto ms-auto">
+				<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/list';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+			</div>
+			<div class="col">
+				<form class="row justify-content-center" name="searchForm">
+					<div class="col-auto p-1">
+						<select name="schType" class="form-select">
+							<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+							<option value="userName" ${schType=="userName"?"selected":""}>작가명</option>
+							<option value="reg_date" ${schType=="reg_date"?"selected":""}>등록일</option>
+							<option value="content" ${schType=="content"?"selected":""}>내용</optio>
+						</select>
+					</div>
+					<div class="col-auto p-1">
+						<input type="text" name="kwd" value="${kwd}" class="form-control">
+					</div>
+					<div class="col-auto p-1">
+						<button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
+					</div>
+				</form>
+			</div>
+		
+		</div>
     
     <div class="container">
-    <c:forEach var="dto" items="${list}" varStatus="status">
-					<div class="col-md-4 col-lg-3 mt-4">
-						<div class="border rounded product-item" data-productNum="${dto.productNum}">
+    	<c:forEach var="dto" items="${list}" varStatus="status">
+					<div class="card">
+						<div class="card-content" data-community_num="${dto.community_num}">
 							<img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/community/noimage.png">
-							<div class="p-2">
-								<div class="text-truncate fw-semibold pb-1">
-									와니네 빵집
+							<div class="p-2 px-4">
+								<div class="title">
+									${dto.brandName}
 								</div>
-								<div class="text-truncate fw-semibold pb-1">
-									갓 구운 신상 베이커리! 촉촉+바삭한 맛을 경험하세요!
+								<div class="description">
+									${dto.content}
 								</div>
 							
 							</div>
 						</div>
 					</div>
-				</c:forEach>
-				</div>
-    
+		</c:forEach>
+	</div>
 
+	
     </main>
 </body>
+<script type="text/javascript">
+
+/* 3. 컨텐츠 클릭 시 상세보기 이벤트 */
+$(document).ready(function() {
+	$('.card-content').on('click', function(){
+		let community_num = $(this).attr('data-community_num');
+		 if (!community_num) {
+		        console.warn("게시글이 없습니다.", $(this).attr('data-community_num'));
+		        alert("게시글이 없습니다.");
+		        return;
+		 }
+		 // 페이지 이동 (쿼리스트링 방식으로 productCode 전달)
+		
+		 let url = '${pageContext.request.contextPath}/community/detail/' + community_num;
+		 location.href = url;
+
+	});
+});
+
+</script>
+
+
 </html>
