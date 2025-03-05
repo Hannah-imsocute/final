@@ -80,7 +80,7 @@ public class MemberManageController {
 			// 멤버 리스트
 			List<MemberManage> list = service.listMember(map);
 
-			String paging = paginateUtil.paging(current_page, total_page, "listMember");
+			String paging = paginateUtil.pagingMethod(current_page, total_page, "listMember");
 
 			model.addAttribute("list", list);
 			model.addAttribute("page", current_page);

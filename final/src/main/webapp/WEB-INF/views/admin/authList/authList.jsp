@@ -69,7 +69,7 @@
 						<div class="tab-content pt-1" id="nav-tabContent"></div>
 
 						<form name="memberSearchForm">
-							<input type="hidden" name="schType" value="email"> 
+							<input type="hidden" name="schType" value="nickname"> 
 							<input type="hidden" name="kwd" value=""> 
 							<input type="hidden" name="role" value="1"> 
 							<input type="hidden" name="non" value="0">
@@ -98,14 +98,18 @@ $(function(){
 });
 
 function listMember(page) {
-    let url = '${pageContext.request.contextPath}/admin/authList/list';    
+    // URL 경로 수정: `list` 경로로 보내야 한다
+    let url = '${pageContext.request.contextPath}/admin/authList/list';  // list 경로로 수정
+
+    // 폼 데이터를 직렬화하고 페이지 번호를 추가
     let formData = $('form[name=memberSearchForm]').serialize();
     formData += '&page=' + page;
 
+    // 페이지 번호를 쿼리 파라미터로 URL에 포함시켜서 보내기
     $.ajax({
-        url: url,
+        url: url + '?page=' + page,  // URL에 page 파라미터 포함
         type: 'GET',
-        data: formData,
+        data: formData,  // 서버로 보내는 데이터
         dataType: 'text',
         success: function(data) {
             $('#nav-tabContent').html(data);        
@@ -115,6 +119,9 @@ function listMember(page) {
         }
     });
 }
+
+
+
 
 function resetList() {
 	// 초기화

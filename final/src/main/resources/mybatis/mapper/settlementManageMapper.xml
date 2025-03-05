@@ -49,7 +49,7 @@
 		SELECT p.settlement_num, p.brand_code, b.brandname,
 		m.nickname, TO_CHAR(point_amount, '999,999,999') point_amount,
 		TO_CHAR(settlement_date, 'YY/MM/DD') settlement_date, p.deposit,
-		p.pointbalance, p.state
+		p.state
 		FROM settlement_point p
 		JOIN seller_brand b ON
 		b.brand_code = p.brand_code

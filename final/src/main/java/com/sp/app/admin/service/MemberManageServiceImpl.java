@@ -194,17 +194,4 @@ public class MemberManageServiceImpl implements MemberManageService {
 		return dto;
 	}
 
-	@Override
-	public List<Map<String, Object>> listAgeSection() {
-		List<Map<String, Object>> list = null;
-		
-		try {
-			list = mapper.listAgeSection();
-		} catch (Exception e) {
-			log.info("listAgeSection : ", e);
-		}
-		
-		return list;
-	}
-	
 }

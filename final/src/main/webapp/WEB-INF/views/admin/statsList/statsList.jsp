@@ -56,12 +56,12 @@
 
 	<!-- 3. 매출 및 인기 상품 -->
 	<div class="row g-3 mt-4">
-		<div class="col-md-6">
-			<div class="card p-3">
-				<h5 class="text-center">일별 매출 변화</h5>
-				<canvas id="salesChart"></canvas>
+		<div id="salesChart" class="col-md-6">
+			<div class="card p-3" style="height: 350px;">
+				<div id="salesChartContainer" style="height: 100%;"></div>
 			</div>
 		</div>
+		
 		<div class="col-md-6">
 			<div class="card p-3">
 				<h5 class="text-center">인기 상품 TOP 5</h5>
@@ -109,95 +109,64 @@
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-		// 연령대 별 비율
-		Highcharts.chart('ageChartContainer', {
-		    chart: {
-		        type: 'column'
-		    },
-		    title: {
-		        text: '회원 연령대별 비율' // 차트 제목
-		    },
-		    xAxis: {
-		        categories: ['10대', '20대', '30대', '40대', '50대', '60대이상'], // x 축 컬럼
-		        accessibility: {
-		            description: 'age'
-		        }
-		    },
-		    yAxis: {
-		        min: 0, // 시작 값
-		        max: 100, // 끝 값
-		        tickInterval: 10, // y축 값 간격
-		        title: {
-		            text: '비율 (%)' // y축 제목
-		        }
-		    },
-		    tooltip: {
-		        valueSuffix: '%' // 마우스 호버 팝업 박스에 표시되는 
-		    },
-		    plotOptions: {
-		        column: {
-		            pointPadding: 0.0, // 바 사이 간격
-		            borderWidth: 0 // 바 테두리
-		        }
-		    },
-		    series: [
-		        {
-		            name: '연령대',
-		            colors: ['#FFBB00'],
-		            colorByPoint: true, 
-		            data: (function() {
-		                let totalMembers = 100;  // 100은 임의 값. 전체 회원 수 (memberMangeMapper = Countdata 쿼리 사용)
-		                let ageData = [10, 20, 40, 10, 10, 10];  // 각 연령대별 회원 수 (예시)
-		                
-		                // 비율 계산식 :  각 연령대의 비율 = (회원 수 / 전체 회원 수) * total회원 수
-		                return ageData.map(function(count) {
-		                    return (count / totalMembers) * 100;
-		                });
-		            })()  // 비율로 변환된 데이터를 반환
-		        },
-		    ],
-		});
-		
-		// 활성/비활성화 회원 비율
-		Highcharts.chart('activeChartContainer', {
-		    chart: {
-		        type: 'pie',
-		        options3d: {
-		            enabled: true,
-		            alpha: 45
-		        }
-		    },
-		    title: {
-		        text: '활성/비활성화 회원 비율'
-		    },
-		    plotOptions: {
-		        pie: {
-		            innerSize: 100,
-		            depth: 45
-		        }
-		    },
-		    series: [{
-		        name: '활성/비활성화',
-		        data: [
-		            { name: '활성 회원', y: 16 },
-		            { name: '비활성 회원', y: 12 }
-		        ]
+
+function memberAnalysis() {
+	
+    let url = '${pageContext.request.contextPath}/admin/statsList/memberAgeSection';
+    $.getJSON(url, function(data){
+        let titles = [];
+        let values = [];
+
+        for(let item of data.list) {
+            titles.push(item.SECTION);
+            values.push(item.COUNT);
+        }
+
+        // 연령대 별 비율 차트
+        Highcharts.chart('ageChartContainer', {
+			title:{
+				text : '연령대별 회원수'
+			},
+			xAxis : {
+				categories:titles
+			},
+			yAxis : {
+				title:{
+					text:'인원(명)'
+				}
+			},
+			series:[{
+		        type: 'column',
+		        colorByPoint: true,
+		        name: '인원수',
+		        data: values,
+		        showInLegend: false
 		    }]
 		});
+	});
+}
 
-        // 일별 매출 변화 차트
-        new Chart(document.getElementById("salesChart"), {
-            type: 'line',
-            data: {
-                labels: ["1일", "2일", "3일", "4일", "5일", "6일", "7일"],
-                datasets: [{
-                    label: "매출(₩)",
-                    borderColor: "#36a2eb",
-                    fill: false,
-                    data: [500000, 750000, 800000, 650000, 900000, 1100000, 950000]
-                }]
-            }
-        });
-    </script>
+    // 활성/비활성화 회원 비율 차트
+    Highcharts.chart('activeChartContainer', {
+        chart: { type: 'pie', options3d: { enabled: true, alpha: 45 } },
+        title: { text: '활성/비활성화 회원 비율' },
+        plotOptions: { pie: { innerSize: 100, depth: 45 } },
+        series: [{
+            name: '활성/비활성화',
+            data: [{ name: '활성 회원', y: 16 }, { name: '비활성 회원', y: 12 }]
+        }]
+    });
+
+    // 일별 매출 차트
+    Highcharts.chart('salesChartContainer', {
+        chart: { type: 'line' },
+        title: { text: '일별 매출' },
+        xAxis: { categories: ['1일', '2일', '3일', '4일', '5일'] },
+        yAxis: { title: { text: '매출' } },
+        series: [{ name: '매출', data: [500, 700, 650, 800, 900] }]
+    });
+
+</script>
+
 
 

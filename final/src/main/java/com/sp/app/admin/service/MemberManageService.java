@@ -20,7 +20,5 @@ public interface MemberManageService {
 	public void insertMemberStatus(MemberManage dto) throws Exception;
 	public List<MemberManage> listMemberStatus(Long memberIdx);
 	public MemberManage findByStatus(Long memberIdx);
-	
-	public List<Map<String, Object>> listAgeSection();
 
 }

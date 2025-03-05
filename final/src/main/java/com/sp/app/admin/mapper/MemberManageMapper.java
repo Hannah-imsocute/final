@@ -27,8 +27,6 @@ public interface MemberManageMapper {
 	public List<MemberManage> listMemberStatus(Long memberIdx);
 	public MemberManage findByStatus(Long memberIdx);
 	
-	public List<Map<String, Object>> listAgeSection();
-	
 	public void updateAuthority(Map<String, Object> map) throws SQLException;
 	public void deleteAuthority(Map<String, Object> map) throws SQLException;
 }
