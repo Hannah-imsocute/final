@@ -7,127 +7,178 @@
   <meta charset="UTF-8">
   <title>주문완료</title>
 
+  <!-- 공통 CSS/JS 로드 -->
   <jsp:include page="/WEB-INF/views/layout/headerResources.jsp" />
 
+  <!-- 폰트 로드 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+    header {
+      position: relative !important; /* 기존 fixed 해제 */
     }
 
+    /* 기본 리셋 */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* 메인 컨테이너 */
     .complete-container {
       max-width: 500px;
-      background: #fff;
+      margin: 60px auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
     .complete-container h2 {
-      font-size: 26px;
-      font-weight: bold;
+      font-size: 24px;
+      font-weight: 700;
       margin-bottom: 10px;
-      color: #007aff;
     }
-
     .complete-container p.desc {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .order-info-box {
-      background: #f1f3f5;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: left;
       font-size: 14px;
-      line-height: 1.6;
+      color: #666;
+      margin-bottom: 30px;
     }
 
-    .info-row {
+    /* 주문 정보 영역 */
+    .order-info-box {
+      text-align: left;
+      margin-bottom: 30px;
+      line-height: 1.6;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 20px;
+      background-color: #fafafa;
+    }
+    .order-info-box .info-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
+      font-size: 14px;
+      margin-bottom: 12px;
     }
-
-    .label {
+    .order-info-box .label {
       color: #555;
     }
-
-    .value {
-      font-weight: 600;
-      color: #222;
+    .order-info-box .value {
+      font-weight: 500;
+    }
+    .order-info-box .highlight {
+      color: #555;
+      font-weight: 700;
     }
 
-    .highlight {
-      color: #e63946;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
+    /* 홈으로 버튼 */
     .btn-home {
+      display: inline-block;
       width: 100%;
-      padding: 12px;
-      background: #007aff;
-      color: white;
+      padding: 15px 0;
+      background-color: #ff7e00;
+      color: #fff;
       font-size: 16px;
-      font-weight: bold;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s;
+    }
+    .btn-home:hover {
+      background-color: #005bb5;
     }
 
-    .btn-home:hover {
-      background: #005bb5;
+    @media (max-width: 576px) {
+      .complete-container {
+        margin: 30px 10px;
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="complete-container">
-  <h2>주문 완료</h2>
-  <p class="desc">구매해주셔서 감사합니다.</p>
-  <div class="order-info-box">
-    <div class="info-row">
-      <div class="label">결제 금액</div>
-      <div class="value highlight">
-        <fmt:formatNumber value="${order.netPay}" pattern="#,###"/>원
-      </div>
-    </div>
-    <div class="info-row">
-      <div class="label">주문번호</div>
-      <div class="value">${order.orderCode}</div>
-    </div>
-    <div class="info-row">
-      <div class="label">배송지</div>
-      <div class="value">
-        <c:out value="${receiverName}" /> / <c:out value="${phone}" /><br />
-        <c:out value="${addrTitle}" />
-      </div>
-    </div>
-    <c:if test="${not empty shippingMemo}">
+<!-- 고정 헤더 -->
+<header>
+  <jsp:include page="/WEB-INF/views/layout/header.jsp" />
+</header>
+
+<main>
+  <!-- 주문 완료 컨테이너 -->
+  <div class="complete-container">
+    <!-- 타이틀 -->
+    <h2>주문완료</h2>
+    <p class="desc">구매해주셔서 감사합니다.</p>
+
+    <!-- 주문 정보 요약 박스 -->
+    <div class="order-info-box">
+
+      <!-- 결제 금액 -->
       <div class="info-row">
-        <div class="label">배송 메모</div>
-        <div class="value"><c:out value="${shippingMemo}" /></div>
+        <div class="label">결제 금액</div>
+        <div class="value highlight">
+          <fmt:formatNumber value="${order.netPay}" pattern="#,###"/>원
+        </div>
       </div>
-    </c:if>
+
+      <!-- 주문번호 -->
+      <div class="info-row">
+        <div class="label">주문번호</div>
+        <div class="value">
+          ${order.orderCode}
+        </div>
+      </div>
+
+      <!-- 배송지 -->
+      <div class="info-row">
+        <div class="label">배송지</div>
+        <div class="value">
+          <c:out value="${receiverName}" /> / <c:out value="${phone}" /><br />
+          <c:out value="${addrTitle}" />
+        </div>
+      </div>
+
+      <!-- 배송 방법 -->
+      <div class="info-row">
+        <div class="label">배송 방법</div>
+        <div class="value">택배</div>
+      </div>
+
+      <!-- 배송 메모 -->
+      <c:if test="${not empty shippingMemo}">
+        <div class="info-row">
+          <div class="label">배송 메모</div>
+          <div class="value">
+            <c:out value="${shippingMemo}" />
+          </div>
+        </div>
+      </c:if>
+    </div>
+
+    <!-- 홈으로 버튼 -->
+    <button class="btn-home" onclick="location.href='${pageContext.request.contextPath}/'">
+      홈으로
+    </button>
   </div>
-  <button class="btn-home" onclick="location.href='${pageContext.request.contextPath}/'">
-    홈으로
-  </button>
-</div>
+</main>
+
+<!-- 푸터 -->
+<footer>
+  <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+</footer>
 </body>
 </html>

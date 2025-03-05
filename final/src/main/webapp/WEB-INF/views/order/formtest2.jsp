@@ -507,8 +507,10 @@
 
       let memberIdx = ${sessionScope.member.memberIdx};
       let merchant_uid = '${order.orderCode}';
-      <%--let name = '${order.orderItem.itemCode}';--%>
       <%--let amount = '${overallNetPay}';--%>
+      <%--let name = '${order.orderItem.item}'--%>
+      // let name = '상품 테스트';
+      <%--let name = '${cart.item}'--%>
       let amount = 10;
       let buyer_email = '${sessionScope.member.email}';
       let buyer_name = '${receiverName}';
@@ -517,12 +519,12 @@
       let buyer_postcode = '${postCode}';
 
 
-     IMP.request_pay(
+      IMP.request_pay(
               {
                 channelKey: "channel-key-eb37305c-955d-472e-98c1-f7d722cc1706",
                 pay_method: provider,
                 merchant_uid: merchant_uid, //상점에서 생성한 고유 주문번호
-                name: '테스트상품',
+                name: '뚝딱뚝딱 상품',
                 amount: amount,
                 buyer_email: buyer_email,
                 buyer_name: buyer_name,
@@ -531,7 +533,7 @@
                 buyer_postcode: buyer_postcode,
               },function(resp) { // callback
                 if(resp.success) {
-                  alert('success...');
+                  alert('결제가 완료되었습니다!!');
                   console.log(resp) ;
                   byMethod = resp.card_name || '간편결제';
                   provider = resp.pay_method || '페이결제';
@@ -544,12 +546,7 @@
                   f.confirmCode.value = confirmCode;
                   f.confirmDate.value = confirmDate;
                   f.cardNumber.value = cardNumber;
-                  // f.productCodes.value =
                   f.memberIdx.value = memberIdx;
-                  // f.postCode.value = buyer_postcode;
-                  // f.itemCode.value = itemCode;
-                  // f.productCode.value = productCode;
-                  // f.quantities.value = quantity;
 
                   f.action = '${pageContext.request.contextPath}/order/submit';
                   f.submit();
@@ -558,32 +555,7 @@
                   console.log(resp);
                   return false;
                 }
-             })
-
-  /*    IMP.request_pay({
-        pg : 'html5_inicis.INIpayTest', // 테스트 시 html5_inicis.INIpayTest 기재
-        pay_method : 'card',
-        merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
-        name : '주문상품명:결제테스트',
-        amount : 1004,                           // 금액
-        buyer_email : 'test@portone.io',
-        buyer_name : '구매자이름',
-        buyer_tel : '010-1234-5678',   // 필수 파라미터
-        buyer_addr : '서울특별시 강남구 삼성동',
-        buyer_postcode : '123-456',
-      }, function(resp) { // callback
-        if(resp.success) {
-          alert('success...');
-          console.log(resp);
-        } else {
-          alert('fail...');
-          console.log(resp);
-        }
-      });*/
-
-
-      // 결제 성공 후 hidden 필드에 세팅
-
+              })
     }
   </script>
 </head>
@@ -629,8 +601,8 @@
     <input type="hidden" name="confirmCode" value="">
     <input type="hidden" name="confirmDate" value="">
     <input type="hidden" name="cardNumber" value="">
-<%--    <input type="hidden" name="orderCode" value="">--%>
-<%--    <input type="hidden" name="orderCode" value="">--%>
+    <%--    <input type="hidden" name="orderCode" value="">--%>
+    <%--    <input type="hidden" name="orderCode" value="">--%>
     <input type="hidden" name="itemCode" value="0">
 
 
@@ -643,8 +615,8 @@
             <input type="hidden" name="quantity" value="${dto.quantity}" />
             <input type="hidden" name="itemCode" value="${dto.itemCode}" />
             <c:if test="${not empty dto.options}">
-<%--              <input type="hidden" name="options" value="${dto.options}" />--%>
-<%--              <input type="hidden" name="orderItems[${status.index}].options" value="${dto.options}" />--%>
+              <%--              <input type="hidden" name="options" value="${dto.options}" />--%>
+              <%--              <input type="hidden" name="orderItems[${status.index}].options" value="${dto.options}" />--%>
               <c:forEach var="opt" items="${dto.options}" varStatus="optStatus">
                 <input type="hidden" name="orderItems[${status.index}].options[${optStatus.index}]" value="${opt}" />
               </c:forEach>
@@ -758,7 +730,7 @@
               <div class="store-name">${cart.brandName}</div>
               <div class="product-card-body">
                 <div class="product-image">
-                  <img src="#" alt="상품 이미지"/>
+                  <img src="${pageContext.request.contextPath}/uploads/product/${cart.thumbnail}" alt="상품 이미지"/>
                 </div>
                 <div class="product-info">
                   <div class="product-title">
@@ -813,11 +785,11 @@
 
           <!-- 결제/취소 버튼 -->
           <button class="btn-submit-order" type="button" onclick="sendOk()">결제하기</button>
-          <button type="button" class="btn btn-light btn-lg"
+     <%--     <button type="button" class="btn btn-light btn-lg"
                   style="width: 250px; margin-top:10px;"
                   onclick="location.href='${pageContext.request.contextPath}/';">
             결제취소
-          </button>
+          </button>--%>
         </div>
       </div>
     </div>

@@ -40,7 +40,7 @@
             SELECT SEQ_ORDER_ITEM.nextval FROM dual
         </selectKey>
         insert into ORDER_ITEM(ITEM_CODE, ORDER_CODE, PRODUCTCODE, OPTIONS, PRICEFOREACH, QUANTITY, PRICE, SHIPPING, ORDER_STATE)
-        VALUES (#{itemCode}, #{orderCode}, #{productCode}, #{options, jdbcType=VARCHAR}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 0)
+        VALUES (#{itemCode}, #{orderCode}, #{productCode}, #{options, jdbcType=VARCHAR}, #{priceForeach}, #{quantity}, #{price}, #{shipping}, 1)
     </insert>
 
 
@@ -104,12 +104,17 @@
         ORDER  BY p.order_date DESC
     </select>
 
-    <!-- 주문에 포함된 상품 정보를 조회할 경우 -->
     <!-- 상품 정보 -->
-    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
+<!--    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
         select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
         from ORDER_ITEM
         where PRODUCTCODE = #{productCode} AND ROWNUM = 1
+    </select>-->
+
+    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
+        select PRODUCTCODE as productCode, price, DISCOUNT, ADDOPTIONS, THUMBNAIL
+        from PRODUCT
+        where PRODUCTCODE = #{productCode}
     </select>
 
     <!--유저의 가장 최근 포인트 조회-->

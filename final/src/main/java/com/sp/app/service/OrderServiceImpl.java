@@ -49,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
         savedLastNumber = Long.parseLong(maxOrderNumber.substring(8));
       }
 
+
       long lastNumber;
       if (!preNumber.equals(savedPreNumber)) {
         // 날짜가 바뀐 경우 카운트 리셋
@@ -63,7 +64,9 @@ public class OrderServiceImpl implements OrderService {
         }
       }
 
-      result = preNumber + String.format("%09d", lastNumber);
+      result = preNumber + String.format("%09d%05d", lastNumber, new Random().nextInt(90000));
+
+
 
     } catch (Exception e) {
       log.info("getLatestOrderCode() ", e);

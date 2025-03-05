@@ -35,7 +35,6 @@ public class CartController {
       Map<String, Object> params = new HashMap<>();
       params.put("memberIdx", memberIdx);
 
-//      List<CartItem> list = cartItemService.getCartItemsByMemberAndProduct(params);
       List<CartItem> list = cartItemService.getCartItemsByCodes(params);
       for (CartItem cartItem : list) {
         model.addAttribute("cartItemCode", cartItem.getCartItemCode());
@@ -100,17 +99,6 @@ public class CartController {
     return result;
   }
 
-  // 장바구니 삭제
-//  @PostMapping("delete")
-  public String deleteCartItem(@RequestParam("cartItemCode") Long cartItemCode) throws Exception {
-    try {
-      cartItemService.deleteCartItem(cartItemCode);
-      return "redirect:/cart/list";
-    } catch (Exception e) {
-      log.info("delete", e);
-    }
-    return "redirect:/cart/list";
-  }
 
   // 장바구니 삭제
   @PostMapping("delete")
@@ -126,6 +114,24 @@ public class CartController {
       log.info("delete", e);
     }
     return params;
+  }
+
+  // 장바구니 선택 삭제
+  @PostMapping("deleteSelected")
+  @ResponseBody
+  public Map<String, Object> deleteSelectedCartItems(@RequestParam("cartItemCode") List<Long> cartItemCodes) throws Exception {
+    Map<String, Object> result = new HashMap<>();
+    try {
+      for(Long cartItemCode : cartItemCodes) {
+        cartItemService.deleteCartItem(cartItemCode);
+      }
+      result.put("status", "success");
+    } catch(Exception e) {
+      result.put("status", "error");
+      result.put("message", "선택된 상품을 삭제할 수 없습니다.");
+      log.info("deleteSelectedCartItems", e);
+    }
+    return result;
   }
 
   // Session 에서 회원코드 반환

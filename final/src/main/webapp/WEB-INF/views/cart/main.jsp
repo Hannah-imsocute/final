@@ -20,7 +20,7 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            background: #f3f3f3;
+            background-color: #f0f2f5;
             font-family: 'Noto Sans KR', sans-serif;
             color: #333;
         }
@@ -180,7 +180,7 @@
 
 <!-- 전체 장바구니 목록을 하나의 폼으로 감싸기 -->
 <form name="cartForm" action="${pageContext.request.contextPath}/order/form" method="post">
-    <!-- 폼 제출 시 최종 금액을 함께 넘기기 위해 히든필드 추가 -->
+    <!-- 폼 제출 시 최종 금액을 함께 넘기기 위해 히든 필드 추가 -->
     <input type="hidden" name="finalTotalPrice" id="finalTotalPrice" value="0" />
 
     <main class="cart-page">
@@ -200,7 +200,8 @@
             <div class="left-actions">
                 <label>
                     <input type="checkbox" class="selectAll" checked/> 전체선택 (
-                    <c:out value="${fn:length(cartList)}"/> / <c:out value="${fn:length(cartList)}"/> 개 )
+                    <span id="selectedCount"><c:out value="${fn:length(cartList)}"/></span> /
+                    <span id="totalCount"><c:out value="${fn:length(cartList)}"/>개</span> )
                 </label>
             </div>
             <div class="right-actions">
@@ -249,7 +250,7 @@
                                         <input type="checkbox" name="cartItemCode" value="${cart.cartItemCode}" checked/>
                                     </div>
                                     <div class="cart-item-image">
-                                        <img src="#" alt="상품이미지">
+                                        <img src="${pageContext.request.contextPath}/uploads/product/${cart.thumbnail}" alt="상품이미지">
                                     </div>
                                     <div class="cart-item-details">
                                         <div class="item-title">
@@ -263,7 +264,7 @@
                                         <!-- 수량 조절 -->
                                         <div class="item-quantity">
                                             <button type="button" class="btn-qty quantity-minus">-</button>
-                                            <!-- 여기서 할인율을 JS로 넘기기 위해 data-discountrate 추가 -->
+                                            <!-- 할인율 전달을 위한 data 속성 -->
                                             <input type="number" class="input-qty"
                                                    value="${cart.quantity}"
                                                    min="1"
@@ -273,9 +274,8 @@
                                                    data-discountrate="${discountRate}" />
                                             <button type="button" class="btn-qty quantity-plus">+</button>
                                         </div>
-                                        <!-- 가격 및 삭제 (서버 계산값으로 초기 표시) -->
+                                        <!-- 가격 및 삭제 -->
                                         <div class="price-and-delete">
-                                            <!-- 상품금액(수량x단가)의 표기. (할인 전 금액) -->
                                             <div class="item-price price-text">
                                                 <fmt:formatNumber value="${lineTotal}" pattern="#,###" />원
                                             </div>
@@ -320,11 +320,11 @@
                 </c:if>
             </div>
 
-            <!-- 우측 결제정보 요약 (서버에서 기본 합계, JS에서 변경 시 동적 업데이트) -->
+            <!-- 우측 결제정보 요약 -->
             <div class="cart-right">
                 <div class="order-summary">
                     <h3>결제정보</h3>
-                    <!-- 초기값: JSP에서 간단 계산 (할인 없이) -->
+                    <!-- JSP에서 계산한 초기값 -->
                     <c:set var="sumLineTotal" value="0" scope="page"/>
                     <c:set var="sumDiscount" value="0" scope="page"/>
                     <c:forEach var="citem" items="${cartList}">
@@ -338,9 +338,7 @@
 
                     <div class="summary-item">
                         <span class="label">상품수</span>
-                        <span class="value">
-                            <c:out value="${fn:length(cartList)}"/>개
-                        </span>
+                        <span class="value" id="selectedProductCount"><c:out value="${fn:length(cartList)}"/>개</span>
                     </div>
                     <div class="summary-item">
                         <span class="label">상품금액</span>
@@ -364,7 +362,7 @@
                             <fmt:formatNumber value="${initFinalSum}" pattern="#,###" />원
                         </span>
                     </div>
-                    <!-- 구매하기 버튼: 폼의 submit 버튼 -->
+                    <!-- 구매하기 버튼 -->
                     <button type="submit" class="btn-checkout">구매하기</button>
                 </div>
             </div>
@@ -394,59 +392,85 @@
     }
 
     /**
-     * 장바구니 전체 합계/할인을 다시 계산하여 우측 요약영역, 히든필드에 반영
+     * 장바구니 전체 합계/할인을 다시 계산하여 우측 요약영역과 히든 필드에 반영
      */
     function updateTotalPrice() {
         let sumLineTotal = 0;   // 전체 상품금액 (할인 전)
         let sumDiscount = 0;    // 전체 할인
-        let sumFinal = 0;       // 최종결제금액(=합계-할인)
+        let sumFinal = 0;       // 최종 결제금액
 
-        // 각 상품블록을 순회하면서 할인 계산
+        // 각 상품 블록을 순회하며, 체크된 항목만 계산
         $('.cart-item-block').each(function () {
-            let $input = $(this).find('.input-qty');
-            let quantity = parseInt($input.val());
-            let oldPrice = parseInt($input.data('oldprice'));
-            let discountRate = parseInt($input.data('discountrate')) || 0;
+            if ($(this).find('.cart-item-check input[type="checkbox"]').prop('checked')) {
+                let $input = $(this).find('.input-qty');
+                let quantity = parseInt($input.val());
+                let oldPrice = parseInt($input.data('oldprice'));
+                let discountRate = parseInt($input.data('discountrate')) || 0;
+                let lineTotal = quantity * oldPrice;
+                let discountAmount = Math.floor(lineTotal * (discountRate / 100));
+                let finalPrice = lineTotal - discountAmount;
 
-            let lineTotal = quantity * oldPrice;
-            let discountAmount = Math.floor(lineTotal * (discountRate / 100));
-            let finalPrice = lineTotal - discountAmount;
-
-            sumLineTotal += lineTotal;
-            sumDiscount += discountAmount;
-            sumFinal += finalPrice;
+                sumLineTotal += lineTotal;
+                sumDiscount += discountAmount;
+                sumFinal += finalPrice;
+            }
         });
 
-        // 우측 영역 갱신
         $('#summaryLineTotal').text(sumLineTotal.toLocaleString() + '원');
         $('#summaryDiscount').text(sumDiscount.toLocaleString() + '원');
         $('#summaryFinalPrice').text(sumFinal.toLocaleString() + '원');
-
-        // form 전송 시 넘기기 위해 히든필드에도 저장
         $('#finalTotalPrice').val(sumFinal);
     }
 
     /**
-     * 개별 항목의 수량이 바뀌었을 때(서버 update 후) 해당 블록의 표시값 & 전체요약을 다시 계산/갱신
+     * 선택된 상품 수를 업데이트 (전체 선택 해제 시 0 표시)
+     */
+    function updateSelectCount() {
+        let selectedCount = $('.cart-item-check input[type="checkbox"]:checked').length;
+        // 전체선택 라벨과 요약의 상품수 모두 업데이트
+        $('#selectedCount').text(selectedCount);
+        $('#selectedProductCount').text(selectedCount + '개');
+    }
+
+    // 체크박스 상태 변경 시 총합과 선택수 업데이트
+    $('.cart-item-check input[type="checkbox"]').on('change', function(){
+        updateTotalPrice();
+        updateSelectCount();
+    });
+
+    // 전체 선택/해제 이벤트
+    $('.selectAll').click(function () {
+        let isChecked = $(this).prop("checked");
+        $('.cart-item-check input[type="checkbox"]').prop("checked", isChecked);
+        updateTotalPrice();
+        updateSelectCount();
+    });
+
+    // 개별 체크박스 클릭 시 전체 선택 여부와 선택수 업데이트
+    $('.cart-item-check input[type=checkbox]').click(function (){
+        let total = $('.cart-item-check input[type="checkbox"]').length;
+        let checkedCount = $('.cart-item-check input[type="checkbox"]:checked').length;
+        $('.selectAll').prop("checked", total === checkedCount);
+        updateSelectCount();
+    });
+
+    /**
+     * 개별 항목 수량 변경 시 UI 업데이트 (서버 업데이트 후)
      */
     function updateItemLineUI($cartItemBlock, newQty) {
         let $input = $cartItemBlock.find('.input-qty');
         $input.val(newQty);
-
         let oldPrice = parseInt($input.data('oldprice'));
         let discountRate = parseInt($input.data('discountrate')) || 0;
-
         let lineTotal = newQty * oldPrice;
         let discountAmount = Math.floor(lineTotal * (discountRate / 100));
         let finalPrice = lineTotal - discountAmount;
 
-        // 1) 상품 블록 내의 금액들 표시
-        $cartItemBlock.find('.item-price').text(lineTotal.toLocaleString() + '원');          // (상단) 상품금액
-        $cartItemBlock.find('.footer-product-amount').text(lineTotal.toLocaleString() + '원'); // (footer) 상품금액
-        $cartItemBlock.find('.discount-amount').text(discountAmount.toLocaleString() + '원');  // (footer) 할인금액
-        $cartItemBlock.find('.final-price').text(finalPrice.toLocaleString() + '원');         // (footer) 최종금액
+        $cartItemBlock.find('.item-price').text(lineTotal.toLocaleString() + '원');
+        $cartItemBlock.find('.footer-product-amount').text(lineTotal.toLocaleString() + '원');
+        $cartItemBlock.find('.discount-amount').text(discountAmount.toLocaleString() + '원');
+        $cartItemBlock.find('.final-price').text(finalPrice.toLocaleString() + '원');
 
-        // 2) 우측 요약 영역 & 히든필드도 재계산
         updateTotalPrice();
     }
 
@@ -457,13 +481,10 @@
         if(currentQty > 1) {
             let newQty = currentQty - 1;
             let cartItemCode = $input.data('cartitemcode');
-
-            // Ajax로 서버에 업데이트
             let url = '${pageContext.request.contextPath}/cart/updateQuantity1';
             let formData = { cartItemCode: cartItemCode, quantity: newQty };
             ajaxFun(url, 'post', formData, 'json', function(data){
                 if(data.status === 'success'){
-                    // 화면에 표시값 갱신
                     let $block = $input.closest('.cart-item-block');
                     updateItemLineUI($block, newQty);
                 } else {
@@ -479,13 +500,10 @@
         let currentQty = parseInt($input.val());
         let newQty = currentQty + 1;
         let cartItemCode = $input.data('cartitemcode');
-
-        // Ajax로 서버에 업데이트
         let url = '${pageContext.request.contextPath}/cart/updateQuantity1';
         let formData = { cartItemCode: cartItemCode, quantity: newQty };
         ajaxFun(url, 'post', formData, 'json', function(data){
             if(data.status === 'success'){
-                // 화면 갱신
                 let $block = $input.closest('.cart-item-block');
                 updateItemLineUI($block, newQty);
             } else {
@@ -494,13 +512,10 @@
         });
     });
 
-    // 선택삭제 버튼
+    // 선택삭제 버튼 (선택된 상품들을 삭제하는 엔드포인트로 폼 전환)
     $(function () {
         $('.btnSelectRemove').click(function () {
             let selectedItems = [];
-            // 주의: 버튼이 submit이 아니라 type=button이므로 별도 폼이 필요하면 만들어주세요.
-            // 여기서는 예시이므로 "btnForm" 폼 등이 있다고 가정하셨던 부분.
-            let $form = $('form[name="btnForm"]');
             $('.cart-item-check input:checked').each(function(){
                 selectedItems.push($(this).val());
             });
@@ -508,36 +523,35 @@
                 alert('선택된 상품이 없습니다.');
                 return;
             }
-            if(! confirm('선택된 상품을 삭제하시겠습니까?')){
+            if(!confirm('선택된 상품을 삭제하시겠습니까?')){
                 return;
             }
-            $form.submit();
+            let url = '${pageContext.request.contextPath}/cart/deleteSelected';
+            let formData = { cartItemCode: selectedItems };
+            const fn = function (data){
+                if(data.status === 'success'){
+                    alert('선택하신 상품이 삭제되었습니다');
+                    $('.cart-item-check input:checked').each(function(){
+                        $(this).closest('.cart-item-block').remove();
+                    });
+                    updateTotalPrice();
+                    updateSelectCount();
+                } else {
+                    alert('삭제에 실패하였습니다: ' + data.message);
+                }
+            };
+            ajaxFun(url, 'post', formData, 'json', fn);
         });
     });
 
-    // 전체선택/해제
-    $(function () {
-        $('.selectAll').click(function () {
-            let isChecked = $(this).prop("checked");
-            $('.cart-item-check input[type="checkbox"]').prop("checked", isChecked);
-        });
-        $('.cart-item-check input[type=checkbox]').click(function (){
-            let length = $('.cart-item-check input[type="checkbox"]').length;
-            let total = $('.cart-item-check input[type="checkbox"]:checked').length;
-            $('.selectAll').prop("checked", length === total);
-        });
-    });
-
-    // 로고 아이콘 클릭 -> 페이지 이동 예시
+    // 로고 아이콘 클릭 -> 페이지 이동 예시 및 폼 submit 검사
     $(function () {
         $('.BaseIcon').click(function () {
             location.href = '${pageContext.request.contextPath}/mypage/home';
         });
 
-        // 폼 submit 시 체크된 cartItemCode가 하나라도 있는지 검사
         $("form[name='cartForm']").on("submit", function(e) {
             if ($("input[name='cartItemCode']:checked").length === 0) {
-                e.preventDefault();
                 alert("선택된 상품이 없습니다.");
                 return false;
             }
@@ -554,12 +568,11 @@
         const fn = function (data) {
             if(data.status === 'success') {
                 alert('상품이 삭제되었습니다.');
-                // DOM에서 해당 block 제거
                 $('input[name="cartItemCode"][value="' + cartItemCode + '"]')
                     .closest('.cart-item-block')
                     .remove();
-                // 합계 재계산
                 updateTotalPrice();
+                updateSelectCount();
             } else {
                 alert('삭제에 실패하였습니다: ' + data.message);
             }
@@ -567,9 +580,10 @@
         ajaxFun(url, 'post', params, 'json', fn);
     }
 
-    // 페이지 로딩완료 시, JS로 최종합계 한 번 세팅(수정/삭제 후 재접속 등 대비)
+    // 페이지 로딩 시 초기 합계 및 선택 수 계산
     $(document).ready(function(){
         updateTotalPrice();
+        updateSelectCount();
     });
 </script>
 </body>

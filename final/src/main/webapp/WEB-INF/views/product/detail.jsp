@@ -528,7 +528,7 @@ $(function(){
 $('.buy-btn').click(function (event) {
     event.preventDefault();
     var productCode = "${dto.productCode}";
-    var quantity = 1;
+	var quantity = $('.quantity-input').val();
     window.location.href = "${pageContext.request.contextPath}/order/form"
           + "?productCode=" + productCode
           + "&quantity=" + quantity
