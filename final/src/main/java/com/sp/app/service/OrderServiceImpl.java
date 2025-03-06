@@ -40,23 +40,23 @@ public class OrderServiceImpl implements OrderService {
       LocalDate now = LocalDate.now();
       String preNumber = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
       String savedPreNumber = "";
-      long savedLastNumber = 0;
+      long savedLastNumber = 0L;
 
       String maxOrderNumber = orderMapper.getLatestOrderCode();
+      log.debug("현재 DB에 저장된 가장 최근 주문번호: {}", maxOrderNumber);
 
       if (maxOrderNumber != null && maxOrderNumber.length() > 8) {
         savedPreNumber = maxOrderNumber.substring(0, 8);
         savedLastNumber = Long.parseLong(maxOrderNumber.substring(8));
+        log.debug("savedPreNumber={}, savedLastNumber={}", savedPreNumber, savedLastNumber);
       }
-
 
       long lastNumber;
       if (!preNumber.equals(savedPreNumber)) {
-        // 날짜가 바뀐 경우 카운트 리셋
         count.set(0);
         lastNumber = count.incrementAndGet();
+        log.debug("새로운 날짜로 넘어갔으므로 카운트 리셋 → {}", lastNumber);
       } else {
-        // 같은 날짜인 경우
         lastNumber = count.incrementAndGet();
         if (savedLastNumber >= lastNumber) {
           count.set(savedLastNumber);
@@ -64,16 +64,17 @@ public class OrderServiceImpl implements OrderService {
         }
       }
 
-      result = preNumber + String.format("%09d%05d", lastNumber, new Random().nextInt(90000));
-
-
+      result = preNumber + String.format("%09d%02d", lastNumber, new Random().nextInt(900));
+      log.info("생성된 주문번호 = {}", result);
 
     } catch (Exception e) {
-      log.info("getLatestOrderCode() ", e);
+      log.error("getLatestOrderCode() 오류 발생: {}", e.getMessage(), e);
+
+      throw new RuntimeException("주문번호 생성 실패", e);
+
     }
     return result;
   }
-
 
   // 주문 테이블 저장
   @Transactional(rollbackFor = Exception.class)
@@ -318,7 +319,7 @@ public class OrderServiceImpl implements OrderService {
     int overallNetPay = 0;
     for (CartItem cartItem : cartItems) {
       int totalPrice = cartItem.getQuantity() * cartItem.getPrice();
-      int shipping = (totalPrice >= 20000) ? 0 : 3000;
+      int shipping = (totalPrice >= 30000) ? 0 : 3000;
       int couponValueForItem = (cartItem.getCouponValue() != null) ? cartItem.getCouponValue() : 0;
       int spentPointForItem = (cartItem.getSpentPoint() != null) ? cartItem.getSpentPoint() : 0;
 
@@ -332,10 +333,6 @@ public class OrderServiceImpl implements OrderService {
 
     // 주문코드 생성
     String orderCode = getLatestOrderCode();
-
-    //  추가 정보(뷰에서 넘어온 쿠폰, 포인트, 결제수단 등) 반영
-//    String payment = (orderFromView != null && orderFromView.getPayment() != null)
-//        ? orderFromView.getPayment() : "카드";
 
     int usedPoint = (orderFromView != null && orderFromView.getSpentPoint() != null)
         ? orderFromView.getSpentPoint() : 0;
@@ -356,7 +353,6 @@ public class OrderServiceImpl implements OrderService {
         .couponValue(couponVal)
         .spentPoint(usedPoint)
         .netPay(finalNetPay)
-//        .payment(payment)
         .shippingInfo((orderFromView != null) ? orderFromView.getShippingInfo() : null)
         .build();
 
@@ -370,7 +366,7 @@ public class OrderServiceImpl implements OrderService {
           .priceForeach(cartItem.getPrice())
           .quantity(cartItem.getQuantity())
           .price(cartItem.getQuantity() * cartItem.getPrice())
-          .shipping((cartItem.getQuantity() * cartItem.getPrice() >= 20000) ? 0 : 3000)
+          .shipping((cartItem.getQuantity() * cartItem.getPrice() >= 30000) ? 0 : 3000)
           .orderState(0)
           .build();
 

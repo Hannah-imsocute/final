@@ -189,6 +189,13 @@
             background-color: #f0f0f0;
             color: #fa7c00;
         }
+
+        /* 이미 요청된 버튼에 대한 스타일 */
+        .already-requested {
+            background-color: #ddd;
+            color: #999;
+            cursor: not-allowed;
+        }
         .cart-icon {
             margin-left: 16px;
             font-size: 24px;
@@ -211,7 +218,7 @@
         }
 
         /************************************************************
-         * 5) 페이징 스타일 (화살표, 번호)
+         * 5) 페이징 스타일
          ************************************************************/
         .pagination {
             display: flex;
@@ -276,7 +283,6 @@
         /************************************************************
          * 6) 모달 디자인 (리뷰, 문의, 교환/반품)
          ************************************************************/
-        /* 공통 모달 배경 */
         .modal {
             display: none;
             position: fixed;
@@ -307,17 +313,15 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .modal-content .close:hover,
-        .modal-content .close:focus {
+        .modal-content .close:hover {
             color: #000;
         }
 
-        /* 리뷰 작성 모달 */
+        /* 리뷰 모달 */
         #writeReviewModal .modal-content h3 {
             margin-top: 0;
             margin-bottom: 15px;
         }
-        /* 상품 정보 영역 */
         #reviewProductInfo {
             display: flex;
             align-items: center;
@@ -334,7 +338,6 @@
             font-weight: bold;
             font-size: 1.2rem;
         }
-        /* 별점 */
         .star-rating {
             direction: rtl;
             font-size: 1.8rem;
@@ -354,7 +357,6 @@
         .star-rating input[type="radio"]:checked ~ label {
             color: #fa7c00;
         }
-        /* textarea */
         textarea {
             width: 100%;
             height: 150px;
@@ -409,7 +411,7 @@
             background-color: #e26d00;
         }
 
-        /* 상품 문의 모달 */
+        /* 문의 모달 */
         #inquiryModal h3 {
             margin-top: 0;
             margin-bottom: 20px;
@@ -449,7 +451,7 @@
             background-color: #e26d00;
         }
 
-        /* 교환/반품 요청 모달 */
+        /* 교환/반품 모달 */
         #requestModal h3 {
             margin-top: 0;
             margin-bottom: 20px;
@@ -471,14 +473,10 @@
             font-size: 1rem;
             cursor: pointer;
         }
-
         .asktextArea {
             resize: none;
         }
 
-        /************************************************************
-         * 7) 반응형 스타일 (미디어 쿼리)
-         ************************************************************/
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -531,7 +529,7 @@
                             <!-- 주문상세 이동 텍스트 링크 -->
                             <div class="detail-button-wrap">
                                 <a href="${pageContext.request.contextPath}/mypage/orderDetail?orderCode=${order.orderCode}">
-                                    주문상세 >
+                                    주문상세 &gt;
                                 </a>
                             </div>
 
@@ -575,7 +573,7 @@
                                             <div class="detail-item">
                                                 <span class="label">결제 금액:</span>
                                                 <span class="value">
-                                                    <fmt:formatNumber value="${order.netPay}" pattern="#,###" />원
+                                                    <fmt:formatNumber value="${order.netPay + order.shipping}" pattern="#,###" />원
                                                 </span>
                                             </div>
                                             <div class="detail-item">
@@ -595,16 +593,22 @@
                                         <!-- 상품 정보 영역 끝 -->
                                         <div class="product-actions">
                                             <!-- 반품 신청 버튼 -->
-                                            <button class="btn-request" data-request-type="return"
-                                                    data-item-code="${order.itemCode}" data-order-code="${order.orderCode}">
+                                            <button class="btn-request ${order.requested ? 'already-requested' : ''}"
+                                                    data-request-type="return"
+                                                    data-item-code="${order.itemCode}"
+                                                    data-order-code="${order.orderCode}"
+                                                    data-requested="${order.requested ? 'true' : 'false'}">
                                                 반품신청
                                             </button>
                                             <!-- 교환 신청 버튼 -->
-                                            <button class="btn-request" data-request-type="exchange"
-                                                    data-item-code="${order.itemCode}" data-order-code="${order.orderCode}">
+                                            <button class="btn-request ${order.requested ? 'already-requested' : ''}"
+                                                    data-request-type="exchange"
+                                                    data-item-code="${order.itemCode}"
+                                                    data-order-code="${order.orderCode}"
+                                                    data-requested="${order.requested ? 'true' : 'false'}">
                                                 교환신청
                                             </button>
-                                            <!-- 리뷰 작성 (조건: reviewCount가 0이면) -->
+                                            <!-- 리뷰 작성 -->
                                             <c:if test="${order.reviewCount == 0}">
                                                 <button class="btn-review"
                                                         data-product-code="${order.productCode}"
@@ -614,7 +618,7 @@
                                                     상품평 작성
                                                 </button>
                                             </c:if>
-                                            <!-- 신규: 상품 문의 버튼 -->
+                                            <!-- 상품 문의 -->
                                             <button type="button" class="btn-inquiry"
                                                     data-product-code="${order.productCode}">
                                                 상품 문의
@@ -632,7 +636,7 @@
                         </c:forEach>
                     </ul>
 
-                    <!-- 페이징 영역 -->
+                    <!-- 페이징 -->
                     <ul class="pagination">
                         <li class="arrow ${page == 1 ? 'disabled' : ''}">
                             <a href="?page=${page - 1}">&lt;</a>
@@ -693,7 +697,6 @@
                 <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
             </div>
             <!-- 리뷰 내용 입력 -->
-            <label for="reviewContent" style="display:none;">리뷰내용</label>
             <textarea id="reviewContent" name="content" placeholder="최소 10자를 입력하세요."></textarea>
             <!-- 파일 업로드 & 미리보기 -->
             <label for="selectFile" class="file-input-label">📁 파일 선택</label>
@@ -701,9 +704,9 @@
             <div id="filePreview" class="file-preview"></div>
             <!-- hidden 필드 -->
             <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
-            <input type="hidden" id="productCode" name="productCode" value="">
-            <input type="hidden" id="productName" name="productName" value="">
-            <input type="hidden" id="orderCode" name="orderCode" value="">
+            <input type="hidden" id="productCode" name="productCode">
+            <input type="hidden" id="productName" name="productName">
+            <input type="hidden" id="orderCode" name="orderCode">
             <!-- 작성 버튼 -->
             <button type="button" id="submitWriteReview">작성완료</button>
         </form>
@@ -720,21 +723,20 @@
               method="post"
               class="inquiry-form">
             <label for="subject">제목</label>
-            <input type="text" id="subject" name="subject"
-                   placeholder="문의 제목을 입력하세요." required />
+            <input type="text" id="subject" name="subject" placeholder="문의 제목" required />
             <label for="inquiryCategory">카테고리</label>
             <select id="inquiryCategory" name="category" required>
-                <option value=0>카테고리 선택</option>
-                <option value=1>제품정보</option>
-                <option value=2>배송문의</option>
-                <option value=3>교환/반품</option>
-                <option value=4>기타</option>
+                <option value="0">카테고리 선택</option>
+                <option value="1">제품정보</option>
+                <option value="2">배송문의</option>
+                <option value="3">교환/반품</option>
+                <option value="4">기타</option>
             </select>
             <label for="inquiryContent">내용</label>
             <textarea id="inquiryContent" name="content" class="asktextArea"
                       placeholder="문의 내용을 입력하세요." required></textarea>
-            <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}" >
-            <input type="hidden" name="productCode" id="AskproductCode" value="" >
+            <input type="hidden" name="memberIdx" value="${sessionScope.member.memberIdx}">
+            <input type="hidden" name="productCode" id="AskproductCode">
             <!-- 문의 제출 버튼 -->
             <button type="submit" id="submitInquiry">문의 제출</button>
         </form>
@@ -746,11 +748,13 @@
     <div class="modal-content">
         <span class="close" id="closeRequestModalBtn">&times;</span>
         <h3 id="modalTitle">요청사항 선택</h3>
-        <form id="requestForm">
-            <select id="requestSelect"></select>
-            <!-- 필요 시 추가 폼 항목 -->
-            <input type="hidden" id="itemCode" name="itemCode" value="">
-            <input type="hidden" id="orderCode" name="orderCode" value="">
+        <!-- 교환/반품 신청 form -->
+        <form id="requestForm" action="${pageContext.request.contextPath}/mypage/refunds" method="post">
+            <!-- 사유 입력 -->
+            <select id="requestSelect" name="changeRequest"></select>
+            <!-- 숨김 필드 -->
+            <input type="hidden" id="itemCode" name="itemCode">
+            <input type="hidden" id="orderCode" name="orderCode">
             <button type="button" id="submitRequest">신청하기</button>
         </form>
     </div>
@@ -760,61 +764,50 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function(){
-
-        /* ====== 장바구니 아이콘 클릭 이벤트 ====== */
-        $('.cart-icon').click(function (e) {
+        /* ====== 장바구니 담기 ====== */
+        $('.cart-icon').click(function(e) {
             e.preventDefault();
             var productCode = $(this).data('product-code');
             var price = $(this).data('price');
             let params = { productCode: productCode, quantity: 1, price: price };
             let url = "${pageContext.request.contextPath}/cart/add";
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: params,
-                dataType: "text",
-                success: function(data){
-                    alert('상품을 장바구니에 담았습니다.');
-                },
-                error: function(jqXHR) {
-                    console.log(jqXHR.responseText);
-                }
+            $.post(url, params, function(data) {
+                alert('상품을 장바구니에 담았습니다.');
+            }).fail(function(err){
+                console.log(err.responseText);
             });
         });
 
-        /* ====== 리뷰 작성 모달 열기 ====== */
         $('.btn-review').click(function(){
             var productCode = $(this).data('product-code');
             var productName = $(this).data('product-name');
             var productImage = $(this).data('product-image');
             var orderCode = $(this).data('product-order');
+
             // 폼 hidden에 값 세팅
             $('#productCode').val(productCode);
             $('#productName').val(productName);
             $('#orderCode').val(orderCode);
+
             // 이미지, 제목
             $('#reviewProductImage').attr('src', productImage);
             $('#reviewProductName').text(productName);
 
             $('#writeReviewModal').show();
         });
-
-        /* ====== 리뷰 모달 닫기 ====== */
         $('#closeWriteReviewBtn').click(function(){
             $('#writeReviewModal').hide();
         });
-        // 모달 영역 바깥 클릭 시 닫기
         $(window).click(function(event) {
             if ($(event.target).is('#writeReviewModal')) {
                 $('#writeReviewModal').hide();
             }
         });
 
-        /* ====== 리뷰 작성 Ajax ====== */
         $('#submitWriteReview').click(function(){
             var content = $('#reviewContent').val().trim();
             if(content.length < 10) {
-                alert("리뷰 내용은 최소 10자 이상 입력해야 합니다.");
+                alert("리뷰 내용은 최소 10자 이상 입력하세요.");
                 $('#reviewContent').focus();
                 return;
             }
@@ -842,7 +835,6 @@
             });
         });
 
-        /* ====== 파일 미리보기 ====== */
         $('#selectFile').on('change', function(){
             $('#filePreview').empty();
             var files = this.files;
@@ -858,7 +850,6 @@
             }
         });
 
-        /* ====== 상품 문의 모달 열기 ====== */
         $('.btn-inquiry').click(function(){
             var productCode = $(this).data('product-code');
             $('#AskproductCode').val(productCode);
@@ -873,28 +864,36 @@
             }
         });
 
-        /* ====== 교환/반품 모달 ====== */
-        var returnOptions = '<option value="">요청사항 선택</option>'
-            + '<option value="불량">상품 불량</option>'
-            + '<option value="변심">단순 변심</option>'
-            + '<option value="분실">배송된 장소에 박스가 분실됨</option>'
-            + '<option value="오배송">오배송</option>';
-        var exchangeOptions = '<option value="">요청사항 선택</option>'
-            + '<option value="사이즈">사이즈 교환</option>'
-            + '<option value="색상">색상 교환</option>'
-            + '<option value="모델">다른 모델 교환</option>';
+        var returnOptions =
+            '<option value="">요청사항 선택</option>' +
+            '<option value="불량">상품 불량</option>' +
+            '<option value="변심">단순 변심</option>' +
+            '<option value="분실">배송된 장소에 박스가 분실됨</option>' +
+            '<option value="오배송">오배송</option>';
+        var exchangeOptions =
+            '<option value="">요청사항 선택</option>' +
+            '<option value="사이즈">사이즈 교환</option>' +
+            '<option value="색상">색상 교환</option>' +
+            '<option value="모델">다른 모델 교환</option>';
 
         $('.btn-request').click(function(e){
             e.preventDefault();
+            // 만약 data-requested 속성이 true이면 alert 후 동작 중단
+            if($(this).data('requested') === true || $(this).data('requested') === 'true'){
+                alert("이미 요청이 접수되었습니다.");
+                return;
+            }
             var requestType = $(this).data('request-type');
             var orderCode = $(this).data('order-code');
             var itemCode = $(this).data('item-code');
+
             $('#itemCode').val(itemCode);
             $('#orderCode').val(orderCode);
+
             if(requestType === 'return'){
                 $('#modalTitle').text('반품 요청사항 선택');
                 $('#requestSelect').html(returnOptions);
-            } else if(requestType === 'exchange'){
+            } else {
                 $('#modalTitle').text('교환 요청사항 선택');
                 $('#requestSelect').html(exchangeOptions);
             }
@@ -909,22 +908,27 @@
             }
         });
 
-        /* ====== 교환/반품 요청 Ajax 예시 ====== */
         $('#submitRequest').click(function(){
             var selectedOption = $('#requestSelect').val();
             if(!selectedOption){
                 alert("요청사항을 선택해주세요.");
                 return;
             }
-            alert("요청이 접수되었습니다: " + selectedOption);
+            $('#requestForm').submit();
             $('#requestModal').hide();
         });
 
-        /* ====== 상품 문의 제출 시 알림 (테스트용) ====== */
         $('#submitInquiry').click(function () {
             alert('상품 문의가 등록되었습니다.');
         });
     });
+</script>
+
+<!-- Flash Attribute 메시지 출력 (리다이렉트 후 alert) -->
+<script>
+    <c:if test="${not empty msg}">
+    alert("${msg}");
+    </c:if>
 </script>
 </body>
 </html>

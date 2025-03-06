@@ -74,10 +74,11 @@
     </insert>
 
 
-    <select id="getUserSaveAmount1" parameterType="long" resultType="com.sp.app.model.MemberPoint">
+    <select id="getUserSaveAmount1" parameterType="map" resultType="com.sp.app.model.MemberPoint">
         select SAVEAMOUNT as saveAmount, SAVEDATE as saveDate, EXPIREDATE as expireDate, REASON, ENABLE
         from POINT_SAVE where MEMBERIDX = #{memberIdx}
         order by SAVEDATE desc
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 
 

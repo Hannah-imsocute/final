@@ -53,10 +53,10 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public int getUsedPoint() {
+    public int getUsedPoint(long memberIdx) {
         int result = 0;
         try {
-           result =  mapper.getUsedPoint();
+           result =  mapper.getUsedPoint(memberIdx);
         } catch(Exception e) {
             log.info("getUsedPoint", e);
         }
@@ -117,11 +117,11 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public List<MemberPoint> getUserSaveAmount1(long memberIdx) {
+    public List<MemberPoint> getUserSaveAmount1(Map<String, Object> map) {
         List<MemberPoint> list = null;
 
         try {
-            list = mapper.getUserSaveAmount1(memberIdx);
+            list = mapper.getUserSaveAmount1(map);
         } catch(Exception e) {
             log.info("getUserSaveAmount1()", e);
         }

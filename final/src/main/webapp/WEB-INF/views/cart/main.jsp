@@ -180,8 +180,10 @@
 
 <!-- 전체 장바구니 목록을 하나의 폼으로 감싸기 -->
 <form name="cartForm" action="${pageContext.request.contextPath}/order/form" method="post">
-    <!-- 폼 제출 시 최종 금액을 함께 넘기기 위해 히든 필드 추가 -->
     <input type="hidden" name="finalTotalPrice" id="finalTotalPrice" value="0" />
+
+    <input type="hidden" name="sumLineTotal" id="sumLineTotal" value="0" />
+    <input type="hidden" name="sumDiscount" id="sumDiscount" value="0" />
 
     <main class="cart-page">
         <!-- 장바구니 단계 -->
@@ -199,9 +201,9 @@
         <div class="cart-actions">
             <div class="left-actions">
                 <label>
-                    <input type="checkbox" class="selectAll" checked/> 전체선택 (
-                    <span id="selectedCount"><c:out value="${fn:length(cartList)}"/></span> /
-                    <span id="totalCount"><c:out value="${fn:length(cartList)}"/>개</span> )
+                    <input type="checkbox" class="selectAll" checked/>
+                    전체선택 (<span id="selectedCount"><c:out value="${fn:length(cartList)}"/></span> /
+                    <span id="totalCount"><c:out value="${fn:length(cartList)}"/>개</span>)
                 </label>
             </div>
             <div class="right-actions">
@@ -217,22 +219,20 @@
                         <p>장바구니가 비어 있습니다.</p>
                     </div>
                 </c:if>
-
                 <c:if test="${not empty cartList}">
                     <div class="cart-card">
                         <c:forEach var="cart" items="${cartList}">
                             <!-- 서버에서 초기 계산 (화면 표시용) -->
                             <c:set var="lineTotal" value="${cart.quantity * cart.price}"/>
-                            <c:set var="discountRate" value="${cart.discount != null ? cart.discount : 0}" />
-                            <c:set var="discountAmount" value="${(lineTotal * discountRate) / 100}" />
-                            <c:set var="finalPrice" value="${lineTotal - discountAmount}" />
+                            <c:set var="discountRate" value="${cart.discount != null ? cart.discount : 0}"/>
+                            <c:set var="discountAmount" value="${(lineTotal * discountRate) / 100}"/>
+                            <c:set var="finalPrice" value="${lineTotal - discountAmount}"/>
 
                             <div class="cart-item-block">
                                 <!-- 상품 정보 -->
                                 <div class="store-info">
                                     <span class="store-name">${cart.brandName}</span>
-                                    <svg data-v-6d2bd019="" data-v-ec764313=""
-                                         width="24" height="24" viewBox="0 0 24 24"
+                                    <svg width="24" height="24" viewBox="0 0 24 24"
                                          xmlns="http://www.w3.org/2000/svg" class="BaseIcon"
                                          style="width: 24px; height: 24px; opacity: 1; fill: currentcolor;">
                                         <g clip-path="url(#clip0_124_2947)">
@@ -264,14 +264,13 @@
                                         <!-- 수량 조절 -->
                                         <div class="item-quantity">
                                             <button type="button" class="btn-qty quantity-minus">-</button>
-                                            <!-- 할인율 전달을 위한 data 속성 -->
                                             <input type="number" class="input-qty"
                                                    value="${cart.quantity}"
                                                    min="1"
                                                    readonly
                                                    data-cartitemcode="${cart.cartItemCode}"
                                                    data-oldprice="${cart.price}"
-                                                   data-discountrate="${discountRate}" />
+                                                   data-discountrate="${discountRate}"/>
                                             <button type="button" class="btn-qty quantity-plus">+</button>
                                         </div>
                                         <!-- 가격 및 삭제 -->
@@ -285,7 +284,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- 상품별 footer (동적 업데이트 대상) -->
+                                <!-- 상품별 footer (개별 항목에서는 배송비는 고정 "무료배송") -->
                                 <div class="cart-card-footer">
                                     <div>
                                         <span class="label">상품금액</span>
@@ -303,13 +302,35 @@
                                     <span class="divider">|</span>
                                     <div>
                                         <span class="label">배송비</span>
-                                        <span class="value shipping price-text">무료배송</span>
+                                        <c:set var="sumLineTotal" value="0" scope="page"/>
+                                        <c:set var="sumDiscount" value="0" scope="page"/>
+                                        <c:forEach var="citem" items="${cartList}">
+                                            <c:set var="lineTotal" value="${citem.quantity * citem.price}" />
+                                            <c:set var="discountRate" value="${citem.discount != null ? citem.discount : 0}" />
+                                            <c:set var="lineDiscount" value="${(lineTotal * discountRate) / 100}" />
+                                            <c:set var="sumLineTotal" value="${sumLineTotal + lineTotal}" scope="page" />
+                                            <c:set var="sumDiscount" value="${sumDiscount + lineDiscount}" scope="page" />
+                                        </c:forEach>
+                                        <c:set var="initFinalSum" value="${sumLineTotal - sumDiscount}" />
+                                        <c:set var="shippingFee" value="${initFinalSum > 30000 ? 0 : 3000}" />
+                                        <c:set var="finalSum" value="${initFinalSum + shippingFee}" />
+
+                                        <span class="value shipping price-text">
+                                        <c:choose>
+                                            <c:when test="${shippingFee == 0}">
+                                                무료배송
+                                            </c:when>
+                                            <c:otherwise>
+                                                <fmt:formatNumber value="${shippingFee}" pattern="#,###" />원
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
                                     </div>
                                     <span class="divider">=</span>
                                     <div>
                                         <span class="label">주문금액</span>
                                         <span class="value footer-order-amount final-price price-text">
-                                            <fmt:formatNumber value="${finalPrice}" pattern="#,###" />원
+                                            <fmt:formatNumber value="${finalPrice + shippingFee}" pattern="#,###" />원
                                         </span>
                                     </div>
                                 </div>
@@ -331,14 +352,18 @@
                         <c:set var="lineTotal" value="${citem.quantity * citem.price}" />
                         <c:set var="discountRate" value="${citem.discount != null ? citem.discount : 0}" />
                         <c:set var="lineDiscount" value="${(lineTotal * discountRate) / 100}" />
-                        <c:set var="sumLineTotal" value="${sumLineTotal + lineTotal}" scope="page" />
-                        <c:set var="sumDiscount" value="${sumDiscount + lineDiscount}" scope="page" />
+                        <c:set var="sumLineTotal" value="${sumLineTotal + lineTotal}" scope="page"/>
+                        <c:set var="sumDiscount" value="${sumDiscount + lineDiscount}" scope="page"/>
                     </c:forEach>
                     <c:set var="initFinalSum" value="${sumLineTotal - sumDiscount}" />
+                    <c:set var="shippingFee" value="${initFinalSum > 30000 ? 0 : 3000}" />
+                    <c:set var="finalSum" value="${initFinalSum + shippingFee}" />
 
                     <div class="summary-item">
                         <span class="label">상품수</span>
-                        <span class="value" id="selectedProductCount"><c:out value="${fn:length(cartList)}"/>개</span>
+                        <span class="value" id="selectedProductCount">
+                            <c:out value="${fn:length(cartList)}"/>개
+                        </span>
                     </div>
                     <div class="summary-item">
                         <span class="label">상품금액</span>
@@ -354,12 +379,21 @@
                     </div>
                     <div class="summary-item">
                         <span class="label">배송비</span>
-                        <span class="value">0원</span>
+                        <span class="value shipping" id="summaryShippingFee">
+                            <c:choose>
+                                <c:when test="${shippingFee == 0}">
+                                    무료배송
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatNumber value="${shippingFee}" pattern="#,###" />원
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
                     </div>
                     <div class="summary-total">
                         총 결제금액:
                         <span style="float:right;" class="price-text" id="summaryFinalPrice">
-                            <fmt:formatNumber value="${initFinalSum}" pattern="#,###" />원
+                            <fmt:formatNumber value="${finalSum}" pattern="#,###" />원
                         </span>
                     </div>
                     <!-- 구매하기 버튼 -->
@@ -392,14 +426,17 @@
     }
 
     /**
-     * 장바구니 전체 합계/할인을 다시 계산하여 우측 요약영역과 히든 필드에 반영
+     * updateTotalPrice()
+     * - 각 상품의 할인 후 금액(sumFinal)을 계산하고, 배송비(shippingFee)를 조건에 따라 결정합니다.
+     * - 화면에는 배송비 포함 최종 금액(displayFinal = sumFinal + shippingFee)을 표시하지만,
+     *   hidden 필드("finalTotalPrice")에는 배송비를 제외한 금액(sumFinal)이 전송됩니다.
      */
     function updateTotalPrice() {
         let sumLineTotal = 0;   // 전체 상품금액 (할인 전)
         let sumDiscount = 0;    // 전체 할인
-        let sumFinal = 0;       // 최종 결제금액
+        let sumFinal = 0;       // 할인 후 상품금액 (배송비 미포함)
 
-        // 각 상품 블록을 순회하며, 체크된 항목만 계산
+        // 각 상품 블록에서 체크된 항목만 계산
         $('.cart-item-block').each(function () {
             if ($(this).find('.cart-item-check input[type="checkbox"]').prop('checked')) {
                 let $input = $(this).find('.input-qty');
@@ -409,36 +446,45 @@
                 let lineTotal = quantity * oldPrice;
                 let discountAmount = Math.floor(lineTotal * (discountRate / 100));
                 let finalPrice = lineTotal - discountAmount;
-
                 sumLineTotal += lineTotal;
                 sumDiscount += discountAmount;
                 sumFinal += finalPrice;
             }
         });
 
+        // 배송비 조건: 할인 후 상품금액이 30,000원 초과면 배송비 0원, 그 외 3,000원
+        let shippingFee = (sumFinal > 30000) ? 0 : 3000;
+        let displayFinal = sumFinal + shippingFee; // 화면 표시용 최종 금액 (배송비 포함)
+
         $('#summaryLineTotal').text(sumLineTotal.toLocaleString() + '원');
         $('#summaryDiscount').text(sumDiscount.toLocaleString() + '원');
-        $('#summaryFinalPrice').text(sumFinal.toLocaleString() + '원');
+        $('#summaryFinalPrice').text(displayFinal.toLocaleString() + '원');
+        // hidden 필드에는 배송비 제외 금액(sumFinal) 저장
         $('#finalTotalPrice').val(sumFinal);
+
+        $('#sumLineTotal').val(sumLineTotal);
+        $('#sumDiscount').val(sumDiscount);
+
+        $('#summaryShippingFee').text((shippingFee === 0) ? "무료배송" : shippingFee.toLocaleString() + "원");
     }
 
     /**
-     * 선택된 상품 수를 업데이트 (전체 선택 해제 시 0 표시)
+     * updateSelectCount()
+     * - 선택된 상품 수 업데이트
      */
     function updateSelectCount() {
         let selectedCount = $('.cart-item-check input[type="checkbox"]:checked').length;
-        // 전체선택 라벨과 요약의 상품수 모두 업데이트
         $('#selectedCount').text(selectedCount);
         $('#selectedProductCount').text(selectedCount + '개');
     }
 
-    // 체크박스 상태 변경 시 총합과 선택수 업데이트
+    // 체크박스 변경 시 업데이트
     $('.cart-item-check input[type="checkbox"]').on('change', function(){
         updateTotalPrice();
         updateSelectCount();
     });
 
-    // 전체 선택/해제 이벤트
+    // 전체 선택/해제
     $('.selectAll').click(function () {
         let isChecked = $(this).prop("checked");
         $('.cart-item-check input[type="checkbox"]').prop("checked", isChecked);
@@ -446,7 +492,6 @@
         updateSelectCount();
     });
 
-    // 개별 체크박스 클릭 시 전체 선택 여부와 선택수 업데이트
     $('.cart-item-check input[type=checkbox]').click(function (){
         let total = $('.cart-item-check input[type="checkbox"]').length;
         let checkedCount = $('.cart-item-check input[type="checkbox"]:checked').length;
@@ -455,7 +500,8 @@
     });
 
     /**
-     * 개별 항목 수량 변경 시 UI 업데이트 (서버 업데이트 후)
+     * updateItemLineUI()
+     * - 개별 상품 수량 변경 후 UI 업데이트
      */
     function updateItemLineUI($cartItemBlock, newQty) {
         let $input = $cartItemBlock.find('.input-qty');
@@ -465,16 +511,14 @@
         let lineTotal = newQty * oldPrice;
         let discountAmount = Math.floor(lineTotal * (discountRate / 100));
         let finalPrice = lineTotal - discountAmount;
-
         $cartItemBlock.find('.item-price').text(lineTotal.toLocaleString() + '원');
         $cartItemBlock.find('.footer-product-amount').text(lineTotal.toLocaleString() + '원');
         $cartItemBlock.find('.discount-amount').text(discountAmount.toLocaleString() + '원');
         $cartItemBlock.find('.final-price').text(finalPrice.toLocaleString() + '원');
-
         updateTotalPrice();
     }
 
-    // 수량 감소 버튼
+    // 수량 감소
     $('.quantity-minus').click(function () {
         let $input = $(this).siblings('.input-qty');
         let currentQty = parseInt($input.val());
@@ -494,7 +538,7 @@
         }
     });
 
-    // 수량 증가 버튼
+    // 수량 증가
     $('.quantity-plus').click(function () {
         let $input = $(this).siblings('.input-qty');
         let currentQty = parseInt($input.val());
@@ -512,7 +556,7 @@
         });
     });
 
-    // 선택삭제 버튼 (선택된 상품들을 삭제하는 엔드포인트로 폼 전환)
+    // 선택삭제
     $(function () {
         $('.btnSelectRemove').click(function () {
             let selectedItems = [];
@@ -544,12 +588,11 @@
         });
     });
 
-    // 로고 아이콘 클릭 -> 페이지 이동 예시 및 폼 submit 검사
+    // 로고 아이콘 클릭 및 폼 제출 검사
     $(function () {
         $('.BaseIcon').click(function () {
             location.href = '${pageContext.request.contextPath}/mypage/home';
         });
-
         $("form[name='cartForm']").on("submit", function(e) {
             if ($("input[name='cartItemCode']:checked").length === 0) {
                 alert("선택된 상품이 없습니다.");
@@ -558,15 +601,15 @@
         });
     });
 
-    // 개별 삭제 (1개)
+    // 개별 삭제
     function deleteCartItem(cartItemCode){
-        if(! confirm('상품을 삭제하시겠습니까?')) {
+        if(!confirm('상품을 삭제하시겠습니까?')) {
             return false;
         }
         let url = '${pageContext.request.contextPath}/cart/delete';
         let params = { cartItemCode: cartItemCode };
         const fn = function (data) {
-            if(data.status === 'success') {
+            if(data.status === 'success'){
                 alert('상품이 삭제되었습니다.');
                 $('input[name="cartItemCode"][value="' + cartItemCode + '"]')
                     .closest('.cart-item-block')

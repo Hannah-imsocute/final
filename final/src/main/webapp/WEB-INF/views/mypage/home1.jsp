@@ -603,7 +603,8 @@
                       </div>
                       <div class="detail-item">
                         <span class="label">결제 금액:</span>
-                        <span class="value"><fmt:formatNumber value="${order.netPay}" pattern="#,###" />원</span>
+<%--                        <span class="value"><fmt:formatNumber value="${order.netPay}" pattern="#,###" />원</span>--%>
+                        <fmt:formatNumber value="${order.netPay + order.shipping}" pattern="#,###" />원
                       </div>
                       <div class="detail-item">
                         <span class="label">배송비:</span>

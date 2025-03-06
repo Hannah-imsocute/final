@@ -37,7 +37,5 @@ public class MyPage {
   private int priceforeach;
   private String confirmCode; // 승인코드
   private String confirmDate; // 승인날짜
-
-
-
+  private boolean requested; // 신청 했는지 여부
 }

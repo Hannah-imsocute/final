@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/point/*")
@@ -36,18 +38,21 @@ public class PointController {
 
             dataCount = pointService.dataCount(member.getMemberIdx());
             int total_page = paginateUtil.pageCount(dataCount, size);
-            int usedPoint = pointService.getUsedPoint();
+            int usedPoint = pointService.getUsedPoint(member.getMemberIdx());
             int pointEnabled = pointService.getPointEnabled(member.getMemberIdx());
-
 
             int offset = (current_page - 1) * size;
             if(offset < 0) offset = 0;
 
             String cp = request.getContextPath();
-            String listUrl = cp + "/coupon/detail";
+            String listUrl = cp + "/point/detail";
             String paging = paginateUtil.paging(current_page, total_page, listUrl);
 
-            List<MemberPoint> userSaveAmount = pointService.getUserSaveAmount1(member.getMemberIdx());
+            Map<String, Object> map = new HashMap<>();
+            map.put("offset", offset);
+            map.put("size", size);
+            map.put("memberIdx", member.getMemberIdx());
+            List<MemberPoint> userSaveAmount = pointService.getUserSaveAmount1(map);
             int saveAmount = pointService.getSaveAmount(member.getMemberIdx());
 
             model.addAttribute("paging", paging);
@@ -57,6 +62,7 @@ public class PointController {
             model.addAttribute("total_page", total_page);
             model.addAttribute("userSaveAmount", userSaveAmount);
             model.addAttribute("usedPoint", usedPoint);
+            model.addAttribute("offset", offset);
             model.addAttribute("saveAmount", saveAmount);
             model.addAttribute("pointEnabled", pointEnabled);
         } catch (Exception e){

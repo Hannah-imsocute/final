@@ -32,12 +32,12 @@ public class MemberOrderController {
 
     @RequestMapping(value = "form", method = {RequestMethod.GET, RequestMethod.POST})
     public String orderForm(
-        @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
-        @RequestParam(name = "productCode", required = false) List<Long> productCodes,
-        @RequestParam(name = "quantity", required = false) List<Integer> quantities,
-        @RequestParam(name = "discount", required = false, defaultValue="0") int discountAmount,
-        @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
-        HttpSession session, Model model) throws Exception {
+            @RequestParam(name = "cartItemCode", required = false) List<Long> cartItemCodes,
+            @RequestParam(name = "productCode", required = false) List<Long> productCodes,
+            @RequestParam(name = "quantity", required = false) List<Integer> quantities,
+            @RequestParam(name = "discount", required = false, defaultValue="0") int discountAmount,
+            @RequestParam(name = "mode", required = false, defaultValue = "cart") String mode,
+            HttpSession session, Model model) throws Exception {
 
         // 회원 정보 확인
         SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -73,7 +73,7 @@ public class MemberOrderController {
 
         if ("direct".equals(mode)) {
             if (productCodes == null || quantities == null ||
-                productCodes.isEmpty() || quantities.isEmpty()) {
+                    productCodes.isEmpty() || quantities.isEmpty()) {
                 throw new Exception("주문 정보가 부족합니다. (직접 구매)");
             }
             for (int i = 0; i < productCodes.size(); i++) {
@@ -87,8 +87,6 @@ public class MemberOrderController {
 
                 int discountedPrice = productInfo.getPrice() - discountAmount;
                 if (discountedPrice < 0) discountedPrice = 0;
-
-//                item.setPriceForeach(productInfo.getPrice());
                 item.setPriceForeach(discountedPrice);
                 item.setPrice(quantities.get(i) * item.getPriceForeach());
                 orderItems.add(item);
@@ -110,7 +108,7 @@ public class MemberOrderController {
             for (CartItem cart : cartItems) {
                 int itemTotal = cart.getQuantity() * cart.getPrice();
                 totalMoney += itemTotal;
-                if (itemTotal < 20000) {
+                if (itemTotal < 30000) {
                     shippingFee += 3000;
                 }
             }
@@ -118,7 +116,7 @@ public class MemberOrderController {
             for (OrderItem oi : orderItems) {
                 int itemTotal = oi.getQuantity() * oi.getPriceForeach();
                 totalMoney += itemTotal;
-                if (itemTotal < 20000) {
+                if (itemTotal < 30000) {
                     shippingFee += 3000;
                 }
             }
@@ -164,11 +162,11 @@ public class MemberOrderController {
 
     @PostMapping("submit")
     public String submitOrder(
-        @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
-        @RequestParam(value = "require", required = false) String require,
-        Order order, ShippingInfo shippingInfo,
-        HttpSession session, @ModelAttribute("payment") Payment payment,
-        RedirectAttributes redirectAttributes) {
+            @RequestParam(value = "selectedItems", required = false) List<Long> selectedItems,
+            @RequestParam(value = "require", required = false) String require,
+            Order order, ShippingInfo shippingInfo,
+            HttpSession session, @ModelAttribute("payment") Payment payment,
+            RedirectAttributes redirectAttributes) {
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
             if (info == null) {
@@ -193,7 +191,7 @@ public class MemberOrderController {
                 redirectAttributes.addFlashAttribute("receiverName", addressInfo.getReceiverName());
                 redirectAttributes.addFlashAttribute("phone", addressInfo.getPhone());
                 redirectAttributes.addFlashAttribute("addrTitle",
-                    addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
+                        addressInfo.getAddTitle() + " " + addressInfo.getAddDetail());
             }
             return "redirect:/order/complete";
         } catch (Exception e) {
@@ -213,8 +211,8 @@ public class MemberOrderController {
     @PostMapping("insertAddress")
     @ResponseBody
     public Map<String, Object> addressSubmit(
-        @ModelAttribute("infolist") ShippingInfo shippingInfo,
-        HttpSession session) {
+            @ModelAttribute("infolist") ShippingInfo shippingInfo,
+            HttpSession session) {
         Map<String, Object> map = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");
@@ -241,8 +239,8 @@ public class MemberOrderController {
     @PostMapping("selectAddress")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> selectShippingAddress(
-        @ModelAttribute ShippingInfo shippingInfo,
-        HttpSession session) {
+            @ModelAttribute ShippingInfo shippingInfo,
+            HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         try {
             SessionInfo info = (SessionInfo) session.getAttribute("member");

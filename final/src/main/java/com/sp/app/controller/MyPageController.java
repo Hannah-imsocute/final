@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -215,17 +216,22 @@ public class MyPageController {
     }
 
 
-    @GetMapping("refunds")
+    @PostMapping("refunds")
     public String changeRequest(@ModelAttribute Change change,
-                                @RequestParam long itemCode,
-                                HttpSession session, Model model) {
+                                HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             SessionInfo member = (SessionInfo) session.getAttribute("member");
+
+            if(member == null) {
+                return "redirect:/member/login";
+            }
+
+            change.setMemberIdx(member.getMemberIdx());
             changeService.insertChangeRequest(change);
-
-
+            redirectAttributes.addFlashAttribute("msg", "신청되었습니다.");
         } catch(Exception e) {
             log.error("changeRequest", e);
+            redirectAttributes.addFlashAttribute("msg", "이미 요청이 접수되었습니다.");
         }
         return "redirect:/mypage/detail";
     }
@@ -276,7 +282,5 @@ public class MyPageController {
         }
         return "mypage/refunds";
     }
-
-
 
 }

@@ -17,7 +17,7 @@ public interface PointMapper {
 
     int getPointEnabled(long memberIdx); // 사용가능한 포인트 금액
 
-    int getUsedPoint(); // 사용금액 반환
+    int getUsedPoint(long memberIdx); // 사용금액 반환
     MemberPoint getUserSaveAmount(long memberIdx); // 포인트 누적 기록 가지고오기
 
     long getPointSaveNum(long memberIdx);
@@ -26,7 +26,7 @@ public interface PointMapper {
 
     void insertReviewPoint(MemberPoint point) throws SQLException; // 포인트 적립
 
-    List<MemberPoint> getUserSaveAmount1(long memberIdx);
+    List<MemberPoint> getUserSaveAmount1(Map<String, Object> map);
 
     int dataCount(long memberIdx);
 

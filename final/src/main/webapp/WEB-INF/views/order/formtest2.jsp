@@ -31,7 +31,7 @@
     .order-header .order-title { margin: 0; font-size: 28px; font-weight: bold; }
     .cart-steps { font-size: 14px; color: #999; }
     .cart-steps ol { list-style: none; display: flex; gap: 15px; margin: 0; padding: 0; }
-    .cart-steps li { padding: 4px 8px; border-radius: 4px; background: #eaeaea; }
+    .cart-steps li { padding: 4px 8px; border-radius: 4px; }
     .cart-steps li.current { font-weight: bold; color: #333; }
 
     .order-content {
@@ -494,6 +494,8 @@
     function sendOk() {
       const f = document.orderSubmit;
 
+      let finalNetPay = parseInt($('#finalNetPayInput').val(), 10) || 0;
+
       // 결제 API에서 응답 받을 파라미터
       let byMethod = ''; // 결제수단
       let provider = '';  // 카드사
@@ -508,10 +510,10 @@
       let memberIdx = ${sessionScope.member.memberIdx};
       let merchant_uid = '${order.orderCode}';
       <%--let amount = '${overallNetPay}';--%>
+      let amount = finalNetPay;
       <%--let name = '${order.orderItem.item}'--%>
       // let name = '상품 테스트';
-      <%--let name = '${cart.item}'--%>
-      let amount = 10;
+      // let amount = 10;
       let buyer_email = '${sessionScope.member.email}';
       let buyer_name = '${receiverName}';
       let buyer_tel = '${phone}';
@@ -524,8 +526,9 @@
                 channelKey: "channel-key-eb37305c-955d-472e-98c1-f7d722cc1706",
                 pay_method: provider,
                 merchant_uid: merchant_uid, //상점에서 생성한 고유 주문번호
-                name: '뚝딱뚝딱 상품',
-                amount: amount,
+                // name: '뚝딱뚝딱 상품',
+                name: '선글라스',
+                amount: 10,
                 buyer_email: buyer_email,
                 buyer_name: buyer_name,
                 buyer_tel: buyer_tel, //필수 파라미터
@@ -601,8 +604,6 @@
     <input type="hidden" name="confirmCode" value="">
     <input type="hidden" name="confirmDate" value="">
     <input type="hidden" name="cardNumber" value="">
-    <%--    <input type="hidden" name="orderCode" value="">--%>
-    <%--    <input type="hidden" name="orderCode" value="">--%>
     <input type="hidden" name="itemCode" value="0">
 
 
@@ -751,6 +752,13 @@
             </div>
           </c:forEach>
 
+          <c:set var="cartFinalPriceParam" value="${param.finalTotalPrice}" />
+          <c:set var="sumLineTotalParam"  value="${param.sumLineTotal}" />
+          <c:set var="sumDiscountParam"   value="${param.sumDiscount}" />
+
+
+          <c:set var="productTotal" value="${sumLineTotalParam}" />
+          <c:set var="discountAmount" value="${sumDiscountParam}" />
 
           <!-- 전체 가격 영역 -->
           <div class="price-info">
@@ -761,7 +769,9 @@
             </div>
             <div class="discount-row">
               <span>할인금액</span>
-              <span class="couponDiscount">-0원</span>
+<%--              <fmt:formatNumber value="${discountAmount}" pattern="#,###" />원--%>
+              <span><fmt:formatNumber value="${discountAmount}" pattern="#,###"/>원</span>
+<%--              <span class="couponDiscount">0원</span>--%>
             </div>
             <div class="shipping-fee">
               <span>배송비</span>
@@ -785,11 +795,6 @@
 
           <!-- 결제/취소 버튼 -->
           <button class="btn-submit-order" type="button" onclick="sendOk()">결제하기</button>
-     <%--     <button type="button" class="btn btn-light btn-lg"
-                  style="width: 250px; margin-top:10px;"
-                  onclick="location.href='${pageContext.request.contextPath}/';">
-            결제취소
-          </button>--%>
         </div>
       </div>
     </div>
@@ -1075,7 +1080,6 @@
       updateFinalPriceByPoint();
     });
     function updateFinalPriceByPoint() {
-      // originalTotal: 서버에서 계산한 overallNetPay (배송비 포함)
       let originalTotal = parseInt("${overallNetPay}", 10) || 0;
       let discountAmt = parseInt($('#discountAmount').val(), 10) || 0;
       let usedPoint = parseInt($("input[name=spentPoint]").val(), 10) || 0;

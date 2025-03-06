@@ -30,7 +30,6 @@
     </select>
 
 
-
     <select id="dataCount" parameterType="long" resultType="Integer">
         SELECT
             NVL(count(*), 0) as count
@@ -43,29 +42,7 @@
         ORDER  BY p.order_date DESC
     </select>
 
-  <!--  <select id="getOrdersHistory1" parameterType="map"
-            resultType="com.sp.app.model.MyPage">
-        SELECT p.order_code     AS orderCode,
-               i.order_state    AS orderState,
-               i.QUANTITY       AS quantity,
-               pk.STATE         AS packageState,
-               pr.ITEM          AS productName,
-               pr.PRODUCTCODE as productCode,
-               pr.PRICE as price,
-               s.BRANDNAME      AS brandName,
-               pr.THUMBNAIL as thumbnail,
-               TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
-               i.quantity       AS quantity,
-               i.price          AS netPay
-        FROM   product_order p
-                   JOIN order_item i ON p.order_code = i.order_code
-                   JOIN product pr   ON i.productcode = pr.productcode
-                   JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
-                   JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
-        WHERE  p.memberidx = #{memberIdx}
-        ORDER  BY p.order_date DESC
-        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-        </select>-->
+
 
     <select id="getOrdersHistory1" parameterType="map" resultType="com.sp.app.model.MyPage">
         SELECT
@@ -91,7 +68,14 @@
                     WHERE pr2.PRODUCTCODE = pr.PRODUCTCODE
                       AND pr2.MEMBERIDX = #{memberIdx}
                 ) THEN 1 ELSE 0
-                END AS reviewCount
+                END AS reviewCount,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM CHAGE_REQUEST cr
+                    WHERE cr.MEMBERIDX = p.memberidx
+                      AND cr.ITEM_CODE = i.item_code
+                ) THEN 1 ELSE 0
+                END AS requested
         FROM product_order p
                  JOIN order_item i ON p.order_code = i.order_code
                  JOIN product pr   ON i.productcode = pr.productcode
