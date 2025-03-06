@@ -31,5 +31,18 @@ public class StatsListServiceImpl implements StatsListService {
 	}
 
 
+	@Override
+	public List<Map<String, Object>> memberStatus() {
+		List<Map<String, Object>> list = null;
+		
+		try {
+			list = mapper.memberStatus();
+		} catch (Exception e) {
+			log.info("memberStatus");
+		}
+		return list;
+	}
+
+
 
 }

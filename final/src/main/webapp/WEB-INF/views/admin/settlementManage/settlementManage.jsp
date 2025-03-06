@@ -56,7 +56,16 @@
                             <i class="bi bi-vector-pen"></i> 작가 정산 내역
                         </button>
                     </li>
+                    
+                    <!-- 날짜 검색 필터 -->
+				    <li class="d-flex align-items-center gap-2 ms-auto">
+				        <input type="date" id="startDate" class="form-control">
+				        <span>~</span>
+				        <input type="date" id="endDate" class="form-control">
+				        <button class="btn btn-warning btn-sm" style="white-space: nowrap; font-weight: 700" onclick="searchByDate()">검색</button>
+				    </li>
                 </ul>
+                
 
                 <!-- 메인 탭의 내용 -->
                 <div class="tab-content pt-1">

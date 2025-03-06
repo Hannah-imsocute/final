@@ -56,5 +56,23 @@
 		UNION ALL
 		SELECT '기타' section, COUNT(*) count FROM memberAge WHERE age &lt; 10 OR age &gt;= 70
 	</select>
+	
+	<!-- 활성/비활성화 차트 -->
+	<select id="memberStatus" resultType="map">
+		WITH  memberStatus AS (
+		    SELECT i.memberIdx, block
+		    FROM member m
+			JOIN member_info i ON m.memberidx = i.memberidx
+			LEFT OUTER JOIN roles r ON i.memberidx = r.memberidx
+			WHERE ( r.authority = 'USER' OR r.authority = 'AUTHOR' )
+		)
+        SELECT '활성' AS status, COUNT(*) AS count
+        FROM memberStatus
+        WHERE block = 0
+        UNION ALL
+        SELECT '비활성' AS status, COUNT(*) AS count
+        FROM memberStatus
+        WHERE block = 1
+	</select>
 
 </mapper>

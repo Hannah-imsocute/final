@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface StatsListMapper {
-
 	public List<Map<String, Object>> listAgeSection();
+
+	public List<Map<String, Object>> memberStatus();
 }

@@ -44,8 +44,10 @@
 		FROM settlement_cash
 	</select>
 
+	<!--  
 	<select id="listSettlementMainTab1SubTab1" parameterType="map"
 		resultType="com.sp.app.admin.model.SettlementManage">
+		정산번호, 브랜드 코드, 브랜드 이름, 작가이름, 정산금액, 정산날짜, 누적 금액, 상태 
 		SELECT p.settlement_num, p.brand_code, b.brandname,
 		m.nickname, TO_CHAR(point_amount, '999,999,999') point_amount,
 		TO_CHAR(settlement_date, 'YY/MM/DD') settlement_date, p.deposit,
@@ -54,6 +56,15 @@
 		JOIN seller_brand b ON
 		b.brand_code = p.brand_code
 		JOIN member m ON b.memberidx = m.memberidx
+	</select>
+		-->
+	
+	<select id="listSettlementMainTab1SubTab1" parameterType="map" resultType="com.sp.app.admin.model.SettlementManage">
+	SELECT settlement_num, b.brandname, m.nickname, TO_CHAR(p.point_amount, '999,999,999') point_amount, 
+		TO_CHAR(p.settlement_date, 'YY/MM/DD') settlement_date, p.state
+	FROM settlement_point p
+	JOIN seller_brand b ON p.brand_code = b.brand_code
+	JOIN member m ON m.memberIdx = b.memberIdx
 	</select>
 
 	<select id="listSettlementMainTab1SubTab2" parameterType="map"

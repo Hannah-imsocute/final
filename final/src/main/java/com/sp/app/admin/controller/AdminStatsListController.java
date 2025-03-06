@@ -41,4 +41,17 @@ public class AdminStatsListController {
 
 		return model;
 	}	
+	
+	@ResponseBody
+	@GetMapping("memberStatus")
+	public Map<String, ?> memberStatus() throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+
+		// 연령대별 인원수
+		List<Map<String, Object>> list = service.memberStatus();
+
+		model.put("list", list);
+
+		return model;
+	}	
 }
