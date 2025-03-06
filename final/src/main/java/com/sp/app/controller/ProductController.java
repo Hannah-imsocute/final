@@ -573,6 +573,50 @@ public class ProductController {
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
 	}
+
+//    // 메인배너이미지 파일명 조회
+//    @ResponseBody
+//    @GetMapping("mainBannerImage")
+//    public ResponseEntity<Map<String, Object>> getTabContent(Model model) {
+//    	Map<String, Object> map = new HashMap<>();
+//    	try {
+//    		List<MainProduct> list = service.listMainBannerItem(); // 메인배너이미지 파일명 조회
+//    		if (list == null) {
+//    			map.put("error", "상품 정보를 찾을 수 없습니다.");
+//    			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+//    		}
+//    		map.put("list", list);
+//    		System.out.println("###### : " +  list);
+//    		return  ResponseEntity.ok(map);
+//    		
+//    	} catch (Exception e) {
+//    		log.info("getTabContent Exception : ", e  );
+//    	}
+//    	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+//    }
+    
+ // 메인배너이미지 파일명 조회
+    @ResponseBody
+	@GetMapping("mainBannerImage") 
+	public ResponseEntity<Map<String, Object>> mainBannerImage(
+			HttpServletRequest req ) throws Exception{
+    	Map<String, Object> response = new HashMap<>();
+
+		try {
+			List<MainProduct> list = service.listMainBannerItem(); // 메인배너이미지 파일명 조회
+			response.put("list", list);			
+
+		} catch (NullPointerException e) {
+			log.info("mainBannerImage NullPointerException : ", e  );
+			return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		} catch (Exception e) {
+			log.info("mainBannerImage Exception : ", e  );
+		    return ResponseEntity.internalServerError().body(Map.of("error", "서버 오류가 발생했습니다."));
+		}
+		return ResponseEntity.ok(response);
+		
+	}
+    
     
     // 후기글 신고하기
     @PostMapping("reveiwReport")

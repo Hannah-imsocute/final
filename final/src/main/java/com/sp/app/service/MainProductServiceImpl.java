@@ -249,6 +249,19 @@ public class MainProductServiceImpl implements MainProductService{
 		}
 		return list;
 	}
+	
+	// 메인 화면 배너 이미지 가져오기
+	@Override
+	public List<MainProduct> listMainBannerItem() {
+		List<MainProduct> list = null;
+		try {
+			list = mapper.listMainBannerItem();
+			System.out.println("######## list" + list);
+		} catch (Exception e) {
+			log.info("listMainBannerItem : " , e);
+		}
+		return list;
+	}
 
 	//작품 후기글 신고
 	@Override

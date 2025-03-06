@@ -76,5 +76,9 @@ public class MainProduct {
 	private String content;
 
 	private long category_num;
+
+	// 메인 상단 배너 이미지 파일명
+	private String banner_image_filename;
+	private String banner_image_kind;
 	
 }

@@ -214,5 +214,38 @@
 		)
 	</select>
 
+	<select id="listMainBannerItem" parameterType="Long"
+		resultType="com.sp.app.model.MainProduct">
+			(
+			    SELECT 
+			        THUMBNAIL AS BANNER_IMAGE_FILENAME, 
+			        'EVENT' AS BANNER_IMAGE_KIND
+			    FROM EVENT_ARTICLE
+			    WHERE SYSDATE BETWEEN STARTDATE AND ENDDATE
+			    ORDER BY CREATED DESC, EVENT_ARTICLE_NUM DESC
+			    FETCH FIRST 1 ROW ONLY
+			)
+			UNION ALL
+			(
+			    SELECT 
+			        THUMBNAIL AS BANNER_IMAGE_FILENAME, 
+			        'PRODUCT' AS BANNER_IMAGE_KIND
+			    FROM PRODUCT
+			    WHERE ADDOPTIONS = '1'
+			    ORDER BY UPLOAD DESC, PRODUCTCODE DESC
+			    FETCH FIRST 1 ROW ONLY
+			)
+			UNION ALL  
+			(
+			    SELECT 
+			        SAVEFILENAME AS BANNER_IMAGE_FILENAME, 
+			        'COMMUNITY' AS BANNER_IMAGE_KIND
+			    FROM COMMUNITYIMAGE
+			    WHERE 1 = 1
+			    ORDER BY UPLOADDATE DESC, IMAGE_NUM DESC
+			    FETCH FIRST 1 ROW ONLY
+			)
+	</select>
+
 </mapper>
 	
