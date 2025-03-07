@@ -34,13 +34,13 @@
 			</div>
 			<div class="carousel-inner">
 				<div class="carousel-item active">
-					<img src="" class="d-block w-100" alt="...">
+					<img src="${pageContext.request.contextPath}/uploads/event/check.jpg" class="d-block w-100" alt="...">
 				</div>
 				<div class="carousel-item">
-					<img src="" class="d-block w-100" alt="...">
+					<img src="${pageContext.request.contextPath}/uploads/event/new.jpg" class="d-block w-100" alt="...">
 				</div>
 				<div class="carousel-item">
-					<img src="" class="d-block w-100" alt="...">
+					<img src="${pageContext.request.contextPath}/uploads/product/necklace.jpg" class="d-block w-100" alt="...">
 				</div>
 			</div>
 			<button class="carousel-control-prev" type="button"
