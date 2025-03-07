@@ -84,7 +84,7 @@
         <div class="post-container">
             <h2 class="post-title">${dto.subject}</h2>
             <p class="post-date">${dto.startdate} ~ ${dto.enddate}</p>
-            <div class="post-image"> <img alt="썸네일" src="/uploads/event/${dto.thumbnail}"> </div> 
+            <div class="post-image"> <img alt="썸네일" src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}"> </div> 
             <p class="post-content">${dto.textcontent}</p>
             <button class="download-btn"><i class="bi bi-download"></i> 쿠폰 다운로드</button>
         </div>

@@ -15,6 +15,38 @@
 	flex: 0 0 20%;
 	max-width: 20%;
 }
+
+.carousel-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.side-banner {
+    width: 33%; /* 캐러셀 대비 동일한 크기 */
+    height: 100%; /* 캐러셀 높이에 맞추기 */
+    flex-shrink: 0;
+    opacity: 0.6;
+    overflow: hidden;
+    border-radius: 20px;
+    display: flex;
+}
+/* ⭐️ 불투명도 추가 */
+.side-banner img {
+    width: 100%;
+    height: 100%; /* 부모 높이 맞추기 */
+    max-height: 350px; /* 캐러셀과 동일한 최대 높이 */
+    object-fit: cover; /* 비율 유지하면서 꽉 채우기 */
+    opacity: 0.6; /* 불투명도 적용 (0.0 = 완전 투명, 1.0 = 완전 불투명) */
+    transition: opacity 0.3s ease-in-out; /* 부드러운 효과 */
+}
+
+.carousel-wrapper {
+	flex-grow: 1;
+	max-width: 800px; /* 캐러셀 크기에 맞춤 */
+}
 </style>
 </head>
 <body>
@@ -22,38 +54,54 @@
 		<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 	</header>
 	<main style="margin-top: 200px;">
-		<div id="carouselExampleIndicators" class="carousel slide">
-			<div class="carousel-indicators">
-				<button type="button" data-bs-target="#carouselExampleIndicators"
-					data-bs-slide-to="0" class="active" aria-current="true"
-					aria-label="Slide 1"></button>
-				<button type="button" data-bs-target="#carouselExampleIndicators"
-					data-bs-slide-to="1" aria-label="Slide 2"></button>
-				<button type="button" data-bs-target="#carouselExampleIndicators"
-					data-bs-slide-to="2" aria-label="Slide 3"></button>
+
+		<div class="carousel-container">
+			<!-- 왼쪽 이미지 -->
+			<div class="side-banner left">
+				<img
+					src="${pageContext.request.contextPath}/uploads/product/necklace.jpg"
+					alt="Left Image">
 			</div>
-			<div class="carousel-inner">
-				<div class="carousel-item active">
-					<img src="${pageContext.request.contextPath}/uploads/event/check.jpg" class="d-block w-100" alt="...">
-				</div>
-				<div class="carousel-item">
-					<img src="${pageContext.request.contextPath}/uploads/event/new.jpg" class="d-block w-100" alt="...">
-				</div>
-				<div class="carousel-item">
-					<img src="${pageContext.request.contextPath}/uploads/product/necklace.jpg" class="d-block w-100" alt="...">
+
+			<!-- 캐러셀 -->
+			<div class="carousel-wrapper">
+				<div id="carouselExampleIndicators" class="carousel slide">
+					<div class="carousel-inner">
+						<div class="carousel-item active">
+							<img
+								src="${pageContext.request.contextPath}/uploads/event/check.jpg"
+								class="d-block w-100" alt="...">
+						</div>
+						<div class="carousel-item">
+							<img
+								src="${pageContext.request.contextPath}/uploads/event/new.jpg"
+								class="d-block w-100" alt="...">
+						</div>
+						<div class="carousel-item">
+							<img
+								src="${pageContext.request.contextPath}/uploads/product/necklace.jpg"
+								class="d-block w-100" alt="...">
+						</div>
+					</div>
+					<button class="carousel-control-prev" type="button"
+						data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					</button>
+					<button class="carousel-control-next" type="button"
+						data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					</button>
 				</div>
 			</div>
-			<button class="carousel-control-prev" type="button"
-				data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Previous</span>
-			</button>
-			<button class="carousel-control-next" type="button"
-				data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-				<span class="carousel-control-next-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Next</span>
-			</button>
+
+			<!-- 오른쪽 이미지 -->
+			<div class="side-banner right">
+				<img
+					src="${pageContext.request.contextPath}/uploads/product/necklace.jpg"
+					alt="Right Image">
+			</div>
 		</div>
+
 
 		<section class="best-items-section">
 			<h2>BEST ITEMS</h2>
@@ -89,19 +137,21 @@
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
-	
+
 	<script type="text/javascript">
-		$(function(){
-			$('.toggle-input').change(function(){
-				let state = $(this).is(':checked');
-				
-				if(state){
-					location.href='${pageContext.request.contextPath}/artist/main/list';
-				}else {
-					location.href= '${pageContext.request.contextPath}/';
-				}
-				
-			});
+		$(function() {
+			$('.toggle-input')
+					.change(
+							function() {
+								let state = $(this).is(':checked');
+
+								if (state) {
+									location.href = '${pageContext.request.contextPath}/artist/main/list';
+								} else {
+									location.href = '${pageContext.request.contextPath}/';
+								}
+
+							});
 		});
 	</script>
 </body>

@@ -17,7 +17,7 @@
 
 			<c:otherwise>
 				<ul class="nav user-menu">
-					<li class="nav-item"><a href="#" class="nav-link">사용자님</a></li>
+					<li class="nav-item"><a href="#" class="nav-link">${sessionScope.member.nickName}님</a></li>
 					<li class="nav-item"><a href="#" class="nav-link">알림</a></li>
 					<li class="nav-item"><a href="#" class="nav-link">메시지</a></li>
 					<li class="nav-item"><a

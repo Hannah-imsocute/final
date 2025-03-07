@@ -22,6 +22,7 @@ import com.sp.app.admin.service.EventManageService;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.common.StorageService;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +36,13 @@ public class AdminEventController {
 	private final EventManageService service;
 	private final StorageService storage;
 	private final PaginateUtil util;
-	private final String uploadPath = "/uploads/event";
+	private String uploadPath;
 	
+	
+	@PostConstruct
+	public void init() {
+		uploadPath = this.storage.getRealPath("/uploads/event");
+	}
 	
 	@GetMapping("main")
 	public String handleMain(@RequestParam(name = "page", defaultValue = "1")int page, Model model) {
@@ -73,7 +79,11 @@ public class AdminEventController {
 			session.removeAttribute("value");
 			
 			dto.setEvent(event);
-			
+			System.out.println("============================");
+			System.out.println("============================");
+			System.out.println(file.getOriginalFilename());
+			System.out.println("============================");
+			System.out.println("============================");
 			String filename = storage.uploadFileToServer(file, uploadPath);
 			
 			dto.setThumbnail(filename);
