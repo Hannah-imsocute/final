@@ -31,8 +31,14 @@ public class CommunityServiceImpl implements CommunityService{
 
 	@Override
 	public Community findById(long num) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Community dto = null;
+		
+		try {
+			dto = mapper.findById(num);
+		} catch (Exception e) {
+			log.info("findById : ", e);
+		}
+		return dto;
 	}
 
 	@Override
@@ -48,13 +54,9 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public void insertCommunity(Community dto, String uploadPath) throws Exception {
+	public void insertCommunity(Community dto) throws Exception {
 		try {
-			mapper.insertCommunity(dto, uploadPath);
-			
-			if(dto.getImages() != null && !dto.getImages().isEmpty()) {
-				insertCommunityImage(dto, uploadPath);
-			}
+			mapper.insertCommunity(dto);
 		} catch (Exception e) {
 			log.info("insertCommunity : ", e);
 		}

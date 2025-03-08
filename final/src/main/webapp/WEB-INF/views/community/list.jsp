@@ -114,7 +114,6 @@
     	<c:forEach var="dto" items="${list}" varStatus="status">
 					<div class="card">
 						<div class="card-content" data-community_num="${dto.community_num}">
-							<img class="thumbnail-img" src="${pageContext.request.contextPath}/uploads/community/noimage.png">
 							<div class="p-2 px-4">
 								<div class="title">
 									${dto.brandName}
@@ -122,7 +121,6 @@
 								<div class="description">
 									${dto.content}
 								</div>
-							
 							</div>
 						</div>
 					</div>

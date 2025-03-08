@@ -10,7 +10,7 @@ public interface CommunityService {
 	public int dataCount(Map<String, Object> map) throws Exception;
 	public Community findById(long num) throws Exception;
 	public List<Community> listCommunity(Map<String, Object> map) throws Exception;
-	public void insertCommunity(Community dto, String uploadPath) throws Exception;
+	public void insertCommunity(Community dto) throws Exception;
 	public void insertCommunityImage(Community dto, String uploadPath) throws Exception;
 	
 	public void updateCommunity(Community dto, String uploadPath) throws Exception;

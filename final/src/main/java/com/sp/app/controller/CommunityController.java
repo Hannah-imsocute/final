@@ -39,12 +39,12 @@ public class CommunityController {
 	private final StorageService storageService;
 
 	private String uploadPath;
-	
+
 	@PostConstruct
 	public void init() {
-		uploadPath = this.storageService.getRealPath("/uploads/product");		
-	}	
-	
+		uploadPath = this.storageService.getRealPath("/uploads/product");
+	}
+
 	@GetMapping("list")
 	public String list(@RequestParam(name = "page", defaultValue = "1") int current_page,
 			@RequestParam(name = "schType", defaultValue = "all") String schType,
@@ -111,101 +111,82 @@ public class CommunityController {
 
 		return "community/list";
 	}
-	
+
 	// 커뮤니티 게시글 상세보기
 	@GetMapping("detail/{community_num}")
-	public String article(
-			@PathVariable("community_num") long community_num, 
-			//@RequestParam(name = "page") String page,
-			//@RequestParam(name = "schType", defaultValue = "all") String schType,
-			//@RequestParam(name = "kwd", defaultValue = "") String kwd,
+	public String article(@PathVariable("community_num") long community_num, 
+//			@RequestParam(name = "page") String page,
+//			@RequestParam(name = "schType", defaultValue = "all") String schType,
+//			@RequestParam(name = "kwd", defaultValue = "") String kwd, 
 			Model model,
-			HttpSession session) throws Exception {
-         
-//		String query = "page=" + page;
+			HttpSession session)
+			throws Exception {
+
+//			String query = "page=" + page;
 
 		try {
+//				kwd = URLDecoder.decode(kwd, "utf-8");
+//				if(! kwd.isBlank()) { 
+//					query += "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "utf-8"); 
+//					}
+			  
+			  //조회수 service.updateHitCount(num);
+			  
+			  
+			  //게시글 가져오기
+			Community dto = Objects.requireNonNull(service.findById(community_num));
+			  
+			  //dto.setContent(myUtil.htmlSymbols(dto.getContent())); //스마트에디터 사용할때는 쓰면안됨
+//				dto.setUserName(myUtil.nameMasking(dto.getUserName()));
+			  
+			model.addAttribute("dto", dto); 
+System.out.println(dto.getBrandName());
 			
-			/*
-			 * kwd = URLDecoder.decode(kwd, "utf-8"); if(! kwd.isBlank()) { query +=
-			 * "&schType=" + schType + "&kwd=" + URLEncoder.encode(kwd, "utf-8"); }
-			 * 
-			 * //조회수 service.updateHitCount(num);
-			 * 
-			 * 
-			 * //게시글 가져오기 Board dto = Objects.requireNonNull(service.findById(num));
-			 * 
-			 * //dto.setContent(myUtil.htmlSymbols(dto.getContent())); //스마트에디터 사용할때는 쓰면안됨
-			 * dto.setUserName(myUtil.nameMasking(dto.getUserName()));
-			 * 
-			 * //이전글 / 다음글
-			 * 
-			 * Map<String, Object> map = new HashMap<>(); map.put("schType", schType);
-			 * map.put("kwd", kwd); map.put("num", num); Board prevDto =
-			 * service.findByPrev(map); Board nextDto = service.findByNext(map);
-			 * 
-			 * 
-			 * //로그인 유저의 게시글 좋아요 여부 SessionInfo info =
-			 * (SessionInfo)session.getAttribute("member"); map.put("userId",
-			 * info.getUserId());
-			 * 
-			 * boolean isUserLiked = service.isUserBoardLiked(map); //로그인 유저가 좋아요 했는지 안했는지
-			 * 파악
-			 * 
-			 * model.addAttribute("dto", dto); model.addAttribute("prevDto", prevDto);
-			 * model.addAttribute("nextDto", nextDto);
-			 * 
-			 * model.addAttribute("isUserLiked", isUserLiked);
-			 */
 //			  model.addAttribute("query",query); 
 //			  model.addAttribute("page",page);
-			 
-			  return "community/detail";
-			
-			
+
+	
 		} catch (NullPointerException e) {
 		} catch (Exception e) {
 			log.info("article : ", e);
 		}
-		return "redirect:/community/list";
-	//	return "redirect:/community/list?" + query";
+		return "community/detail";
+		// return "redirect:/community/list?" + query";
 	}
-	
-	 @GetMapping("write")
-	    public String writeForm(Model model) throws Exception {
-	    	try {
-				model.addAttribute("mode","write");
-			} catch (Exception e) {
-				log.info("writeForm : " , e);
-			}
-	    	return "community/write";
-	    }
 
-    @PostMapping("write")
-    public String writeSubmit(Community dto,
-                                HttpServletRequest request,
-                                HttpSession session,
-                                Model model) throws Exception {
-    	
-    	Long memberIdx = getMemberIdx(session);
-    	dto.setMemberIdx(memberIdx);
+	@GetMapping("write")
+	public String writeForm(Model model) throws Exception {
+		try {
+			model.addAttribute("mode", "write");
+		} catch (Exception e) {
+			log.info("writeForm : ", e);
+		}
+		return "community/write";
+	}
+
+	@PostMapping("write")
+	public String writeSubmit(Community dto, HttpServletRequest request, HttpSession session, Model model)
+			throws Exception {
+
+		Long memberIdx = getMemberIdx(session);
+		dto.setMemberIdx(memberIdx);
+
 //    	dto.setMemberIdx(2); // 테스트소스
-    	
-        // 제품(작품) 정보를 DB에 저장하는 신규 메서드
-        service.insertCommunity(dto, uploadPath);
-        service.insertCommunityImage(dto, uploadPath);
-        // 등록한 작품 리스트 조회
-        
-        String contextPath = request.getContextPath();
-        return "redirect:" + contextPath + "/community/list";
-   
-    }
 
-    
-    // Session 에서 회원코드 반환
-    private static Long getMemberIdx(HttpSession session) {
-      SessionInfo member = (SessionInfo) session.getAttribute("member");
-      return member.getMemberIdx();
-    }
+		// 제품(작품) 정보를 DB에 저장하는 신규 메서드
+		service.insertCommunity(dto);
+//        service.insertCommunityImage(dto, uploadPath);
+		// 등록한 작품 리스트 조회
+
+		String contextPath = request.getContextPath();
+		return "redirect:" + contextPath + "/community/list";
+
+	}
+
+	// Session 에서 회원코드 반환
+	private static Long getMemberIdx(HttpSession session) {
+		SessionInfo member = (SessionInfo) session.getAttribute("member");
+		return member.getMemberIdx();
+	}
 
 }

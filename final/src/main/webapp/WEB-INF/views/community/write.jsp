@@ -42,13 +42,17 @@
 	<main>
 	<div class="content">
         <!-- 작품 설명 -->
-        <div class="form-group">
-            <label>작품 설명</label>
-            <textarea name="describe" id="ir1" rows="5" style="max-width: 95%; height: 290px;"><c:out value="${dto.describe}" escapeXml="false"/></textarea>
-       		<button type="submit" class="submit-btn" onclick="smartEditInDescribe()">${mode=="update"?"수정완료":"등록완료"}</button>
-	    	<button type="reset" class="btn btn-light">다시입력</button>
-	    	<button type="button" class="btn btn-light" onclick="location.href='${url}';">${mode=="update"?"수정취소":"등록취소"}</button>
-	   </div>
+        <form name="communityForm" class="communityForm" method="post" enctype="multipart/form-data" 
+        	action="${pageContext.request.contextPath}/community/${mode}"
+		    onsubmit="return validateProductForm()">
+       		<div class="form-group">
+            	<label>작품 설명</label>
+            	<textarea name="content" id="ir1" rows="5" style="max-width: 95%; height: 290px;"><c:out value="${dto.content}" escapeXml="false"/></textarea>
+       			<button type="submit" class="submit-btn" onclick="smartEditInDescribe()">${mode=="update"?"수정완료":"등록완료"}</button>
+	    		<button type="reset" class="btn btn-light">다시입력</button>
+	    		<button type="button" class="btn btn-light" onclick="location.href='${url}';">${mode=="update"?"수정취소":"등록취소"}</button>
+		   </div>
+	   </form>
  	</div>
 	</main>
 <script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>

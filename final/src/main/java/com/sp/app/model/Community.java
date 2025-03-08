@@ -17,7 +17,7 @@ public class Community {
 	private long community_num;
 	private long memberIdx;
 	private String brandName;
-	private String content; //
+	private String content; // smart edit 본문
 	private String created_po; //글올린 날짜
 	private String update_po; //글 수정한 날짜
 	

@@ -22,7 +22,7 @@
 	
 	
 	<!-- 커뮤니티게시글 등록 -->
-	<select id="insertCommynity" parameterType="map">
+	<select id="insertCommunity" parameterType="map">
 		INSERT INTO community (
 		    community_num,
 		    memberidx,
@@ -30,12 +30,12 @@
 		    created_po,
 		    update_po
 		) VALUES (
-		    SEQ_COMMUNITY_NEXTVAL,
-		    #{memberidx},
+		    SEQ_COMMUNITY.NEXTVAL,
+		    #{memberIdx},
 		    #{content},
 		    sysdate,
 		    sysdate
-		);
+		)
 	</select>
 	
 	<insert id="insertCommunityImage" parameterType="com.sp.app.model.Community">
@@ -54,15 +54,18 @@
 		);
 	</insert>
 
-	<select id="findById" parameterType="Long"
-		resultType="com.sp.app.model.MainProduct">
-		SELECT productCode, p.brand_code, s.brandName, item, price, discount,
-		addOptions, describe, upload, modified, p.categoryCode, name,
-		thumbnail, blind
-		FROM product p
-		JOIN SELLER_BRAND S ON P.brand_code = s.brand_code
-		JOIN productCategory c ON c.categoryCode = p.categoryCode
-		WHERE productCode = #{productCode}
+	<select id="findById" parameterType="Long" resultType="com.sp.app.model.Community">
+		SELECT
+		    community_num,
+		    c.memberidx,
+		    content,
+		    created_po,
+		    update_po,
+            brandname
+		FROM community c
+        JOIN seller_brand s
+        ON c.memberidx = s.memberidx
+	    where community_num = #{community_num}
 	</select>
 
 	<select id="listMainProductFile" parameterType="Long"
