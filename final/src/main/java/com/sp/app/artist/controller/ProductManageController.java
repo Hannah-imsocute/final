@@ -132,17 +132,15 @@ public class ProductManageController{
                                 HttpSession session,
                                 Model model) throws Exception {
     	
-//    	Long memberIdx = getMemberIdx(session);
-//    	dto.setMemberIdx(memberIdx);
-    
-    	dto.setMemberIdx(2); // 테스트소스
-    	
-        // 제품(작품) 정보를 DB에 저장하는 신규 메서드
+//    	dto.setMemberIdx(2); // 테스트소스
+
+    	// 제품(작품) 정보를 DB에 저장하는 신규 메서드
         service.insertProduct(dto, uploadPath);
         
         // 등록한 작품 리스트 조회
         Map<String, Object> map = new HashMap<>();
         Long memberIdx = getMemberIdx(session);
+        
         map.put("memberIdx", memberIdx); 
         List<ProductManage> productList = service.listProduct(map);
       

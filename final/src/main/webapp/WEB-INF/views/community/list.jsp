@@ -103,7 +103,7 @@
                             <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/list';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
                         </div>
                         <div class="button-container">
-                                <button type="button" onclick="location.href='{pageContext.request.contextPath}/community/write'">글올리기</button>
+                                <button type="button" onclick="location.href='${pageContext.request.contextPath}/community/write'">글올리기</button>
                         </div>
                     </form>
                 </div>
@@ -152,6 +152,4 @@ $(document).ready(function() {
 });
 
 </script>
-
-
 </html>

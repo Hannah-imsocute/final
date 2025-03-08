@@ -1,6 +1,10 @@
 
 package com.sp.app.model;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +26,7 @@ public class Community {
 	private String saveFileName;
 	private String original_FileName;
 	private String uploadDate;
+	private List<MultipartFile> images;
 	
 	//좋아요
 	private String liked_at; //좋아요 한 날짜 

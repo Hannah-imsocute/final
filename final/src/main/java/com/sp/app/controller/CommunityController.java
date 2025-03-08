@@ -12,16 +12,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+import com.sp.app.artist.model.ProductManage;
 import com.sp.app.common.PaginateUtil;
-
+import com.sp.app.common.StorageService;
 import com.sp.app.model.Community;
 import com.sp.app.model.SessionInfo;
 import com.sp.app.service.CommunityService;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +36,15 @@ import lombok.extern.slf4j.Slf4j;
 public class CommunityController {
 	private final CommunityService service;
 	private final PaginateUtil paginateUtil;
-	
+	private final StorageService storageService;
 
+	private String uploadPath;
+	
+	@PostConstruct
+	public void init() {
+		uploadPath = this.storageService.getRealPath("/uploads/product");		
+	}	
+	
 	@GetMapping("list")
 	public String list(@RequestParam(name = "page", defaultValue = "1") int current_page,
 			@RequestParam(name = "schType", defaultValue = "all") String schType,
@@ -161,8 +170,42 @@ public class CommunityController {
 		return "redirect:/community/list";
 	//	return "redirect:/community/list?" + query";
 	}
-
 	
+	 @GetMapping("write")
+	    public String writeForm(Model model) throws Exception {
+	    	try {
+				model.addAttribute("mode","write");
+			} catch (Exception e) {
+				log.info("writeForm : " , e);
+			}
+	    	return "community/write";
+	    }
 
+    @PostMapping("write")
+    public String writeSubmit(Community dto,
+                                HttpServletRequest request,
+                                HttpSession session,
+                                Model model) throws Exception {
+    	
+    	Long memberIdx = getMemberIdx(session);
+    	dto.setMemberIdx(memberIdx);
+//    	dto.setMemberIdx(2); // 테스트소스
+    	
+        // 제품(작품) 정보를 DB에 저장하는 신규 메서드
+        service.insertCommunity(dto, uploadPath);
+        service.insertCommunityImage(dto, uploadPath);
+        // 등록한 작품 리스트 조회
+        
+        String contextPath = request.getContextPath();
+        return "redirect:" + contextPath + "/community/list";
+   
+    }
+
+    
+    // Session 에서 회원코드 반환
+    private static Long getMemberIdx(HttpSession session) {
+      SessionInfo member = (SessionInfo) session.getAttribute("member");
+      return member.getMemberIdx();
+    }
 
 }

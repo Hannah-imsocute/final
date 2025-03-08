@@ -14,6 +14,7 @@ public interface CommunityMapper {
 	public Community findById(long num) throws SQLException;
 	public List<Community> listCommunity(Map<String, Object> map) throws SQLException;
 	public void insertCommunity(Community dto, String uploadPath) throws SQLException;
+	public void insertCommunityImage(Community dto, String uploadPath) throws SQLException;
 	public void updateCommunity(Community dto, String uploadPath) throws SQLException;
 	public void deleteCommunity(long num, String uploadPath, String memberIdx, String AUTHORITY) throws SQLException;
 

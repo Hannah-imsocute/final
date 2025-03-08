@@ -79,7 +79,7 @@
 						</div>
 						<div class="carousel-item">
 							<img
-								src="${pageContext.request.contextPath}/uploads/product/necklace.jpg"
+								src="${pageContext.request.contextPath}/uploads/product/sofa.jpg"
 								class="d-block w-100" alt="...">
 						</div>
 					</div>
@@ -97,7 +97,7 @@
 			<!-- 오른쪽 이미지 -->
 			<div class="side-banner right">
 				<img
-					src="${pageContext.request.contextPath}/uploads/product/necklace.jpg"
+					src="${pageContext.request.contextPath}/uploads/product/mainbanner3.jpg"
 					alt="Right Image">
 			</div>
 		</div>
