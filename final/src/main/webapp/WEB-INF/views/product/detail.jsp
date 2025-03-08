@@ -103,7 +103,7 @@
  
                 <div class="promotion">
                     결제 혜택: 포토 리뷰 작성 시 500 포인트 적립
-                    <br>똑딱똑딱 전상품 무료배송!
+                    <br>똑딱똑딱 30,000원 이상 구매시 무료배송!
                 </div>
 
 
@@ -324,7 +324,13 @@ $(function(){
 	                    	$productReviewBox.find('.review-num').text("후기글번호 :  " + arrayKey.review_num);
 	                    	$productReviewBox.find('.review-author').text(" 작성자 :  " + arrayKey.nickName);
 	                    	$productReviewBox.find('.review-content').text(arrayKey.content);
-	                    	reviewContainer.append($productReviewBox);
+	                    	
+	                    	var imageUrl = contextPath + "/uploads/review/" + arrayKey.image;
+	                        var imgTag = '<img src="' + imageUrl + '" alt="리뷰 이미지" class="review-image" style="width: 100px; border-radius: 5px; margin-top: 5px; display: block;">';
+	                    	
+	                        $productReviewBox.find('.review-content').append(imgTag);
+	                        
+	                        reviewContainer.append($productReviewBox);
 	                    	
 	                   		console.log("$productReviewBox :" + $productReviewBox);
                  	    });

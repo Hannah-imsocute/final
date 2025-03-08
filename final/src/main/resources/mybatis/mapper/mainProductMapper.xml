@@ -164,15 +164,16 @@
 
 	<select id="listMainProductReview" parameterType="Long"
 		resultType="com.sp.app.model.MainProduct">
-		SELECT review_num, p.productCode, nickName, content
+		SELECT r.review_num, p.productCode, nickName, content, image
 		FROM
 		product p
 		JOIN productReview r
 		ON p.productCode = r.productCode
+        JOIN productReviewImage m
+        ON r.review_num = m.review_num
 		JOIN MEMBER m
 		ON m.memberIdx = r.memberIdx
-		WHERE p.productCode =
-		#{productCode}
+		WHERE p.productCode = #{productCode}
 	</select>
 
 	<!-- 작품 후기글 신고 -->

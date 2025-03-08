@@ -555,17 +555,21 @@ public class ProductController {
 
 			}else if (tab.equals(".product-review")) {
 				List<MainProduct> listReview = service.listMainProductReview(productCode);
-				
+			
 				if (listReview == null) {
 					 map.put("error", "상품 정보를 찾을 수 없습니다.");
 					 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
 		            }
 				map.put("listReview", listReview);
+				for(MainProduct product : listReview ) {
+					System.out.println("product image : " +product.getImage());
+				}
 	        }
 			
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-			    System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
-			}
+			//디버깅용
+//			for (Map.Entry<String, Object> entry : map.entrySet()) {
+//			    System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+//			}
 			return  ResponseEntity.ok(map);
 			
 		} catch (Exception e) {
