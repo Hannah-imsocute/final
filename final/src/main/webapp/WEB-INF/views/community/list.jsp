@@ -54,8 +54,8 @@
         .button-container {
             display: flex;
             justify-content: flex-end;
-            margin-top: 20px;
             padding-right: 20px;
+            width: auto;
         }
         .button-container button {
             background-color: #ff6b6b;
@@ -81,34 +81,34 @@
 		<jsp:include page="/WEB-INF/views/layout/header.jsp" />
 	</header>
 	<main>
-    <div class="button-container">
-            <button type="button" onclick="location.href='{pageContext.request.contextPath}/community/write'">글올리기</button>
-    </div>
-
-		<div class="row community-list-search d-flex align-items-center justify-content-end">
-			<div class="col-auto ms-auto">
-				<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/list';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
-			</div>
-			<div class="col">
-				<form class="row justify-content-center" name="searchForm">
-					<div class="col-auto p-1">
-						<select name="schType" class="form-select">
-							<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+        
+        <div class="row community-list-search d-flex align-items-center justify-content-end">
+            <div class="col">
+                <form class="row justify-content-center" name="searchForm">
+                    <div class="col-auto p-1">
+                        <select name="schType" class="form-select">
+                            <option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
 							<option value="userName" ${schType=="userName"?"selected":""}>작가명</option>
 							<option value="reg_date" ${schType=="reg_date"?"selected":""}>등록일</option>
 							<option value="content" ${schType=="content"?"selected":""}>내용</optio>
-						</select>
-					</div>
-					<div class="col-auto p-1">
-						<input type="text" name="kwd" value="${kwd}" class="form-control">
-					</div>
-					<div class="col-auto p-1">
-						<button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
-					</div>
-				</form>
-			</div>
-		
-		</div>
+                            </select>
+                        </div>
+                        <div class="col-auto p-1">
+                            <input type="text" name="kwd" value="${kwd}" class="form-control">
+                        </div>
+                        <div class="col-auto p-1">
+                            <button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
+                        </div>
+                        <div class="col-auto p-1">
+                            <button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/community/list';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+                        </div>
+                        <div class="button-container">
+                                <button type="button" onclick="location.href='{pageContext.request.contextPath}/community/write'">글올리기</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
     
     <div class="container">
     	<c:forEach var="dto" items="${list}" varStatus="status">
