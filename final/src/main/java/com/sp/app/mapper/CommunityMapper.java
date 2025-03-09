@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sp.app.model.Community;
-import com.sp.app.model.MainProduct;
 @Mapper
 public interface CommunityMapper {
 	public int dataCount(Map<String, Object> map) throws SQLException;
@@ -23,6 +22,7 @@ public interface CommunityMapper {
 	public Community findByPrev(Map<String, Object> map) throws SQLException;
 	public Community findByNext(Map<String, Object> map) throws SQLException;
 
+	
 	public boolean deleteUploadFile(String uploadPath, String filename) throws SQLException;
 
 

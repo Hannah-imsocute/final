@@ -2,13 +2,9 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sp.app.mapper.CommunityMapper">
-	
-
-	<select id="dataCount" parameterType="map"
-		resultType="Integer">
-		SELECT NVL(COUNT(*), 0) dataCount FROM Community
+	<select id="replyDataCount" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) dataCount FROM community
 	</select>
-
 
 	<!-- 커뮤니티 리스트 -->
 	<select id="listCommunity" parameterType="map"
@@ -22,7 +18,7 @@
 	
 	
 	<!-- 커뮤니티게시글 등록 -->
-	<select id="insertCommunity" parameterType="map">
+	<insert id="insertCommunity" parameterType="map">
 		INSERT INTO community (
 		    community_num,
 		    memberidx,
@@ -36,7 +32,7 @@
 		    sysdate,
 		    sysdate
 		)
-	</select>
+	</insert>
 	
 	<insert id="insertCommunityImage" parameterType="com.sp.app.model.Community">
 		INSERT INTO communityimage (
@@ -67,6 +63,9 @@
         ON c.memberidx = s.memberidx
 	    where community_num = #{community_num}
 	</select>
+	
+	
+	
 
 	<select id="listMainProductFile" parameterType="Long"
 		resultType="com.sp.app.model.MainProduct">
@@ -91,27 +90,9 @@
 		WHERE p.productCode =
 		#{productCode}
 	</select>
-
 	
 
-	<!-- 작품 신고 -->
-	<select id="insertProductReport" parameterType="map">
-		INSERT INTO item_report (
-		sellerreport_num,
-		productcode,
-		memberidx2,
-		reason,
-		report_date,
-		category_num
-		) VALUES (
-		SEQ_ITEM_REPORT.NEXTVAL,
-		#{productCode},
-		#{memberIdx},
-		#{content},
-		sysdate,
-		#{categoryNum}
-		)
-	</select>
+	
 
 </mapper>
 	

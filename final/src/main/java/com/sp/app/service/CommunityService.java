@@ -1,12 +1,13 @@
 package com.sp.app.service;
+
 import java.util.List;
 import java.util.Map;
 
 import com.sp.app.model.Community;
 
 
-
 public interface CommunityService {
+
 	public int dataCount(Map<String, Object> map) throws Exception;
 	public Community findById(long num) throws Exception;
 	public List<Community> listCommunity(Map<String, Object> map) throws Exception;
@@ -22,5 +23,6 @@ public interface CommunityService {
 	public Community findByNext(Map<String, Object> map) throws Exception;
 
 	public boolean deleteUploadFile(String uploadPath, String filename) throws Exception;
+
 
 }

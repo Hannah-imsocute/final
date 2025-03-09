@@ -2,7 +2,6 @@ package com.sp.app.controller;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sp.app.artist.model.ProductManage;
 import com.sp.app.common.PaginateUtil;
 import com.sp.app.common.StorageService;
 import com.sp.app.model.Community;
 import com.sp.app.model.SessionInfo;
 import com.sp.app.service.CommunityService;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CommunityController {
 	private final CommunityService service;
 	private final PaginateUtil paginateUtil;
-	private final StorageService storageService;
 
-	private String uploadPath;
-
-	@PostConstruct
-	public void init() {
-		uploadPath = this.storageService.getRealPath("/uploads/product");
-	}
 
 	@GetMapping("list")
 	public String list(@RequestParam(name = "page", defaultValue = "1") int current_page,
@@ -140,7 +130,7 @@ public class CommunityController {
 //				dto.setUserName(myUtil.nameMasking(dto.getUserName()));
 			  
 			model.addAttribute("dto", dto); 
-System.out.println(dto.getBrandName());
+
 			
 //			  model.addAttribute("query",query); 
 //			  model.addAttribute("page",page);
@@ -188,5 +178,9 @@ System.out.println(dto.getBrandName());
 		SessionInfo member = (SessionInfo) session.getAttribute("member");
 		return member.getMemberIdx();
 	}
+	
+	
+	
+
 
 }

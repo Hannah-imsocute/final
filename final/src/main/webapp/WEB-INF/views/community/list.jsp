@@ -21,7 +21,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             max-width: 1200px;
-            margin: 20px auto;
+            margin-top: 20px;
+
         }
         .card:hover {
             background: white;

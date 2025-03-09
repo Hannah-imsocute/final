@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sp.app.mapper.ReplyMapper">
+	
+	<insert id="insertReply" parameterType="com.sp.app.model.Reply">
+		INSERT INTO communityReply (
+		    reply_num,
+		    memberidx,
+		    community_num,
+		    content,
+		    created,
+		    updated,
+		    parent_comment_num,
+		    blind
+		) VALUES (
+		    SEQ_COMMUNITYREPLY.NEXTVAL,
+		    #{memberIdx},
+		    #{community_num},
+		    #{content},
+		    SYSDATE,
+		    SYSDATE,
+		    0,
+		    0
+		)
+	</insert>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) dataCount
+		FROM communityReply
+		WHERE community_num = #{community_num}
+	</select>
+
+		<!-- 커뮤니티 댓글 리스트 -->
+	<select id="listReply" parameterType="map"
+		resultType="com.sp.app.model.Reply">
+		SELECT
+		    reply_num,
+		    c.memberidx,
+		    nickname,
+		    community_num,
+		    content,
+		    created,
+		    updated,
+		    parent_comment_num,
+		    blind
+		FROM communityreply c
+		JOIN member m
+		ON m.memberidx = c.memberidx
+		WHERE community_num = #{community_num}
+		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
+	</select>
+	
+	
+
+</mapper>
+	
