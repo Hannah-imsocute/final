@@ -262,6 +262,10 @@
     .product-option {
       color: #666;
     }
+    .product-discount {
+      font-size: 13px;
+      color: #666;
+    }
     .product-price {
       color: #f05;
       font-weight: 500;
@@ -333,6 +337,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       position: relative;
       z-index: 10000;
+      height: 700px;
       border: 1px solid #ccc;
     }
     .modal-header {
@@ -353,6 +358,7 @@
       line-height: 1;
       cursor: pointer;
     }
+
     .modal-body label {
       display: block;
       margin-bottom: 5px;
@@ -385,6 +391,28 @@
     }
     .modal-footer .modal-cancel {
       background-color: #ccc;
+    }
+
+    #btnAddNewAddress {
+      background-color: #ff8200;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px; /* 버튼 크기 조절 */
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #btnAddNewAddress:hover {
+      background-color: #e66f00;
+      transform: translateY(-3px);
+    }
+
+    #btnAddNewAddress:active {
+      transform: translateY(-1px);
     }
 
     /* 배송지 목록 항목 */
@@ -482,12 +510,12 @@
     #couponModalOverlay .coupon-modal-cancel:hover {
       background: #b3b3b3;
     }
+
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <script type="text/javascript">
-
     var IMP = window.IMP;
     IMP.init("imp86656532");
 
@@ -499,51 +527,46 @@
       // 결제 API에서 응답 받을 파라미터
       let byMethod = ''; // 결제수단
       let provider = '';  // 카드사
-      let confirmCode = ''; // 승인번호
+      let confirmCode = ''; // 승인번호(또는 결제 확인값)
       let confirmDate = ''; // YYYY-MM-DD HH:mm:ss
       let cardNumber = '';
-      let itemCode = '${order.orderItem.itemCode}';
-      let productCode ='${order.productCode}';
-      let quantity = '${order.orderItem.quantity}'
       confirmDate = new Date().toISOString().replace('T', ' ').slice(0, -5); // YYYY-MM-DD HH:mm:ss
 
       let memberIdx = ${sessionScope.member.memberIdx};
       let merchant_uid = '${order.orderCode}';
-      <%--let amount = '${overallNetPay}';--%>
       let amount = finalNetPay;
-      <%--let name = '${order.orderItem.item}'--%>
-      // let name = '상품 테스트';
-      // let amount = 10;
+
       let buyer_email = '${sessionScope.member.email}';
       let buyer_name = '${receiverName}';
       let buyer_tel = '${phone}';
       let buyer_addr = '${addTitle} - ${addDetail}';
       let buyer_postcode = '${postCode}';
 
-
+      // 결제창 요청
       IMP.request_pay(
               {
                 channelKey: "channel-key-eb37305c-955d-472e-98c1-f7d722cc1706",
                 pay_method: provider,
-                merchant_uid: merchant_uid, //상점에서 생성한 고유 주문번호
-                // name: '뚝딱뚝딱 상품',
-                name: '선글라스',
+                merchant_uid: merchant_uid,
+                name: '뚝딱뚝딱 상품', // 결제 상품명
                 amount: 10,
                 buyer_email: buyer_email,
                 buyer_name: buyer_name,
-                buyer_tel: buyer_tel, //필수 파라미터
+                buyer_tel: buyer_tel,
                 buyer_addr: buyer_addr,
                 buyer_postcode: buyer_postcode,
-              },function(resp) { // callback
+              },
+              function(resp) { // callback
                 if(resp.success) {
                   alert('결제가 완료되었습니다!!');
-                  console.log(resp) ;
+                  console.log(resp);
                   byMethod = resp.card_name || '간편결제';
                   provider = resp.pay_method || '페이결제';
                   confirmCode = resp.paid_at;
                   cardNumber = resp.card_number;
-                  // 승인번호 : 숫자
-                  f.payment.value  = amount;          // 전체 결제 금액
+
+                  // 폼 hidden 값 세팅
+                  f.payment.value  = amount;
                   f.byMethod.value = byMethod;
                   f.provider.value = provider;
                   f.confirmCode.value = confirmCode;
@@ -558,7 +581,8 @@
                   console.log(resp);
                   return false;
                 }
-              })
+              }
+      );
     }
   </script>
 </head>
@@ -567,7 +591,12 @@
   <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 </header>
 
-<%-- 장바구니에서 넘어온 값--%>
+<!--
+  ===================================
+   1) 장바구니 or 바로구매 분기처리
+  ===================================
+-->
+<!-- 장바구니에서 넘어온 값 -->
 <c:set var="cartFinalPriceParam" value="${param.finalTotalPrice}" />
 <c:if test="${not empty cartFinalPriceParam}">
   <!-- 장바구니 금액을 productTotal로 간주 -->
@@ -582,6 +611,41 @@
   </c:choose>
   <c:set var="overallNetPay" value="${productTotal + shippingFee}" scope="page"/>
 </c:if>
+
+<!-- 바로구매로 넘어온 경우: orderItems가 있고, 총합 계산 + 할인율 반영 -->
+<c:if test="${mode eq 'direct' && not empty orderItems}">
+  <!-- 직접 구매 상품 총합 & 할인 합계 계산 -->
+  <c:set var="tempTotal" value="0" scope="page"/>
+  <c:set var="tempDiscountSum" value="0" scope="page"/>
+  <c:forEach var="dto" items="${orderItems}">
+    <!-- (1) 개별 상품 총액 -->
+    <c:set var="subTotal" value="${dto.price * dto.quantity}" />
+
+    <!-- (2) 개별 상품 할인금액: (단가×수량×할인율/100) -->
+    <c:set var="itemDiscount" value="${subTotal * (dto.discount) / 100.0}" />
+
+    <!-- (3) 총합 및 할인 누적 -->
+    <c:set var="tempTotal" value="${tempTotal + subTotal}" scope="page"/>
+    <c:set var="tempDiscountSum" value="${tempDiscountSum + itemDiscount}" scope="page"/>
+  </c:forEach>
+
+  <!-- (4) 전체에서 할인액 합계 차감 -->
+  <c:set var="tempTotal" value="${tempTotal - tempDiscountSum}" scope="page"/>
+
+  <!-- (5) 할인 반영 후 배송비 계산 -->
+  <c:choose>
+    <c:when test="${tempTotal lt 30000}">
+      <c:set var="shippingFee" value="3000" scope="page"/>
+    </c:when>
+    <c:otherwise>
+      <c:set var="shippingFee" value="0" scope="page"/>
+    </c:otherwise>
+  </c:choose>
+
+  <c:set var="productTotal" value="${tempTotal}" scope="page"/>
+  <c:set var="overallNetPay" value="${productTotal + shippingFee}" scope="page"/>
+</c:if>
+
 
 <div class="order-page-container">
   <!-- 주문 헤더 -->
@@ -606,7 +670,6 @@
     <input type="hidden" name="cardNumber" value="">
     <input type="hidden" name="itemCode" value="0">
 
-
     <!-- 카트 or 직접구매 분기 -->
     <c:choose>
       <c:when test="${mode eq 'direct'}">
@@ -616,14 +679,11 @@
             <input type="hidden" name="quantity" value="${dto.quantity}" />
             <input type="hidden" name="itemCode" value="${dto.itemCode}" />
             <c:if test="${not empty dto.options}">
-              <%--              <input type="hidden" name="options" value="${dto.options}" />--%>
-              <%--              <input type="hidden" name="orderItems[${status.index}].options" value="${dto.options}" />--%>
               <c:forEach var="opt" items="${dto.options}" varStatus="optStatus">
                 <input type="hidden" name="orderItems[${status.index}].options[${optStatus.index}]" value="${opt}" />
               </c:forEach>
             </c:if>
-
-            <!-- 추가 필드 -->
+            <!-- 추가 필드 예시 -->
             <input type="hidden" name="priceforeach" value="${dto.priceForeach}" />
             <input type="hidden" name="price" value="${dto.price}" />
             <input type="hidden" name="order_state" value="1" />
@@ -722,56 +782,100 @@
       <!-- 오른쪽: 주문 상품 목록 카드형 + 합계 -->
       <div class="order-right">
         <div class="order-summary-box">
-          <!-- 상품 개수 표시 (예: 주문 상품 1개) -->
-          <h3>주문 상품 <c:out value="${fn:length(cartItems)}" />개</h3>
 
-          <!-- 개별 상품 카드 -->
-          <c:forEach var="cart" items="${cartItems}">
-            <div class="product-card">
-              <div class="store-name">${cart.brandName}</div>
-              <div class="product-card-body">
-                <div class="product-image">
-                  <img src="${pageContext.request.contextPath}/uploads/product/${cart.thumbnail}" alt="상품 이미지"/>
-                </div>
-                <div class="product-info">
-                  <div class="product-title">
-                    <c:out value="${cart.item}" />
-                  </div>
-                  <div class="product-option">
-                    <c:out value="${cart.cartOption != null ? cart.cartOption : '옵션없음'}" />
-                  </div>
-                  <div class="product-price">
-                    <fmt:formatNumber value="${cart.price}" pattern="#,###" />원 /
-                    <c:out value="${cart.quantity}" />개
-                  </div>
-                  <div class="product-shipfee">
-                    배송비 3,000원 (30,000원 이상 구매시 무료)
-                  </div>
-                </div>
-              </div>
-            </div>
-          </c:forEach>
+          <!-- =========================================
+               2) 장바구니 or 직접구매 상품 목록 표시
+             ========================================= -->
+          <c:choose>
+            <c:when test="${mode eq 'direct'}">
+              <!-- 바로구매: orderItems 기반 -->
+              <h3>주문 상품 <c:out value="${fn:length(orderItems)}" />개</h3>
 
-          <c:set var="cartFinalPriceParam" value="${param.finalTotalPrice}" />
+              <c:forEach var="dto" items="${orderItems}">
+                <div class="product-card">
+                  <div class="store-name">
+                    <!-- brandName 등을 dto에 담았다면 -->
+                    <c:out value="${dto.brandName != null ? dto.brandName : '브랜드 미지정'}" />
+                  </div>
+                  <div class="product-card-body">
+                    <div class="product-image">
+                      <img src="${pageContext.request.contextPath}/uploads/product/${dto.thumbnail}" alt="상품 이미지"/>
+                    </div>
+                    <div class="product-info">
+                      <div class="product-title">
+                        <c:out value="${dto.item}" />
+                      </div>
+                      <div class="product-option">
+                        <c:out value="${dto.options != null ? dto.options : ''}" />
+                      </div>
+
+                      <div class="product-price">
+                        <fmt:formatNumber value="${dto.price}" pattern="#,###" />원 /
+                        <c:out value="${dto.quantity}" />개
+                      </div>
+                      <div class="product-shipfee">
+                        배송비 3,000원 (30,000원 이상 구매시 무료)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+            </c:when>
+            <c:otherwise>
+              <!-- 장바구니: cartItems 기반 -->
+              <h3>주문 상품 <c:out value="${fn:length(cartItems)}" />개</h3>
+
+              <c:forEach var="cart" items="${cartItems}">
+                <div class="product-card">
+                  <div class="store-name">${cart.brandName}</div>
+                  <div class="product-card-body">
+                    <div class="product-image">
+                      <img src="${pageContext.request.contextPath}/uploads/product/${cart.thumbnail}" alt="상품 이미지"/>
+                    </div>
+                    <div class="product-info">
+                      <div class="product-title">
+                        <c:out value="${cart.item}" />
+                      </div>
+                      <div class="product-option">
+                        <c:out value="${cart.cartOption != null ? cart.cartOption : '옵션없음'}" />
+                      </div>
+                      <div class="product-price">
+                        <fmt:formatNumber value="${cart.price}" pattern="#,###" />원 /
+                        <c:out value="${cart.quantity}" />개
+                      </div>
+                      <div class="product-shipfee">
+                        배송비 3,000원 (30,000원 이상 구매시 무료)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+            </c:otherwise>
+          </c:choose>
+
+          <!-- 장바구니에서 (discountAmount) 값이 넘어온 경우 활용 가능 -->
           <c:set var="sumLineTotalParam"  value="${param.sumLineTotal}" />
           <c:set var="sumDiscountParam"   value="${param.sumDiscount}" />
-
-
-          <c:set var="productTotal" value="${sumLineTotalParam}" />
           <c:set var="discountAmount" value="${sumDiscountParam}" />
 
           <!-- 전체 가격 영역 -->
           <div class="price-info">
             <div class="price-row">
               <span>상품금액</span>
-              <!-- 장바구니에서 넘어온 값 사용 가능 -->
               <span><fmt:formatNumber value="${productTotal}" pattern="#,###" />원</span>
             </div>
             <div class="discount-row">
               <span>할인금액</span>
-<%--              <fmt:formatNumber value="${discountAmount}" pattern="#,###" />원--%>
-              <span><fmt:formatNumber value="${discountAmount}" pattern="#,###"/>원</span>
-<%--              <span class="couponDiscount">0원</span>--%>
+              <span>
+            <c:choose>
+              <c:when test="${mode eq 'direct'}">
+                <fmt:formatNumber value="${tempDiscountSum}" pattern="#,###"/>원
+              </c:when>
+              <c:otherwise>
+                <fmt:formatNumber value="${discountAmount}" pattern="#,###"/>원
+              </c:otherwise>
+            </c:choose>
+          </span>
             </div>
             <div class="shipping-fee">
               <span>배송비</span>
@@ -780,7 +884,6 @@
             <div class="total-amount">
               <span>총 결제금액</span>
               <span class="highlight" id="finalNetPay">
-                <!-- 장바구니 값이 있으면, 반영된 overallNetPay 출력 -->
                 <fmt:formatNumber value="${overallNetPay}" pattern="#,###" />원
               </span>
             </div>
@@ -789,7 +892,7 @@
           <!-- hidden 필드 (JS에서 변경 시 반영) -->
           <input type="hidden" name="coupon.couponCode" id="couponCode" value="" />
           <input type="hidden" name="couponValue" id="couponValue" value="0" />
-          <input type="hidden" name="discountAmount" id="discountAmount" value="" />
+          <input type="hidden" name="discountAmount" id="discountAmount" value="${discountAmount != null ? discountAmount : 0}" />
           <input type="hidden" name="finalNetPay" id="finalNetPayInput" value="${overallNetPay}" />
           <input type="hidden" name="spentPoint" id="spentPoint" value="0" />
 
@@ -930,7 +1033,7 @@
   }
 
   $(document).ready(function() {
-    // 배송시 요청사항 처리
+    // ======================= (A) 배송시 요청사항 처리 =======================
     const $deliverySelect = $('.shipping-box .memo-input');
     const $otherRequestDiv = $('#otherRequestDiv');
     const $otherInput = $('#otherRequestInput');
@@ -947,13 +1050,14 @@
       if ($deliverySelect.val() === 'other') {
         const otherVal = $otherInput.val().trim();
         if (otherVal) {
+          // 셀렉트 name 지우고 hidden 인풋으로 대체
           $deliverySelect.removeAttr('name');
           $(this).append('<input type="hidden" name="require" value="'+otherVal+'">');
         }
       }
     });
 
-    // (B) 배송지 변경 모달
+    // ====================== (B) 배송지 변경 모달 처리 ======================
     const $modalOverlay = $('#modalOverlay');
     const $closeButtons = $('.modal-close');
 
@@ -980,7 +1084,7 @@
       sample6_execDaumPostcode();
     });
 
-    // 배송지 선택
+    // 기존 배송지 선택
     $(document).on('click', '.btn-select-address', function() {
       const $li = $(this).closest('.address-item');
       const receiverName = $li.data('receivername');
@@ -988,7 +1092,7 @@
       const addDetail = $li.data('adddetail');
       const phone = $li.data('phone');
       const postCode = $li.data('postcode');
-      const addName = $li.data('addname'); // 서버에 저장 시 필요하다면 사용
+      const addName = $li.data('addname');
 
       $('.recipient-name').text(receiverName);
       $('.recipient-phone').text(phone);
@@ -996,7 +1100,7 @@
       if(addDetail) newAddrHtml += ' ' + addDetail;
       $('.addr-text').html(newAddrHtml);
 
-      // 서버에 선택된 주소 업데이트 (예시 Ajax)
+      // 서버로 주소 업데이트 (AJAX 예시)
       $.ajax({
         url: '${pageContext.request.contextPath}/order/selectAddress',
         type: 'post',
@@ -1004,6 +1108,7 @@
         success: function(response) {
           if(response.status === "success") {
             $modalOverlay.hide();
+            // hidden 값 반영
             $("#hiddenAddrName").val(addName);
             $("#hiddenPostCode").val(postCode);
             $("#hiddenAddTitle").val(addTitle);
@@ -1070,7 +1175,7 @@
       }
     });
 
-    // (C) 포인트 처리
+    // ===================== (C) 포인트 사용 로직 =====================
     $('.point-btn').click(function() {
       const fullPoint = parseInt("${balance}", 10) || 0;
       $("input[name=spentPoint]").val(fullPoint);
@@ -1102,7 +1207,7 @@
       $("#finalNetPayInput").val(finalTotal);
     }
 
-    // (D) 쿠폰 모달
+    // ====================== (D) 쿠폰 모달 처리 ======================
     $('#openCouponModal').click(function(){
       $('#couponModalOverlay').css('display','flex');
     });

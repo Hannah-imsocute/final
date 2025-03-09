@@ -31,7 +31,6 @@ public class ReviewServiceImpl implements ReviewService{
     public void insertReview(Review dto, String uploadPath) throws SQLException {
         try {
             // 리뷰 작성
-            dto.setImage(uploadPath);
             dto.setBlock(0);
             mapper.insertReview(dto);
 
@@ -45,7 +44,7 @@ public class ReviewServiceImpl implements ReviewService{
                 }
             }
             // 리뷰 포인트 적립
-            int saveAmount = (dto.getSelectFile() != null) ? 100 : 50;
+            int saveAmount = (dto.getSelectFile() != null && !dto.getSelectFile().isEmpty()) ? 100 : 50;
             MemberPoint point = MemberPoint.builder()
                     .memberIdx(dto.getMemberIdx())
                     .reason("리뷰 적립")
@@ -59,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService{
         }
     }
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteReview(long num, String uploadPath) throws Exception {
         try {
@@ -73,9 +72,11 @@ public class ReviewServiceImpl implements ReviewService{
             mapper.deleteReview(num);
         } catch(Exception e) {
             log.info("deleteReview", e);
+            throw e;
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateReview(Review dto, String uploadPath) throws Exception {
         try {

@@ -15,13 +15,6 @@
         where MEMBERIDX = #{memberIdx} and ITEM_CODE = #{itemCode}
     </select>
 
-<!--    <select id="getRequestList" parameterType="map" resultType="com.sp.app.model.Change">
-        select CHANGE_NUM as changeNum, memberIdx as memberIdx, ITEM_CODE as itemCode,
-               CHANGE_REQUEST as changeRequest, CHANGE_STATE as changeState, CHANGED_DATE as changeDate
-        from CHAGE_REQUEST
-        where MEMBERIDX = #{memberIdx}
-        offset #{offset} rows fetch first #{size} rows only
-    </select>-->
 
     <select id="getRequestList" parameterType="map" resultType="com.sp.app.model.Change">
         select CHANGE_NUM as changeNum, c.memberIdx as memberIdx, c.ITEM_CODE as itemCode,
@@ -40,6 +33,14 @@
         from CHAGE_REQUEST
         where MEMBERIDX = #{memberIdx}
     </select>
+
+    <select id="countChangeRequest" parameterType="map" resultType="int">
+        select count(*)
+        from CHAGE_REQUEST
+        where MEMBERIDX = #{memberIdx}
+          and ITEM_CODE = #{itemCode}
+    </select>
+
 
 
 

@@ -12,5 +12,6 @@ public interface ChangeMapper {
     List<Change> getChangeState(long memberIdx);
     List<Change> getRequestList(Map<String, Object> map);
     int dataCount(long memberIdx);
+    int countChangeRequest(Map<String, Object> map);
 
 }

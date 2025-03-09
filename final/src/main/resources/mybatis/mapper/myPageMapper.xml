@@ -17,7 +17,7 @@
                i.SHIPPING        AS shipping,
                pr.DISCOUNT       AS discount,
                i.PRICEFOREACH    AS priceforeach,
-              TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
+               TO_CHAR(p.order_date, 'YYYYMMDD')    AS orderDate,
                i.quantity       AS quantity,
                i.price          AS netPay
         FROM   product_order p
@@ -117,7 +117,6 @@
                  LEFT JOIN SELLER_BRAND s ON pr.BRAND_CODE = s.BRAND_CODE
                  LEFT JOIN PACKAGE pk   ON pk.ITEM_CODE = i.ITEM_CODE
                  LEFT JOIN PAYBYMETHOD ph ON p.ORDER_CODE = ph.ORDER_CODE
-                 LEFT JOIN USER_HAVE_COUPON uc ON uc.MEMBERIDX = p.MEMBERIDX
         WHERE p.memberidx = #{memberIdx} and i.ORDER_CODE = #{orderCode}
         ORDER BY p.order_date DESC
     </select>
@@ -130,8 +129,4 @@
         where o.ORDER_CODE = #{orderCode}
     </select>
 
-
-    <!--    <if test="kwd != null and kwd != ''">-->
-<!--        AND INSTR(subject, #{kwd}) &gt; 0-->
-<!--    </if>-->
 </mapper>

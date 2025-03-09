@@ -19,6 +19,11 @@ public class OrderItem {
     private int price;          // 상품 금액 (priceForeach * quantity)
     private int shipping;       // 배송비
 
+    private String brandName;
+    private String item;
+    private String thumbnail;
+    private double discount;
+
     // 주문 상태: 0 - 주문접수, 1 - 결제완료, 2 - 배송준비중, 3 - 부분배송, 4 - 전체배송완료 등
     private int orderState;
 
@@ -33,6 +38,5 @@ public class OrderItem {
     private List<Long> productCodes;
     private List<Integer> quantities;
     private List<Long> itemCodes;
-//    private List<String> options;
 
 }

@@ -257,7 +257,7 @@
                                             <c:out value="${cart.item}"/>
                                         </div>
                                         <div class="item-option">
-                                            <c:out value="${cart.optionName != null ? cart.optionName : '옵션없음'}"/>
+                                            <c:out value="${cart.optionName != null ? cart.optionName : ''}"/>
                                         </div>
                                     </div>
                                     <div class="cart-item-right">
@@ -301,7 +301,7 @@
                                     </div>
                                     <span class="divider">|</span>
                                     <div>
-                                        <span class="label">배송비</span>
+                                        <span class="label"></span>
                                         <c:set var="sumLineTotal" value="0" scope="page"/>
                                         <c:set var="sumDiscount" value="0" scope="page"/>
                                         <c:forEach var="citem" items="${cartList}">
@@ -316,14 +316,6 @@
                                         <c:set var="finalSum" value="${initFinalSum + shippingFee}" />
 
                                         <span class="value shipping price-text">
-                                        <c:choose>
-                                            <c:when test="${shippingFee == 0}">
-                                                무료배송
-                                            </c:when>
-                                            <c:otherwise>
-                                                <fmt:formatNumber value="${shippingFee}" pattern="#,###" />원
-                                            </c:otherwise>
-                                        </c:choose>
                                     </span>
                                     </div>
                                     <span class="divider">=</span>

@@ -226,8 +226,7 @@
                         <td>${coupon.couponCode}</td>
                         <td>${coupon.couponStart} ~ ${coupon.expireDate}</td>
                         <td>${coupon.couponRate}%</td>
-                        <td>${coupon.couponValid == 0 ? '사용가능' : '사용완료'}</td>
-                    </tr>
+                        <td>${coupon.couponValid != 0 ? '사용가능' : '사용완료'}</td>
                 </c:forEach>
                 </tbody>
             </table>

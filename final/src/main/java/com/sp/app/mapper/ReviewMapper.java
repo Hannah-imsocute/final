@@ -3,6 +3,7 @@ package com.sp.app.mapper;
 import com.sp.app.model.Review;
 import com.sp.app.model.MyPage;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.jdbc.SQL;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,6 +28,7 @@ public interface ReviewMapper {
     // 상품평 삭제하기
     void deleteReview(long num) throws SQLException;
 
+    void deleteReviewImage(long num) throws SQLException;
     // 리뷰 목록 보기
     List<Review> getlistReview(Map<String, Object> map); // 리뷰 찾기
     // 리뷰 이미지 보기

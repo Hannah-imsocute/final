@@ -184,7 +184,7 @@
                             <strong>${orderDetail.productName}</strong>
                         </p>
                         <p> 주문번호:
-                            <stront>${orderDetail.orderCode}</stront>
+                            <strong>${orderDetail.orderCode}</strong>
                         </p>
                         <p>상품가격:
                             <fmt:formatNumber value="${orderDetail.priceforeach}" pattern="#,###"/>원
@@ -215,6 +215,10 @@
                 <div class="card">
                     <h3>배송정보</h3>
                     <p>
+                        <span class="label">받는사람:</span>
+                        ${orderDetail.receiverName}
+                    </p>
+                    <p>
                         <span class="label">배송지:</span>
                             ${orderDetail.addrTitle} / ${orderDetail.addrDetail}
                     </p>
@@ -236,7 +240,9 @@
                     <p class="label">승인 날짜: ${orderDetail.confirmDate}</p>
                     <p>
                         <span class="label">결제금액:</span>
-                        <fmt:formatNumber value="${orderDetail.netPay}" pattern="#,###"/>원
+<%--                        <fmt:formatNumber value="${orderDetail.netPay}" pattern="#,###"/>원--%>
+                        <fmt:formatNumber value="${orderDetail.netPay + orderDetail.shipping - (orderDetail.priceforeach * orderDetail.quantity * orderDetail.discount / 100)}" pattern="#,###" />원
+
                     </p>
                 </div>
             </div>

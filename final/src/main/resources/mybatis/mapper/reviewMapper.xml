@@ -14,7 +14,7 @@
     <!--리뷰이미지 작성-->
     <insert id="insertImageReview" parameterType="com.sp.app.model.Review">
         insert into PRODUCTREVIEWIMAGE (REVIEW_IMG_NUM, IMAGE, REVIEW_NUM)
-        VALUES (SEQ_PRODUCTREVIEWIMAGE.nextval, #{image}, #{reviewNum} )
+        VALUES (SEQ_PRODUCTREVIEWIMAGE.nextval, #{image}, #{reviewNum})
     </insert>
 
     <update id="updateReview" parameterType="com.sp.app.model.Review">
@@ -27,6 +27,12 @@
         where memberIdx = #{memberIdx} and review_num = #{reviewNum}
     </update>
 
+
+    <delete id="deleteReviewImage" parameterType="long">
+        DELETE FROM PRODUCTREVIEWIMAGE
+        WHERE review_num = #{reviewNum}
+    </delete>
+
     <delete id="deleteReview" parameterType="Long">
         delete from PRODUCTREVIEW where review_num = #{reviewNum}
     </delete>
@@ -37,16 +43,7 @@
         where memberIdx = #{memberIdx}
     </select>
 
-  <!--  <select id="getlistReview" parameterType="map" resultType="com.sp.app.model.Review">
-        select pr.REVIEW_NUM, pr.MEMBERIDX, pr.CONTENT, pr.STARRATE,
-               pr ,m.NICKNAME, pi.IMAGE
-        from PRODUCTREVIEW pr
-                 LEFT JOIN MEMBER m ON pr.MEMBERIDX = m.MEMBERIDX
-                 LEFT JOIN PRODUCTREVIEWIMAGE pi ON pr.REVIEW_NUM = pi.REVIEW_NUM
-        where pr.MEMBERIDX = #{memberIdx}
-        OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
-    </select>
--->
+
     <select id="getlistReview" parameterType="map" resultType="com.sp.app.model.Review">
         select pr.REVIEW_NUM as reviewNum, pr.MEMBERIDX as memberIdx, pr.CONTENT, pr.STARRATE as starRate,
               pi.IMAGE as image, o.ITEM_CODE as itemCode, o.PRODUCTCODE as productCode, p.ITEM as productName,
@@ -60,8 +57,6 @@
         OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
     </select>
 
-<!--    select REVIEW_IMG_NUM, IMAGE, REVIEW_NUM-->
-<!--    from PRODUCTREVIEWIMAGE-->
     <select id="listReviewFile" parameterType="long" resultType="com.sp.app.model.Review">
         select REVIEW_IMG_NUM, IMAGE, p.REVIEW_NUM
         from PRODUCTREVIEWIMAGE pi

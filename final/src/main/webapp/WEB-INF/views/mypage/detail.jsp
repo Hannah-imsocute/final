@@ -567,13 +567,13 @@
                                             <div class="detail-item">
                                                 <span class="label">할인 금액:</span>
                                                 <span class="value">
-                                                    <fmt:formatNumber value="${order.discount}" pattern="#,###" />원
+                                                    <fmt:formatNumber value="${order.priceforeach * order.quantity * order.discount / 100}" pattern="#,###" />원
                                                 </span>
                                             </div>
                                             <div class="detail-item">
                                                 <span class="label">결제 금액:</span>
                                                 <span class="value">
-                                                    <fmt:formatNumber value="${order.netPay + order.shipping}" pattern="#,###" />원
+                                                  <fmt:formatNumber value="${order.netPay + order.shipping - (order.priceforeach * order.quantity * order.discount / 100)}" pattern="#,###" />원
                                                 </span>
                                             </div>
                                             <div class="detail-item">
@@ -805,6 +805,12 @@
         });
 
         $('#submitWriteReview').click(function(){
+            var files = $('#selectFile')[0].files;
+            if (!files || files.length === 0) {
+                // remove name attribute => 서버 전송 시 제외됨
+                $('#selectFile').removeAttr('name');
+            }
+
             var content = $('#reviewContent').val().trim();
             if(content.length < 10) {
                 alert("리뷰 내용은 최소 10자 이상 입력하세요.");

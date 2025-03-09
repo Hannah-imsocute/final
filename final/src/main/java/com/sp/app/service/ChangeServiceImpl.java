@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +18,17 @@ public class ChangeServiceImpl implements ChangeService {
     @Override
     public void insertChangeRequest(Change change) {
         try {
-            change.setMemberIdx(change.getMemberIdx());
-            change.setItemCode(change.getItemCode());
-            change.setChangeRequest(change.getChangeRequest());
             change.setChangeState(0); // 교환진행상태
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("memberIdx", change.getMemberIdx());
+            param.put("itemCode", change.getItemCode());
+
+            int count = mapper.countChangeRequest(param);
+            if(count > 0) {
+                throw new RuntimeException("이미 요청이 접수되었습니다.");
+            }
+
             mapper.insertChangeRequest(change);
         } catch(Exception e) {
             log.info("insertChangeRequest", e);
@@ -54,4 +62,8 @@ public class ChangeServiceImpl implements ChangeService {
     public int dataCount(long memberIdx) {
         return mapper.dataCount(memberIdx);
     }
+
+
+
+
 }

@@ -553,9 +553,7 @@
     </div>
 
     <div class="banner-box">
-<%--      <p>--%>
         오늘도 뚝딱뚝딱 하로 가볼까 !!!
-<%--      </p>--%>
     </div>
     <div class="coupon-box banner-box">
       <p>
@@ -599,12 +597,16 @@
                       </div>
                       <div class="detail-item">
                         <span class="label">할인 금액:</span>
-                        <span class="value"><fmt:formatNumber value="${order.discount}" pattern="#,###" />원</span>
+<%--                        <span class="label">${not empty coupon.couponValid == 1}</span>--%>
+                        <span class="value">
+                        <fmt:formatNumber value="${order.priceforeach * order.quantity * order.discount / 100}" pattern="#,###" />원
+                        </span>
                       </div>
                       <div class="detail-item">
                         <span class="label">결제 금액:</span>
-<%--                        <span class="value"><fmt:formatNumber value="${order.netPay}" pattern="#,###" />원</span>--%>
-                        <fmt:formatNumber value="${order.netPay + order.shipping}" pattern="#,###" />원
+                        <span class="value">
+                          <fmt:formatNumber value="${order.netPay + order.shipping - (order.priceforeach * order.quantity * order.discount / 100)}" pattern="#,###" />원
+                        </span>
                       </div>
                       <div class="detail-item">
                         <span class="label">배송비:</span>
@@ -709,7 +711,7 @@
     <ul>
       <c:forEach var="coupon" items="${couponList}">
         <li>
-          <span class="coupon-code">${coupon.couponName}</span>
+          <span class="coupon-code">${coupon.couponCode}</span>
           <span class="coupon-expire">${coupon.expireDate}</span>
         </li>
       </c:forEach>

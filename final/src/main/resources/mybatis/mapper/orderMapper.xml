@@ -104,16 +104,11 @@
         ORDER  BY p.order_date DESC
     </select>
 
-    <!-- 상품 정보 -->
-<!--    <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
-        select PRODUCTCODE as productCode, OPTIONS, PRICEFOREACH as priceForeach, QUANTITY, PRICE, SHIPPING
-        from ORDER_ITEM
-        where PRODUCTCODE = #{productCode} AND ROWNUM = 1
-    </select>-->
-
     <select id="getProduct" parameterType="Long" resultType="com.sp.app.model.OrderItem">
-        select PRODUCTCODE as productCode, price, DISCOUNT, ADDOPTIONS, THUMBNAIL
-        from PRODUCT
+        select PRODUCTCODE as productCode, price, DISCOUNT, ADDOPTIONS, THUMBNAIL,
+               s.BRANDNAME as brandName
+        from PRODUCT p
+                 JOIN SELLER_BRAND s ON s.BRAND_CODE = p.BRAND_CODE
         where PRODUCTCODE = #{productCode}
     </select>
 
