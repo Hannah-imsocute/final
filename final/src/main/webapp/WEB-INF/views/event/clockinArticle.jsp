@@ -58,17 +58,19 @@ main {
 
 .post-image {
 	width: 100%;
-	height: 300px;
-	background-color: #ddd;
-	border-radius: 5px;
-	margin-bottom: 15px;
+	max-height: 700px; /* 기존보다 더 크게 설정 */
 	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .post-image img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
+	width: auto;
+	object-fit: contain; /* 이미지 비율 유지하며 잘리지 않도록 설정 */
 }
 
 .post-content {
@@ -245,6 +247,11 @@ main {
 	color: red; /* 숫자 색상 (하트와 같은 색이면 테두리와 어울림) */
 	pointer-events: none; /* 마우스로 클릭 시 숫자 때문에 이벤트가 가로막히지 않도록 (선택) */
 }
+
+.day-number {
+	font-size: 16px;
+	color: #333;
+}
 </style>
 </head>
 <body>
@@ -255,8 +262,11 @@ main {
 		<div class="post-container">
 			<h2 class="post-title">${dto.subject}</h2>
 			<p class="post-date">${dto.startdate }~${dto.enddate }</p>
-			<div class="post-image"></div>
-			<p class="post-content"></p>
+			<div class="post-image">
+				<img alt="썸네일"
+					src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}">
+			</div>
+			<p class="post-content">${dto.textcontent }</p>
 
 			<table class="table">
 				<thead>
@@ -275,24 +285,30 @@ main {
 						<c:forEach var="i" begin="1" end="${week-1}">
 							<td class='gray'></td>
 						</c:forEach>
+						<c:forEach var="chk" items="${checked}">
 
-						<c:forEach var="i" begin="1" end="${lastDate}">
-							<c:set var="cls" value="${i==td ? 'today':'other' }" />
-							<td class="${cls}">
-								<!-- 하트를 감싸는 컨테이너 -->
-								<div class="heart-icon-wrap">
-									<!-- 하트 아이콘 -->
-									<i class="bi bi-heart"></i>
-									<!-- 하트 위에 겹칠 숫자 -->
-									<span class="heart-number" data-number="${i}">${i}</span>
-								</div>
-							</td>
-							<c:set var="week" value="${week+1}" />
-							<c:if test="${lastDate!=i && week%7==1 }">
-								<c:out value="</tr><tr>" escapeXml="false" />
-							</c:if>
+							<c:forEach var="i" begin="1" end="${lastDate}">
+								<c:set var="cls" value="${i==td ? 'today':'other' }" />
+								<td class="${cls}">
+									<div class="heart-icon-wrap">
+										<c:choose>
+											<c:when test="${chk == i }">
+												<i class="bi bi-heart"></i>
+												<span class="heart-number" data-number="${i}">${i}</span>
+											</c:when>
+											<c:otherwise>
+												<span class="heart-number" data-number="${i}">${i}</span>
+											</c:otherwise>
+										</c:choose>
+									</div>
+								</td>
+								<c:set var="week" value="${week+1}" />
+								<c:if test="${lastDate!=i && week%7==1 }">
+									<c:out value="</tr><tr>" escapeXml="false" />
+								</c:if>
+							</c:forEach>
+
 						</c:forEach>
-
 						<c:if test="${week%7!=1}">
 							<c:set var="w" value="${week%7==0?7:week%7}" />
 							<c:forEach var="i" begin="${w}" end="7">

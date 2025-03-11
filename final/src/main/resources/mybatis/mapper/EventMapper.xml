@@ -8,6 +8,7 @@
 		<result property="textcontent" column="textcontent" />
 		<result property="eventType" column="eventType" />
 		<result property="startdate" column="startdate" />
+		<result property="thumbnail" column="thumbnail" />
 		<result property="enddate" column="enddate" />
 		<result property="created" column="created" />
 

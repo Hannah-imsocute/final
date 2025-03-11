@@ -23,6 +23,10 @@ public class NoticeManageServiceImpl implements NoticeManageService {
 	@Override
 	public void insertNotice(Map<String, Object> map) throws Exception {
 		try {
+			
+			Notice dto = (Notice) map.get("dto");
+			int yesOrno = dto.getFixed() == 1 ? 1 : 0 ;
+			map.put("yesOrno", yesOrno);
 			mapper.insertNotice(map);
 		} catch (Exception e) {
 			log.info("========================insertNotice", e);

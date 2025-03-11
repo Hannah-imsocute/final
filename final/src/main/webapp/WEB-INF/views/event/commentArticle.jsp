@@ -49,13 +49,26 @@ main {
 	margin-bottom: 15px;
 }
 
+
 .post-image {
-	width: 100%;
-	height: 300px;
-	background-color: #ddd;
-	border-radius: 5px;
-	margin-bottom: 15px;
+    width: 100%;
+    max-height: 800px; /* 기존보다 더 크게 설정 */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.post-image img {
+    max-width: 100%;  
+    max-height: 100%;
+    height: auto;
+    width: auto;
+    object-fit: contain; /* 이미지 비율 유지하며 잘리지 않도록 설정 */
+}
+
+
+
 
 .post-content {
 	font-size: 16px;

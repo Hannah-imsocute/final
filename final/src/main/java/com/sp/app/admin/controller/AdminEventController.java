@@ -73,17 +73,15 @@ public class AdminEventController {
 			
 			EventType event = (EventType)session.getAttribute("value");
 			
+			/*
 			if(event == null) {
 				return "redirect:/admin/event/main";
 			}
+			*/
 			session.removeAttribute("value");
 			
 			dto.setEvent(event);
-			System.out.println("============================");
-			System.out.println("============================");
-			System.out.println(file.getOriginalFilename());
-			System.out.println("============================");
-			System.out.println("============================");
+
 			String filename = storage.uploadFileToServer(file, uploadPath);
 			
 			dto.setThumbnail(filename);

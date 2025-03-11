@@ -2,7 +2,9 @@ package com.sp.app.admin.controller;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
@@ -107,6 +109,23 @@ public class NoticeManageController {
 			log.info("================handleMain", e);
 		}
 		return "admin/noticeList/information";
+	}
+	
+	@GetMapping("write")
+	public String handleWrite() {
+		return "admin/noticeList/write";
+	}
+	
+	@PostMapping("save")
+	public String submitForm(Notice dto ) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			map.put("dto", dto);
+			service.insertNotice(map);
+		} catch (Exception e) {
+			log.info("=============submit ", e);
+		}
+		return "redirect:/admin/notice/main";
 	}
 
 	@GetMapping("article/{num}")

@@ -38,14 +38,6 @@ h2 {
 	padding-left: 10%;
 }
 
-.event-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 20px;
-	max-width: 1100px;
-	margin: 0 auto;
-}
-
 .event-card {
 	background-color: #fff;
 	border-radius: 10px;
@@ -54,16 +46,38 @@ h2 {
 	text-align: center;
 	padding-bottom: 15px;
 	transition: transform 0.3s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	height: 100%; /* 카드 높이를 균일하게 */
+}
+
+.event-card .img-container {
+	width: 100%;
+	height: 250px; /* 180px에서 250px로 높이 증가 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background-color: #f5f5f5;
+}
+
+.event-card img {
+	max-width: 100%;
+	max-height: 250px; /* 이미지 최대 높이도 증가 */
+	object-fit: contain;
+}
+
+.event-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	/* 280px에서 320px로 증가 */
+	gap: 25px; /* 간격도 약간 증가 */
+	max-width: 1200px; /* 1100px에서 1200px로 증가 */
+	margin: 0 auto;
 }
 
 .event-card:hover {
 	transform: scale(1.05);
-}
-
-.event-card img {
-	width: 100%;
-	height: 180px;
-	object-fit: cover;
 }
 
 .event-card h3 {
@@ -96,33 +110,46 @@ h2 {
 
 			<c:forEach var="dto" items="${list}">
 
-				<div class="event-card" data-eventNum="${dto.event_article_num}" data-eventType="${dto.eventType}">
-					<img src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}" alt="새해 쿠폰 이벤트">
+				<div class="event-card" data-eventNum="${dto.event_article_num}"
+					data-eventType="${dto.eventType}">
+					<div class="img-container">
+						<img
+							src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}"
+							alt="이벤트 이미지">
+					</div>
 					<h3>${dto.subject}</h3>
-					<p>${dto.eventType}</p>
 					<span class="event-date">${dto.startdate} ~ ${dto.enddate}</span>
 				</div>
-
 			</c:forEach>
 		</div>
 	</section>
 	<footer>
 		<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 	</footer>
-	
+
 	<script type="text/javascript">
-		$(function(){
-			$('.event-card').each(function(){
-				$(this).click(function (){
-					
-					let articleNumber = $(this).attr('data-eventNum');
-					let Type = $(this).attr('data-eventType');
-					
-					let url = "${pageContext.request.contextPath}/event/article/"+Type + "/" +articleNumber;
-					
-					location.href = url;
-				});
-			});
+		$(function() {
+			$('.event-card')
+					.each(
+							function() {
+								$(this)
+										.click(
+												function() {
+
+													let articleNumber = $(this)
+															.attr(
+																	'data-eventNum');
+													let Type = $(this).attr(
+															'data-eventType');
+
+													let url = "${pageContext.request.contextPath}/event/article/"
+															+ Type
+															+ "/"
+															+ articleNumber;
+
+													location.href = url;
+												});
+							});
 		});
 	</script>
 </body>

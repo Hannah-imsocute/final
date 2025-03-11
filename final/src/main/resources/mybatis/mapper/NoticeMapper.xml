@@ -58,7 +58,7 @@
 	</select>
 
 	<select id="getListOfNotice" parameterType="map" resultType="com.sp.app.admin.model.Notice">
-		SELECT evt_not_num , adminidx, subject, create_date,
+		SELECT evt_not_num , adminidx, subject, TO_CHAR(create_date,'YYYY-MM-DD')create_date,
 		NVL(category_num,0)category_num, textcontent
 		FROM event_notice WHERE fixed = 0
 		<if test="kwd != null and kwd != '' ">
