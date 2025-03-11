@@ -109,7 +109,6 @@ body {
 		<ul class="nav nav-tabs mb-4">
 			<li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/admin/notice/main">공지사항</a></li>
 			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/admin/notice/info">문의사항</a></li>
-			<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/admin/notice/faq">FAQ</a></li>
 			<li class="nav-item ms-auto">
 				<button type="button" class="btn btn-primary"
 					onclick="location.href='${pageContext.request.contextPath}/admin/notice/write'">
