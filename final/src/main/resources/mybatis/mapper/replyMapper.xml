@@ -48,6 +48,7 @@
 		JOIN member m
 		ON m.memberidx = c.memberidx
 		WHERE community_num = #{community_num}
+		ORDER BY created DESC
 		OFFSET #{offset} ROWS FETCH FIRST #{size} ROWS ONLY
 	</select>
 	
