@@ -65,19 +65,22 @@
 
 	<select id="hasCoupon" parameterType="map" resultType="String">
 		SELECT
-			CASE
-				WHEN cnt = 1 THEN 'true'
-				ELSE 'false'
-			END AS is_valid
+		CASE
+		WHEN cnt = 1 THEN 'true'
+		ELSE 'false'
+		END AS is_valid
 		FROM (
-			SELECT COUNT(*) AS cnt
-			FROM USER_HAVE_COUPON
-			WHERE memberidx = #{memberidx} and couponcode = #{coupon_code}
+		SELECT COUNT(*) AS cnt
+		FROM USER_HAVE_COUPON
+		WHERE memberidx = #{memberidx} and couponcode = #{coupon_code}
 		)
 	</select>
 
-	<select id="couponInfo" parameterType="String" resultType="com.sp.app.admin.model.EventType">
-		SELECT coupon_code, couponname, valid, rate, TO_CHAR(couponstart,'YYYY-MM-DD') couponstart, TO_CHAR(expiredate, 'YYYY-MM-DD') expiredate
+	<select id="couponInfo" parameterType="String"
+		resultType="com.sp.app.admin.model.EventType">
+		SELECT coupon_code, couponname, valid, rate,
+		TO_CHAR(couponstart,'YYYY-MM-DD') couponstart, TO_CHAR(expiredate,
+		'YYYY-MM-DD') expiredate
 		FROM coupon WHERE coupon_code = #{coupon_code}
 	</select>
 
@@ -98,12 +101,35 @@
 		parameterType="com.sp.app.model.MemberPoint">
 		INSERT INTO point_save (POINT_SAVE_NUM, memberidx,
 		saveamount, savedate, expiredate, reason, enable, balance )
-		VALUES ( SEQ_POINT_SAVE.NEXTVAL, #{memberIdx}, #{saveAmount}, SYSDATE,
+		VALUES (
+		SEQ_POINT_SAVE.NEXTVAL, #{memberIdx}, #{saveAmount}, SYSDATE,
 		SYSDATE+365, #{reason}, '0', #{balance})
 	</insert>
 
 	<insert id="insertGetCoupon" parameterType="map">
-		INSERT INTO user_have_coupon (usercoupon_num, memberidx, couponcode, getdate, expiredate, valid )
-		 VALUES (SEQ_USER_HAVE_COUPON.NEXTVAL, #{memberidx}, #{couponcode}, SYSDATE, #{expiredate}, 0)
+		INSERT INTO
+		user_have_coupon (usercoupon_num, memberidx, couponcode, getdate,
+		expiredate, valid )
+		VALUES (SEQ_USER_HAVE_COUPON.NEXTVAL, #{memberidx}, #{couponcode}, SYSDATE,
+		#{expiredate}, 0)
 	</insert>
+
+	<insert id="insertComment" parameterType="map">
+		INSERT INTO event_comm
+		(evtcmm_num, evt_num, content, memberidx) VALUES
+		(SEQ_EVENT_COMM.NEXTVAL, #{num}, #{content}, #{memberidx})
+	</insert>
+
+	<select id="commList" parameterType="Long"
+		resultType="com.sp.app.model.EventComment">
+		SELECT evtcmm_num, evt_num, content, ec.memberidx, nickname
+		FROM event_comm ec LEFT OUTER JOIN member m ON m.memberidx =
+		ec.memberidx
+		WHERE evt_num = #{evtnum}
+		ORDER BY evtcmm_num DESC
+	</select>
+	
+	<delete id="deleteComm" parameterType="Long">
+		DELETE FROM event_comm WHERE evtcmm_num = #{evtcmm_num}
+	</delete>
 </mapper>

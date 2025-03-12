@@ -285,30 +285,31 @@ main {
 						<c:forEach var="i" begin="1" end="${week-1}">
 							<td class='gray'></td>
 						</c:forEach>
-						<c:forEach var="chk" items="${checked}">
 
-							<c:forEach var="i" begin="1" end="${lastDate}">
-								<c:set var="cls" value="${i==td ? 'today':'other' }" />
-								<td class="${cls}">
-									<div class="heart-icon-wrap">
-										<c:choose>
-											<c:when test="${chk == i }">
-												<i class="bi bi-heart"></i>
-												<span class="heart-number" data-number="${i}">${i}</span>
-											</c:when>
-											<c:otherwise>
-												<span class="heart-number" data-number="${i}">${i}</span>
-											</c:otherwise>
-										</c:choose>
-									</div>
-								</td>
-								<c:set var="week" value="${week+1}" />
-								<c:if test="${lastDate!=i && week%7==1 }">
-									<c:out value="</tr><tr>" escapeXml="false" />
-								</c:if>
-							</c:forEach>
-
+						<c:forEach var="i" begin="1" end="${lastDate}">
+							<c:set var="cls" value="${i==td ? 'today':'other' }" />
+							<td class="${cls}">
+								<div class="heart-icon-wrap">
+									<c:set var="dayStr">
+										<fmt:formatNumber value="${i}" pattern="0" />
+									</c:set>
+									<c:choose>
+										<c:when test="${checked.contains(dayStr)}">
+											<i class="bi bi-heart"></i>
+											<span class="heart-number" data-number="${i}">${i}</span>
+										</c:when>
+										<c:otherwise>
+											<span class="heart-number" data-number="${i}">${i}</span>
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</td>
+							<c:set var="week" value="${week+1}" />
+							<c:if test="${lastDate!=i && week%7==1 }">
+								<c:out value="</tr><tr>" escapeXml="false" />
+							</c:if>
 						</c:forEach>
+
 						<c:if test="${week%7!=1}">
 							<c:set var="w" value="${week%7==0?7:week%7}" />
 							<c:forEach var="i" begin="${w}" end="7">

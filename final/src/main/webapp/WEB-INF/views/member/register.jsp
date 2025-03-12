@@ -171,7 +171,19 @@
 			$form.submit();
 		});
 	
-		//$('.chkAll').
+		$('.chkAll').click(function(){
+			if($(this).is(':checked')){
+				$('.chk').each(function(){
+					$(this).prop('checked',true);
+				});
+			}
+		});
+		
+		$('.chk').click(function(){
+			if($('.chk:checked').length == 3){
+				$('.chkAll').prop('checked', true);
+			}
+		});
 	});
 	
 	
