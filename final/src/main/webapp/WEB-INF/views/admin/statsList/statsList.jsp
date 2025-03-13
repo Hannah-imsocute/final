@@ -15,25 +15,25 @@
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>총 회원 수</h6>
-				<h4>1,234명</h4>
+				<h4>124명</h4>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>신규 가입</h6>
-				<h4>120명</h4>
+				<h4>10명</h4>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>총 매출</h6>
-				<h4>￦12,345,678</h4>
+				<h4>￦1,120,300</h4>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>총 거래 수</h6>
-				<h4>567건</h4>
+				<h4>52건</h4>
 			</div>
 		</div>
 	</div>
@@ -77,28 +77,28 @@
 					<tbody>
 						<tr>
 							<td>1</td>
-							<td>상품 A</td>
-							<td>320개</td>
+							<td>바게트</td>
+							<td>20개</td>
 						</tr>
 						<tr>
 							<td>2</td>
-							<td>상품 B</td>
-							<td>290개</td>
+							<td>선글라스</td>
+							<td>18개</td>
 						</tr>
 						<tr>
 							<td>3</td>
-							<td>상품 C</td>
-							<td>250개</td>
+							<td>신선한사과</td>
+							<td>15개</td>
 						</tr>
 						<tr>
 							<td>4</td>
-							<td>상품 D</td>
-							<td>210개</td>
+							<td>주방기구</td>
+							<td>13개</td>
 						</tr>
 						<tr>
 							<td>5</td>
-							<td>상품 E</td>
-							<td>180개</td>
+							<td>메이크업팔레트</td>
+							<td>10개</td>
 						</tr>
 					</tbody>
 				</table>
