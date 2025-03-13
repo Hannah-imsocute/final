@@ -23,7 +23,6 @@ import com.sp.app.service.NoticeService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/notice/*")

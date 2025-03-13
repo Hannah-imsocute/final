@@ -26,7 +26,6 @@ import com.sp.app.service.EventService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("/event/*")
