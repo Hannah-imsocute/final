@@ -14,7 +14,7 @@
                     AND (oi.ORDER_STATE &gt;= 3 AND oi.ORDER_STATE &lt;= 5)
                 </when>
                 <when test="tebNum == 130">
-                    AND (oi.ORDER_STATE &gt;= 16 AND oi.ORDER_STATE &lt;= 17)
+                    AND (oi.ORDER_STATE =18)
                 </when>
             </choose>
         </sql>
@@ -81,9 +81,9 @@
 <!--    주문에 관한 정보-->
     <select id="findByOrderId" parameterType="String" resultType="com.sp.app.artist.model.OrderManage">
 
-        SELECT (po.ORDER_CODE)AS order_code,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,
+        SELECT (po.ORDER_CODE)AS order_code,po.MEMBERIDX,(oi.PRICEFOREACH*oi.QUANTITY)as netPay,(oi.PRICEFOREACH*oi.QUANTITY+oi.SHIPPING)as totalMoney,nickname,TO_CHAR(po.order_date,'YYYY-MM-DD HH24:MI:SS')AS order_date,(order_state)AS orderState,
                NVL(re.refund_amount,0) AS refund_amount,po.spentpoint,SHIPPING,(dc.deliveryName)as company_name,trackingnumber
-                ,(BYMETHOD)as payMethod,(PROVIDER)as cardName,(CARDNUMBER)as authNumber,(CONFIRM_DATE)as authDate
+                ,(BYMETHOD)as payMethod,(PROVIDER)as cardName,(CARDNUMBER)as authNumber,(CONFIRM_DATE)as authDate,orderstatedate
         FROM ORDER_ITEM oi
                  JOIN PRODUCT_ORDER po ON oi.ORDER_CODE=po.ORDER_CODE
                  LEFT OUTER JOIN  PACKAGE p ON oi.ITEM_CODE = p.ITEM_CODE
@@ -116,7 +116,7 @@
 </update>
 <!-- 상태 변경 -->
 <update id="updateOrderState" parameterType="map">
-    UPDATE ORDER_ITEM SET order_State= #{orderState} ,orderStateDate=SYSDATE WHERE item_code=#{item_code}
+    UPDATE ORDER_ITEM SET order_State= #{orderState} ,orderStateDate=SYSDATE WHERE item_code=#{num}
 </update>
 
 

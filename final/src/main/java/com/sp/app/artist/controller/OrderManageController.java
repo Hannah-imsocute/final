@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @Controller
@@ -53,6 +50,9 @@ public class OrderManageController {
             int total_page;
             int dataCount;
 
+
+
+
             kwd = URLDecoder.decode(kwd,"UTF-8");
             SessionInfo info = (SessionInfo) session.getAttribute("member");
             Map<String,Object>map = new HashMap<>();
@@ -71,9 +71,10 @@ public class OrderManageController {
             map.put("offset",offset);
             map.put("size",size);
 
+
             List<OrderManage> list = service.listOrder(map);
 
-
+              
             String cp = req.getContextPath();
             String listUrl = cp+ "/artist/orderManage/"+tebNum;
 
@@ -186,7 +187,7 @@ public class OrderManageController {
 
     @PostMapping("invoiceNumber")
     @ResponseBody
-    public Map<String,?> invoiceNumber(@RequestParam Map<String,Object> paramMap ){
+    public Map<String,?> invoiceNumber(@RequestParam Map<String,Object> paramMap  ){
         //배송  상태 변경
         Map<String,Object> model = new HashMap<String,Object>();
 

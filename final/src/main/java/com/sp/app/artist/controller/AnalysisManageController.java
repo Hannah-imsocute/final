@@ -32,8 +32,8 @@ public class AnalysisManageController {
         //map에 저장하고 그냥 map 넣은 값 가져와서 모델로 뿌려주는게 나을듯
 
             Map<String,Object> today = service.todayProduct(info.getMemberIdx());
-            Map<String,Object> thisMonth = service.todayProduct(info.getMemberIdx());
-            Map<String,Object> previousMonth = service.todayProduct(info.getMemberIdx());
+            Map<String,Object> thisMonth = service.thisMonthProduct(info.getMemberIdx());
+            Map<String,Object> previousMonth = service.previousMonthProduct(info.getMemberIdx());
 
             model.addAttribute("today",today);
             model.addAttribute("thisMonth",thisMonth);
