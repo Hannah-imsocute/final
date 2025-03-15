@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
 import com.sp.app.mapper.EventMapper;
+import com.sp.app.model.EventComment;
 import com.sp.app.model.MemberPoint;
 
 import lombok.RequiredArgsConstructor;
@@ -129,6 +130,36 @@ public class EventServiceImpl implements EventService {
 			log.info("==============couponInfo : ", e);
 		}
 		return dto;
+	}
+
+	@Override
+	public void insertComment(Map<String, Object> map) throws Exception {
+		try {
+			mapper.insertComment(map);
+		} catch (Exception e) {
+			log.info("==================insertComment", e);
+		}
+	}
+
+	@Override
+	public List<EventComment> commList(long evtnum) {
+		List<EventComment> list = null;
+		try {
+			list = mapper.commList(evtnum);
+		} catch (Exception e) {
+			log.info("====================commlist", e);
+		}
+		return list;
+	}
+
+	@Override
+	public void deleteComm(long evtcmm_num) throws Exception {
+		try {
+			mapper.deleteComm(evtcmm_num);
+			
+		} catch (Exception e) {
+			log.info("===============deleteComm", e);
+		}
 	}
 	
 }

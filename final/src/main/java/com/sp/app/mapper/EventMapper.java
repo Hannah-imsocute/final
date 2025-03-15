@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
+import com.sp.app.model.EventComment;
 import com.sp.app.model.MemberPoint;
 
 @Mapper
@@ -22,4 +23,8 @@ public interface EventMapper {
 	
 	public String hasCoupon(Map<String, Object> map);
 	public EventType couponInfo(String coupon_code);
+
+	public void insertComment(Map<String, Object> map) throws SQLException;
+	public List<EventComment> commList(long evtnum);
+	public void deleteComm(long evtcmm_num) throws SQLException;
 }

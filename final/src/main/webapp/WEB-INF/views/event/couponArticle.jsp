@@ -50,23 +50,21 @@ main {
 }
 
 .post-image {
-    width: 100%;
-    max-height: 550px; /* 기존보다 더 크게 설정 */
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	width: 100%;
+	max-height: 550px; /* 기존보다 더 크게 설정 */
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .post-image img {
-    max-width: 100%;  
-    max-height: 100%;
-    height: auto;
-    width: auto;
-    object-fit: contain; /* 이미지 비율 유지하며 잘리지 않도록 설정 */
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
+	width: auto;
+	object-fit: contain; /* 이미지 비율 유지하며 잘리지 않도록 설정 */
 }
-
-
 
 .post-content {
 	font-size: 16px;
@@ -103,7 +101,7 @@ main {
 	<main>
 		<div class="post-container">
 			<h2 class="post-title">${dto.subject}</h2>
-			<p class="post-date">${dto.startdate}~ ${dto.enddate}</p>
+			<p class="post-date">${dto.startdate}~${dto.enddate}</p>
 			<div class="post-image">
 				<img alt="썸네일"
 					src="${pageContext.request.contextPath}/uploads/event/${dto.thumbnail}">
@@ -117,38 +115,26 @@ main {
 
 	<script type="text/javascript">
 		$(function() {
-			$('.download-btn')
-					.click(
-							function() {
-								let valid = $
-								{
-									valid
-								}
-								;
-								if (valid == 'true') {
-									alert('이미 발급된 쿠폰입니다.');
-									return false;
-								}
-								let num = $
-								{
-									dto.event_article_num
-								}
-								;
-								let code = '${dto.event.coupon_code}';
-								let url = '${pageContext.request.contextPath}/event/getCoupon';
-								let params = {
-									couponcode : code,
-									eventNum : num
-								};
+			$('.download-btn').click(function() {
+				let valid = "${valid}";
+				if (valid == 'true') {
+						alert('이미 발급된 쿠폰입니다.');
+						return false;
+				}
+				let num = "${dto.event_article_num}";
+					let code = '${dto.event.coupon_code}';
+					let url = '${pageContext.request.contextPath}/event/getCoupon';
+					let params = {couponcode : code,eventNum : num};
+					const fn = function(data) {
+						if(data.state == 'true'){
+							alert('쿠폰이 발급되었습니다');
+						}else{
+							alert('꺄악 오류발생');
+						}
+					};
 
-								const fn = function(data) {
-									console.log(data);
-								};
-
-								ajaxRequest(url, 'post',
-										JSON.stringify(params), 'json', fn,
-										false, 'json');
-							});
+				ajaxRequest(url, 'post',JSON.stringify(params), 'json', fn,	false, 'json');
+			});
 		});
 	</script>
 </body>

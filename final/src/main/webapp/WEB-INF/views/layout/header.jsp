@@ -41,21 +41,6 @@
 			src="/dist/images/layout/top_logo.png" alt="로고"></a>
 	</div>
 
-	<!-- 전체 카테고리 아이콘 -->
-	<div class="category-menu">
-		<button class="category-btn">
-			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-				fill="#000000" class="bi bi-list" viewBox="0 0 16 16">
-        <path
-					d="M2 3h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm0 4h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm0 4h12a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z" />
-      </svg>
-			전체 카테고리
-		</button>
-	</div>
-	<div class="category-dropdown">
-		<a href="#">카테고리 1</a> <a href="#">카테고리 2</a> <a href="#">카테고리 3</a> <a
-			href="#">카테고리 4</a> <a href="#">카테고리 5</a>
-	</div>
 
 
 	<div class="search-container">

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.app.admin.model.Event;
+import com.sp.app.model.EventComment;
 import com.sp.app.model.SessionInfo;
 import com.sp.app.service.EventService;
 
@@ -137,7 +139,11 @@ public class EventController {
 				return "event/clockinArticle";
 
 			} else {
+				// 이벤트객체랑 댓글 목록 넘겨야됌 
 				dto = service.findById(map);
+				List<EventComment> list = service.commList(dto.getEvent_article_num());
+				
+				model.addAttribute("cmmList", list);
 				model.addAttribute("dto", dto);
 				return "event/commentArticle";
 			}
@@ -176,6 +182,41 @@ public class EventController {
 		} catch (Exception e) {
 		}
 
+		return map;
+	}
+	
+	@PostMapping("commentadd")
+	@ResponseBody
+	public Map<String, Object> addComment(@RequestBody EventComment dto, HttpSession session) {
+		Map<String, Object> map = new HashMap<>();
+		SessionInfo info = (SessionInfo) session.getAttribute("member");
+		try {
+			long num = dto.getEvt_num();
+			String content = dto.getContent();
+			map.put("memberidx", info.getMemberIdx());
+			map.put("num", num);
+			map.put("content", content);
+			
+			service.insertComment(map);
+			
+			// 댓글 다시 뿌려 
+			map.put("state", "true");
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return map;
+	}
+	
+	@PostMapping("commentdelete")
+	@ResponseBody
+	public Map<String, Object> deleteComment(@RequestParam("evtcmm_num") long evtcmm_num){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			service.deleteComm(evtcmm_num);
+			map.put("state", "true");
+		} catch (Exception e) {
+			
+		}
 		return map;
 	}
 }

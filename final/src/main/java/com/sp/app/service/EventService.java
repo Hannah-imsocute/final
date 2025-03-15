@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.sp.app.admin.model.Event;
 import com.sp.app.admin.model.EventType;
+import com.sp.app.model.EventComment;
 
 public interface EventService {
 	public List<Event> eventList();
@@ -17,4 +18,8 @@ public interface EventService {
 	
 	public String hasCoupon(Map<String, Object> map);
 	public EventType couponInfo(String coupon_code);
+	
+	public void insertComment(Map<String, Object> map) throws Exception;
+	public List<EventComment> commList(long evtnum);
+	public void deleteComm(long evtcmm_num) throws Exception;
 }
