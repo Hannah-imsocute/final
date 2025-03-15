@@ -15,25 +15,25 @@
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>총 회원 수</h6>
-				<h4>1,234명</h4>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="card text-center p-3">
-				<h6>신규 가입</h6>
 				<h4>120명</h4>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="card text-center p-3">
+				<h6>신규 가입</h6>
+				<h4>13명</h4>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card text-center p-3">
 				<h6>총 매출</h6>
-				<h4>￦12,345,678</h4>
+				<h4>￦2,878,782</h4>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="card text-center p-3">
 				<h6>총 거래 수</h6>
-				<h4>567건</h4>
+				<h4>87건</h4>
 			</div>
 		</div>
 	</div>
@@ -77,28 +77,28 @@
 					<tbody>
 						<tr>
 							<td>1</td>
-							<td>상품 A</td>
-							<td>320개</td>
+							<td>초코빵</td>
+							<td>39</td>
 						</tr>
 						<tr>
 							<td>2</td>
-							<td>상품 B</td>
-							<td>290개</td>
+							<td>바나나</td>
+							<td>35</td>
 						</tr>
 						<tr>
 							<td>3</td>
-							<td>상품 C</td>
-							<td>250개</td>
+							<td>파스타</td>
+							<td>27</td>
 						</tr>
 						<tr>
 							<td>4</td>
-							<td>상품 D</td>
-							<td>210개</td>
+							<td>바게트</td>
+							<td>16</td>
 						</tr>
 						<tr>
 							<td>5</td>
-							<td>상품 E</td>
-							<td>180개</td>
+							<td>초콜릿</td>
+							<td>14</td>
 						</tr>
 					</tbody>
 				</table>
@@ -115,6 +115,7 @@ $(document).ready(function() {
     memberAnalysis();
 });
 
+/*
 function memberAnalysis() {
     let url = '${pageContext.request.contextPath}/admin/statsList/memberAgeSection';
     $.getJSON(url, function(data){
@@ -162,6 +163,48 @@ function memberAnalysis() {
         });
     });
 }
+*/
+function memberAnalysis() {
+    // 원래 AJAX 요청 주석 처리
+    // let url = '${pageContext.request.contextPath}/admin/statsList/memberAgeSection';
+    // $.getJSON(url, function(data){
+    
+    let titles = ["10대", "20대", "30대", "40대", "50대", "60대 이상"];
+    let values = [15, 25, 30, 20, 20, 10]; // 총합 120명
+    
+    console.log(titles, values);  // 데이터 확인
+
+    Highcharts.chart('ageChartContainer', {
+        title:{
+            text : '연령대별 회원수'
+        },
+        xAxis : {
+            categories: titles
+        },
+        yAxis : {
+            title:{
+                text:'인원(명)'
+            }
+        },
+        series:[{
+            type: 'column',
+            colorByPoint: true,
+            name: '인원수',
+            data: values,
+            showInLegend: false
+        }],
+        // 차트 클릭시 권한 관리로 이동
+        chart: {
+            events: {
+                click: function() {
+                    let url = '/admin/authList'
+                    window.location.href = url;
+                }
+            }
+        }
+    });
+}
+
 
 $(document).ready(function() {
 	memberStatus();
